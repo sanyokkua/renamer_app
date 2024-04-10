@@ -1,4 +1,5 @@
-from PySide6.QtCore import (Slot)
+from PySide6.QtCore import (Slot, Qt)
+from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (QCheckBox, QFormLayout, QLabel,
                                QLineEdit, QSpinBox)
 
@@ -10,14 +11,18 @@ class RenameByPatternWidget(BaseParamsWidget):
     def __init__(self):
         super().__init__()
         self.main_layout = QFormLayout(self)
+        self.main_layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.main_layout.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
 
         self.start_seq_from_label = QLabel(self)
         self.start_seq_from_spinbox = QSpinBox(self)
+        self.start_seq_from_spinbox.setCursor(QCursor(Qt.PointingHandCursor))
         self.main_layout.setWidget(0, QFormLayout.LabelRole, self.start_seq_from_label)
         self.main_layout.setWidget(0, QFormLayout.FieldRole, self.start_seq_from_spinbox)
 
         self.use_number_seq_label = QLabel(self)
         self.use_number_seq_checkbox = QCheckBox(self)
+        self.use_number_seq_checkbox.setCursor(QCursor(Qt.PointingHandCursor))
         self.main_layout.setWidget(1, QFormLayout.LabelRole, self.use_number_seq_label)
         self.main_layout.setWidget(1, QFormLayout.FieldRole, self.use_number_seq_checkbox)
 
@@ -25,11 +30,13 @@ class RenameByPatternWidget(BaseParamsWidget):
         self.prefix_to_add_line_edit = QLineEdit(self)
         self.main_layout.setWidget(2, QFormLayout.LabelRole, self.prefix_to_add_label)
         self.main_layout.setWidget(2, QFormLayout.FieldRole, self.prefix_to_add_line_edit)
+        self.prefix_to_add_line_edit.setValidator(self.path_symbols_validator)
 
         self.suffix_to_add_label = QLabel(self)
         self.suffix_to_add_line_edit = QLineEdit(self)
         self.main_layout.setWidget(5, QFormLayout.LabelRole, self.suffix_to_add_label)
         self.main_layout.setWidget(5, QFormLayout.FieldRole, self.suffix_to_add_line_edit)
+        self.suffix_to_add_line_edit.setValidator(self.path_symbols_validator)
 
         self.add_text_to_widgets()
         self.add_event_handlers()

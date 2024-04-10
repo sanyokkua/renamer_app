@@ -2,7 +2,8 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QModelIndex, QAbstractTableModel
 from PySide6.QtCore import Signal, Slot
-from PySide6.QtWidgets import QTableView
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QTableView, QHeaderView
 
 from core.models import FileItemModel
 
@@ -18,17 +19,14 @@ def map_path_to_model(path: str) -> FileItemModel:
     if not file_path.exists():
         raise FilePassedToModelIsNotValid("File does not exist")
 
-    if file_path.is_file():
-        is_file = True
-    else:
-        is_file = False
-
     file_path_str: str = path
-    file_name: str = file_path.name
-    file_type = "File" if is_file else "Folder"
+    file_type = "File" if file_path.is_file() else "Folder"
+    file_ext: str = file_path.suffix
+    file_name: str = file_path.name.removesuffix(file_ext)
     file_new_name: str = file_name
 
-    return FileItemModel(file_path=file_path_str, file_name=file_name, file_type=file_type, new_name=file_new_name)
+    return FileItemModel(file_path=file_path_str, file_name=file_name, file_type=file_type, new_name=file_new_name,
+                         file_ext=file_ext)
 
 
 class FileTableModel(QAbstractTableModel):
@@ -51,11 +49,11 @@ class FileTableModel(QAbstractTableModel):
 
             data_obj: FileItemModel = self.file_list[row]
             if col == 0:
-                return data_obj.file_name
+                return f"{data_obj.file_name}{data_obj.file_ext}"
             elif col == 1:
                 return data_obj.file_type
             elif col == 2:
-                return data_obj.new_name
+                return f"{data_obj.new_name}{data_obj.file_ext}"
 
             return super().data(index, role)
 
@@ -88,6 +86,12 @@ class FileTableView(QTableView):
         self.setDragEnabled(True)
         self.viewport().setAcceptDrops(True)
         self.resizeColumnsToContents()
+        self.resizeRowsToContents()
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.verticalHeader().setDefaultSectionSize(10)
+        font = QFont("Arial", 10)
+        self.setFont(font)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():

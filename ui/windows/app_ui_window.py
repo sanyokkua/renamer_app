@@ -1,5 +1,5 @@
 from PySide6.QtCore import (Qt, Slot)
-from PySide6.QtGui import (QAction)
+from PySide6.QtGui import (QAction, QCursor)
 from PySide6.QtWidgets import (QComboBox, QFormLayout, QHBoxLayout,
                                QLabel, QMainWindow,
                                QMenu, QMenuBar, QProgressBar, QPushButton,
@@ -25,16 +25,21 @@ class AppUiWindow(QMainWindow):
         self.main_widget.setEnabled(True)
         self.main_widget.setLayoutDirection(Qt.LeftToRight)
         self.main_widget_layout = QHBoxLayout(self.main_widget)
+        self.main_widget.setMinimumHeight(500)
 
         # Content widgets in Main Widget
 
         self.left_widget = QWidget(self.main_widget)
+        self.left_widget.setMinimumWidth(400)
+        self.left_widget.setMaximumWidth(400)
         self.left_widget_layout = QVBoxLayout(self.left_widget)
 
         self.center_widget = QWidget(self.main_widget)
+        self.center_widget.setFixedWidth(100)
         self.center_widget_layout = QVBoxLayout(self.center_widget)
 
         self.right_widget = QWidget(self.main_widget)
+        self.right_widget.setMinimumWidth(400)
         self.right_widget_layout = QVBoxLayout(self.right_widget)
 
         self.main_widget_layout.addWidget(self.left_widget)
@@ -47,23 +52,30 @@ class AppUiWindow(QMainWindow):
         self.left_widget_control_widget_layout = QFormLayout(self.left_widget_control_widget)
         self.select_mode_label = QLabel(self.left_widget_control_widget)
         self.select_mode_label_combo_box = QComboBox(self.left_widget_control_widget)
+        self.select_mode_label_combo_box.setCursor(QCursor(Qt.PointingHandCursor))
         self.left_widget_control_widget_layout.setWidget(0, QFormLayout.LabelRole, self.select_mode_label)
         self.left_widget_control_widget_layout.setWidget(0, QFormLayout.FieldRole, self.select_mode_label_combo_box)
 
         self.left_widget_content_widget = QWidget(self.left_widget)
 
+        self.left_widget_control_widget.setFixedHeight(50)
         self.left_widget_layout.addWidget(self.left_widget_control_widget)
         self.left_widget_layout.addWidget(self.left_widget_content_widget)
 
         # Center content widgets
 
         self.preview_btn = QPushButton(self.center_widget)
+        self.preview_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.rename_btn = QPushButton(self.center_widget)
+        self.rename_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.reset_btn = QPushButton(self.center_widget)
+        self.reset_btn.setCursor(QCursor(Qt.PointingHandCursor))
 
+        self.center_widget_layout.addStretch(1)
         self.center_widget_layout.addWidget(self.preview_btn)
         self.center_widget_layout.addWidget(self.rename_btn)
         self.center_widget_layout.addWidget(self.reset_btn)
+        self.center_widget_layout.addStretch(4)
 
         # Right content widgets
 
