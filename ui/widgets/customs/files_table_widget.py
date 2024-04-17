@@ -1,43 +1,20 @@
-from pathlib import Path
-
 from PySide6.QtCore import Qt, QModelIndex, QAbstractTableModel
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QTableView, QHeaderView
 
-from core.models import FileItemModel
+from core.models.app_file import AppFile
 
 
-class FilePassedToModelIsNotValid(Exception):
-    def __init__(self, message="An error occurred"):
-        self.message = message
-        super().__init__(self.message)
-
-
-def map_path_to_model(path: str) -> FileItemModel:
-    file_path = Path(path)
-    if not file_path.exists():
-        raise FilePassedToModelIsNotValid("File does not exist")
-
-    file_path_str: str = path
-    file_type = "File" if file_path.is_file() else "Folder"
-    file_ext: str = file_path.suffix
-    file_name: str = file_path.name.removesuffix(file_ext)
-    file_new_name: str = file_name
-
-    return FileItemModel(file_path=file_path_str, file_name=file_name, file_type=file_type, new_name=file_new_name,
-                         file_ext=file_ext)
-
-
-class FileTableModel(QAbstractTableModel):
+class FilesTableModel(QAbstractTableModel):
     columns = ["Original Name", "Type", "New Name"]
+    rows: list[AppFile] = []
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.file_list = []
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
-        return len(self.file_list)
+        return len(self.rows)
 
     def columnCount(self, parent: QModelIndex = QModelIndex()) -> int:
         return len(self.columns)
@@ -47,13 +24,13 @@ class FileTableModel(QAbstractTableModel):
             row = index.row()
             col = index.column()
 
-            data_obj: FileItemModel = self.file_list[row]
+            data_obj: AppFile = self.rows[row]
             if col == 0:
-                return f"{data_obj.file_name}{data_obj.file_ext}"
+                return f"{data_obj.file_name}{data_obj.file_extension}"
             elif col == 1:
-                return data_obj.file_type
+                return "Folder" if data_obj.is_folder else "File"
             elif col == 2:
-                return f"{data_obj.new_name}{data_obj.file_ext}"
+                return f"{data_obj.next_name}{data_obj.file_extension}"
 
             return super().data(index, role)
 
@@ -67,21 +44,22 @@ class FileTableModel(QAbstractTableModel):
 
     def insertRows(self, row, files):
         self.beginInsertRows(QModelIndex(), row, row + len(files) - 1)
-        self.file_list.extend(files)
+        self.rows.extend(files)
         self.endInsertRows()
 
+    @Slot()
     def clear(self) -> None:
         self.beginResetModel()  # Notify views that the model is about to be reset
-        self.file_list = []  # Clear the data structure
+        self.rows = []  # Clear the data structure
         self.endResetModel()  # Notify views that the model has been reset
 
 
-class FileTableView(QTableView):
-    files_dropped = Signal(list)
+class FilesTableView(QTableView):
+    files_dropped_to_widget = Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setModel(FileTableModel())
+        self.setModel(FilesTableModel())
         self.setAcceptDrops(True)
         self.setDragEnabled(True)
         self.viewport().setAcceptDrops(True)
@@ -92,26 +70,27 @@ class FileTableView(QTableView):
         self.verticalHeader().setDefaultSectionSize(10)
         font = QFont("Arial", 10)
         self.setFont(font)
+        self.setAutoFillBackground(False)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
     def dragMoveEvent(self, event):
-        # if event.mimeData().hasUrls():
         event.acceptProposedAction()
 
     def dropEvent(self, event) -> None:
         if event.mimeData().hasUrls():
             urls = event.mimeData().urls()
-            file_paths = [map_path_to_model(url.toLocalFile()) for url in urls]
+            file_paths = [url.toLocalFile() for url in urls]
             self.emit_files_dropped(file_paths)
 
-    def emit_files_dropped(self, file_paths: list[FileItemModel]) -> None:
-        self.files_dropped.emit(file_paths)
+    def emit_files_dropped(self, file_paths: list[str]) -> None:
+        self.files_dropped_to_widget.emit(file_paths)
 
     @Slot()
-    def update_table_data(self, files: list[FileItemModel]) -> None:
-        self.model().clear()
-        self.model().insertRows(len(self.model().file_list), files)
+    def update_table_data(self, files: list[AppFile]) -> None:
+        model: FilesTableModel = self.model()
+        model.clear()
+        model.insertRows(len(model.rows), files)
         self.resizeColumnsToContents()

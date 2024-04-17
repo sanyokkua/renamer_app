@@ -1,12 +1,12 @@
 from PySide6.QtWidgets import QApplication
 
-from ui.windows.app_ui_window import AppUiWindow
+from ui.windows.application_main_window import ApplicationMainWindow
 
 
 class RenamerApp(QApplication):
     def __init__(self) -> None:
         super().__init__([])
-        self._main_widget: AppUiWindow = AppUiWindow()
+        self._main_widget: ApplicationMainWindow = ApplicationMainWindow()
         self._main_widget.show()
 
 
