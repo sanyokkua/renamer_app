@@ -17,7 +17,6 @@ class ImageDimensionsPrepareCommand(PrepareCommand):
         self.separator_between: str = separator_between
         self.separator_before_or_after: str = separator_before_or_after
 
-    def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction]
-    ) -> List[AppFile]:
-        pass
+    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction]) -> List[AppFile]:
+        print(self)
+        return []

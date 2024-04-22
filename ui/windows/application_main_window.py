@@ -1,22 +1,27 @@
 from PySide6.QtCore import (Qt, Slot)
-from PySide6.QtWidgets import (QHBoxLayout,
-                               QMainWindow, QWidget)
+from PySide6.QtWidgets import (QHBoxLayout, QVBoxLayout,
+                               QMainWindow, QWidget, QProgressBar)
 
 from core.commands.map_url_to_app_file import MapUrlToAppFileCommand
 from core.commons import PrepareCommand
+from core.enums import AppModes
 from core.models.app_file import AppFile
+from ui.widgets.views.app_controls_widget import AppControlsWidget
 from ui.widgets.views.app_files_list_view_widget import AppFilesListViewWidget
 from ui.widgets.views.app_mode_view_widget import AppModeSelectViewWidget
-from ui.widgets.views.app_process_btn_view_widget import AppProcessButtonsViewWidget
 
 
 class ApplicationMainWindow(QMainWindow):
-    _main_widget_layout: QHBoxLayout
+    _main_widget_layout: QVBoxLayout
     _main_widget: QWidget
 
+    _content_widget: QWidget
+    _content_widget_layout: QHBoxLayout
+
+    _app_controls_widget: AppControlsWidget
     _app_modes_widget: AppModeSelectViewWidget
-    _controls_widget: AppProcessButtonsViewWidget
     _files_view_widget: AppFilesListViewWidget
+    _progress_bar: QProgressBar
 
     _mapping_command: MapUrlToAppFileCommand
     _app_file_list: list[AppFile] = []
@@ -27,12 +32,16 @@ class ApplicationMainWindow(QMainWindow):
 
         # Create main widget of application where rest of the widgets will be displayed
         self._main_widget = QWidget(self)
-        self._main_widget_layout = QHBoxLayout(self._main_widget)
+        self._main_widget_layout = QVBoxLayout(self._main_widget)
+        self._main_widget_layout.setContentsMargins(0, 0, 0, 0)
 
         # Create Main control widgets
-        self._app_modes_widget = AppModeSelectViewWidget(self._main_widget)
-        self._controls_widget = AppProcessButtonsViewWidget(self._main_widget)
-        self._files_view_widget = AppFilesListViewWidget(self._main_widget)
+        self._app_controls_widget = AppControlsWidget(self._main_widget)
+        self._progress_bar = QProgressBar(self._main_widget)
+        self._content_widget = QWidget(self._main_widget)
+        self._content_widget_layout = QHBoxLayout(self._content_widget)
+        self._app_modes_widget = AppModeSelectViewWidget(self._content_widget)
+        self._files_view_widget = AppFilesListViewWidget(self._content_widget)
 
         # Configure main application widget
         self.setCentralWidget(self._main_widget)
@@ -41,37 +50,59 @@ class ApplicationMainWindow(QMainWindow):
         self._main_widget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self._main_widget.setMinimumWidth(1000)
         self._main_widget.setMinimumHeight(600)
+        self._main_widget.setContentsMargins(0, 0, 0, 0)
+        self._progress_bar.setValue(0)
 
         # Add Control widgets to the main layout
-        self._main_widget_layout.addWidget(self._app_modes_widget)
-        self._main_widget_layout.addWidget(self._controls_widget)
-        self._main_widget_layout.addWidget(self._files_view_widget)
+        self._content_widget_layout.addWidget(self._app_modes_widget)
+        self._content_widget_layout.addWidget(self._files_view_widget)
+
+        self._main_widget_layout.addWidget(self._app_controls_widget)
+        self._main_widget_layout.addWidget(self._content_widget)
+        self._main_widget_layout.addWidget(self._progress_bar)
 
         # Configure event handling for the widgets events
-        self._controls_widget.previewBtnClicked.connect(self.handle_preview_btn_clicked)
-        self._controls_widget.renameBtnClicked.connect(self.handle_rename_btn_clicked)
-        self._controls_widget.resetBtnClicked.connect(self.handle_reset_btn_clicked)
+        self._app_controls_widget.appModeSelected.connect(self.handle_app_mode_changed)
+        self._app_controls_widget.previewBtnClicked.connect(self.handle_preview_btn_clicked)
+        self._app_controls_widget.renameBtnClicked.connect(self.handle_rename_btn_clicked)
+        self._app_controls_widget.clearBtnClicked.connect(self.handle_clear_btn_clicked)
         self._files_view_widget.files_list_updated.connect(self.handle_files_dropped)
+
+    @Slot()
+    def handle_app_mode_changed(self, value: AppModes):
+        self._app_modes_widget.handle_app_mode_changed(value)
 
     @Slot()
     def handle_preview_btn_clicked(self):
         command: PrepareCommand = self._app_modes_widget.request_command()
-        mapped_files = command.execute(self._app_file_list, self._files_view_widget.update_progress_bar)
+        mapped_files = command.execute(self._app_file_list, self.update_progress_bar)
         self._app_file_list = mapped_files
+        self.update_files_table_view()
 
     @Slot()
     def handle_rename_btn_clicked(self):
         command: PrepareCommand = self._app_modes_widget.request_command()
-        mapped_files = command.execute(self._app_file_list, self._files_view_widget.update_progress_bar)
+        mapped_files = command.execute(self._app_file_list, self.update_progress_bar)
+
         self._app_file_list = mapped_files
+        self.update_files_table_view()
 
     @Slot()
-    def handle_reset_btn_clicked(self):
-        command: PrepareCommand = self._app_modes_widget.request_command()
-        mapped_files = command.execute(self._app_file_list, self._files_view_widget.update_progress_bar)
-        self._app_file_list = mapped_files
+    def handle_clear_btn_clicked(self):
+        self._app_file_list = []
+        self.update_files_table_view()
 
     @Slot()
     def handle_files_dropped(self, list_of_files: list[str]):
-        mapped_files = self._mapping_command.execute(list_of_files, self._files_view_widget.update_progress_bar)
+        mapped_files = self._mapping_command.execute(list_of_files, self.update_progress_bar)
         self._app_file_list = mapped_files
+        self.update_files_table_view()
+
+    @Slot()
+    def update_progress_bar(self, min_val: int, max_val: int, current_val: int):
+        self._progress_bar.setMinimum(min_val)
+        self._progress_bar.setMaximum(max_val)
+        self._progress_bar.setValue(current_val)
+
+    def update_files_table_view(self):
+        self._files_view_widget.update_table_data(self._app_file_list)

@@ -4,7 +4,7 @@ from core.commands.prep_add_text import AddTextPrepareCommand
 from core.commons import PrepareCommand
 from core.enums import ItemPosition
 from core.text_values import ITEM_POSITION_TEXT
-from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget
+from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget, PATH_SYMBOLS_VALIDATOR
 from ui.widgets.customs.pairs.label_line_edit_widget import LabelLineEditWidget
 from ui.widgets.customs.pairs.label_radio_buttons_widget import LabelRadioButtonsWidget
 
@@ -20,18 +20,19 @@ class AddTextWidget(BasePrepareCommandWidget):
 
     def init_widgets(self):
         self._radio_enum_widget = LabelRadioButtonsWidget(parent=self, enum_class=ItemPosition,
-                                                          text_mapping=ITEM_POSITION_TEXT)
+                                                          text_mapping=ITEM_POSITION_TEXT, vertical=True)
         self._text_to_add = LabelLineEditWidget(self)
 
     def configure_widgets(self):
-        self._radio_enum_widget.setMaximumHeight(50)
         self._text_to_add.setMaximumHeight(100)
+        self._text_to_add.set_text_validator(PATH_SYMBOLS_VALIDATOR)
 
         self._main_layout.addWidget(self._radio_enum_widget)
         self._main_layout.addWidget(self._text_to_add)
 
-        self._text_value = ""
-        self._selected_radio_value = ItemPosition(self._radio_enum_widget.get_current_value())
+        self._text_value = self._text_to_add.get_current_value()
+        self._selected_radio_value = self._radio_enum_widget.get_current_value()
+        self.setContentsMargins(0, 0, 0, 0)
 
     def add_text_to_widgets(self):
         self._text_to_add.set_label_text(self.tr("Text to add"))

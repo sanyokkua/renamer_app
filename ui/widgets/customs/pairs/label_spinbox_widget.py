@@ -11,6 +11,7 @@ class LabelSpinBoxWidget(BaseLabelWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setContentsMargins(0, 0, 0, 0)
 
     def create_pair_widget(self) -> QWidget:
         self._spin_box = QSpinBox(self)

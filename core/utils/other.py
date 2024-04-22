@@ -52,7 +52,7 @@ def build_app_file_from_path_str(path: str | None) -> AppFile:
     file_new_name: str = file_name
     file_creation_date: float = current_file_path.stat().st_birthtime
     file_modification_date: float = current_file_path.stat().st_mtime
-    file_metadata: Metadata | None = build_metadata_from_path(current_file_path)
+    # file_metadata: Metadata | None = build_metadata_from_path(current_file_path) # TODO
 
     return AppFile(
         _absolute_path=file_path_str,
@@ -63,7 +63,7 @@ def build_app_file_from_path_str(path: str | None) -> AppFile:
         _next_name=file_new_name,
         _fs_creation_date=file_creation_date,
         _fs_modification_date=file_modification_date,
-        _metadata=file_metadata,
+        _metadata=None,
     )
 
 

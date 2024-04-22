@@ -11,7 +11,6 @@ class ParentFoldersPrepareCommand(PrepareCommand):
         self.number_of_parents: int = number_of_parents
         self.separator: str = separator
 
-    def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction]
-    ) -> List[AppFile]:
-        pass
+    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction]) -> List[AppFile]:
+        print(self)
+        return []

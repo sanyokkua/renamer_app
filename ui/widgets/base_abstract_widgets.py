@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 
-from PySide6.QtCore import Slot, Qt
+from PySide6.QtCore import Slot, Qt, QRegularExpression
+from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtWidgets import (QWidget, QFormLayout, QLabel, QVBoxLayout)
 
 from core.commons import PrepareCommand
 
-
-# PATH_SYMBOLS_VALIDATOR = QRegularExpressionValidator()
-# PATH_SYMBOLS_REGEXP = QRegularExpression("^([A-Za-z]*[0-9]*[_ ]*\.)*$")
-# PATH_SYMBOLS_VALIDATOR.setRegularExpression(PATH_SYMBOLS_REGEXP)
+PATH_SYMBOLS_VALIDATOR = QRegularExpressionValidator()
+PATH_SYMBOLS_REGEXP = QRegularExpression("^[A-Za-z0-9_. -]*$")
+PATH_SYMBOLS_VALIDATOR.setRegularExpression(PATH_SYMBOLS_REGEXP)
 
 
 class ABCMeta(type(QWidget), type(ABC)):

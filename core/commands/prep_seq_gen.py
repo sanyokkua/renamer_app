@@ -13,7 +13,6 @@ class SequencePrepareCommand(PrepareCommand):
         self.padding: int = padding
         self.sort_source: SortSource = sort_source
 
-    def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction]
-    ) -> List[AppFile]:
-        pass
+    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction]) -> List[AppFile]:
+        print(self)
+        return []

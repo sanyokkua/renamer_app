@@ -2,7 +2,7 @@ from enum import IntEnum
 from typing import TypeVar, Type
 
 from PySide6.QtCore import Slot, Signal
-from PySide6.QtWidgets import (QWidget, QComboBox)
+from PySide6.QtWidgets import (QWidget, QComboBox, QSizePolicy)
 
 from ui.widgets.base_abstract_widgets import BaseLabelWidget
 
@@ -21,9 +21,12 @@ class LabelComboboxWidget(BaseLabelWidget):
         self._enum_class = enum_class
         self._text_mapping = text_mapping
         super().__init__(parent)
+        self.setContentsMargins(0, 0, 0, 0)
 
     def create_pair_widget(self) -> QWidget:
         self._combobox = QComboBox(self)
+        self._combobox.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
         enum_list = list(self._enum_class)
         for enum_item in enum_list:
             text = self.tr(self._text_mapping.get(enum_item))

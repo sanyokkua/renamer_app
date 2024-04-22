@@ -11,15 +11,16 @@ class DateTimeRenamePrepareCommand(PrepareCommand):
                  time_format: TimeFormat = TimeFormat.HH_MM_SS_24_TOGETHER,
                  datetime_format: DateTimeFormat = DateTimeFormat.DATE_TIME_UNDERSCORED,
                  datetime_source: DateTimeSource = DateTimeSource.CONTENT_CREATION_DATE,
-                 use_uppercase: bool = True):
+                 use_uppercase: bool = True,
+                 custom_datetime: str = ""):
         self.position: ItemPositionWithReplacement = position
         self.date_format: DateFormat = date_format
         self.time_format: TimeFormat = time_format
         self.datetime_format: DateTimeFormat = datetime_format
         self.datetime_source: DateTimeSource = datetime_source
         self.use_uppercase: bool = use_uppercase
+        self.custom_datetime: str = custom_datetime
 
-    def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction]
-    ) -> List[AppFile]:
-        pass
+    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction]) -> List[AppFile]:
+        print(self)
+        return []

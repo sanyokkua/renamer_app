@@ -10,7 +10,6 @@ class ReplaceTextPrepareCommand(PrepareCommand):
         self.text: str = text
         self.position: ItemPositionExtended = position
 
-    def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction]
-    ) -> List[AppFile]:
-        pass
+    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction]) -> List[AppFile]:
+        print(self)
+        return []

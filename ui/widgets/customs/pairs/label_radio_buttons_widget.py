@@ -24,6 +24,7 @@ class LabelRadioButtonsWidget(BaseLabelWidget):
         self._text_mapping = text_mapping
         self._vertical = vertical
         super().__init__(parent)
+        self.setContentsMargins(0, 0, 0, 0)
 
     def custom_init(self):
         self._radio_button_group = QButtonGroup(self)
@@ -50,5 +51,5 @@ class LabelRadioButtonsWidget(BaseLabelWidget):
     def create_event_handlers(self):
         self._radio_button_group.idToggled.connect(lambda btn_id: self.valueIsChanged.emit(btn_id))
 
-    def get_current_value(self) -> IntEnum:
+    def get_current_value(self) -> T:
         return self._radio_button_group.checkedId()

@@ -10,7 +10,6 @@ class ChangeCasePreparePrepareCommand(PrepareCommand):
         self.capitalize: bool = capitalize
         self.text_case: TextCaseOptions = text_case
 
-    def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction]
-    ) -> List[AppFile]:
-        pass
+    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction]) -> List[AppFile]:
+        print(self)
+        return []

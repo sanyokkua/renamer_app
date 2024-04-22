@@ -1,12 +1,10 @@
 from PySide6.QtCore import Slot
-from PySide6.QtWidgets import QVBoxLayout
+from PySide6.QtWidgets import QVBoxLayout, QGroupBox
 
 from core.commons import PrepareCommand
 from core.enums import AppModes
 from core.exceptions import WidgetNotFoundException
-from core.text_values import APP_MODE_TEXT
 from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget
-from ui.widgets.customs.pairs.label_combobox_widget import LabelComboboxWidget
 from ui.widgets.modes.add_text_widget import AddTextWidget
 from ui.widgets.modes.change_case_widget import ChangeCaseWidget
 from ui.widgets.modes.date_time_widget import DateTimeWidget
@@ -20,7 +18,9 @@ from ui.widgets.modes.truncate_text_widget import TruncateTextWidget
 
 class AppModeSelectViewWidget(BasePrepareCommandWidget):
     _main_layout: QVBoxLayout
-    _app_modes_combobox: LabelComboboxWidget
+    _app_modes_view_widget: QGroupBox
+    _app_modes_view_widget_layout: QVBoxLayout
+
     _current_mode_widget: BasePrepareCommandWidget
 
     _mode_add_text_widget: AddTextWidget
@@ -40,17 +40,20 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
 
     def init_widgets(self):
         self._main_layout = QVBoxLayout(self)
-        self._app_modes_combobox = LabelComboboxWidget(parent=self, enum_class=AppModes,
-                                                       text_mapping=APP_MODE_TEXT)
-        self._mode_add_text_widget = AddTextWidget(self)
-        self._mode_change_case_widget = ChangeCaseWidget(self)
-        self._mode_date_time_widget = DateTimeWidget(self)
-        self._mode_image_dimensions_widget = ImageDimensionsWidget(self)
-        self._mode_parent_folders_widget = ParentFoldersWidget(self)
-        self._mode_remove_text_widget = RemoveTextWidget(self)
-        self._mode_replace_text_widget = ReplaceTextWidget(self)
-        self._mode_sequence_generator_widget = SequenceGeneratorWidget(self)
-        self._mode_truncate_text_widget = TruncateTextWidget(self)
+
+        self._app_modes_view_widget = QGroupBox(self)
+        self._app_modes_view_widget_layout = QVBoxLayout(self._app_modes_view_widget)
+
+        self._mode_add_text_widget = AddTextWidget(self._app_modes_view_widget)
+        self._mode_change_case_widget = ChangeCaseWidget(self._app_modes_view_widget)
+        self._mode_date_time_widget = DateTimeWidget(self._app_modes_view_widget)
+        self._mode_image_dimensions_widget = ImageDimensionsWidget(self._app_modes_view_widget)
+        self._mode_parent_folders_widget = ParentFoldersWidget(self._app_modes_view_widget)
+        self._mode_remove_text_widget = RemoveTextWidget(self._app_modes_view_widget)
+        self._mode_replace_text_widget = ReplaceTextWidget(self._app_modes_view_widget)
+        self._mode_sequence_generator_widget = SequenceGeneratorWidget(self._app_modes_view_widget)
+        self._mode_truncate_text_widget = TruncateTextWidget(self._app_modes_view_widget)
+
         self._mode_widget_dict = {
             AppModes.ADD_CUSTOM_TEXT: self._mode_add_text_widget,
             AppModes.CHANGE_CASE: self._mode_change_case_widget,
@@ -79,18 +82,21 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
         self.setMinimumWidth(450)
         self.setMaximumWidth(450)
 
-        self._app_modes_combobox.setFixedHeight(50)
-        self._main_layout.addWidget(self._app_modes_combobox)
-        self._main_layout.addWidget(self._current_mode_widget)
-        self._main_layout.addStretch(1)
+        self.setContentsMargins(0, 0, 0, 0)
+        self._main_layout.addWidget(self._app_modes_view_widget)
+
+        self._app_modes_view_widget.setLayout(self._app_modes_view_widget_layout)
+        self._app_modes_view_widget_layout.setContentsMargins(0, 0, 0, 0)
+        self._app_modes_view_widget_layout.addWidget(self._current_mode_widget)
+        self._app_modes_view_widget_layout.addStretch(1)
 
         self.handle_app_mode_changed(AppModes.ADD_CUSTOM_TEXT)
 
     def add_text_to_widgets(self):
-        self._app_modes_combobox.set_label_text(self.tr("Select mode"))
+        self._app_modes_view_widget.setTitle(self.tr("Configure renaming"))
 
     def create_event_handlers(self):
-        self._app_modes_combobox.valueIsChanged.connect(self.handle_app_mode_changed)
+        pass
 
     def request_command(self) -> PrepareCommand:
         return self._current_mode_widget.request_command()
@@ -103,6 +109,6 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
             raise WidgetNotFoundException()
 
         self._current_mode_widget.hide()
-        self._main_layout.replaceWidget(self._current_mode_widget, widget)
+        self._app_modes_view_widget_layout.replaceWidget(self._current_mode_widget, widget)
         self._current_mode_widget = widget
         self._current_mode_widget.show()
