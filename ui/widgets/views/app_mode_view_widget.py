@@ -7,6 +7,7 @@ from core.exceptions import WidgetNotFoundException
 from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget
 from ui.widgets.modes.add_text_widget import AddTextWidget
 from ui.widgets.modes.change_case_widget import ChangeCaseWidget
+from ui.widgets.modes.change_extension_widget import ChangeExtensionWidget
 from ui.widgets.modes.date_time_widget import DateTimeWidget
 from ui.widgets.modes.image_dimensions_widget import ImageDimensionsWidget
 from ui.widgets.modes.parent_folders_widget import ParentFoldersWidget
@@ -32,6 +33,7 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
     _mode_replace_text_widget: ReplaceTextWidget
     _mode_sequence_generator_widget: SequenceGeneratorWidget
     _mode_truncate_text_widget: TruncateTextWidget
+    _mode_change_extension_widget: ChangeExtensionWidget
 
     _mode_widget_dict: dict[AppModes, BasePrepareCommandWidget]
 
@@ -53,6 +55,7 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
         self._mode_replace_text_widget = ReplaceTextWidget(self._app_modes_view_widget)
         self._mode_sequence_generator_widget = SequenceGeneratorWidget(self._app_modes_view_widget)
         self._mode_truncate_text_widget = TruncateTextWidget(self._app_modes_view_widget)
+        self._mode_change_extension_widget = ChangeExtensionWidget(self._app_modes_view_widget)
 
         self._mode_widget_dict = {
             AppModes.ADD_CUSTOM_TEXT: self._mode_add_text_widget,
@@ -64,6 +67,7 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
             AppModes.REPLACE_CUSTOM_TEXT: self._mode_replace_text_widget,
             AppModes.ADD_SEQUENCE: self._mode_sequence_generator_widget,
             AppModes.TRUNCATE_FILE_NAME: self._mode_truncate_text_widget,
+            AppModes.CHANGE_EXTENSION: self._mode_change_extension_widget
         }
 
     def configure_widgets(self):

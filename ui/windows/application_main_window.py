@@ -1,6 +1,6 @@
 from PySide6.QtCore import (Qt, Slot)
 from PySide6.QtWidgets import (QHBoxLayout, QVBoxLayout,
-                               QMainWindow, QWidget, QProgressBar)
+                               QMainWindow, QWidget, QProgressBar, QApplication)
 
 from core.commands.map_url_to_app_file import MapUrlToAppFileCommand
 from core.commons import PrepareCommand
@@ -103,6 +103,10 @@ class ApplicationMainWindow(QMainWindow):
         self._progress_bar.setMinimum(min_val)
         self._progress_bar.setMaximum(max_val)
         self._progress_bar.setValue(current_val)
+        self._progress_bar.setFormat(f"Progress: {current_val}%")
+        self._progress_bar.update()
+        QApplication.processEvents()  # Process events to update GUI
+        QApplication.instance().processEvents()  # Process events to update GUI
 
     def update_files_table_view(self):
         self._files_view_widget.update_table_data(self._app_file_list)

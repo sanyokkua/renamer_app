@@ -12,6 +12,8 @@ from ui.widgets.customs.pairs.label_combobox_widget import LabelComboboxWidget
 from ui.widgets.customs.pairs.label_radio_buttons_widget import LabelRadioButtonsWidget
 
 
+# TODO: Add additional field (separator between datetime and name if begin or end position is chosen)
+
 class DateTimeWidget(BasePrepareCommandWidget):
     _datetime_position_radio_btn: LabelRadioButtonsWidget
     _date_format_combobox: LabelComboboxWidget

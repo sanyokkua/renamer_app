@@ -14,6 +14,7 @@ APP_MODE_TEXT: dict[AppModes, str] = {
     AppModes.REPLACE_CUSTOM_TEXT: "Replace custom text in existing file name",
     AppModes.ADD_SEQUENCE: "Add sequence to the existing file name",
     AppModes.TRUNCATE_FILE_NAME: "Truncate existing file name",
+    AppModes.CHANGE_EXTENSION: "Change extension",
 }
 
 ITEM_POSITION_TEXT: dict[ItemPosition, str] = {
@@ -102,7 +103,6 @@ TIME_FORMAT_TEXT: dict[TimeFormat, str] = {
     TimeFormat.HH_MM_SS_24_UNDERSCORED: "HH_MM_SS (24 hours)",
     TimeFormat.HH_MM_SS_24_DOTTED: "HH.MM.SS (24 hours)",
     TimeFormat.HH_MM_SS_24_DASHED: "HH-MM-SS (24 hours)",
-    TimeFormat.HH_MM_24: "HH_MM (24 hours)",
     TimeFormat.HH_MM_24_TOGETHER: "HHMM (24 hours)",
     TimeFormat.HH_MM_24_WHITE_SPACED: "HH MM (24 hours)",
     TimeFormat.HH_MM_24_UNDERSCORED: "HH_MM (24 hours)",
@@ -113,7 +113,6 @@ TIME_FORMAT_TEXT: dict[TimeFormat, str] = {
     TimeFormat.HH_MM_SS_AM_PM_UNDERSCORED: "HH_MM_SS (AM/PM, 12 hours)",
     TimeFormat.HH_MM_SS_AM_PM_DOTTED: "HH.MM.SS (AM/PM, 12 hours)",
     TimeFormat.HH_MM_SS_AM_PM_DASHED: "HH-MM-SS (AM/PM, 12 hours)",
-    TimeFormat.HH_MM_AM_PM_: "HH_MM (AM/PM, 12 hours)",
     TimeFormat.HH_MM_AM_PM_TOGETHER: "HHMM (AM/PM, 12 hours)",
     TimeFormat.HH_MM_AM_PM_WHITE_SPACED: "HH MM (AM/PM, 12 hours)",
     TimeFormat.HH_MM_AM_PM_UNDERSCORED: "HH_MM (AM/PM, 12 hours)",
