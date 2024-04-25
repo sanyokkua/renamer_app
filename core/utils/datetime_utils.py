@@ -106,7 +106,7 @@ def make_time_string(time_format: TimeFormat, timestamp: float) -> str:
 
     formatted_string = dt.strftime(date_format_pattern)
     print(f"Pattern: {date_format_pattern}, Result: {formatted_string}")
-    return formatted_string
+    return formatted_string.lower()
 
 
 def make_datetime_string(date_time_format: DateTimeFormat,
@@ -128,6 +128,11 @@ def make_datetime_string(date_time_format: DateTimeFormat,
     """
     date_str: str = make_date_string(date_format, timestamp)
     time_str: str = make_time_string(time_format, timestamp)
+
+    if date_format == DateFormat.DO_NOT_USE_DATE and time_format != TimeFormat.DO_NOT_USE_TIME:
+        return time_str
+    elif time_format == TimeFormat.DO_NOT_USE_TIME and date_format != DateFormat.DO_NOT_USE_DATE:
+        return date_str
 
     match date_time_format:
         case DateTimeFormat.DATE_TIME_TOGETHER:

@@ -8,7 +8,7 @@ from core.enums import TextCaseOptions
 from core.exceptions import PassedArgumentIsNone
 from core.models.app_file import AppFile
 from tests.core.commands.test_commons import build_app_file, \
-    check_name_after_command_applied
+    verify_command_result
 
 
 def test_command_with_none_arguments():
@@ -53,65 +53,19 @@ def test_command_call_callback():
                                     mock.call(0, 100, 0)])
 
 
-def test_command_change_to_camel_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.CAMEL_CASE)
+@pytest.mark.parametrize("text_case, capitalize, file_name, exp_file_name", [
+    (TextCaseOptions.CAMEL_CASE, False, "this_is-a_file name", "thisIsAFileName"),
+    (TextCaseOptions.PASCAL_CASE, False, "this_is-a_file name", "ThisIsAFileName"),
+    (TextCaseOptions.SNAKE_CASE, False, "this_is-a_file name", "this_is_a_file_name"),
+    (TextCaseOptions.SNAKE_CASE_SCREAMING, False, "this_is-a_file name", "THIS_IS_A_FILE_NAME"),
+    (TextCaseOptions.KEBAB_CASE, False, "this_is-a_file name", "this-is-a-file-name"),
+    (TextCaseOptions.UPPERCASE, False, "this_is-a_file name", "THIS_IS-A_FILE NAME"),
+    (TextCaseOptions.LOWERCASE, False, "This_IS-A_file Name", "this_is-a_file name"),
+    (TextCaseOptions.TITLE_CASE, False, "this_is-a_file name", "This Is A File Name"),
+    (TextCaseOptions.LOWERCASE, True, "This_IS-A_file Name", "This_is-a_file name"),
+    (TextCaseOptions.PASCAL_CASE, True, "this_is-a_file name", "ThisIsAFileName"),
+])
+def test_extension_change_commands(text_case: TextCaseOptions, capitalize: bool, file_name: str, exp_file_name: str):
+    test_command = ChangeCasePreparePrepareCommand(capitalize=capitalize, text_case=text_case)
 
-    file_name_origin: str = "this_is-a_file name"
-    file_name_expected: str = "thisIsAFileName"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
-
-
-def test_command_change_to_pascal_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.PASCAL_CASE)
-
-    file_name_origin: str = "this_is-a_file name"
-    file_name_expected: str = "ThisIsAFileName"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
-
-
-def test_command_change_to_snake_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.SNAKE_CASE)
-
-    file_name_origin: str = "this_is-a_file name"
-    file_name_expected: str = "this_is_a_file_name"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
-
-
-def test_command_change_to_snake_screaming_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.SNAKE_CASE_SCREAMING)
-
-    file_name_origin: str = "this_is-a_file name"
-    file_name_expected: str = "THIS_IS_A_FILE_NAME"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
-
-
-def test_command_change_to_kebab_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.KEBAB_CASE)
-
-    file_name_origin: str = "this_is-a_file name"
-    file_name_expected: str = "this-is-a-file-name"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
-
-
-def test_command_change_to_upper_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.UPPERCASE)
-
-    file_name_origin: str = "this_is-a_file name"
-    file_name_expected: str = "THIS_IS-A_FILE NAME"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
-
-
-def test_command_change_to_lower_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.LOWERCASE)
-
-    file_name_origin: str = "This_IS-A_file Name"
-    file_name_expected: str = "this_is-a_file name"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
-
-
-def test_command_change_to_title_case():
-    test_command = ChangeCasePreparePrepareCommand(capitalize=False, text_case=TextCaseOptions.TITLE_CASE)
-
-    file_name_origin: str = "this_is-a_file name"
-    file_name_expected: str = "This Is A File Name"
-    check_name_after_command_applied(test_command, file_name_origin, file_name_expected)
+    verify_command_result(test_command, file_name_origin=file_name, file_name_expected=exp_file_name)

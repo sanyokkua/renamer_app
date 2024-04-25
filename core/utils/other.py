@@ -47,6 +47,7 @@ def build_app_file_from_path_str(path: str | None) -> AppFile:
     file_path_str: str = str(current_file_path.absolute())
     is_folder = current_file_path.is_dir()
     file_ext: str = current_file_path.suffix
+    file_ext_new: str = current_file_path.suffix
     file_name: str = current_file_path.name.removesuffix(file_ext)
     file_size: int = current_file_path.stat().st_size
     file_new_name: str = file_name
@@ -58,6 +59,7 @@ def build_app_file_from_path_str(path: str | None) -> AppFile:
         _absolute_path=file_path_str,
         _is_folder=is_folder,
         _file_extension=file_ext,
+        _file_extension_new=file_ext_new,
         _file_name=file_name,
         _file_size=file_size,
         _next_name=file_new_name,

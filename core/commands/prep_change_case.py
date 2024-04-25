@@ -26,12 +26,13 @@ class ChangeCasePreparePrepareCommand(BasePrepareCommand):
         self.capitalize: bool = capitalize
         self.text_case: TextCaseOptions = text_case
 
-    def create_new_name(self, item: AppFile) -> AppFile:
+    def create_new_name(self, item: AppFile, index: int) -> AppFile:
         """
         Create a new name for the AppFile item based on the specified text case option.
 
         Args:
             item (AppFile): The AppFile item for which the new name will be created.
+            index (int): The index of current item.
 
         Returns:
             AppFile: The AppFile item with the new name.

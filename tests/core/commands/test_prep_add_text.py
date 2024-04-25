@@ -5,7 +5,7 @@ import pytest
 
 from core.enums import ItemPosition
 from core.models.app_file import AppFile
-from tests.core.commands.test_commons import check_that_only_new_name_changed, build_app_file
+from tests.core.commands.test_commons import build_app_file, check_that_only_new_name_changed
 
 
 def test_command_with_none_arguments():

@@ -102,3 +102,17 @@ def rename_file(app_file: AppFile | None) -> None:
     if len(app_file.next_name) > 0:
         new_file_path = app_file.absolute_path.replace(app_file.file_name, app_file.next_name)
         rename(app_file.absolute_path, new_file_path)
+
+
+def get_parent_folders(file_path: str) -> list[str]:
+    if file_path is None or len(file_path.strip()) == 0:
+        return []
+
+    file_path = file_path.replace("\\", "/")
+    file_path = file_path.replace("//", "/")
+    file_path = file_path.removesuffix("/")
+    split_path_items = file_path.split("/")
+
+    # Exclude the root element (drive letter for windows or empty string for unix)
+    # and exclude last item (filename or directory)
+    return split_path_items[1:len(split_path_items) - 1]

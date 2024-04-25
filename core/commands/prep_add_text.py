@@ -30,12 +30,13 @@ class AddTextPrepareCommand(BasePrepareCommand):
         self.text: str = text
         self.position: ItemPosition = position
 
-    def create_new_name(self, item: AppFile) -> AppFile:
+    def create_new_name(self, item: AppFile, index: int) -> AppFile:
         """
         Create a new name for the AppFile by adding text to the beginning or end.
 
         Args:
             item (AppFile): The AppFile object for which the new name is to be created.
+            index (int): The index of current item.
 
         Returns:
             AppFile: The AppFile object with the new name.

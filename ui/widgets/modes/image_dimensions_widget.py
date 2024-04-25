@@ -84,8 +84,8 @@ class ImageDimensionsWidget(BasePrepareCommandWidget):
             position=self._dimension_position_value,
             left_side=self._left_side_value,
             right_side=self._right_side_value,
-            separator_between=self._separator_between_value,
-            separator_before_or_after=self._separator_with_dimensions_value
+            dimension_separator=self._separator_between_value,
+            name_separator=self._separator_with_dimensions_value
         )
 
     @Slot()

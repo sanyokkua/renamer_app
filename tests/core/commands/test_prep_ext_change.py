@@ -3,8 +3,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from core.commands.prep_ext_change import ExtensionChangePrepareCommand
+from core.commons import PrepareCommand
 from core.models.app_file import AppFile
-from tests.core.commands.test_commons import build_app_file
+from tests.core.commands.test_commons import build_app_file, check_extension_after_command_applied
 
 
 def test_command_with_none_arguments():
@@ -53,4 +55,18 @@ def test_command_call_callback():
                                     mock.call(0, 2, 2),
                                     mock.call(0, 100, 0)])
 
-# TODO: Create tests
+
+@pytest.mark.parametrize("user_ext, file_ext_orig, file_ext_new", [
+    (".new_ext", ".jpg", ".new_ext"),
+    (".new_ext", ".png", ".new_ext"),
+    (".new_ext", "", ".new_ext"),
+    ("", ".jpg", ""),
+    ("", ".png", ""),
+    ("", "", ""),
+    ("ext", ".jpg", ".ext"),
+    ("ext", ".png", ".ext"),
+    ("ext", "", ".ext"),
+])
+def test_extension_change_commands(user_ext: str, file_ext_orig: str, file_ext_new: str):
+    test_command: PrepareCommand = ExtensionChangePrepareCommand(new_extension=user_ext)
+    check_extension_after_command_applied(test_command, file_ext_orig, file_ext_new)

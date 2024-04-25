@@ -52,6 +52,7 @@ class AppFile:
     _is_folder: bool
     _file_name: str
     _file_extension: str
+    _file_extension_new: str
     _file_size: int
     _next_name: str
     _fs_creation_date: float
@@ -73,6 +74,14 @@ class AppFile:
     @property
     def file_extension(self) -> str:
         return self._file_extension
+
+    @property
+    def file_extension_new(self) -> str:
+        return self._file_extension_new
+
+    @file_extension_new.setter
+    def file_extension_new(self, value: str):
+        self._file_extension_new = value
 
     @property
     def file_size(self) -> int:

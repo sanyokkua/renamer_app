@@ -8,7 +8,8 @@ from core.models.app_file import AppFile
 mock_object_inst = AppFile(
     _absolute_path="",
     _is_folder=False,
-    _file_extension="file_ext",
+    _file_extension=".file_ext",
+    _file_extension_new=".file_ext",
     _file_name="file_name",
     _file_size=1000,
     _next_name="file_new_name",

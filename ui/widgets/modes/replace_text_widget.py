@@ -43,8 +43,9 @@ class ReplaceTextWidget(BasePrepareCommandWidget):
 
     def request_command(self) -> PrepareCommand:
         return ReplaceTextPrepareCommand(
-            text="",
-            position=ItemPositionExtended.BEGIN
+            position=ItemPositionExtended.BEGIN,
+            text_to_replace="",
+            new_value=""  # TODO: add new field to UI
         )
 
     @Slot()

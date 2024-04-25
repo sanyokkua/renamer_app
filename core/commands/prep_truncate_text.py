@@ -9,7 +9,7 @@ class TruncateNamePrepareCommand(BasePrepareCommand):
         self.number_of_symbols: int = number_of_symbols
         self.truncate_options: TruncateOptions = truncate_options
 
-    def create_new_name(self, item: AppFile) -> AppFile:
+    def create_new_name(self, item: AppFile, index: int) -> AppFile:
         return item
 
 # TODO: add implementation

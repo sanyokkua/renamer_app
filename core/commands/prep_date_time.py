@@ -55,12 +55,13 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
         self.custom_datetime: str = custom_datetime
         self.separator_for_name_and_datetime = separator_for_name_and_datetime
 
-    def create_new_name(self, item: AppFile) -> AppFile:
+    def create_new_name(self, item: AppFile, index: int) -> AppFile:
         """
         Create a new name for the AppFile item based on the specified date and time formats and sources.
 
         Args:
             item (AppFile): The AppFile item for which the new name will be created.
+            index (int): The index of current item.
 
         Returns:
             AppFile: The AppFile item with the new name.
