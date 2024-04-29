@@ -16,8 +16,12 @@ class ReplaceTextPrepareCommand(BasePrepareCommand):
         new_value (str): The new value to replace the specified text in the file names.
     """
 
-    def __init__(self, position: ItemPositionExtended = ItemPositionExtended.BEGIN, text_to_replace: str = "",
-                 new_value: str = ""):
+    def __init__(
+            self,
+            position: ItemPositionExtended = ItemPositionExtended.BEGIN,
+            text_to_replace: str = "",
+            new_value: str = "",
+    ):
         """
         Initializes the ReplaceTextPrepareCommand with the specified parameters.
 
@@ -53,7 +57,9 @@ class ReplaceTextPrepareCommand(BasePrepareCommand):
             reversed_name = next_name[::-1]
             reversed_value_to_replace = self.text_to_replace[::-1]
             reversed_new_value = self.new_value[::-1]
-            next_name = reversed_name.replace(reversed_value_to_replace, reversed_new_value, 1)[::-1]
+            next_name = reversed_name.replace(
+                reversed_value_to_replace, reversed_new_value, 1
+            )[::-1]
         elif self.position == ItemPositionExtended.EVERYWHERE:
             next_name = next_name.replace(self.text_to_replace, self.new_value)
 

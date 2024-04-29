@@ -1,5 +1,17 @@
-from core.enums import ItemPosition, AppModes, ItemPositionExtended, ItemPositionWithReplacement, SortSource, \
-    TextCaseOptions, TruncateOptions, ImageDimensionOptions, DateFormat, DateTimeFormat, DateTimeSource, TimeFormat
+from core.enums import (
+    ItemPosition,
+    AppModes,
+    ItemPositionExtended,
+    ItemPositionWithReplacement,
+    SortSource,
+    TextCaseOptions,
+    TruncateOptions,
+    ImageDimensionOptions,
+    DateFormat,
+    DateTimeFormat,
+    DateTimeSource,
+    TimeFormat,
+)
 
 APP_MODE_LABEL_VALUE: str = "Select mode"
 POSITION_OF_TEXT_LABEL_VALUE: str = "Position of text"

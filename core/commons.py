@@ -17,18 +17,20 @@ class Command(ABC):
     """
 
     @staticmethod
-    def call_status_callback(status_callback: Optional[StatusFunction], max_val: int, current_val: int):
+    def call_status_callback(
+            status_callback: Optional[StatusFunction], max_val: int, current_val: int
+    ):
         """
-         Calls the status callback function if provided.
+        Calls the status callback function if provided.
 
-         Args:
-             status_callback (Optional[StatusFunction]): A function to call for status updates.
-             max_val (int): The maximum value.
-             current_val (int): The current value.
+        Args:
+            status_callback (Optional[StatusFunction]): A function to call for status updates.
+            max_val (int): The maximum value.
+            current_val (int): The current value.
 
-         Returns:
-             None
-         """
+        Returns:
+            None
+        """
         if status_callback is not None:
             status_callback(0, max_val, current_val)
 
@@ -56,17 +58,19 @@ class PrepareCommand(Command):
     """
 
     @abstractmethod
-    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction]) -> List[AppFile]:
+    def execute(
+            self, data: List[AppFile], status_callback: Optional[StatusFunction]
+    ) -> List[AppFile]:
         """
-         Executes the preparation command.
+        Executes the preparation command.
 
-         Args:
-             data (List[AppFile]): The list of AppFile items to process.
-             status_callback (Optional[StatusFunction]): A function to call for status updates.
+        Args:
+            data (List[AppFile]): The list of AppFile items to process.
+            status_callback (Optional[StatusFunction]): A function to call for status updates.
 
-         Returns:
-             List[AppFile]: The list of processed AppFile items.
-         """
+        Returns:
+            List[AppFile]: The list of processed AppFile items.
+        """
         pass
 
 
@@ -78,7 +82,9 @@ class BasePrepareCommand(Command):
         None
     """
 
-    def execute(self, data: List[AppFile], status_callback: Optional[StatusFunction] = None) -> List[AppFile]:
+    def execute(
+            self, data: List[AppFile], status_callback: Optional[StatusFunction] = None
+    ) -> List[AppFile]:
         """
         Executes the base preparation command.
 

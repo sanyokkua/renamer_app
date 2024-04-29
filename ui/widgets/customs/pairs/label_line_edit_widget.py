@@ -1,6 +1,6 @@
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QRegularExpressionValidator
-from PySide6.QtWidgets import (QWidget, QLineEdit)
+from PySide6.QtWidgets import QWidget, QLineEdit
 
 from ui.widgets.base_abstract_widgets import BaseLabelWidget
 

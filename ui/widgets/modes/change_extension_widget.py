@@ -2,7 +2,10 @@ from PySide6.QtCore import Slot
 
 from core.commands.prep_ext_change import ExtensionChangePrepareCommand
 from core.commons import PrepareCommand
-from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget, PATH_SYMBOLS_VALIDATOR
+from ui.widgets.base_abstract_widgets import (
+    BasePrepareCommandWidget,
+    PATH_SYMBOLS_VALIDATOR,
+)
 from ui.widgets.customs.pairs.label_line_edit_widget import LabelLineEditWidget
 
 

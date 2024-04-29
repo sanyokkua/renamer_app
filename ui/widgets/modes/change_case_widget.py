@@ -19,8 +19,9 @@ class ChangeCaseWidget(BasePrepareCommandWidget):
         super().__init__(parent)
 
     def init_widgets(self):
-        self._case_options = LabelComboboxWidget(parent=self, enum_class=TextCaseOptions,
-                                                 text_mapping=TEXT_CASE_OPTIONS_TEXT)
+        self._case_options = LabelComboboxWidget(
+            parent=self, enum_class=TextCaseOptions, text_mapping=TEXT_CASE_OPTIONS_TEXT
+        )
         self._capitalize = LabelCheckboxWidget(self)
 
     def configure_widgets(self):
@@ -43,7 +44,9 @@ class ChangeCaseWidget(BasePrepareCommandWidget):
         self._capitalize.valueIsChanged.connect(self.handle_checked_changed)
 
     def request_command(self) -> PrepareCommand:
-        return ChangeCasePreparePrepareCommand(capitalize=self._capitalize_value, text_case=self._selected_value)
+        return ChangeCasePreparePrepareCommand(
+            capitalize=self._capitalize_value, text_case=self._selected_value
+        )
 
     @Slot()
     def handle_item_selected(self, text_case: TextCaseOptions):

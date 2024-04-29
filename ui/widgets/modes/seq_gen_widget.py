@@ -26,8 +26,9 @@ class SequenceGeneratorWidget(BasePrepareCommandWidget):
         self._start_number_spinbox = LabelSpinBoxWidget(self)
         self._step_value_spinbox = LabelSpinBoxWidget(self)
         self._padding_spinbox = LabelSpinBoxWidget(self)
-        self._sort_source_combobox = LabelComboboxWidget(parent=self, enum_class=SortSource,
-                                                         text_mapping=SORT_SOURCE_TEXT)
+        self._sort_source_combobox = LabelComboboxWidget(
+            parent=self, enum_class=SortSource, text_mapping=SORT_SOURCE_TEXT
+        )
 
     def configure_widgets(self):
         self._start_number_spinbox.spin_box_min = 0
@@ -47,21 +48,27 @@ class SequenceGeneratorWidget(BasePrepareCommandWidget):
     def add_text_to_widgets(self):
         self._start_number_spinbox.set_label_text(self.tr("Select start number:"))
         self._step_value_spinbox.set_label_text(self.tr("Select step value:"))
-        self._padding_spinbox.set_label_text(self.tr("Select minimal amount of digits in number:"))
+        self._padding_spinbox.set_label_text(
+            self.tr("Select minimal amount of digits in number:")
+        )
         self._sort_source_combobox.set_label_text(self.tr("Select sorting source:"))
 
     def create_event_handlers(self):
-        self._start_number_spinbox.valueIsChanged.connect(self.handle_start_number_changed)
+        self._start_number_spinbox.valueIsChanged.connect(
+            self.handle_start_number_changed
+        )
         self._step_value_spinbox.valueIsChanged.connect(self.handle_step_number_changed)
         self._padding_spinbox.valueIsChanged.connect(self.handle_padding_number_changed)
-        self._sort_source_combobox.valueIsChanged.connect(self.handle_sort_source_changed)
+        self._sort_source_combobox.valueIsChanged.connect(
+            self.handle_sort_source_changed
+        )
 
     def request_command(self) -> PrepareCommand:
         return SequencePrepareCommand(
             start_number=self._start_number_value,
             step_value=self._step_value_value,
             padding=self._padding_value,
-            sort_source=self._sort_source_value
+            sort_source=self._sort_source_value,
         )
 
     @Slot()

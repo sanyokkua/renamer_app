@@ -1,5 +1,5 @@
-from PySide6.QtCore import (Signal, Slot)
-from PySide6.QtWidgets import (QVBoxLayout)
+from PySide6.QtCore import Signal, Slot
+from PySide6.QtWidgets import QVBoxLayout
 
 from core.models.app_file import AppFile
 from ui.widgets.base_abstract_widgets import BaseAbstractWidget
@@ -29,7 +29,9 @@ class AppFilesListViewWidget(BaseAbstractWidget):
         pass
 
     def create_event_handlers(self):
-        self._files_table_view.files_dropped_to_widget.connect(self.handle_files_dropped)
+        self._files_table_view.files_dropped_to_widget.connect(
+            self.handle_files_dropped
+        )
 
     @Slot()
     def handle_files_dropped(self, files_list: list[str]):

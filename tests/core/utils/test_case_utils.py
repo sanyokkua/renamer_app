@@ -43,11 +43,26 @@ def test_to_screaming_snake_case():
     assert cu.to_screaming_snake_case("    ") == ""
     assert cu.to_screaming_snake_case(666) == ""
     assert cu.to_screaming_snake_case("") == ""
-    assert cu.to_screaming_snake_case("THIS IS SCREAMING SNAKE CASE") == "THIS_IS_SCREAMING_SNAKE_CASE"
-    assert cu.to_screaming_snake_case("THIS_IS_SCREAMING_SNAKE_CASE") == "THIS_IS_SCREAMING_SNAKE_CASE"
-    assert cu.to_screaming_snake_case("this-IS-sCreaming-snake-casE") == "THIS_IS_SCREAMING_SNAKE_CASE"
-    assert cu.to_screaming_snake_case("this.is.screaming.snake.case") == "THIS_IS_SCREAMING_SNAKE_CASE"
-    assert cu.to_screaming_snake_case("this_IS screaming  .snake-CASE") == "THIS_IS_SCREAMING_SNAKE_CASE"
+    assert (
+            cu.to_screaming_snake_case("THIS IS SCREAMING SNAKE CASE")
+            == "THIS_IS_SCREAMING_SNAKE_CASE"
+    )
+    assert (
+            cu.to_screaming_snake_case("THIS_IS_SCREAMING_SNAKE_CASE")
+            == "THIS_IS_SCREAMING_SNAKE_CASE"
+    )
+    assert (
+            cu.to_screaming_snake_case("this-IS-sCreaming-snake-casE")
+            == "THIS_IS_SCREAMING_SNAKE_CASE"
+    )
+    assert (
+            cu.to_screaming_snake_case("this.is.screaming.snake.case")
+            == "THIS_IS_SCREAMING_SNAKE_CASE"
+    )
+    assert (
+            cu.to_screaming_snake_case("this_IS screaming  .snake-CASE")
+            == "THIS_IS_SCREAMING_SNAKE_CASE"
+    )
 
 
 def test_to_kebab_case():

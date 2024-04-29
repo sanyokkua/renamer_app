@@ -1,5 +1,6 @@
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import (QWidget, QSpinBox)
+from PySide6.QtGui import QCursor, Qt
+from PySide6.QtWidgets import QWidget, QSpinBox
 
 from ui.widgets.base_abstract_widgets import BaseLabelWidget
 
@@ -15,6 +16,7 @@ class LabelSpinBoxWidget(BaseLabelWidget):
 
     def create_pair_widget(self) -> QWidget:
         self._spin_box = QSpinBox(self)
+        self._spin_box.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         return self._spin_box
 
     def create_event_handlers(self):

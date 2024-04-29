@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, QModelIndex, QAbstractTableModel
 from PySide6.QtCore import Signal, Slot
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QColor, QColorConstants
 from PySide6.QtWidgets import QTableView, QHeaderView
 
 from core.models.app_file import AppFile
@@ -19,8 +19,8 @@ class FilesTableModel(QAbstractTableModel):
     def columnCount(self, parent: QModelIndex = QModelIndex()) -> int:
         return len(self.columns)
 
-    def data(self, index: QModelIndex, role: int) -> str:
-        if role == Qt.DisplayRole:
+    def data(self, index: QModelIndex, role: int):
+        if role == Qt.ItemDataRole.DisplayRole:
             row = index.row()
             col = index.column()
 
@@ -30,9 +30,19 @@ class FilesTableModel(QAbstractTableModel):
             elif col == 1:
                 return "Folder" if data_obj.is_folder else "File"
             elif col == 2:
-                return f"{data_obj.next_name}{data_obj.file_extension}"
+                return f"{data_obj.next_name}{data_obj.file_extension_new}"
 
-            return super().data(index, role)
+        if role == Qt.ItemDataRole.BackgroundRole:
+            row = index.row()
+            data_obj: AppFile = self.rows[row]
+            [is_valid, err] = data_obj.is_valid()
+            if not is_valid:
+                print(f"FilesTableModel.data. err {err}")
+                return QColor(QColorConstants.Red)
+            elif data_obj.is_name_changed:
+                return QColor(QColorConstants.Green)
+            else:
+                return QColor(QColorConstants.White)
 
     def headerData(self, section, orientation, role=...):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:

@@ -18,11 +18,14 @@ class ImageDimensionsPrepareCommand(BasePrepareCommand):
         name_separator (str): The separator to be placed before or after the dimensions.
     """
 
-    def __init__(self, position: ItemPositionWithReplacement = ItemPositionWithReplacement.BEGIN,
-                 left_side: ImageDimensionOptions = ImageDimensionOptions.WIDTH,
-                 right_side: ImageDimensionOptions = ImageDimensionOptions.HEIGHT,
-                 dimension_separator: str = "x",
-                 name_separator: str = "_"):
+    def __init__(
+            self,
+            position: ItemPositionWithReplacement = ItemPositionWithReplacement.BEGIN,
+            left_side: ImageDimensionOptions = ImageDimensionOptions.WIDTH,
+            right_side: ImageDimensionOptions = ImageDimensionOptions.HEIGHT,
+            dimension_separator: str = "x",
+            name_separator: str = "_",
+    ):
         """
         Initializes the ImageDimensionsPrepareCommand with the specified parameters.
 
@@ -55,13 +58,21 @@ class ImageDimensionsPrepareCommand(BasePrepareCommand):
         Returns:
             AppFile: The AppFile object with the image dimensions included in its name.
         """
-        if item.metadata is None or item.metadata.img_vid_width is None or item.metadata.img_vid_height is None:
+        if (
+                item.metadata is None
+                or item.metadata.img_vid_width is None
+                or item.metadata.img_vid_height is None
+        ):
             return item
 
         width: int = item.metadata.img_vid_width
         height: int = item.metadata.img_vid_height
-        left_side: int = width if self.left_side == ImageDimensionOptions.WIDTH else height
-        right_side: int = width if self.right_side == ImageDimensionOptions.WIDTH else height
+        left_side: int = (
+            width if self.left_side == ImageDimensionOptions.WIDTH else height
+        )
+        right_side: int = (
+            width if self.right_side == ImageDimensionOptions.WIDTH else height
+        )
 
         # ABS is used in case if negative number will be recorded in metadata
         dimension: str = f"{abs(left_side)}{self.dimension_separator}{abs(right_side)}"

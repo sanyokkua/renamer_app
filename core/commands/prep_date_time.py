@@ -2,7 +2,13 @@ import datetime
 from datetime import datetime
 
 from core.commons import BasePrepareCommand
-from core.enums import ItemPositionWithReplacement, DateFormat, TimeFormat, DateTimeFormat, DateTimeSource
+from core.enums import (
+    ItemPositionWithReplacement,
+    DateFormat,
+    TimeFormat,
+    DateTimeFormat,
+    DateTimeSource,
+)
 from core.models.app_file import AppFile
 from core.utils.datetime_utils import make_datetime_string
 
@@ -25,14 +31,17 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
         separator_for_name_and_datetime (str): The separator to use between the file name and the date-time string in the new name.
     """
 
-    def __init__(self, position: ItemPositionWithReplacement = ItemPositionWithReplacement.REPLACE,
-                 date_format: DateFormat = DateFormat.YYYY_MM_DD_TOGETHER,
-                 time_format: TimeFormat = TimeFormat.HH_MM_SS_24_TOGETHER,
-                 datetime_format: DateTimeFormat = DateTimeFormat.DATE_TIME_UNDERSCORED,
-                 datetime_source: DateTimeSource = DateTimeSource.CONTENT_CREATION_DATE,
-                 use_uppercase: bool = True,
-                 custom_datetime: str = "",
-                 separator_for_name_and_datetime: str = ""):
+    def __init__(
+            self,
+            position: ItemPositionWithReplacement = ItemPositionWithReplacement.REPLACE,
+            date_format: DateFormat = DateFormat.YYYY_MM_DD_TOGETHER,
+            time_format: TimeFormat = TimeFormat.HH_MM_SS_24_TOGETHER,
+            datetime_format: DateTimeFormat = DateTimeFormat.DATE_TIME_UNDERSCORED,
+            datetime_source: DateTimeSource = DateTimeSource.CONTENT_CREATION_DATE,
+            use_uppercase: bool = True,
+            custom_datetime: str = "",
+            separator_for_name_and_datetime: str = "",
+    ):
         """
         Initialize the DateTimeRenamePrepareCommand.
 
@@ -69,7 +78,9 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
         current_name: str = item.file_name
 
         timestamp: float = self.get_timestamp(item)
-        date_time_str: str = make_datetime_string(self.datetime_format, self.date_format, self.time_format, timestamp)
+        date_time_str: str = make_datetime_string(
+            self.datetime_format, self.date_format, self.time_format, timestamp
+        )
         next_name: str = self.build_next_name(current_name, date_time_str)
         next_name = self.fix_case_of_am_pm(next_name)
 
@@ -94,7 +105,9 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
             case DateTimeSource.FILE_MODIFICATION_DATE:
                 timestamp = item.fs_modification_date
             case DateTimeSource.CONTENT_CREATION_DATE:
-                tmp_val: float | None = 0 if item.metadata is None else item.metadata.creation_date
+                tmp_val: float | None = (
+                    0 if item.metadata is None else item.metadata.creation_date
+                )
                 timestamp = 0 if tmp_val is None else tmp_val
             case DateTimeSource.CURRENT_DATE:
                 now: datetime = datetime.now()

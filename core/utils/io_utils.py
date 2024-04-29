@@ -20,9 +20,15 @@ def get_exif_creation_time(file_path: Path) -> float | None:
             exif_by_exifread = process_file(opened_file)
             print(exif_by_exifread)
 
-            tag_date_time_original: IfdTag | None = exif_by_exifread.get(TAG_EXIF_DATE_TIME_ORIGINAL)
-            tag_img_date_time: IfdTag | None = exif_by_exifread.get(TAG_EXIF_IMAGE_DATE_TIME)
-            tag_date_time_digit: IfdTag | None = exif_by_exifread.get(TAG_EXIF_DATE_TIME_DIGITIZED)
+            tag_date_time_original: IfdTag | None = exif_by_exifread.get(
+                TAG_EXIF_DATE_TIME_ORIGINAL
+            )
+            tag_img_date_time: IfdTag | None = exif_by_exifread.get(
+                TAG_EXIF_IMAGE_DATE_TIME
+            )
+            tag_date_time_digit: IfdTag | None = exif_by_exifread.get(
+                TAG_EXIF_DATE_TIME_DIGITIZED
+            )
 
             def get_value(tag: IfdTag) -> str | None:
                 return tag.printable if tag is not None else None
@@ -100,7 +106,9 @@ def rename_file(app_file: AppFile | None) -> None:
         return None
 
     if len(app_file.next_name) > 0:
-        new_file_path = app_file.absolute_path.replace(app_file.file_name, app_file.next_name)
+        new_file_path = app_file.absolute_path.replace(
+            app_file.file_name, app_file.next_name
+        )
         rename(app_file.absolute_path, new_file_path)
 
 
@@ -115,4 +123,4 @@ def get_parent_folders(file_path: str) -> list[str]:
 
     # Exclude the root element (drive letter for windows or empty string for unix)
     # and exclude last item (filename or directory)
-    return split_path_items[1:len(split_path_items) - 1]
+    return split_path_items[1: len(split_path_items) - 1]

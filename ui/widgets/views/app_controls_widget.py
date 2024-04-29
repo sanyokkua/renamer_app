@@ -1,4 +1,5 @@
 from PySide6.QtCore import Signal, Slot
+from PySide6.QtGui import Qt, QCursor
 from PySide6.QtWidgets import QHBoxLayout, QPushButton
 
 from core.enums import AppModes
@@ -24,7 +25,9 @@ class AppControlsWidget(BaseAbstractWidget):
 
     def init_widgets(self):
         self._main_layout = QHBoxLayout(self)
-        self._app_modes_combobox = LabelComboboxWidget(parent=self, enum_class=AppModes, text_mapping=APP_MODE_TEXT)
+        self._app_modes_combobox = LabelComboboxWidget(
+            parent=self, enum_class=AppModes, text_mapping=APP_MODE_TEXT
+        )
         self._preview_btn = QPushButton(self)
         self._rename_btn = QPushButton(self)
         self._clear_btn = QPushButton(self)
@@ -38,6 +41,10 @@ class AppControlsWidget(BaseAbstractWidget):
         self._main_layout.addWidget(self._rename_btn)
         self._main_layout.addWidget(self._clear_btn)
         self._main_layout.addStretch(1)
+        cursor = QCursor(Qt.CursorShape.PointingHandCursor)
+        self._preview_btn.setCursor(cursor)
+        self._rename_btn.setCursor(cursor)
+        self._clear_btn.setCursor(cursor)
 
     def add_text_to_widgets(self):
         self._app_modes_combobox.set_label_text(self.tr("Select mode"))

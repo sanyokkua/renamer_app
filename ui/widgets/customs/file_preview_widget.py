@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (QVBoxLayout)
+from PySide6.QtWidgets import QVBoxLayout
 
 from ui.widgets.base_abstract_widgets import BaseAbstractWidget
 

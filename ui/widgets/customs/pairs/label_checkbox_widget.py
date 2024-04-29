@@ -1,5 +1,6 @@
 from PySide6.QtCore import Slot, Signal, Qt
-from PySide6.QtWidgets import (QWidget, QCheckBox, QVBoxLayout)
+from PySide6.QtGui import QCursor
+from PySide6.QtWidgets import QWidget, QCheckBox, QVBoxLayout
 
 
 class LabelCheckboxWidget(QWidget):
@@ -11,9 +12,11 @@ class LabelCheckboxWidget(QWidget):
     def __init__(self, parent=None, label: str = ""):
         super().__init__(parent)
         self._main_layout = QVBoxLayout(self)
+        self._main_layout.setSpacing(0)
         self._checkbox = QCheckBox(self)
 
         self._checkbox.setText(self.tr(label))
+        self._checkbox.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.setLayout(self._main_layout)
 
         self._main_layout.addWidget(self._checkbox)

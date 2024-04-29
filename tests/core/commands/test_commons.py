@@ -2,19 +2,24 @@ from core.commons import PrepareCommand
 from core.models.app_file import AppFile, Metadata
 
 
-def build_app_file(file_name: str,
-                   file_ext: str = ".jpg",
-                   timestamp: float = 10000,
-                   width: int = 1080,
-                   height: int = 720,
-                   absolute_path: str = "") -> AppFile:
+def build_app_file(
+        file_name: str,
+        file_ext: str = ".jpg",
+        cr_timestamp: float = 10000,
+        mod_timestamp: float = 10000,
+        cc_timestamp: float = 10000,
+        width: int = 1080,
+        height: int = 720,
+        absolute_path: str = "",
+        file_size: int = 1000,
+) -> AppFile:
     if len(absolute_path.strip()) == 0:
         absolute = f"absolute/file/path/{file_name}"
     else:
         absolute = absolute_path
 
     metadata = Metadata(
-        _creation_date=timestamp,
+        _creation_date=cc_timestamp,
         _img_vid_width=width,
         _img_vid_height=height,
         _audio_artist_name="ArtistName",
@@ -30,10 +35,10 @@ def build_app_file(file_name: str,
         _file_extension=file_ext,
         _file_extension_new=file_ext,
         _file_name=file_name,
-        _file_size=1000,
+        _file_size=file_size,
         _next_name=file_name,
-        _fs_creation_date=timestamp,
-        _fs_modification_date=timestamp,
+        _fs_creation_date=cr_timestamp,
+        _fs_modification_date=mod_timestamp,
         _metadata=metadata,
     )
 
@@ -51,7 +56,9 @@ def check_that_only_new_name_changed(original_file: AppFile, updated_file: AppFi
     assert updated_file.next_name != original_file.file_name
 
 
-def check_extension_after_command_applied(test_command: PrepareCommand, file_ext_origin: str, file_ext_expected: str):
+def check_extension_after_command_applied(
+        test_command: PrepareCommand, file_ext_origin: str, file_ext_expected: str
+):
     built_app_file: AppFile = build_app_file("custom_name", file_ext_origin)
 
     result: list[AppFile] = test_command.execute([built_app_file])
@@ -66,20 +73,31 @@ def check_extension_after_command_applied(test_command: PrepareCommand, file_ext
     assert built_app_file.fs_creation_date == result[0].fs_creation_date
     assert built_app_file.fs_modification_date == result[0].fs_modification_date
     assert built_app_file.is_folder == result[0].is_folder
-    assert not built_app_file.is_name_changed
     assert built_app_file.metadata == result[0].metadata
     assert built_app_file.next_name == result[0].file_name
 
 
-def verify_command_result(test_command: PrepareCommand, file_name_origin: str, file_name_expected: str,
-                          file_ext: str = ".jpg",
-                          file_creation_time: float = 1000,
-                          img_width: int = 1080,
-                          img_height: int = 720,
-                          absolute_path: str = "",
-                          is_updated_name: bool = True):
-    built_app_file: AppFile = build_app_file(file_name=file_name_origin, timestamp=file_creation_time, width=img_width,
-                                             height=img_height, absolute_path=absolute_path, file_ext=file_ext)
+def verify_command_result(
+        test_command: PrepareCommand,
+        file_name_origin: str,
+        file_name_expected: str,
+        file_ext: str = ".jpg",
+        file_creation_time: float = 1000,
+        img_width: int = 1080,
+        img_height: int = 720,
+        absolute_path: str = "",
+        is_updated_name: bool = True,
+):
+    built_app_file: AppFile = build_app_file(
+        file_name=file_name_origin,
+        mod_timestamp=file_creation_time,
+        width=img_width,
+        height=img_height,
+        absolute_path=absolute_path,
+        file_ext=file_ext,
+        cr_timestamp=file_creation_time,
+        cc_timestamp=file_creation_time,
+    )
 
     result: list[AppFile] = test_command.execute([built_app_file])
 

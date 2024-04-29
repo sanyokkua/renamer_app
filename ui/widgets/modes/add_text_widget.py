@@ -4,7 +4,10 @@ from core.commands.prep_add_text import AddTextPrepareCommand
 from core.commons import PrepareCommand
 from core.enums import ItemPosition
 from core.text_values import ITEM_POSITION_TEXT
-from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget, PATH_SYMBOLS_VALIDATOR
+from ui.widgets.base_abstract_widgets import (
+    BasePrepareCommandWidget,
+    PATH_SYMBOLS_VALIDATOR,
+)
 from ui.widgets.customs.pairs.label_line_edit_widget import LabelLineEditWidget
 from ui.widgets.customs.pairs.label_radio_buttons_widget import LabelRadioButtonsWidget
 
@@ -19,8 +22,12 @@ class AddTextWidget(BasePrepareCommandWidget):
         super().__init__(parent)
 
     def init_widgets(self):
-        self._radio_enum_widget = LabelRadioButtonsWidget(parent=self, enum_class=ItemPosition,
-                                                          text_mapping=ITEM_POSITION_TEXT, vertical=True)
+        self._radio_enum_widget = LabelRadioButtonsWidget(
+            parent=self,
+            enum_class=ItemPosition,
+            text_mapping=ITEM_POSITION_TEXT,
+            vertical=True,
+        )
         self._text_to_add = LabelLineEditWidget(self)
 
     def configure_widgets(self):
@@ -44,7 +51,9 @@ class AddTextWidget(BasePrepareCommandWidget):
         self._text_to_add.valueIsChanged.connect(self.handle_text_changed)
 
     def request_command(self) -> PrepareCommand:
-        return AddTextPrepareCommand(text=self._text_value, position=self._selected_radio_value)
+        return AddTextPrepareCommand(
+            text=self._text_value, position=self._selected_radio_value
+        )
 
     @Slot()
     def handle_radio_changed(self, selected_radio: ItemPosition):

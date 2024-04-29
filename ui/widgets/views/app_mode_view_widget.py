@@ -49,13 +49,23 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
         self._mode_add_text_widget = AddTextWidget(self._app_modes_view_widget)
         self._mode_change_case_widget = ChangeCaseWidget(self._app_modes_view_widget)
         self._mode_date_time_widget = DateTimeWidget(self._app_modes_view_widget)
-        self._mode_image_dimensions_widget = ImageDimensionsWidget(self._app_modes_view_widget)
-        self._mode_parent_folders_widget = ParentFoldersWidget(self._app_modes_view_widget)
+        self._mode_image_dimensions_widget = ImageDimensionsWidget(
+            self._app_modes_view_widget
+        )
+        self._mode_parent_folders_widget = ParentFoldersWidget(
+            self._app_modes_view_widget
+        )
         self._mode_remove_text_widget = RemoveTextWidget(self._app_modes_view_widget)
         self._mode_replace_text_widget = ReplaceTextWidget(self._app_modes_view_widget)
-        self._mode_sequence_generator_widget = SequenceGeneratorWidget(self._app_modes_view_widget)
-        self._mode_truncate_text_widget = TruncateTextWidget(self._app_modes_view_widget)
-        self._mode_change_extension_widget = ChangeExtensionWidget(self._app_modes_view_widget)
+        self._mode_sequence_generator_widget = SequenceGeneratorWidget(
+            self._app_modes_view_widget
+        )
+        self._mode_truncate_text_widget = TruncateTextWidget(
+            self._app_modes_view_widget
+        )
+        self._mode_change_extension_widget = ChangeExtensionWidget(
+            self._app_modes_view_widget
+        )
 
         self._mode_widget_dict = {
             AppModes.ADD_CUSTOM_TEXT: self._mode_add_text_widget,
@@ -67,7 +77,7 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
             AppModes.REPLACE_CUSTOM_TEXT: self._mode_replace_text_widget,
             AppModes.ADD_SEQUENCE: self._mode_sequence_generator_widget,
             AppModes.TRUNCATE_FILE_NAME: self._mode_truncate_text_widget,
-            AppModes.CHANGE_EXTENSION: self._mode_change_extension_widget
+            AppModes.CHANGE_EXTENSION: self._mode_change_extension_widget,
         }
 
     def configure_widgets(self):
@@ -113,6 +123,8 @@ class AppModeSelectViewWidget(BasePrepareCommandWidget):
             raise WidgetNotFoundException()
 
         self._current_mode_widget.hide()
-        self._app_modes_view_widget_layout.replaceWidget(self._current_mode_widget, widget)
+        self._app_modes_view_widget_layout.replaceWidget(
+            self._current_mode_widget, widget
+        )
         self._current_mode_widget = widget
         self._current_mode_widget.show()

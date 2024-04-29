@@ -10,31 +10,26 @@ DATE_FORMAT_MAPPING: dict[DateFormat, str] = {
     DateFormat.YYYY_MM_DD_UNDERSCORED: "%Y_%m_%d",
     DateFormat.YYYY_MM_DD_DOTTED: "%Y.%m.%d",
     DateFormat.YYYY_MM_DD_DASHED: "%Y-%m-%d",
-
     DateFormat.YY_MM_DD_TOGETHER: "%y%m%d",
     DateFormat.YY_MM_DD_WHITE_SPACED: "%y %m %d",
     DateFormat.YY_MM_DD_UNDERSCORED: "%y_%m_%d",
     DateFormat.YY_MM_DD_DOTTED: "%y.%m.%d",
     DateFormat.YY_MM_DD_DASHED: "%y-%m-%d",
-
     DateFormat.MM_DD_YYYY_TOGETHER: "%m%d%Y",
     DateFormat.MM_DD_YYYY_WHITE_SPACED: "%m %d %Y",
     DateFormat.MM_DD_YYYY_UNDERSCORED: "%m_%d_%Y",
     DateFormat.MM_DD_YYYY_DOTTED: "%m.%d.%Y",
     DateFormat.MM_DD_YYYY_DASHED: "%m-%d-%Y",
-
     DateFormat.MM_DD_YY_TOGETHER: "%m%d%y",
     DateFormat.MM_DD_YY_WHITE_SPACED: "%m %d %y",
     DateFormat.MM_DD_YY_UNDERSCORED: "%m_%d_%y",
     DateFormat.MM_DD_YY_DOTTED: "%m.%d.%y",
     DateFormat.MM_DD_YY_DASHED: "%m-%d-%y",
-
     DateFormat.DD_MM_YYYY_TOGETHER: "%d%m%Y",
     DateFormat.DD_MM_YYYY_WHITE_SPACED: "%d %m %Y",
     DateFormat.DD_MM_YYYY_UNDERSCORED: "%d_%m_%Y",
     DateFormat.DD_MM_YYYY_DOTTED: "%d.%m.%Y",
     DateFormat.DD_MM_YYYY_DASHED: "%d-%m-%Y",
-
     DateFormat.DD_MM_YY_TOGETHER: "%d%m%y",
     DateFormat.DD_MM_YY_WHITE_SPACED: "%d %m %y",
     DateFormat.DD_MM_YY_UNDERSCORED: "%d_%m_%y",
@@ -50,19 +45,16 @@ TIME_FORMAT_MAPPING: dict[TimeFormat, str] = {
     TimeFormat.HH_MM_SS_24_UNDERSCORED: "%H_%M_%S",
     TimeFormat.HH_MM_SS_24_DOTTED: "%H.%M.%S",
     TimeFormat.HH_MM_SS_24_DASHED: "%H-%M-%S",
-
     TimeFormat.HH_MM_24_TOGETHER: "%H%M",
     TimeFormat.HH_MM_24_WHITE_SPACED: "%H %M",
     TimeFormat.HH_MM_24_UNDERSCORED: "%H_%M",
     TimeFormat.HH_MM_24_DOTTED: "%H.%M",
     TimeFormat.HH_MM_24_DASHED: "%H-%M",
-
     TimeFormat.HH_MM_SS_AM_PM_TOGETHER: "%I%M%S%p",
     TimeFormat.HH_MM_SS_AM_PM_WHITE_SPACED: "%I %M %S %p",
     TimeFormat.HH_MM_SS_AM_PM_UNDERSCORED: "%I_%M_%S_%p",
     TimeFormat.HH_MM_SS_AM_PM_DOTTED: "%I.%M.%S.%p",
     TimeFormat.HH_MM_SS_AM_PM_DASHED: "%I-%M-%S-%p",
-
     TimeFormat.HH_MM_AM_PM_TOGETHER: "%I%M%p",
     TimeFormat.HH_MM_AM_PM_WHITE_SPACED: "%I %M %p",
     TimeFormat.HH_MM_AM_PM_UNDERSCORED: "%I_%M_%p",
@@ -109,10 +101,12 @@ def make_time_string(time_format: TimeFormat, timestamp: float) -> str:
     return formatted_string.lower()
 
 
-def make_datetime_string(date_time_format: DateTimeFormat,
-                         date_format: DateFormat,
-                         time_format: TimeFormat,
-                         timestamp: float) -> str:
+def make_datetime_string(
+        date_time_format: DateTimeFormat,
+        date_format: DateFormat,
+        time_format: TimeFormat,
+        timestamp: float,
+) -> str:
     """
     Generate a formatted date-time string based on the given date-time format,
     date format, time format, and timestamp.
@@ -129,9 +123,15 @@ def make_datetime_string(date_time_format: DateTimeFormat,
     date_str: str = make_date_string(date_format, timestamp)
     time_str: str = make_time_string(time_format, timestamp)
 
-    if date_format == DateFormat.DO_NOT_USE_DATE and time_format != TimeFormat.DO_NOT_USE_TIME:
+    if (
+            date_format == DateFormat.DO_NOT_USE_DATE
+            and time_format != TimeFormat.DO_NOT_USE_TIME
+    ):
         return time_str
-    elif time_format == TimeFormat.DO_NOT_USE_TIME and date_format != DateFormat.DO_NOT_USE_DATE:
+    elif (
+            time_format == TimeFormat.DO_NOT_USE_TIME
+            and date_format != DateFormat.DO_NOT_USE_DATE
+    ):
         return date_str
 
     match date_time_format:

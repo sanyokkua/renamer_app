@@ -17,7 +17,12 @@ class ParentFoldersPrepareCommand(BasePrepareCommand):
         separator (str): The separator between the parent folder names and the file name.
     """
 
-    def __init__(self, position: ItemPosition = ItemPosition.BEGIN, number_of_parents: int = 1, separator: str = "_"):
+    def __init__(
+            self,
+            position: ItemPosition = ItemPosition.BEGIN,
+            number_of_parents: int = 1,
+            separator: str = "_",
+    ):
         """
         Initializes the ParentFoldersPrepareCommand with the specified parameters.
 

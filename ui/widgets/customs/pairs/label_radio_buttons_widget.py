@@ -3,11 +3,17 @@ from typing import TypeVar, Type
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QCursor
-from PySide6.QtWidgets import (QButtonGroup, QLabel, QVBoxLayout, QHBoxLayout, QRadioButton)
+from PySide6.QtWidgets import (
+    QButtonGroup,
+    QLabel,
+    QVBoxLayout,
+    QHBoxLayout,
+    QRadioButton,
+)
 
 from ui.widgets.base_abstract_widgets import BaseLabelWidget
 
-T = TypeVar('T', bound=IntEnum)
+T = TypeVar("T", bound=IntEnum)
 
 
 class LabelRadioButtonsWidget(BaseLabelWidget):
@@ -19,7 +25,13 @@ class LabelRadioButtonsWidget(BaseLabelWidget):
 
     valueIsChanged = Signal(IntEnum)
 
-    def __init__(self, enum_class: Type[T], text_mapping: dict[T, str], parent=None, vertical: bool = False):
+    def __init__(
+            self,
+            enum_class: Type[T],
+            text_mapping: dict[T, str],
+            parent=None,
+            vertical: bool = False,
+    ):
         self._enum_class = enum_class
         self._text_mapping = text_mapping
         self._vertical = vertical
@@ -49,7 +61,9 @@ class LabelRadioButtonsWidget(BaseLabelWidget):
                 btn.setChecked(True)
 
     def create_event_handlers(self):
-        self._radio_button_group.idToggled.connect(lambda btn_id: self.valueIsChanged.emit(btn_id))
+        self._radio_button_group.idToggled.connect(
+            lambda btn_id: self.valueIsChanged.emit(btn_id)
+        )
 
     def get_current_value(self) -> T:
         return self._radio_button_group.checkedId()

@@ -15,7 +15,11 @@ class ChangeCasePreparePrepareCommand(BasePrepareCommand):
         text_case (TextCaseOptions): The desired text case option to apply to the file names.
     """
 
-    def __init__(self, capitalize: bool = False, text_case: TextCaseOptions = TextCaseOptions.TITLE_CASE):
+    def __init__(
+            self,
+            capitalize: bool = False,
+            text_case: TextCaseOptions = TextCaseOptions.TITLE_CASE,
+    ):
         """
         Initialize the ChangeCasePreparePrepareCommand.
 
@@ -42,6 +46,8 @@ class ChangeCasePreparePrepareCommand(BasePrepareCommand):
         if self.capitalize:
             next_file_name = next_file_name[0].upper() + next_file_name[1:]
 
-        print(f"Orig: {item.file_name}, next: {next_file_name}, func: {self.text_case.name}, is cap: {self.capitalize}")
+        print(
+            f"Orig: {item.file_name}, next: {next_file_name}, func: {self.text_case}, is cap: {self.capitalize}"
+        )
         item.next_name = next_file_name
         return item

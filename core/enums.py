@@ -17,6 +17,7 @@ class AppModes(IntEnum):
         TRUNCATE_FILE_NAME (int): Mode to truncate file names.
         CHANGE_EXTENSION (int): Mode to change file extensions.
     """
+
     ADD_CUSTOM_TEXT = 0
     CHANGE_CASE = 1
     USE_DATETIME = 2
@@ -37,6 +38,7 @@ class ItemPosition(IntEnum):
         BEGIN (int): Item position at the beginning.
         END (int): Item position at the end.
     """
+
     BEGIN = 0
     END = 1
 
@@ -50,6 +52,7 @@ class ItemPositionExtended(IntEnum):
         END (int): Item position at the end.
         EVERYWHERE (int): Item position everywhere.
     """
+
     BEGIN = 0
     END = 1
     EVERYWHERE = 2
@@ -64,6 +67,7 @@ class ItemPositionWithReplacement(IntEnum):
         END (int): Item position at the end.
         REPLACE (int): Item replacement position.
     """
+
     BEGIN = 0
     END = 1
     REPLACE = 2
@@ -83,6 +87,7 @@ class SortSource(IntEnum):
         IMAGE_WIDTH (int): Sort by image width.
         IMAGE_HEIGHT (int): Sort by image height.
     """
+
     FILE_NAME = 0
     FILE_PATH = 1
     FILE_SIZE = 2
@@ -107,6 +112,7 @@ class TextCaseOptions(IntEnum):
         LOWERCASE (int): Convert to lowercase.
         TITLE_CASE (int): Convert to title case.
     """
+
     CAMEL_CASE = 0
     PASCAL_CASE = 1
     SNAKE_CASE = 2
@@ -126,6 +132,7 @@ class TruncateOptions(IntEnum):
         REMOVE_SYMBOLS_FROM_END (int): Remove symbols from the end.
         TRUNCATE_EMPTY_SYMBOLS (int): Truncate empty symbols.
     """
+
     REMOVE_SYMBOLS_IN_BEGIN = 0
     REMOVE_SYMBOLS_FROM_END = 1
     TRUNCATE_EMPTY_SYMBOLS = 2
@@ -168,6 +175,7 @@ class DateFormat(IntEnum):
         DD_MM_YY_DOTTED (int): Day-month-year format with abbreviated year separated by dots.
         DD_MM_YY_DASHED (int): Day-month-year format with abbreviated year separated by dashes.
     """
+
     DO_NOT_USE_DATE = 0
     YYYY_MM_DD_TOGETHER = 1
     YYYY_MM_DD_WHITE_SPACED = 2
@@ -228,6 +236,7 @@ class TimeFormat(IntEnum):
         HH_MM_AM_PM_DOTTED (int): Hour-minute format with AM/PM indicator separated by dots.
         HH_MM_AM_PM_DASHED (int): Hour-minute format with AM/PM indicator separated by dashes.
     """
+
     DO_NOT_USE_TIME = 0
     HH_MM_SS_24_TOGETHER = 1
     HH_MM_SS_24_WHITE_SPACED = 2
@@ -268,6 +277,7 @@ class DateTimeFormat(IntEnum):
         REVERSE_DATE_TIME_DASHED (int): Date and time in reverse order separated by dashes.
         NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970 (int): Number of seconds since January 1, 1970.
     """
+
     DATE_TIME_TOGETHER = 0
     DATE_TIME_WHITE_SPACED = 1
     DATE_TIME_UNDERSCORED = 2
@@ -292,6 +302,7 @@ class DateTimeSource(IntEnum):
         CURRENT_DATE (int): Current date and time.
         CUSTOM_DATE (int): Custom date and time.
     """
+
     FILE_CREATION_DATE = 0
     FILE_MODIFICATION_DATE = 1
     CONTENT_CREATION_DATE = 2
@@ -308,6 +319,7 @@ class ImageDimensionOptions(IntEnum):
         WIDTH (int): Use image width.
         HEIGHT (int): Use image height.
     """
+
     DO_NOT_USE = 0
     WIDTH = 1
     HEIGHT = 2

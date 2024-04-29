@@ -19,7 +19,11 @@ def to_camel_case(input_string: str) -> str:
         str: The string converted to camelCase. If the input string
         is None, an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
     replace_symbols = input_string.replace("_", " ")
     replace_symbols = replace_symbols.replace("-", " ")
@@ -30,7 +34,7 @@ def to_camel_case(input_string: str) -> str:
 
     camel_case_words = [words[0].lower()] + [word.capitalize() for word in words[1:]]
 
-    camel_case_string = ''.join(camel_case_words)
+    camel_case_string = "".join(camel_case_words)
 
     return camel_case_string
 
@@ -50,7 +54,11 @@ def to_pascal_case(input_string: str) -> str:
         str: The string converted to PascalCase. If the input string
         is None, an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
 
     replace_symbols = input_string.replace("_", " ")
@@ -62,7 +70,7 @@ def to_pascal_case(input_string: str) -> str:
 
     pascal_case_words = [word.capitalize() for word in words]
 
-    pascal_case_string = ''.join(pascal_case_words)
+    pascal_case_string = "".join(pascal_case_words)
 
     return pascal_case_string
 
@@ -82,14 +90,18 @@ def to_snake_case(input_string: str) -> str:
         str: The string converted to snake_case. If the input string is None,
         an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
 
     replace_symbols = input_string.replace("-", " ")
     replace_symbols = replace_symbols.replace(".", " ")
     all_words = replace_symbols.split(" ")
     replace_symbols = " ".join([word for word in all_words if len(word.strip()) > 0])
-    snake_case_string = replace_symbols.replace(' ', '_')
+    snake_case_string = replace_symbols.replace(" ", "_")
 
     snake_case_string = snake_case_string.lower()
     return snake_case_string
@@ -110,7 +122,11 @@ def to_screaming_snake_case(input_string: str) -> str:
         str: The string converted to SCREAMING_SNAKE_CASE. If the input string
         is None, an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
 
     replace_symbols = input_string.replace("-", " ")
@@ -118,7 +134,7 @@ def to_screaming_snake_case(input_string: str) -> str:
     all_words = replace_symbols.split(" ")
     replace_symbols = " ".join([word for word in all_words if len(word.strip()) > 0])
 
-    snake_case_string = replace_symbols.replace(' ', '_')
+    snake_case_string = replace_symbols.replace(" ", "_")
 
     snake_case_string = snake_case_string.upper()
     return snake_case_string
@@ -138,7 +154,11 @@ def to_kebab_case(input_string: str) -> str:
         str: The string converted to kebab-case. If the input string
         is None, an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
 
     replace_symbols = input_string.replace("_", " ")
@@ -146,7 +166,7 @@ def to_kebab_case(input_string: str) -> str:
     all_words = replace_symbols.split(" ")
     replace_symbols = " ".join([word for word in all_words if len(word.strip()) > 0])
 
-    kebab_case_string = replace_symbols.replace(' ', '-')
+    kebab_case_string = replace_symbols.replace(" ", "-")
 
     kebab_case_string = kebab_case_string.lower()
     return kebab_case_string
@@ -165,7 +185,11 @@ def to_uppercase(input_string: str) -> str:
         str: The string converted to UPPERCASE. If the input string
         is None, an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
 
     uppercase_string = input_string.upper()
@@ -185,7 +209,11 @@ def to_lowercase(input_string: str) -> str:
         str: The string converted to lowercase. If the input string
         is None, an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
 
     lowercase_string = input_string.lower()
@@ -206,7 +234,11 @@ def to_title_case(input_string):
         str: The string converted to Title Case. If the input string
         is None, an empty string is returned.
     """
-    if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+    if (
+            input_string is None
+            or not isinstance(input_string, str)
+            or len(input_string.strip()) == 0
+    ):
         return ""
 
     replace_symbols = input_string.replace("_", " ")

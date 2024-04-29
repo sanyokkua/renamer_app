@@ -2,9 +2,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Type
 
-from core.exceptions import PassedArgumentIsNone, FileNotFoundException, PathStringIsEmpty
+from core.exceptions import (
+    PassedArgumentIsNone,
+    FileNotFoundException,
+    PathStringIsEmpty,
+)
 from core.models.app_file import AppFile, Metadata
-from core.utils.io_utils import get_exif_creation_time, get_image_dimensions, get_exif_tags
+from core.utils.io_utils import (
+    get_exif_creation_time,
+    get_image_dimensions,
+    get_exif_tags,
+)
 
 
 def build_metadata_from_path(file_path: Path | None) -> Metadata | None:
@@ -27,7 +35,7 @@ def build_metadata_from_path(file_path: Path | None) -> Metadata | None:
         _audio_album_name=None,
         _audio_song_name=None,
         _audio_year=None,
-        _other_found_tag_values=tags
+        _other_found_tag_values=tags,
     )
 
 

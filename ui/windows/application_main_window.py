@@ -1,6 +1,12 @@
-from PySide6.QtCore import (Qt, Slot)
-from PySide6.QtWidgets import (QHBoxLayout, QVBoxLayout,
-                               QMainWindow, QWidget, QProgressBar, QApplication)
+from PySide6.QtCore import Qt, Slot
+from PySide6.QtWidgets import (
+    QHBoxLayout,
+    QVBoxLayout,
+    QMainWindow,
+    QWidget,
+    QProgressBar,
+    QApplication,
+)
 
 from core.commands.map_url_to_app_file import MapUrlToAppFileCommand
 from core.commons import PrepareCommand
@@ -63,17 +69,23 @@ class ApplicationMainWindow(QMainWindow):
 
         # Configure event handling for the widgets events
         self._app_controls_widget.appModeSelected.connect(self.handle_app_mode_changed)
-        self._app_controls_widget.previewBtnClicked.connect(self.handle_preview_btn_clicked)
-        self._app_controls_widget.renameBtnClicked.connect(self.handle_rename_btn_clicked)
+        self._app_controls_widget.previewBtnClicked.connect(
+            self.handle_preview_btn_clicked
+        )
+        self._app_controls_widget.renameBtnClicked.connect(
+            self.handle_rename_btn_clicked
+        )
         self._app_controls_widget.clearBtnClicked.connect(self.handle_clear_btn_clicked)
         self._files_view_widget.files_list_updated.connect(self.handle_files_dropped)
 
     @Slot()
     def handle_app_mode_changed(self, value: AppModes):
         self._app_modes_widget.handle_app_mode_changed(value)
+        self.reset_names()
 
     @Slot()
     def handle_preview_btn_clicked(self):
+        self.reset_names()
         command: PrepareCommand = self._app_modes_widget.request_command()
         mapped_files = command.execute(self._app_file_list, self.update_progress_bar)
         self._app_file_list = mapped_files
@@ -86,6 +98,7 @@ class ApplicationMainWindow(QMainWindow):
 
         self._app_file_list = mapped_files
         self.update_files_table_view()
+        self.reset_names()
 
     @Slot()
     def handle_clear_btn_clicked(self):
@@ -94,7 +107,9 @@ class ApplicationMainWindow(QMainWindow):
 
     @Slot()
     def handle_files_dropped(self, list_of_files: list[str]):
-        mapped_files = self._mapping_command.execute(list_of_files, self.update_progress_bar)
+        mapped_files = self._mapping_command.execute(
+            list_of_files, self.update_progress_bar
+        )
         self._app_file_list = mapped_files
         self.update_files_table_view()
 
@@ -110,3 +125,8 @@ class ApplicationMainWindow(QMainWindow):
 
     def update_files_table_view(self):
         self._files_view_widget.update_table_data(self._app_file_list)
+
+    def reset_names(self):
+        for item in self._app_file_list:
+            item.next_name = item.file_name
+        self.update_files_table_view()
