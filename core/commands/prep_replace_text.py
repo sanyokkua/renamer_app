@@ -17,10 +17,10 @@ class ReplaceTextPrepareCommand(BasePrepareCommand):
     """
 
     def __init__(
-            self,
-            position: ItemPositionExtended = ItemPositionExtended.BEGIN,
-            text_to_replace: str = "",
-            new_value: str = "",
+        self,
+        position: ItemPositionExtended = ItemPositionExtended.BEGIN,
+        text_to_replace: str = "",
+        new_value: str = "",
     ):
         """
         Initializes the ReplaceTextPrepareCommand with the specified parameters.

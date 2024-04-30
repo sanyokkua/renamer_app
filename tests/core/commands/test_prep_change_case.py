@@ -70,47 +70,47 @@ def test_command_call_callback():
         (TextCaseOptions.CAMEL_CASE, False, "this_is-a_file name", "thisIsAFileName"),
         (TextCaseOptions.PASCAL_CASE, False, "this_is-a_file name", "ThisIsAFileName"),
         (
-                TextCaseOptions.SNAKE_CASE,
-                False,
-                "this_is-a_file name",
-                "this_is_a_file_name",
+            TextCaseOptions.SNAKE_CASE,
+            False,
+            "this_is-a_file name",
+            "this_is_a_file_name",
         ),
         (
-                TextCaseOptions.SNAKE_CASE_SCREAMING,
-                False,
-                "this_is-a_file name",
-                "THIS_IS_A_FILE_NAME",
+            TextCaseOptions.SNAKE_CASE_SCREAMING,
+            False,
+            "this_is-a_file name",
+            "THIS_IS_A_FILE_NAME",
         ),
         (
-                TextCaseOptions.KEBAB_CASE,
-                False,
-                "this_is-a_file name",
-                "this-is-a-file-name",
+            TextCaseOptions.KEBAB_CASE,
+            False,
+            "this_is-a_file name",
+            "this-is-a-file-name",
         ),
         (
-                TextCaseOptions.UPPERCASE,
-                False,
-                "this_is-a_file name",
-                "THIS_IS-A_FILE NAME",
+            TextCaseOptions.UPPERCASE,
+            False,
+            "this_is-a_file name",
+            "THIS_IS-A_FILE NAME",
         ),
         (
-                TextCaseOptions.LOWERCASE,
-                False,
-                "This_IS-A_file Name",
-                "this_is-a_file name",
+            TextCaseOptions.LOWERCASE,
+            False,
+            "This_IS-A_file Name",
+            "this_is-a_file name",
         ),
         (
-                TextCaseOptions.TITLE_CASE,
-                False,
-                "this_is-a_file name",
-                "This Is A File Name",
+            TextCaseOptions.TITLE_CASE,
+            False,
+            "this_is-a_file name",
+            "This Is A File Name",
         ),
         (TextCaseOptions.LOWERCASE, True, "This_IS-A_file Name", "This_is-a_file name"),
         (TextCaseOptions.PASCAL_CASE, True, "this_is-a_file name", "ThisIsAFileName"),
     ],
 )
 def test_command_params_combinations(
-        text_case: TextCaseOptions, capitalize: bool, file_name: str, exp_file_name: str
+    text_case: TextCaseOptions, capitalize: bool, file_name: str, exp_file_name: str
 ):
     test_command = ChangeCasePreparePrepareCommand(
         capitalize=capitalize, text_case=text_case

@@ -16,9 +16,9 @@ class TruncateNamePrepareCommand(BasePrepareCommand):
     """
 
     def __init__(
-            self,
-            number_of_symbols: int = 0,
-            truncate_options: TruncateOptions = TruncateOptions.TRUNCATE_EMPTY_SYMBOLS,
+        self,
+        number_of_symbols: int = 0,
+        truncate_options: TruncateOptions = TruncateOptions.TRUNCATE_EMPTY_SYMBOLS,
     ):
         """
         Initializes a TruncateNamePrepareCommand instance.
@@ -46,15 +46,15 @@ class TruncateNamePrepareCommand(BasePrepareCommand):
         next_name: str = item.file_name
 
         if (
-                self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS
-                and self.number_of_symbols > len(next_name)
+            self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS
+            and self.number_of_symbols > len(next_name)
         ):
             item.next_name = ""
             return item
 
         if (
-                self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS
-                and self.number_of_symbols == 0
+            self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS
+            and self.number_of_symbols == 0
         ):
             item.next_name = next_name
             return item
@@ -63,7 +63,7 @@ class TruncateNamePrepareCommand(BasePrepareCommand):
             case TruncateOptions.TRUNCATE_EMPTY_SYMBOLS:
                 next_name = next_name.strip()
             case TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN:
-                trimmed_string = next_name[self.number_of_symbols:]
+                trimmed_string = next_name[self.number_of_symbols :]
                 next_name = trimmed_string
             case TruncateOptions.REMOVE_SYMBOLS_FROM_END:
                 trimmed_string = next_name[: -self.number_of_symbols]

@@ -20,9 +20,9 @@ def to_camel_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
     replace_symbols = input_string.replace("_", " ")
@@ -55,9 +55,9 @@ def to_pascal_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
 
@@ -91,9 +91,9 @@ def to_snake_case(input_string: str) -> str:
         an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
 
@@ -123,9 +123,9 @@ def to_screaming_snake_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
 
@@ -155,9 +155,9 @@ def to_kebab_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
 
@@ -186,9 +186,9 @@ def to_uppercase(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
 
@@ -210,9 +210,9 @@ def to_lowercase(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
 
@@ -235,9 +235,9 @@ def to_title_case(input_string):
         is None, an empty string is returned.
     """
     if (
-            input_string is None
-            or not isinstance(input_string, str)
-            or len(input_string.strip()) == 0
+        input_string is None
+        or not isinstance(input_string, str)
+        or len(input_string.strip()) == 0
     ):
         return ""
 

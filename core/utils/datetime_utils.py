@@ -102,10 +102,10 @@ def make_time_string(time_format: TimeFormat, timestamp: float) -> str:
 
 
 def make_datetime_string(
-        date_time_format: DateTimeFormat,
-        date_format: DateFormat,
-        time_format: TimeFormat,
-        timestamp: float,
+    date_time_format: DateTimeFormat,
+    date_format: DateFormat,
+    time_format: TimeFormat,
+    timestamp: float,
 ) -> str:
     """
     Generate a formatted date-time string based on the given date-time format,
@@ -124,13 +124,13 @@ def make_datetime_string(
     time_str: str = make_time_string(time_format, timestamp)
 
     if (
-            date_format == DateFormat.DO_NOT_USE_DATE
-            and time_format != TimeFormat.DO_NOT_USE_TIME
+        date_format == DateFormat.DO_NOT_USE_DATE
+        and time_format != TimeFormat.DO_NOT_USE_TIME
     ):
         return time_str
     elif (
-            time_format == TimeFormat.DO_NOT_USE_TIME
-            and date_format != DateFormat.DO_NOT_USE_DATE
+        time_format == TimeFormat.DO_NOT_USE_TIME
+        and date_format != DateFormat.DO_NOT_USE_DATE
     ):
         return date_str
 

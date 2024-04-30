@@ -26,11 +26,11 @@ class LabelRadioButtonsWidget(BaseLabelWidget):
     valueIsChanged = Signal(IntEnum)
 
     def __init__(
-            self,
-            enum_class: Type[T],
-            text_mapping: dict[T, str],
-            parent=None,
-            vertical: bool = False,
+        self,
+        enum_class: Type[T],
+        text_mapping: dict[T, str],
+        parent=None,
+        vertical: bool = False,
     ):
         self._enum_class = enum_class
         self._text_mapping = text_mapping

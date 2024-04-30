@@ -18,7 +18,7 @@ class Command(ABC):
 
     @staticmethod
     def call_status_callback(
-            status_callback: Optional[StatusFunction], max_val: int, current_val: int
+        status_callback: Optional[StatusFunction], max_val: int, current_val: int
     ):
         """
         Calls the status callback function if provided.
@@ -59,7 +59,7 @@ class PrepareCommand(Command):
 
     @abstractmethod
     def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction]
+        self, data: List[AppFile], status_callback: Optional[StatusFunction]
     ) -> List[AppFile]:
         """
         Executes the preparation command.
@@ -83,7 +83,7 @@ class BasePrepareCommand(Command):
     """
 
     def execute(
-            self, data: List[AppFile], status_callback: Optional[StatusFunction] = None
+        self, data: List[AppFile], status_callback: Optional[StatusFunction] = None
     ) -> List[AppFile]:
         """
         Executes the base preparation command.

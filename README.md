@@ -33,7 +33,10 @@ This option also can be available.
 
 # Used libs
 
+- [ExifRead](https://pypi.org/project/ExifRead/), [Docs](https://github.com/ianare/exif-py) - Exif read tool for some types of images, reserve lib
 - [Pillow](https://pypi.org/project/pillow/), [Docs](https://pillow.readthedocs.io/en/stable/) - Parsing Image Data
+- [Pillow Heif](https://pypi.org/project/pillow-heif/), [Docs](https://pillow-heif.readthedocs.io/en/latest/) - Support for HEIF codec and file types like **".heic"** for Pillow
+- [Mutagen](https://pypi.org/project/mutagen/), [Docs](https://mutagen.readthedocs.io/en/latest/) - Support for extracting audio metadata for MP3, FLAC, OGG, etc.
 - [PySide6](https://pypi.org/project/PySide6/), [Docs](https://doc.qt.io/qtforpython-6/api.html) - UI Widgets
 
 # How to run app from sources

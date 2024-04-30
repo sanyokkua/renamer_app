@@ -6,7 +6,9 @@ name = "pypi"
 [packages]
 pyside6 = "*"
 pillow = "*"
+pillow-heif = "*"
 exifread = "*"
+mutagen = "*"
 
 [dev-packages]
 pyinstaller = "*"

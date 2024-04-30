@@ -82,7 +82,7 @@ def test_command_call_callback():
     ],
 )
 def test_command_params_combinations(
-        user_ext: str, file_ext_orig: str, file_ext_new: str
+    user_ext: str, file_ext_orig: str, file_ext_new: str
 ):
     test_command: PrepareCommand = ExtensionChangePrepareCommand(new_extension=user_ext)
     check_extension_after_command_applied(test_command, file_ext_orig, file_ext_new)

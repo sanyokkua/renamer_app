@@ -1,6 +1,4 @@
-from enum import Enum
 from pathlib import Path
-from typing import Type
 
 from core.exceptions import (
     PassedArgumentIsNone,
@@ -9,9 +7,10 @@ from core.exceptions import (
 )
 from core.models.app_file import AppFile, Metadata
 from core.utils.io_utils import (
-    get_exif_creation_time,
-    get_image_dimensions,
-    get_exif_tags,
+    get_metadata_creation_time,
+    get_metadata_dimensions,
+    get_metadata_tags,
+    get_metadata_audio,
 )
 
 
@@ -23,18 +22,19 @@ def build_metadata_from_path(file_path: Path | None) -> Metadata | None:
     if not file_path.exists():
         raise FileNotFoundException(path=str(file_path.absolute()))
 
-    creation_date = get_exif_creation_time(file_path)
-    width, height = get_image_dimensions(file_path)
-    tags = get_exif_tags(file_path)
+    creation_date = get_metadata_creation_time(file_path)
+    width, height = get_metadata_dimensions(file_path)
+    tags = get_metadata_tags(file_path)
+    a_artist, a_album, a_song, a_year = get_metadata_audio(file_path)
 
     return Metadata(
         _creation_date=creation_date,
         _img_vid_width=width,
         _img_vid_height=height,
-        _audio_artist_name=None,
-        _audio_album_name=None,
-        _audio_song_name=None,
-        _audio_year=None,
+        _audio_artist_name=a_artist,
+        _audio_album_name=a_album,
+        _audio_song_name=a_song,
+        _audio_year=a_year,
         _other_found_tag_values=tags,
     )
 
@@ -54,14 +54,16 @@ def build_app_file_from_path_str(path: str | None) -> AppFile:
 
     file_path_str: str = str(current_file_path.absolute())
     is_folder = current_file_path.is_dir()
-    file_ext: str = current_file_path.suffix
+    file_ext: str = current_file_path.suffix  # has leading period, ex: ".jpg"
     file_ext_new: str = current_file_path.suffix
     file_name: str = current_file_path.name.removesuffix(file_ext)
     file_size: int = current_file_path.stat().st_size
     file_new_name: str = file_name
+
+    # TODO: Currently for some images that doesn't have metadata is 1970 is set, should be checked such cases and fixed
     file_creation_date: float = current_file_path.stat().st_birthtime
     file_modification_date: float = current_file_path.stat().st_mtime
-    # file_metadata: Metadata | None = build_metadata_from_path(current_file_path) # TODO
+    file_metadata: Metadata | None = build_metadata_from_path(current_file_path)
 
     return AppFile(
         _absolute_path=file_path_str,
@@ -73,12 +75,5 @@ def build_app_file_from_path_str(path: str | None) -> AppFile:
         _next_name=file_new_name,
         _fs_creation_date=file_creation_date,
         _fs_modification_date=file_modification_date,
-        _metadata=None,
+        _metadata=file_metadata,
     )
-
-
-def get_enum_item_by_value[T: Enum](enum_class: Type[T], enum_value: object) -> T:
-    for member in enum_class.__members__.values():
-        if member.value == enum_value:
-            return member
-    raise ValueError(f"No matching enum value found for {enum_value}")

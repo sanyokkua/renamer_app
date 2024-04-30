@@ -110,8 +110,8 @@ class AppFile:
     @property
     def is_name_changed(self) -> bool:
         return (
-                self._file_name != self._next_name
-                or self._file_extension != self._file_extension_new
+            self._file_name != self._next_name
+            or self._file_extension != self._file_extension_new
         )
 
     def is_valid(self) -> tuple[bool, str]:

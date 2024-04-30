@@ -69,11 +69,11 @@ def test_command_call_callback():
         (TruncateOptions.TRUNCATE_EMPTY_SYMBOLS, 1000, "no_empty", "no_empty", False),
         (TruncateOptions.TRUNCATE_EMPTY_SYMBOLS, 100, "   no_empty", "no_empty", True),
         (
-                TruncateOptions.TRUNCATE_EMPTY_SYMBOLS,
-                10,
-                "   no_empty    ",
-                "no_empty",
-                True,
+            TruncateOptions.TRUNCATE_EMPTY_SYMBOLS,
+            10,
+            "   no_empty    ",
+            "no_empty",
+            True,
         ),
         (TruncateOptions.TRUNCATE_EMPTY_SYMBOLS, 0, "no_empty    ", "no_empty", True),
         (TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN, 0, "no_empty", "no_empty", False),
@@ -91,7 +91,7 @@ def test_command_call_callback():
     ],
 )
 def test_command_params_combinations(
-        option, number_of_symbols: int, file_name: str, exp_name: str, has_changes: bool
+    option, number_of_symbols: int, file_name: str, exp_name: str, has_changes: bool
 ):
     from core.commands.prep_truncate_text import TruncateNamePrepareCommand
 

@@ -16,9 +16,9 @@ class ChangeCasePreparePrepareCommand(BasePrepareCommand):
     """
 
     def __init__(
-            self,
-            capitalize: bool = False,
-            text_case: TextCaseOptions = TextCaseOptions.TITLE_CASE,
+        self,
+        capitalize: bool = False,
+        text_case: TextCaseOptions = TextCaseOptions.TITLE_CASE,
     ):
         """
         Initialize the ChangeCasePreparePrepareCommand.

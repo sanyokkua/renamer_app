@@ -21,7 +21,7 @@ class MapUrlToAppFileCommand(PrepareCommand):
     """
 
     def execute(
-            self, data: List[str], status_callback: Optional[StatusFunction]
+        self, data: List[str], status_callback: Optional[StatusFunction]
     ) -> List[AppFile]:
         """
         Execute the command to map URL paths to AppFile objects.

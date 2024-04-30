@@ -39,11 +39,11 @@ class SequencePrepareCommand(BasePrepareCommand):
     """
 
     def __init__(
-            self,
-            start_number: int = 0,
-            step_value: int = 1,
-            padding: int = 1,
-            sort_source: SortSource = SortSource.FILE_NAME,
+        self,
+        start_number: int = 0,
+        step_value: int = 1,
+        padding: int = 1,
+        sort_source: SortSource = SortSource.FILE_NAME,
     ):
         """
         Initializes a SequencePrepareCommand instance.

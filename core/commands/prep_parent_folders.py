@@ -18,10 +18,10 @@ class ParentFoldersPrepareCommand(BasePrepareCommand):
     """
 
     def __init__(
-            self,
-            position: ItemPosition = ItemPosition.BEGIN,
-            number_of_parents: int = 1,
-            separator: str = "_",
+        self,
+        position: ItemPosition = ItemPosition.BEGIN,
+        number_of_parents: int = 1,
+        separator: str = "_",
     ):
         """
         Initializes the ParentFoldersPrepareCommand with the specified parameters.

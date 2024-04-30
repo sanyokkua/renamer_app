@@ -32,15 +32,15 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
     """
 
     def __init__(
-            self,
-            position: ItemPositionWithReplacement = ItemPositionWithReplacement.REPLACE,
-            date_format: DateFormat = DateFormat.YYYY_MM_DD_TOGETHER,
-            time_format: TimeFormat = TimeFormat.HH_MM_SS_24_TOGETHER,
-            datetime_format: DateTimeFormat = DateTimeFormat.DATE_TIME_UNDERSCORED,
-            datetime_source: DateTimeSource = DateTimeSource.CONTENT_CREATION_DATE,
-            use_uppercase: bool = True,
-            custom_datetime: str = "",
-            separator_for_name_and_datetime: str = "",
+        self,
+        position: ItemPositionWithReplacement = ItemPositionWithReplacement.REPLACE,
+        date_format: DateFormat = DateFormat.YYYY_MM_DD_TOGETHER,
+        time_format: TimeFormat = TimeFormat.HH_MM_SS_24_TOGETHER,
+        datetime_format: DateTimeFormat = DateTimeFormat.DATE_TIME_UNDERSCORED,
+        datetime_source: DateTimeSource = DateTimeSource.CONTENT_CREATION_DATE,
+        use_uppercase: bool = True,
+        custom_datetime: str = "",
+        separator_for_name_and_datetime: str = "",
     ):
         """
         Initialize the DateTimeRenamePrepareCommand.

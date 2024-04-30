@@ -19,12 +19,12 @@ class ImageDimensionsPrepareCommand(BasePrepareCommand):
     """
 
     def __init__(
-            self,
-            position: ItemPositionWithReplacement = ItemPositionWithReplacement.BEGIN,
-            left_side: ImageDimensionOptions = ImageDimensionOptions.WIDTH,
-            right_side: ImageDimensionOptions = ImageDimensionOptions.HEIGHT,
-            dimension_separator: str = "x",
-            name_separator: str = "_",
+        self,
+        position: ItemPositionWithReplacement = ItemPositionWithReplacement.BEGIN,
+        left_side: ImageDimensionOptions = ImageDimensionOptions.WIDTH,
+        right_side: ImageDimensionOptions = ImageDimensionOptions.HEIGHT,
+        dimension_separator: str = "x",
+        name_separator: str = "_",
     ):
         """
         Initializes the ImageDimensionsPrepareCommand with the specified parameters.
@@ -59,9 +59,9 @@ class ImageDimensionsPrepareCommand(BasePrepareCommand):
             AppFile: The AppFile object with the image dimensions included in its name.
         """
         if (
-                item.metadata is None
-                or item.metadata.img_vid_width is None
-                or item.metadata.img_vid_height is None
+            item.metadata is None
+            or item.metadata.img_vid_width is None
+            or item.metadata.img_vid_height is None
         ):
             return item
 

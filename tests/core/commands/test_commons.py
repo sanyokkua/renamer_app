@@ -3,15 +3,15 @@ from core.models.app_file import AppFile, Metadata
 
 
 def build_app_file(
-        file_name: str,
-        file_ext: str = ".jpg",
-        cr_timestamp: float = 10000,
-        mod_timestamp: float = 10000,
-        cc_timestamp: float = 10000,
-        width: int = 1080,
-        height: int = 720,
-        absolute_path: str = "",
-        file_size: int = 1000,
+    file_name: str,
+    file_ext: str = ".jpg",
+    cr_timestamp: float = 10000,
+    mod_timestamp: float = 10000,
+    cc_timestamp: float = 10000,
+    width: int = 1080,
+    height: int = 720,
+    absolute_path: str = "",
+    file_size: int = 1000,
 ) -> AppFile:
     if len(absolute_path.strip()) == 0:
         absolute = f"absolute/file/path/{file_name}"
@@ -57,7 +57,7 @@ def check_that_only_new_name_changed(original_file: AppFile, updated_file: AppFi
 
 
 def check_extension_after_command_applied(
-        test_command: PrepareCommand, file_ext_origin: str, file_ext_expected: str
+    test_command: PrepareCommand, file_ext_origin: str, file_ext_expected: str
 ):
     built_app_file: AppFile = build_app_file("custom_name", file_ext_origin)
 
@@ -78,15 +78,15 @@ def check_extension_after_command_applied(
 
 
 def verify_command_result(
-        test_command: PrepareCommand,
-        file_name_origin: str,
-        file_name_expected: str,
-        file_ext: str = ".jpg",
-        file_creation_time: float = 1000,
-        img_width: int = 1080,
-        img_height: int = 720,
-        absolute_path: str = "",
-        is_updated_name: bool = True,
+    test_command: PrepareCommand,
+    file_name_origin: str,
+    file_name_expected: str,
+    file_ext: str = ".jpg",
+    file_creation_time: float = 1000,
+    img_width: int = 1080,
+    img_height: int = 720,
+    absolute_path: str = "",
+    is_updated_name: bool = True,
 ):
     built_app_file: AppFile = build_app_file(
         file_name=file_name_origin,

@@ -24,7 +24,7 @@ class WidgetNotFoundException(Exception):
 
 class CaseIsNotSupported(Exception):
     def __init__(
-            self, message="Case is not found. Check if all possible cases are handled."
+        self, message="Case is not found. Check if all possible cases are handled."
     ):
         self.message = message
         super().__init__(self.message)
@@ -32,8 +32,8 @@ class CaseIsNotSupported(Exception):
 
 class SortSourceException(Exception):
     def __init__(
-            self,
-            message="Sort source is not found. Check if all possible sources are handled.",
+        self,
+        message="Sort source is not found. Check if all possible sources are handled.",
     ):
         self.message = message
         super().__init__(self.message)

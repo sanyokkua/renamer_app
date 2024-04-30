@@ -154,8 +154,8 @@ class DateTimeWidget(BasePrepareCommandWidget):
     def handle_position_changed(self, value: ItemPositionWithReplacement):
         print(f"handle_position_changed: {value}")
         if (
-                value == ItemPositionWithReplacement.BEGIN
-                or value == ItemPositionWithReplacement.END
+            value == ItemPositionWithReplacement.BEGIN
+            or value == ItemPositionWithReplacement.END
         ):
             self._datetime_separator.show()
             self._datetime_separator_value = (
