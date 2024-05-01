@@ -77,7 +77,11 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
         """
         current_name: str = item.file_name
 
-        timestamp: float = self.get_timestamp(item)
+        timestamp: float | None = self.get_timestamp(item)
+
+        if timestamp is None:
+            return item
+
         date_time_str: str = make_datetime_string(
             self.datetime_format, self.date_format, self.time_format, timestamp
         )
@@ -88,7 +92,7 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
 
         return item
 
-    def get_timestamp(self, item: AppFile) -> float:
+    def get_timestamp(self, item: AppFile) -> float | None:
         """
         Get the timestamp based on the specified source of date and time information.
 
@@ -105,10 +109,9 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
             case DateTimeSource.FILE_MODIFICATION_DATE:
                 timestamp = item.fs_modification_date
             case DateTimeSource.CONTENT_CREATION_DATE:
-                tmp_val: float | None = (
-                    0 if item.metadata is None else item.metadata.creation_date
+                timestamp = (
+                    None if item.metadata is None else item.metadata.creation_date
                 )
-                timestamp = 0 if tmp_val is None else tmp_val
             case DateTimeSource.CURRENT_DATE:
                 now: datetime = datetime.now()
                 timestamp = now.timestamp()

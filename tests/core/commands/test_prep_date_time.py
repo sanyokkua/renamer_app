@@ -1042,3 +1042,27 @@ def test_command_params_combinations(
         file_name_expected=n_name,
         file_creation_time=ts,
     )
+
+
+def test_command_params_combinations_for_empty_timestamp():
+    # Prepare
+    from core.commands.prep_date_time import DateTimeRenamePrepareCommand
+
+    test_command = DateTimeRenamePrepareCommand(
+        position=ItemPositionWithReplacement.REPLACE,
+        date_format=DateFormat.YYYY_MM_DD_TOGETHER,
+        time_format=TimeFormat.HH_MM_SS_24_TOGETHER,
+        datetime_format=DateTimeFormat.DATE_TIME_UNDERSCORED,
+        datetime_source=DateTimeSource.CONTENT_CREATION_DATE,
+        use_uppercase=True,
+        custom_datetime="",
+    )
+
+    # Verify
+    verify_command_result(
+        test_command,
+        file_name_origin="FILE_NAME",
+        file_name_expected="FILE_NAME",
+        file_creation_time=None,
+        is_updated_name=False,
+    )
