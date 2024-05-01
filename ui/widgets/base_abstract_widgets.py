@@ -4,7 +4,7 @@ from PySide6.QtCore import Slot, Qt, QRegularExpression
 from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtWidgets import QWidget, QFormLayout, QLabel, QVBoxLayout
 
-from core.commons import PrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 
 PATH_SYMBOLS_VALIDATOR = QRegularExpressionValidator()
 PATH_SYMBOLS_REGEXP = QRegularExpression("^[A-Za-z0-9_. -\(\)]*$")
@@ -53,7 +53,7 @@ class BasePrepareCommandWidget(BaseAbstractWidget):
         self._main_layout.setSpacing(0)
 
     @abstractmethod
-    def request_command(self) -> PrepareCommand:
+    def request_command(self) -> AppFileItemByItemListProcessingCommand:
         pass
 
 
@@ -71,9 +71,7 @@ class BaseLabelWidget[T](QWidget, ABC, metaclass=ABCMeta):
         self._widget_label: QLabel = QLabel(self)
         self._widget_layout.setFormAlignment(Qt.AlignmentFlag.AlignLeft)
         self._widget_layout.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
-        self._widget_layout.setWidget(
-            0, QFormLayout.ItemRole.LabelRole, self._widget_label
-        )
+        self._widget_layout.setWidget(0, QFormLayout.ItemRole.LabelRole, self._widget_label)
         self._widget_layout.setSpacing(0)
         self.setLayout(self._widget_layout)
         widget = self.create_pair_widget()

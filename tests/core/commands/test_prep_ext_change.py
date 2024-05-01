@@ -1,24 +1,18 @@
-from unittest import mock
-from unittest.mock import MagicMock
-
 import pytest
 
+import tests.core.commands.test_base_command_tests as base
 from core.commands.prep_ext_change import ExtensionChangePrepareCommand
-from core.commons import PrepareCommand
-from core.models.app_file import AppFile
 from tests.core.commands.test_commons import (
-    build_app_file,
     check_extension_after_command_applied,
 )
 
 
 def test_command_with_none_arguments():
-    from core.exceptions import PassedArgumentIsNone
     from core.commands.prep_ext_change import ExtensionChangePrepareCommand
 
     test_command = ExtensionChangePrepareCommand(new_extension="")
-    with pytest.raises(PassedArgumentIsNone):
-        test_command.execute(None, None)
+
+    base.command_validates_none_input(test_command)
 
 
 def test_command_with_empty_arguments():
@@ -26,9 +20,7 @@ def test_command_with_empty_arguments():
 
     test_command = ExtensionChangePrepareCommand(new_extension="")
 
-    result = test_command.execute([], None)
-
-    assert result == []
+    base.command_returns_empty_array_on_empty_input(test_command)
 
 
 def test_command_with_incorrect_data_type_arguments():
@@ -36,8 +28,7 @@ def test_command_with_incorrect_data_type_arguments():
 
     test_command = ExtensionChangePrepareCommand(new_extension="")
 
-    with pytest.raises(TypeError):
-        test_command.execute("string", None)
+    base.command_validates_data_input_type(test_command)
 
 
 def test_command_call_callback():
@@ -45,26 +36,7 @@ def test_command_call_callback():
 
     test_command = ExtensionChangePrepareCommand(new_extension="")
 
-    mock_function = MagicMock()
-
-    file1 = build_app_file("file_name_1")
-    file2 = build_app_file("file_name_2", ".png")
-
-    files = [file1, file2]
-
-    result: list[AppFile] = test_command.execute(files, mock_function)
-
-    assert len(result) == 2
-
-    assert mock_function.call_count == 4
-    mock_function.assert_has_calls(
-        [
-            mock.call(0, 2, 0),
-            mock.call(0, 2, 1),
-            mock.call(0, 2, 2),
-            mock.call(0, 100, 0),
-        ]
-    )
+    base.command_calls_callback_in_each_stage(test_command)
 
 
 @pytest.mark.parametrize(
@@ -81,8 +53,6 @@ def test_command_call_callback():
         ("ext", "", ".ext"),
     ],
 )
-def test_command_params_combinations(
-    user_ext: str, file_ext_orig: str, file_ext_new: str
-):
-    test_command: PrepareCommand = ExtensionChangePrepareCommand(new_extension=user_ext)
+def test_command_params_combinations(user_ext: str, file_ext_orig: str, file_ext_new: str):
+    test_command = ExtensionChangePrepareCommand(new_extension=user_ext)
     check_extension_after_command_applied(test_command, file_ext_orig, file_ext_new)

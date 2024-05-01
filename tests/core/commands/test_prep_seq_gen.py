@@ -1,9 +1,6 @@
 from datetime import datetime
-from unittest import mock
-from unittest.mock import MagicMock
 
-import pytest
-
+import tests.core.commands.test_base_command_tests as base
 from core.enums import SortSource
 from core.models.app_file import AppFile
 from tests.core.commands.test_commons import (
@@ -13,12 +10,11 @@ from tests.core.commands.test_commons import (
 
 
 def test_command_with_none_arguments():
-    from core.exceptions import PassedArgumentIsNone
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
     test_command = SequencePrepareCommand()
-    with pytest.raises(PassedArgumentIsNone):
-        test_command.execute(None, None)
+
+    base.command_validates_none_input(test_command)
 
 
 def test_command_with_empty_arguments():
@@ -26,9 +22,7 @@ def test_command_with_empty_arguments():
 
     test_command = SequencePrepareCommand()
 
-    result = test_command.execute([], None)
-
-    assert result == []
+    base.command_returns_empty_array_on_empty_input(test_command)
 
 
 def test_command_with_incorrect_data_type_arguments():
@@ -36,8 +30,7 @@ def test_command_with_incorrect_data_type_arguments():
 
     test_command = SequencePrepareCommand()
 
-    with pytest.raises(TypeError):
-        test_command.execute("string", None)
+    base.command_validates_data_input_type(test_command)
 
 
 def test_command_call_callback():
@@ -45,34 +38,13 @@ def test_command_call_callback():
 
     test_command = SequencePrepareCommand()
 
-    mock_function = MagicMock()
-
-    file1 = build_app_file("file_name_1")
-    file2 = build_app_file("file_name_2", ".png")
-
-    files = [file1, file2]
-
-    result: list[AppFile] = test_command.execute(files, mock_function)
-
-    assert len(result) == 2
-
-    assert mock_function.call_count == 4
-    mock_function.assert_has_calls(
-        [
-            mock.call(0, 2, 0),
-            mock.call(0, 2, 1),
-            mock.call(0, 2, 2),
-            mock.call(0, 100, 0),
-        ]
-    )
+    base.command_calls_callback_in_each_stage(test_command)
 
 
 def test_command_sort_source_file_name():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_NAME, start_number=0, step_value=1, padding=1
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_NAME, start_number=0, step_value=1, padding=1)
 
     app_file_1: AppFile = build_app_file("file_1")
     app_file_2: AppFile = build_app_file("file_2")
@@ -111,9 +83,7 @@ def test_command_sort_source_file_name():
 def test_command_sort_source_file_name_diff_start_number():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_NAME, start_number=5, step_value=1, padding=1
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_NAME, start_number=5, step_value=1, padding=1)
 
     app_file_1: AppFile = build_app_file("file_1")
     app_file_2: AppFile = build_app_file("file_2")
@@ -147,9 +117,7 @@ def test_command_sort_source_file_name_diff_start_number():
 def test_command_sort_source_file_name_diff_step_value():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_NAME, start_number=0, step_value=2, padding=1
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_NAME, start_number=0, step_value=2, padding=1)
 
     app_file_1: AppFile = build_app_file("file_1")
     app_file_2: AppFile = build_app_file("file_2")
@@ -183,9 +151,7 @@ def test_command_sort_source_file_name_diff_step_value():
 def test_command_sort_source_file_name_diff_padding_1():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_SIZE, start_number=1, step_value=1, padding=1
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_SIZE, start_number=1, step_value=1, padding=1)
 
     app_file_1: AppFile = build_app_file("file_1", file_size=1000)
     app_file_2: AppFile = build_app_file("file_2", file_size=1001)
@@ -243,9 +209,7 @@ def test_command_sort_source_file_name_diff_padding_1():
 def test_command_sort_source_file_name_diff_padding_2():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_SIZE, start_number=1, step_value=1, padding=2
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_SIZE, start_number=1, step_value=1, padding=2)
 
     app_file_1: AppFile = build_app_file("file_1", file_size=1000)
     app_file_2: AppFile = build_app_file("file_2", file_size=1001)
@@ -303,9 +267,7 @@ def test_command_sort_source_file_name_diff_padding_2():
 def test_command_sort_source_file_name_diff_padding_4():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_SIZE, start_number=1, step_value=1, padding=4
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_SIZE, start_number=1, step_value=1, padding=4)
 
     app_file_1: AppFile = build_app_file("file_1", file_size=1000)
     app_file_2: AppFile = build_app_file("file_2", file_size=1001)
@@ -365,21 +327,11 @@ def test_command_sort_source_file_path():
 
     test_command = SequencePrepareCommand(sort_source=SortSource.FILE_PATH)
 
-    app_file_1: AppFile = build_app_file(
-        file_name="file_1", absolute_path="/photos/file_1.jpg"
-    )
-    app_file_3: AppFile = build_app_file(
-        file_name="file_3", absolute_path="/user/file_3.jpg"
-    )
-    app_file_2: AppFile = build_app_file(
-        file_name="file_2", absolute_path="/user/photos/file_2.jpg"
-    )
-    app_file_4: AppFile = build_app_file(
-        file_name="file_4", absolute_path="/user/photos/file_4.jpg"
-    )
-    app_file_5: AppFile = build_app_file(
-        file_name="file_5", absolute_path="/user/photos/file_5.jpg"
-    )
+    app_file_1: AppFile = build_app_file(file_name="file_1", absolute_path="/photos/file_1.jpg")
+    app_file_3: AppFile = build_app_file(file_name="file_3", absolute_path="/user/file_3.jpg")
+    app_file_2: AppFile = build_app_file(file_name="file_2", absolute_path="/user/photos/file_2.jpg")
+    app_file_4: AppFile = build_app_file(file_name="file_4", absolute_path="/user/photos/file_4.jpg")
+    app_file_5: AppFile = build_app_file(file_name="file_5", absolute_path="/user/photos/file_5.jpg")
 
     files_list_random: list[AppFile] = [
         app_file_1,
@@ -456,18 +408,10 @@ def test_command_sort_source_file_creation_datetime():
     now_timestamp: float = now.timestamp()
 
     app_file_1: AppFile = build_app_file(file_name="file_1", cr_timestamp=None)
-    app_file_3: AppFile = build_app_file(
-        file_name="file_3", cr_timestamp=(now_timestamp + 10)
-    )
-    app_file_2: AppFile = build_app_file(
-        file_name="file_2", cr_timestamp=(now_timestamp + 15)
-    )
-    app_file_4: AppFile = build_app_file(
-        file_name="file_4", cr_timestamp=(now_timestamp + 20)
-    )
-    app_file_5: AppFile = build_app_file(
-        file_name="file_5", cr_timestamp=(now_timestamp + 25)
-    )
+    app_file_3: AppFile = build_app_file(file_name="file_3", cr_timestamp=(now_timestamp + 10))
+    app_file_2: AppFile = build_app_file(file_name="file_2", cr_timestamp=(now_timestamp + 15))
+    app_file_4: AppFile = build_app_file(file_name="file_4", cr_timestamp=(now_timestamp + 20))
+    app_file_5: AppFile = build_app_file(file_name="file_5", cr_timestamp=(now_timestamp + 25))
 
     files_list_random: list[AppFile] = [
         app_file_1,
@@ -500,25 +444,15 @@ def test_command_sort_source_file_creation_datetime():
 def test_command_sort_source_file_modification_datetime():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_MODIFICATION_DATETIME
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_MODIFICATION_DATETIME)
     now: datetime = datetime.now()
     now_timestamp: float = now.timestamp()
 
     app_file_1: AppFile = build_app_file(file_name="file_1", mod_timestamp=None)
-    app_file_3: AppFile = build_app_file(
-        file_name="file_3", mod_timestamp=(now_timestamp + 10)
-    )
-    app_file_2: AppFile = build_app_file(
-        file_name="file_2", mod_timestamp=(now_timestamp + 15)
-    )
-    app_file_4: AppFile = build_app_file(
-        file_name="file_4", mod_timestamp=(now_timestamp + 20)
-    )
-    app_file_5: AppFile = build_app_file(
-        file_name="file_5", mod_timestamp=(now_timestamp + 25)
-    )
+    app_file_3: AppFile = build_app_file(file_name="file_3", mod_timestamp=(now_timestamp + 10))
+    app_file_2: AppFile = build_app_file(file_name="file_2", mod_timestamp=(now_timestamp + 15))
+    app_file_4: AppFile = build_app_file(file_name="file_4", mod_timestamp=(now_timestamp + 20))
+    app_file_5: AppFile = build_app_file(file_name="file_5", mod_timestamp=(now_timestamp + 25))
 
     files_list_random: list[AppFile] = [
         app_file_1,
@@ -551,25 +485,15 @@ def test_command_sort_source_file_modification_datetime():
 def test_command_sort_source_content_creation_datetime():
     from core.commands.prep_seq_gen import SequencePrepareCommand
 
-    test_command = SequencePrepareCommand(
-        sort_source=SortSource.FILE_CONTENT_CREATION_DATETIME
-    )
+    test_command = SequencePrepareCommand(sort_source=SortSource.FILE_CONTENT_CREATION_DATETIME)
     now: datetime = datetime.now()
     now_timestamp: float = now.timestamp()
 
     app_file_1: AppFile = build_app_file(file_name="file_1", cc_timestamp=None)
-    app_file_3: AppFile = build_app_file(
-        file_name="file_3", cc_timestamp=(now_timestamp + 10)
-    )
-    app_file_2: AppFile = build_app_file(
-        file_name="file_2", cc_timestamp=(now_timestamp + 15)
-    )
-    app_file_4: AppFile = build_app_file(
-        file_name="file_4", cc_timestamp=(now_timestamp + 20)
-    )
-    app_file_5: AppFile = build_app_file(
-        file_name="file_5", cc_timestamp=(now_timestamp + 25)
-    )
+    app_file_3: AppFile = build_app_file(file_name="file_3", cc_timestamp=(now_timestamp + 10))
+    app_file_2: AppFile = build_app_file(file_name="file_2", cc_timestamp=(now_timestamp + 15))
+    app_file_4: AppFile = build_app_file(file_name="file_4", cc_timestamp=(now_timestamp + 20))
+    app_file_5: AppFile = build_app_file(file_name="file_5", cc_timestamp=(now_timestamp + 25))
 
     files_list_random: list[AppFile] = [
         app_file_1,

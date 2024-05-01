@@ -1,7 +1,6 @@
 from PySide6.QtCore import Slot
 
 from core.commands.prep_seq_gen import SequencePrepareCommand
-from core.commons import PrepareCommand
 from core.enums import SortSource
 from core.text_values import SORT_SOURCE_TEXT
 from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget
@@ -48,22 +47,16 @@ class SequenceGeneratorWidget(BasePrepareCommandWidget):
     def add_text_to_widgets(self):
         self._start_number_spinbox.set_label_text(self.tr("Select start number:"))
         self._step_value_spinbox.set_label_text(self.tr("Select step value:"))
-        self._padding_spinbox.set_label_text(
-            self.tr("Select minimal amount of digits in number:")
-        )
+        self._padding_spinbox.set_label_text(self.tr("Select minimal amount of digits in number:"))
         self._sort_source_combobox.set_label_text(self.tr("Select sorting source:"))
 
     def create_event_handlers(self):
-        self._start_number_spinbox.valueIsChanged.connect(
-            self.handle_start_number_changed
-        )
+        self._start_number_spinbox.valueIsChanged.connect(self.handle_start_number_changed)
         self._step_value_spinbox.valueIsChanged.connect(self.handle_step_number_changed)
         self._padding_spinbox.valueIsChanged.connect(self.handle_padding_number_changed)
-        self._sort_source_combobox.valueIsChanged.connect(
-            self.handle_sort_source_changed
-        )
+        self._sort_source_combobox.valueIsChanged.connect(self.handle_sort_source_changed)
 
-    def request_command(self) -> PrepareCommand:
+    def request_command(self) -> SequencePrepareCommand:
         return SequencePrepareCommand(
             start_number=self._start_number_value,
             step_value=self._step_value_value,

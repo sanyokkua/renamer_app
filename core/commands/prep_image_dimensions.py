@@ -1,13 +1,13 @@
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import ItemPositionWithReplacement, ImageDimensionOptions
 from core.models.app_file import AppFile
 
 
-class ImageDimensionsPrepareCommand(BasePrepareCommand):
+class ImageDimensionsPrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command class to prepare files by including image dimensions in their names.
 
-    This class inherits from BasePrepareCommand.
+    This class inherits from AppFileItemByItemListProcessingCommand.
 
     Attributes:
         position (ItemPositionWithReplacement): The position where the dimensions will be inserted.
@@ -47,32 +47,25 @@ class ImageDimensionsPrepareCommand(BasePrepareCommand):
         self.dimension_separator: str = dimension_separator
         self.name_separator: str = name_separator
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Creates a new name for the given AppFile object by including image dimensions in its name.
 
         Args:
             item (AppFile): The AppFile object for which the image dimensions need to be included in the name.
             index (int): The index of current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile object with the image dimensions included in its name.
         """
-        if (
-            item.metadata is None
-            or item.metadata.img_vid_width is None
-            or item.metadata.img_vid_height is None
-        ):
+        if item.metadata is None or item.metadata.img_vid_width is None or item.metadata.img_vid_height is None:
             return item
 
         width: int = item.metadata.img_vid_width
         height: int = item.metadata.img_vid_height
-        left_side: int = (
-            width if self.left_side == ImageDimensionOptions.WIDTH else height
-        )
-        right_side: int = (
-            width if self.right_side == ImageDimensionOptions.WIDTH else height
-        )
+        left_side: int = width if self.left_side == ImageDimensionOptions.WIDTH else height
+        right_side: int = width if self.right_side == ImageDimensionOptions.WIDTH else height
 
         # ABS is used in case if negative number will be recorded in metadata
         dimension: str = f"{abs(left_side)}{self.dimension_separator}{abs(right_side)}"

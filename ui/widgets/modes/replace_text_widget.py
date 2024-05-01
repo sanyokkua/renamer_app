@@ -1,7 +1,6 @@
 from PySide6.QtCore import Slot
 
 from core.commands.prep_replace_text import ReplaceTextPrepareCommand
-from core.commons import PrepareCommand
 from core.enums import ItemPositionExtended
 from core.text_values import ITEM_POSITION_EXTENDED_TEXT
 from ui.widgets.base_abstract_widgets import (
@@ -39,36 +38,22 @@ class ReplaceTextWidget(BasePrepareCommandWidget):
         self._main_layout.addWidget(self._text_to_replace_line_edit)
         self._main_layout.addWidget(self._text_to_add_line_edit)
 
-        self._replace_position_value = (
-            self._replace_position_radio_btn.get_current_value()
-        )
-        self._text_to_replace_value = (
-            self._text_to_replace_line_edit.get_current_value()
-        )
+        self._replace_position_value = self._replace_position_radio_btn.get_current_value()
+        self._text_to_replace_value = self._text_to_replace_line_edit.get_current_value()
         self._text_to_add_value = self._text_to_add_line_edit.get_current_value()
         self.setContentsMargins(0, 0, 0, 0)
 
     def add_text_to_widgets(self):
-        self._replace_position_radio_btn.set_label_text(
-            self.tr("Chose where to replace text:")
-        )
-        self._text_to_replace_line_edit.set_label_text(
-            self.tr("Enter text to replace:")
-        )
+        self._replace_position_radio_btn.set_label_text(self.tr("Chose where to replace text:"))
+        self._text_to_replace_line_edit.set_label_text(self.tr("Enter text to replace:"))
         self._text_to_add_line_edit.set_label_text(self.tr("Enter text to add:"))
 
     def create_event_handlers(self):
-        self._replace_position_radio_btn.valueIsChanged.connect(
-            self.handle_position_changed
-        )
-        self._text_to_replace_line_edit.valueIsChanged.connect(
-            self.handle_text_to_replace_changed
-        )
-        self._text_to_add_line_edit.valueIsChanged.connect(
-            self.handle_text_to_add_changed
-        )
+        self._replace_position_radio_btn.valueIsChanged.connect(self.handle_position_changed)
+        self._text_to_replace_line_edit.valueIsChanged.connect(self.handle_text_to_replace_changed)
+        self._text_to_add_line_edit.valueIsChanged.connect(self.handle_text_to_add_changed)
 
-    def request_command(self) -> PrepareCommand:
+    def request_command(self) -> ReplaceTextPrepareCommand:
         return ReplaceTextPrepareCommand(
             position=self._replace_position_value,
             text_to_replace=self._text_to_replace_value,

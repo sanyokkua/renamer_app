@@ -14,6 +14,9 @@ from core.utils.io_utils import (
 )
 
 
+# TODO: Add unit tests
+
+
 def build_metadata_from_path(file_path: Path | None) -> Metadata | None:
     if file_path is None:
         raise PassedArgumentIsNone()
@@ -60,7 +63,6 @@ def build_app_file_from_path_str(path: str | None) -> AppFile:
     file_size: int = current_file_path.stat().st_size
     file_new_name: str = file_name
 
-    # TODO: Currently for some images that doesn't have metadata is 1970 is set, should be checked such cases and fixed
     file_creation_date: float = current_file_path.stat().st_birthtime
     file_modification_date: float = current_file_path.stat().st_mtime
     file_metadata: Metadata | None = build_metadata_from_path(current_file_path)

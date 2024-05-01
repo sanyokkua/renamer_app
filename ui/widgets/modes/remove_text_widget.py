@@ -1,7 +1,6 @@
 from PySide6.QtCore import Slot
 
 from core.commands.prep_remove_text import RemoveTextPrepareCommand
-from core.commons import PrepareCommand
 from core.enums import ItemPosition
 from core.text_values import ITEM_POSITION_TEXT
 from ui.widgets.base_abstract_widgets import (
@@ -40,23 +39,15 @@ class RemoveTextWidget(BasePrepareCommandWidget):
         self.setContentsMargins(0, 0, 0, 0)
 
     def add_text_to_widgets(self):
-        self._text_position_radio_btn.set_label_text(
-            self.tr("Select side where to remove text:")
-        )
+        self._text_position_radio_btn.set_label_text(self.tr("Select side where to remove text:"))
         self._text_to_remove_line_edit.set_label_text(self.tr("Enter text to remove:"))
 
     def create_event_handlers(self):
-        self._text_position_radio_btn.valueIsChanged.connect(
-            self.handle_position_changed
-        )
-        self._text_to_remove_line_edit.valueIsChanged.connect(
-            self.handle_remove_text_changed
-        )
+        self._text_position_radio_btn.valueIsChanged.connect(self.handle_position_changed)
+        self._text_to_remove_line_edit.valueIsChanged.connect(self.handle_remove_text_changed)
 
-    def request_command(self) -> PrepareCommand:
-        return RemoveTextPrepareCommand(
-            text=self._text_to_remove_value, position=self._text_position_value
-        )
+    def request_command(self) -> RemoveTextPrepareCommand:
+        return RemoveTextPrepareCommand(text=self._text_to_remove_value, position=self._text_position_value)
 
     @Slot()
     def handle_position_changed(self, value: ItemPosition):

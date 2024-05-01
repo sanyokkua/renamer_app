@@ -19,9 +19,7 @@ register_heif_opener()
 register_avif_opener()
 
 PIL_REG_EXT: dict[str, str] = Image.registered_extensions()
-PIL_SUPPORTED_EXT: set[str] = {
-    ext.lower() for ext, file in PIL_REG_EXT.items() if file in Image.OPEN
-}
+PIL_SUPPORTED_EXT: set[str] = {ext.lower() for ext, file in PIL_REG_EXT.items() if file in Image.OPEN}
 EXIF_READ_SUPPORTED_EXT: set[str] = {".tiff", ".jpg", ".jpeg", ".png", ".webp", ".heic"}
 
 TAG_EXIF_IMAGE_DATE_TIME = "Image DateTime"
@@ -37,6 +35,9 @@ MUTAGEN_SUPPORTED_EXT: set[str] = {
     ".wv",
     ".aiff",
 }
+
+
+# TODO: Add unit tests
 
 
 def validate_path(file_path: Path) -> None:
@@ -112,25 +113,15 @@ def get_creation_datetime_by_exifread(file_path: Path) -> float | None:
             exif_by_exifread = process_file(opened_file)
             print(exif_by_exifread)
 
-            tag_date_time_original: IfdTag | None = exif_by_exifread.get(
-                TAG_EXIF_DATE_TIME_ORIGINAL
-            )
-            tag_img_date_time: IfdTag | None = exif_by_exifread.get(
-                TAG_EXIF_IMAGE_DATE_TIME
-            )
-            tag_date_time_digit: IfdTag | None = exif_by_exifread.get(
-                TAG_EXIF_DATE_TIME_DIGITIZED
-            )
+            tag_date_time_original: IfdTag | None = exif_by_exifread.get(TAG_EXIF_DATE_TIME_ORIGINAL)
+            tag_img_date_time: IfdTag | None = exif_by_exifread.get(TAG_EXIF_IMAGE_DATE_TIME)
+            tag_date_time_digit: IfdTag | None = exif_by_exifread.get(TAG_EXIF_DATE_TIME_DIGITIZED)
 
-            parsed_datetime_original = parse_date_time(
-                get_value(tag_date_time_original)
-            )
+            parsed_datetime_original = parse_date_time(get_value(tag_date_time_original))
             parsed_datetime = parse_date_time(get_value(tag_img_date_time))
             parsed_datetime_digitized = parse_date_time(get_value(tag_date_time_digit))
 
-            return chose_correct_date(
-                parsed_datetime, parsed_datetime_original, parsed_datetime_digitized
-            )
+            return chose_correct_date(parsed_datetime, parsed_datetime_original, parsed_datetime_digitized)
     except Exception as ex:
         # Any Exception or error during work with file and extraction of file is OK in this case,
         # so None should be returned
@@ -144,9 +135,7 @@ def get_creation_datetime_by_pil(file_path: Path) -> float | None:
     try:
         with Image.open(file_path) as image:
             base_exif_data: Exif | None = image.getexif()
-            ifd_exif_data: dict | None = (
-                base_exif_data.get_ifd(ExifTags.IFD.Exif) if base_exif_data else None
-            )
+            ifd_exif_data: dict | None = base_exif_data.get_ifd(ExifTags.IFD.Exif) if base_exif_data else None
 
             image_datetime_str = None
             image_datetime_original_str = None
@@ -155,29 +144,17 @@ def get_creation_datetime_by_pil(file_path: Path) -> float | None:
             if base_exif_data is not None and ExifTags.Base.DateTime in base_exif_data:
                 image_datetime_str = base_exif_data[ExifTags.Base.DateTime]
 
-            if (
-                ifd_exif_data is not None
-                and ExifTags.Base.DateTimeOriginal in ifd_exif_data
-            ):
-                image_datetime_original_str = ifd_exif_data[
-                    ExifTags.Base.DateTimeOriginal
-                ]
+            if ifd_exif_data is not None and ExifTags.Base.DateTimeOriginal in ifd_exif_data:
+                image_datetime_original_str = ifd_exif_data[ExifTags.Base.DateTimeOriginal]
 
-            if (
-                ifd_exif_data is not None
-                and ExifTags.Base.DateTimeDigitized in ifd_exif_data
-            ):
-                image_datetime_digitized_str = ifd_exif_data[
-                    ExifTags.Base.DateTimeDigitized
-                ]
+            if ifd_exif_data is not None and ExifTags.Base.DateTimeDigitized in ifd_exif_data:
+                image_datetime_digitized_str = ifd_exif_data[ExifTags.Base.DateTimeDigitized]
 
             parsed_datetime_original = parse_date_time(image_datetime_original_str)
             parsed_datetime = parse_date_time(image_datetime_str)
             parsed_datetime_digitized = parse_date_time(image_datetime_digitized_str)
 
-            return chose_correct_date(
-                parsed_datetime, parsed_datetime_original, parsed_datetime_digitized
-            )
+            return chose_correct_date(parsed_datetime, parsed_datetime_original, parsed_datetime_digitized)
     except Exception as ex:
         # Any Exception or error during work with file and extraction of file is OK in this case,
         # so None should be returned
@@ -202,13 +179,7 @@ def get_metadata_creation_time(file_path: Path) -> float | None:
         if exifread_creation_val is None and pil_creation_val is None:
             return None
 
-        return min(
-            [
-                date
-                for date in [exifread_creation_val, pil_creation_val]
-                if date is not None
-            ]
-        )
+        return min([date for date in [exifread_creation_val, pil_creation_val] if date is not None])
 
     except Exception:
         return None
@@ -232,11 +203,7 @@ def get_metadata_tags(file_path: Path) -> dict[str, any]:
         try:
             with Image.open(file_path) as image:
                 base_exif_data: Exif | None = image.getexif()
-                ifd_exif_data: dict | None = (
-                    base_exif_data.get_ifd(ExifTags.IFD.Exif)
-                    if base_exif_data
-                    else None
-                )
+                ifd_exif_data: dict | None = base_exif_data.get_ifd(ExifTags.IFD.Exif) if base_exif_data else None
 
                 if base_exif_data is not None:
                     for tag, value in base_exif_data.items():
@@ -330,35 +297,36 @@ def get_metadata_audio(
     return audio_artist_name, audio_album_name, audio_song_name, audio_year
 
 
-def rename_file(app_file: AppFile | None) -> None:
+def rename_file(app_file: AppFile | None) -> tuple[bool, str]:
     if app_file is None:
-        return
+        raise PassedArgumentIsNone("Passed appFile for renaming is none")
 
     if not isinstance(app_file, AppFile):
-        return
+        raise TypeError("Passed object is not an instance of AppFile")
 
     if not app_file.is_name_changed:
-        return
+        return False, app_file.absolute_path
 
     if not app_file.is_valid():
-        return
+        return False, app_file.absolute_path
 
     file_absolute_path: str = app_file.absolute_path
     print(f"Original File Name: {file_absolute_path}")
 
-    new_file_path = file_absolute_path.replace(app_file.file_name, app_file.next_name)
-    if (
-        len(app_file.file_extension) > 0
-        and len(app_file.file_extension_new.strip()) == 0
-    ):
-        new_file_path = new_file_path.replace(app_file.file_extension, "")
-    else:
-        new_file_path = new_file_path.replace(
-            app_file.file_extension, app_file.file_extension_new
-        )
+    path_without_file = file_absolute_path.removesuffix(f"{app_file.file_name}{app_file.file_extension}")
+
+    new_file_path = path_without_file + app_file.next_name
+    if not app_file.is_folder:
+        new_file_path = new_file_path + app_file.file_extension_new
 
     print(f"New File Name: {new_file_path}")
-    rename(app_file.absolute_path, new_file_path)
+    try:
+        rename(app_file.absolute_path, new_file_path)
+    except Exception as ex:
+        print(ex)
+        return False, app_file.absolute_path
+
+    return True, new_file_path
 
 
 def get_parent_folders(file_path: str) -> list[str]:

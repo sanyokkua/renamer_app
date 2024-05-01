@@ -1,12 +1,12 @@
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.models.app_file import AppFile
 
 
-class ExtensionChangePrepareCommand(BasePrepareCommand):
+class ExtensionChangePrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command class to prepare files by changing their extensions.
 
-    This class inherits from BasePrepareCommand.
+    This class inherits from AppFileItemByItemListProcessingCommand.
 
     Attributes:
         new_extension (str): The new extension to be applied to the files.
@@ -23,7 +23,7 @@ class ExtensionChangePrepareCommand(BasePrepareCommand):
         """
         self.new_extension: str = new_extension
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Creates a new name for the given AppFile object by changing its extension.
 
@@ -33,6 +33,7 @@ class ExtensionChangePrepareCommand(BasePrepareCommand):
         Args:
             item (AppFile): The AppFile object for which the extension needs to be changed.
             index (int): The index of current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile object with the new extension applied.

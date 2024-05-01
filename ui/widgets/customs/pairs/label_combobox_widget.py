@@ -26,9 +26,7 @@ class LabelComboboxWidget(BaseLabelWidget):
 
     def create_pair_widget(self) -> QWidget:
         self._combobox = QComboBox(self)
-        self._combobox.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-        )
+        self._combobox.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         enum_list = list(self._enum_class)
         for enum_item in enum_list:
@@ -46,7 +44,5 @@ class LabelComboboxWidget(BaseLabelWidget):
 
     @Slot()
     def handle_combobox_index_changed(self, index: int):
-        selected_enum_value = self._combobox.itemData(
-            index
-        )  # Get the data associated with the selected item
+        selected_enum_value = self._combobox.itemData(index)  # Get the data associated with the selected item
         self.valueIsChanged.emit(selected_enum_value)  # Emit the selected enum value

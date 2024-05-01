@@ -1,7 +1,6 @@
 from PySide6.QtCore import Slot
 
 from core.commands.prep_parent_folders import ParentFoldersPrepareCommand
-from core.commons import PrepareCommand
 from core.enums import ItemPosition
 from core.text_values import ITEM_POSITION_TEXT
 from ui.widgets.base_abstract_widgets import (
@@ -41,34 +40,22 @@ class ParentFoldersWidget(BasePrepareCommandWidget):
         self._main_layout.addWidget(self._number_of_parents_spinbox)
         self._main_layout.addWidget(self._separator_line_edit)
 
-        self._folder_name_position_value = (
-            self._folder_name_position_radio_btn.get_current_value()
-        )
-        self._number_of_parents_value = (
-            self._number_of_parents_spinbox.get_current_value()
-        )
+        self._folder_name_position_value = self._folder_name_position_radio_btn.get_current_value()
+        self._number_of_parents_value = self._number_of_parents_spinbox.get_current_value()
         self._separator_value = self._separator_line_edit.get_current_value()
         self.setContentsMargins(0, 0, 0, 0)
 
     def add_text_to_widgets(self):
-        self._folder_name_position_radio_btn.set_label_text(
-            self.tr("Select renaming mode:")
-        )
-        self._number_of_parents_spinbox.set_label_text(
-            self.tr("Number of parent folders to include:")
-        )
+        self._folder_name_position_radio_btn.set_label_text(self.tr("Select renaming mode:"))
+        self._number_of_parents_spinbox.set_label_text(self.tr("Number of parent folders to include:"))
         self._separator_line_edit.set_label_text(self.tr("Separator between folders:"))
 
     def create_event_handlers(self):
-        self._folder_name_position_radio_btn.valueIsChanged.connect(
-            self.handle_position_changed
-        )
-        self._number_of_parents_spinbox.valueIsChanged.connect(
-            self.handle_parents_number_changed
-        )
+        self._folder_name_position_radio_btn.valueIsChanged.connect(self.handle_position_changed)
+        self._number_of_parents_spinbox.valueIsChanged.connect(self.handle_parents_number_changed)
         self._separator_line_edit.valueIsChanged.connect(self.handle_separator_changed)
 
-    def request_command(self) -> PrepareCommand:
+    def request_command(self) -> ParentFoldersPrepareCommand:
         return ParentFoldersPrepareCommand(
             position=self._folder_name_position_value,
             number_of_parents=self._number_of_parents_value,

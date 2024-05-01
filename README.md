@@ -49,4 +49,8 @@ Following should be installed:
 pipenv install
 ```
 
+# Code Style
+
+Formatted by black formatter with params: --line-length 120
+
 TODO:

@@ -1,13 +1,13 @@
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import ItemPositionExtended
 from core.models.app_file import AppFile
 
 
-class ReplaceTextPrepareCommand(BasePrepareCommand):
+class ReplaceTextPrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command class to prepare files by replacing specified text with a new value in their names.
 
-    This class inherits from BasePrepareCommand.
+    This class inherits from AppFileItemByItemListProcessingCommand.
 
     Attributes:
         position (ItemPositionExtended): The position where the text replacement will occur.
@@ -35,13 +35,14 @@ class ReplaceTextPrepareCommand(BasePrepareCommand):
         self.text_to_replace: str = text_to_replace
         self.new_value: str = new_value
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Creates a new name for the given AppFile object by replacing specified text with a new value.
 
         Args:
             item (AppFile): The AppFile object in which the text replacement needs to be performed.
             index (int): The index of current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile object with the specified text replaced by the new value in its name.
@@ -57,9 +58,7 @@ class ReplaceTextPrepareCommand(BasePrepareCommand):
             reversed_name = next_name[::-1]
             reversed_value_to_replace = self.text_to_replace[::-1]
             reversed_new_value = self.new_value[::-1]
-            next_name = reversed_name.replace(
-                reversed_value_to_replace, reversed_new_value, 1
-            )[::-1]
+            next_name = reversed_name.replace(reversed_value_to_replace, reversed_new_value, 1)[::-1]
         elif self.position == ItemPositionExtended.EVERYWHERE:
             next_name = next_name.replace(self.text_to_replace, self.new_value)
 

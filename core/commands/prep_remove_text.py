@@ -1,13 +1,13 @@
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import ItemPosition
 from core.models.app_file import AppFile
 
 
-class RemoveTextPrepareCommand(BasePrepareCommand):
+class RemoveTextPrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command class to prepare files by removing specified text from their names.
 
-    This class inherits from BasePrepareCommand.
+    This class inherits from AppFileItemByItemListProcessingCommand.
 
     Attributes:
         text (str): The text to remove from the file names.
@@ -27,13 +27,14 @@ class RemoveTextPrepareCommand(BasePrepareCommand):
         self.text: str = text
         self.position: ItemPosition = position
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Creates a new name for the given AppFile object by removing specified text from its name.
 
         Args:
             item (AppFile): The AppFile object from which the specified text needs to be removed.
             index (int): The index of current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile object with the specified text removed from its name.

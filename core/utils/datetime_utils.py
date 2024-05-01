@@ -123,15 +123,9 @@ def make_datetime_string(
     date_str: str = make_date_string(date_format, timestamp)
     time_str: str = make_time_string(time_format, timestamp)
 
-    if (
-        date_format == DateFormat.DO_NOT_USE_DATE
-        and time_format != TimeFormat.DO_NOT_USE_TIME
-    ):
+    if date_format == DateFormat.DO_NOT_USE_DATE and time_format != TimeFormat.DO_NOT_USE_TIME:
         return time_str
-    elif (
-        time_format == TimeFormat.DO_NOT_USE_TIME
-        and date_format != DateFormat.DO_NOT_USE_DATE
-    ):
+    elif time_format == TimeFormat.DO_NOT_USE_TIME and date_format != DateFormat.DO_NOT_USE_DATE:
         return date_str
 
     match date_time_format:

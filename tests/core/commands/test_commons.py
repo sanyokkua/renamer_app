@@ -1,4 +1,4 @@
-from core.commons import PrepareCommand
+from core.abstract import Command
 from core.models.app_file import AppFile, Metadata
 
 
@@ -56,9 +56,7 @@ def check_that_only_new_name_changed(original_file: AppFile, updated_file: AppFi
     assert updated_file.next_name != original_file.file_name
 
 
-def check_extension_after_command_applied(
-    test_command: PrepareCommand, file_ext_origin: str, file_ext_expected: str
-):
+def check_extension_after_command_applied(test_command: Command, file_ext_origin: str, file_ext_expected: str):
     built_app_file: AppFile = build_app_file("custom_name", file_ext_origin)
 
     result: list[AppFile] = test_command.execute([built_app_file])
@@ -78,7 +76,7 @@ def check_extension_after_command_applied(
 
 
 def verify_command_result(
-    test_command: PrepareCommand,
+    test_command: Command,
     file_name_origin: str,
     file_name_expected: str,
     file_ext: str = ".jpg",

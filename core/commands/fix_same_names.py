@@ -1,75 +1,67 @@
-from typing import List, Optional
+from collections import defaultdict
+from typing import Optional
 
-from core.commons import PrepareCommand, StatusFunction
-from core.exceptions import PassedArgumentIsNone
+from core.abstract import StatusFunction
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.models.app_file import AppFile
 
 
-# TODO: Requires testing
+class FixSameNamesCommand(AppFileItemByItemListProcessingCommand):
+    """A command to fix names of files with the same name."""
 
+    def process_data(self, data: list[AppFile], status_callback: Optional[StatusFunction] = None) -> list[AppFile]:
+        """Process the data to fix names.
 
-def change_names(data: List[AppFile]) -> List[AppFile]:
-    new_list: list[AppFile] = []  # List of AppFiles with changed name
-    counter: int = 0
-    padding: int = len(str(len(data)))
+        Args:
+            data (list[AppFile]): The list of AppFile items.
+            status_callback (Optional[StatusFunction]): A function to call for status updates.
 
-    for file_obj in data:
-        suffix: str = "({:0{width}d})".format(counter, width=padding)
-        file_obj.next_name = file_obj.next_name + suffix
-        new_list.append(file_obj)
-        counter += 1
-    return new_list
+        Returns:
+            list[AppFile]: The list of processed AppFile items.
+        """
+        unique_names: set[str] = set()
+        name_groups = defaultdict(list)
 
+        data_size = len(data) * 2  # Two times we will go by each data item
+        global_counter = 0
+        self.call_status_callback(status_callback, global_counter, data_size)
 
-class FixSameNamesCommand(PrepareCommand):
-
-    def execute(
-        self, data: List[AppFile], status_callback: Optional[StatusFunction]
-    ) -> List[AppFile]:
-        if data is None:
-            raise PassedArgumentIsNone()
-        if not isinstance(data, list):
-            raise TypeError("data argument type should be List[str]")
-
-        mapped_app_files: list[AppFile] = []
-        self.call_status_callback(status_callback, len(data), len(mapped_app_files))
-
-        names_dict: dict[str, list[AppFile]] = {}
-        iter_counter: int = 0
-        for item in data:
-            name_key: str = item.next_name
-            if name_key in names_dict:
-                list_of_files = names_dict.get(name_key)
-                list_of_files.append(item)
+        for file in data:
+            name_groups[(file.next_name, file.file_extension_new)].append(file)
+            if file.is_name_changed:
+                unique_names.add(f"{file.next_name}{file.file_extension_new}")
             else:
-                names_dict[name_key] = [item]
-            self.call_status_callback(status_callback, len(data), iter_counter)
-            iter_counter += 1
-        self.call_status_callback(status_callback, 100, 0)
+                unique_names.add(f"{file.file_name}{file.file_extension}")
 
-        if len(names_dict) == 0:
-            return data
+            self.call_status_callback(status_callback, global_counter, data_size)
+            global_counter += 1
 
-        for app_files_list in names_dict.values():
-            if len(app_files_list) == 0:
-                self.call_status_callback(
-                    status_callback, len(data), len(mapped_app_files)
-                )
-                continue
-
-            if len(app_files_list) == 1:
-                mapped_app_files.append(app_files_list[0])
-                self.call_status_callback(
-                    status_callback, len(data), len(mapped_app_files)
-                )
-
+        for files_with_same_name in name_groups.values():
+            if len(files_with_same_name) == 1:
+                # If only one file in the group, no need to fix its name
+                self.call_status_callback(status_callback, global_counter, data_size)
+                global_counter += 1
             else:
-                changed_files: list[AppFile] = change_names(app_files_list)
-                for changed_file in changed_files:
-                    mapped_app_files.append(changed_file)
-                    self.call_status_callback(
-                        status_callback, len(data), len(mapped_app_files)
-                    )
+                # If multiple files with the same name, fix their names
+                num_files = len(files_with_same_name)
+                digits = len(str(num_files))  # Calculate number of digits required
+                for i, file in enumerate(files_with_same_name):
+                    if file.is_name_changed:
+                        counter = 1
+                        suffix = f" ({counter:0{digits}d})"  # Generate suffix dynamically ({:0{width}d})
+                        new_name = f"{file.next_name}{suffix}"
+                        new_name_with_ext = f"{new_name}{file.file_extension_new}"
 
-        self.call_status_callback(status_callback, 100, 0)
-        return mapped_app_files
+                        while new_name_with_ext in unique_names:
+                            counter += 1
+                            suffix = f" ({counter:0{digits}d})"  # Generate suffix dynamically ({:0{width}d})
+                            new_name = f"{file.next_name}{suffix}"
+                            new_name_with_ext = f"{new_name}{file.file_extension_new}"
+
+                        unique_names.add(new_name_with_ext)
+                        file.next_name = new_name
+                    self.call_status_callback(status_callback, global_counter, data_size)
+                    global_counter += 1
+
+        self.call_status_callback(status_callback, 0, 100)
+        return data  # returning data because only object values will be changed

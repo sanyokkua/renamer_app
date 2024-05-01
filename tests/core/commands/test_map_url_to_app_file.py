@@ -53,10 +53,10 @@ def test_command_call_callback(monkeypatch):
     assert mock_function.call_count == 4
     mock_function.assert_has_calls(
         [
-            mock.call(0, 2, 0),
-            mock.call(0, 2, 1),
-            mock.call(0, 2, 2),
-            mock.call(0, 100, 0),
+            mock.call(0, 2),
+            mock.call(1, 2),
+            mock.call(2, 2),
+            mock.call(0, 100),
         ]
     )
 

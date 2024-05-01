@@ -1,10 +1,10 @@
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import TextCaseOptions
 from core.models.app_file import AppFile
 from core.utils.case_utils import convert_case_of_string
 
 
-class ChangeCasePreparePrepareCommand(BasePrepareCommand):
+class ChangeCasePreparePrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A class representing a command to change the case of file names in a preparation pipeline.
 
@@ -30,13 +30,14 @@ class ChangeCasePreparePrepareCommand(BasePrepareCommand):
         self.capitalize: bool = capitalize
         self.text_case: TextCaseOptions = text_case
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Create a new name for the AppFile item based on the specified text case option.
 
         Args:
             item (AppFile): The AppFile item for which the new name will be created.
             index (int): The index of current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile item with the new name.
@@ -46,8 +47,6 @@ class ChangeCasePreparePrepareCommand(BasePrepareCommand):
         if self.capitalize:
             next_file_name = next_file_name[0].upper() + next_file_name[1:]
 
-        print(
-            f"Orig: {item.file_name}, next: {next_file_name}, func: {self.text_case}, is cap: {self.capitalize}"
-        )
+        print(f"Orig: {item.file_name}, next: {next_file_name}, func: {self.text_case}, is cap: {self.capitalize}")
         item.next_name = next_file_name
         return item

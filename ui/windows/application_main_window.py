@@ -8,22 +8,18 @@ from PySide6.QtWidgets import (
     QApplication,
 )
 
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.commands.fix_same_names import FixSameNamesCommand
 from core.commands.map_url_to_app_file import MapUrlToAppFileCommand
 from core.commands.renaming_commands import (
-    FilterOutNotChangedFilesCommand,
     RenameFilesCommand,
-    FilterOutFilesWithErrorsCommand,
 )
-from core.commons import PrepareCommand
 from core.enums import AppModes
 from core.models.app_file import AppFile
 from ui.widgets.views.app_controls_widget import AppControlsWidget
 from ui.widgets.views.app_files_list_view_widget import AppFilesListViewWidget
 from ui.widgets.views.app_mode_view_widget import AppModeSelectViewWidget
 
-FILTER_ONLY_CHANGED_COMMAND = FilterOutNotChangedFilesCommand()
-FILTER_ONLY_VALID_COMMAND = FilterOutFilesWithErrorsCommand()
 FIX_SAME_NAMES_COMMAND = FixSameNamesCommand()
 RENAME_COMMAND = RenameFilesCommand()
 
@@ -80,12 +76,8 @@ class ApplicationMainWindow(QMainWindow):
 
         # Configure event handling for the widgets events
         self._app_controls_widget.appModeSelected.connect(self.handle_app_mode_changed)
-        self._app_controls_widget.previewBtnClicked.connect(
-            self.handle_preview_btn_clicked
-        )
-        self._app_controls_widget.renameBtnClicked.connect(
-            self.handle_rename_btn_clicked
-        )
+        self._app_controls_widget.previewBtnClicked.connect(self.handle_preview_btn_clicked)
+        self._app_controls_widget.renameBtnClicked.connect(self.handle_rename_btn_clicked)
         self._app_controls_widget.clearBtnClicked.connect(self.handle_clear_btn_clicked)
         self._files_view_widget.files_list_updated.connect(self.handle_files_dropped)
 
@@ -101,15 +93,14 @@ class ApplicationMainWindow(QMainWindow):
     @Slot()
     def handle_rename_btn_clicked(self):
         self.run_preparation_commands_for_files()
-        # TODO: After renaming new file names should be displayed. In other words list of files should be re-opened
-        RENAME_COMMAND.execute(self._app_file_list, self.update_progress_bar)
+        result = RENAME_COMMAND.execute(self._app_file_list, self.update_progress_bar)
+        self._app_file_list = result
+        self.update_files_table_view()
 
     def run_preparation_commands_for_files(self):
         self.reset_names()
-        command: PrepareCommand = self._app_modes_widget.request_command()
+        command: AppFileItemByItemListProcessingCommand = self._app_modes_widget.request_command()
         result = command.execute(self._app_file_list, self.update_progress_bar)
-        result = FILTER_ONLY_VALID_COMMAND.execute(result, self.update_progress_bar)
-        result = FILTER_ONLY_CHANGED_COMMAND.execute(result, self.update_progress_bar)
         result = FIX_SAME_NAMES_COMMAND.execute(result, self.update_progress_bar)
         self._app_file_list = result
         self.update_files_table_view()
@@ -121,15 +112,13 @@ class ApplicationMainWindow(QMainWindow):
 
     @Slot()
     def handle_files_dropped(self, list_of_files: list[str]):
-        mapped_files = self._mapping_command.execute(
-            list_of_files, self.update_progress_bar
-        )
+        mapped_files = self._mapping_command.execute(list_of_files, self.update_progress_bar)
         self._app_file_list = mapped_files
         self.update_files_table_view()
 
     @Slot()
-    def update_progress_bar(self, min_val: int, max_val: int, current_val: int):
-        self._progress_bar.setMinimum(min_val)
+    def update_progress_bar(self, current_val: int, max_val: int):
+        self._progress_bar.setMinimum(0)
         self._progress_bar.setMaximum(max_val)
         self._progress_bar.setValue(current_val)
         self._progress_bar.setFormat(f"Progress: {current_val}%")

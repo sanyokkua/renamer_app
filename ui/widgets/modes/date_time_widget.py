@@ -2,7 +2,6 @@ from PySide6.QtCore import QDateTime, Slot
 from PySide6.QtWidgets import QDateTimeEdit
 
 from core.commands.prep_date_time import DateTimeRenamePrepareCommand
-from core.commons import PrepareCommand
 from core.enums import (
     ItemPositionWithReplacement,
     DateFormat,
@@ -68,9 +67,7 @@ class DateTimeWidget(BasePrepareCommandWidget):
         self._use_uppercase_checkbox = LabelCheckboxWidget(self)
         self._date_time_edit = QDateTimeEdit(self)
 
-        self._datetime_position_value = (
-            self._datetime_position_radio_btn.get_current_value()
-        )
+        self._datetime_position_value = self._datetime_position_radio_btn.get_current_value()
         self._datetime_separator_value = self._datetime_separator.get_current_value()
         self._date_format_value = self._date_format_combobox.get_current_value()
         self._time_format_value = self._time_format_combobox.get_current_value()
@@ -94,51 +91,27 @@ class DateTimeWidget(BasePrepareCommandWidget):
         self._main_layout.addWidget(self._datetime_source_combobox)
         self._main_layout.addWidget(self._date_time_edit)
         self.setContentsMargins(0, 0, 0, 0)
-        self._custom_datetime_value = self._date_time_edit.dateTime().toString(
-            "yyyyMMdd_hhmmss"
-        )
+        self._custom_datetime_value = self._date_time_edit.dateTime().toString("yyyyMMdd_hhmmss")
 
     def add_text_to_widgets(self):
-        self._datetime_position_radio_btn.set_label_text(
-            self.tr("Chose renaming mode:")
-        )
-        self._datetime_separator.set_label_text(
-            self.tr("Enter separator for datetime:")
-        )
+        self._datetime_position_radio_btn.set_label_text(self.tr("Chose renaming mode:"))
+        self._datetime_separator.set_label_text(self.tr("Enter separator for datetime:"))
         self._date_format_combobox.set_label_text(self.tr("Chose Date format:"))
         self._time_format_combobox.set_label_text(self.tr("Chose Time format:"))
-        self._datetime_format_combobox.set_label_text(
-            self.tr("Chose Date/Time format:")
-        )
-        self._datetime_source_combobox.set_label_text(
-            self.tr("Chose the source of time:")
-        )
+        self._datetime_format_combobox.set_label_text(self.tr("Chose Date/Time format:"))
+        self._datetime_source_combobox.set_label_text(self.tr("Chose the source of time:"))
         self._use_uppercase_checkbox.set_label_text(self.tr("Use am/pm in Uppercase:"))
 
     def create_event_handlers(self):
-        self._datetime_position_radio_btn.valueIsChanged.connect(
-            self.handle_position_changed
-        )
-        self._date_format_combobox.valueIsChanged.connect(
-            self.handle_date_format_changed
-        )
-        self._time_format_combobox.valueIsChanged.connect(
-            self.handle_time_format_changed
-        )
-        self._datetime_format_combobox.valueIsChanged.connect(
-            self.handle_datetime_format_changed
-        )
-        self._use_uppercase_checkbox.valueIsChanged.connect(
-            self.handle_use_uppercase_changed
-        )
-        self._datetime_source_combobox.valueIsChanged.connect(
-            self.handle_source_changed
-        )
-        self._date_time_edit.dateTimeChanged.connect(
-            self.handle_custom_datetime_changed
-        )
+        self._datetime_position_radio_btn.valueIsChanged.connect(self.handle_position_changed)
+        self._date_format_combobox.valueIsChanged.connect(self.handle_date_format_changed)
+        self._time_format_combobox.valueIsChanged.connect(self.handle_time_format_changed)
+        self._datetime_format_combobox.valueIsChanged.connect(self.handle_datetime_format_changed)
+        self._use_uppercase_checkbox.valueIsChanged.connect(self.handle_use_uppercase_changed)
+        self._datetime_source_combobox.valueIsChanged.connect(self.handle_source_changed)
+        self._date_time_edit.dateTimeChanged.connect(self.handle_custom_datetime_changed)
 
-    def request_command(self) -> PrepareCommand:
+    def request_command(self) -> DateTimeRenamePrepareCommand:
         return DateTimeRenamePrepareCommand(
             position=self._datetime_position_value,
             date_format=self._date_format_value,
@@ -153,14 +126,9 @@ class DateTimeWidget(BasePrepareCommandWidget):
     @Slot()
     def handle_position_changed(self, value: ItemPositionWithReplacement):
         print(f"handle_position_changed: {value}")
-        if (
-            value == ItemPositionWithReplacement.BEGIN
-            or value == ItemPositionWithReplacement.END
-        ):
+        if value == ItemPositionWithReplacement.BEGIN or value == ItemPositionWithReplacement.END:
             self._datetime_separator.show()
-            self._datetime_separator_value = (
-                self._datetime_separator.get_current_value()
-            )
+            self._datetime_separator_value = self._datetime_separator.get_current_value()
         else:
             self._datetime_separator.hide()
             self._datetime_separator_value = ""

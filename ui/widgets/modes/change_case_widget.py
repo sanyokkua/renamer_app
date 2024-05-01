@@ -1,7 +1,6 @@
 from PySide6.QtCore import Slot
 
 from core.commands.prep_change_case import ChangeCasePreparePrepareCommand
-from core.commons import PrepareCommand
 from core.enums import TextCaseOptions
 from core.text_values import TEXT_CASE_OPTIONS_TEXT
 from ui.widgets.base_abstract_widgets import BasePrepareCommandWidget
@@ -43,10 +42,8 @@ class ChangeCaseWidget(BasePrepareCommandWidget):
         self._case_options.valueIsChanged.connect(self.handle_item_selected)
         self._capitalize.valueIsChanged.connect(self.handle_checked_changed)
 
-    def request_command(self) -> PrepareCommand:
-        return ChangeCasePreparePrepareCommand(
-            capitalize=self._capitalize_value, text_case=self._selected_value
-        )
+    def request_command(self) -> ChangeCasePreparePrepareCommand:
+        return ChangeCasePreparePrepareCommand(capitalize=self._capitalize_value, text_case=self._selected_value)
 
     @Slot()
     def handle_item_selected(self, text_case: TextCaseOptions):

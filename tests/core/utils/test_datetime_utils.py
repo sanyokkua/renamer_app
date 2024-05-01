@@ -236,7 +236,4 @@ def test_make_datetime_string(
     time_format: TimeFormat,
     expected_output: str,
 ):
-    assert (
-        make_datetime_string(date_time_format, date_format, time_format, timestamp)
-        == expected_output
-    )
+    assert make_datetime_string(date_time_format, date_format, time_format, timestamp) == expected_output

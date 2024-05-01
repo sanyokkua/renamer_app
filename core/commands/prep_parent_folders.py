@@ -1,14 +1,14 @@
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import ItemPosition
 from core.models.app_file import AppFile
 from core.utils.io_utils import get_parent_folders
 
 
-class ParentFoldersPrepareCommand(BasePrepareCommand):
+class ParentFoldersPrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command class to prepare files by including parent folder names in their names.
 
-    This class inherits from BasePrepareCommand.
+    This class inherits from AppFileItemByItemListProcessingCommand.
 
     Attributes:
         position (ItemPosition): The position where the parent folder names will be inserted.
@@ -38,13 +38,14 @@ class ParentFoldersPrepareCommand(BasePrepareCommand):
         self.number_of_parents: int = abs(number_of_parents)
         self.separator: str = separator
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Creates a new name for the given AppFile object by including parent folder names in its name.
 
         Args:
             item (AppFile): The AppFile object for which the parent folder names need to be included in the name.
             index (int): The index of current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile object with the parent folder names included in its name.

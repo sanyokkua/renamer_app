@@ -2,7 +2,6 @@ from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QWidget, QHBoxLayout
 
 from core.commands.prep_image_dimensions import ImageDimensionsPrepareCommand
-from core.commons import PrepareCommand
 from core.enums import ItemPositionWithReplacement, ImageDimensionOptions
 from core.text_values import (
     ITEM_POSITION_WITH_REPLACEMENT_TEXT,
@@ -53,16 +52,12 @@ class ImageDimensionsWidget(BasePrepareCommandWidget):
             enum_class=ImageDimensionOptions,
             text_mapping=IMAGE_DIMENSION_OPTIONS_TEXT,
         )
-        self._separator_between_line_edit = LabelLineEditWidget(
-            parent=self._widget_dimension_edit
-        )
+        self._separator_between_line_edit = LabelLineEditWidget(parent=self._widget_dimension_edit)
         self._separator_with_dimensions_line_edit = LabelLineEditWidget(parent=self)
 
     def configure_widgets(self):
         self._separator_between_line_edit.set_text_validator(PATH_SYMBOLS_VALIDATOR)
-        self._separator_with_dimensions_line_edit.set_text_validator(
-            PATH_SYMBOLS_VALIDATOR
-        )
+        self._separator_with_dimensions_line_edit.set_text_validator(PATH_SYMBOLS_VALIDATOR)
 
         self._widget_dimension_edit.setLayout(self._widget_dimension_edit_layout)
         self._widget_dimension_edit_layout.addWidget(self._left_side_combobox)
@@ -73,23 +68,15 @@ class ImageDimensionsWidget(BasePrepareCommandWidget):
         self._main_layout.addWidget(self._widget_dimension_edit)
         self._main_layout.addWidget(self._separator_with_dimensions_line_edit)
 
-        self._dimension_position_value = (
-            self._dimension_position_radio_btn.get_current_value()
-        )
+        self._dimension_position_value = self._dimension_position_radio_btn.get_current_value()
         self._left_side_value = self._left_side_combobox.get_current_value()
         self._right_side_value = self._right_side_combobox.get_current_value()
-        self._separator_between_value = (
-            self._separator_between_line_edit.get_current_value()
-        )
-        self._separator_with_dimensions_value = (
-            self._separator_with_dimensions_line_edit.get_current_value()
-        )
+        self._separator_between_value = self._separator_between_line_edit.get_current_value()
+        self._separator_with_dimensions_value = self._separator_with_dimensions_line_edit.get_current_value()
         self.setContentsMargins(0, 0, 0, 0)
 
     def add_text_to_widgets(self):
-        self._dimension_position_radio_btn.set_label_text(
-            self.tr("Chose renaming mode:")
-        )
+        self._dimension_position_radio_btn.set_label_text(self.tr("Chose renaming mode:"))
         self._left_side_combobox.set_label_text(self.tr("Left:"))
         self._separator_between_line_edit.set_label_text(self.tr("Separator:"))
         self._right_side_combobox.set_label_text(self.tr("Right:"))
@@ -98,19 +85,13 @@ class ImageDimensionsWidget(BasePrepareCommandWidget):
         )
 
     def create_event_handlers(self):
-        self._dimension_position_radio_btn.valueIsChanged.connect(
-            self.handle_position_changed
-        )
+        self._dimension_position_radio_btn.valueIsChanged.connect(self.handle_position_changed)
         self._left_side_combobox.valueIsChanged.connect(self.handle_left_side_changed)
-        self._separator_between_line_edit.valueIsChanged.connect(
-            self.handle_separator_between_changed
-        )
+        self._separator_between_line_edit.valueIsChanged.connect(self.handle_separator_between_changed)
         self._right_side_combobox.valueIsChanged.connect(self.handle_right_side_changed)
-        self._separator_with_dimensions_line_edit.valueIsChanged.connect(
-            self.handle_separator_with_dimensions_changed
-        )
+        self._separator_with_dimensions_line_edit.valueIsChanged.connect(self.handle_separator_with_dimensions_changed)
 
-    def request_command(self) -> PrepareCommand:
+    def request_command(self) -> ImageDimensionsPrepareCommand:
         return ImageDimensionsPrepareCommand(
             position=self._dimension_position_value,
             left_side=self._left_side_value,

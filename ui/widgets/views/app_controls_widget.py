@@ -25,9 +25,7 @@ class AppControlsWidget(BaseAbstractWidget):
 
     def init_widgets(self):
         self._main_layout = QHBoxLayout(self)
-        self._app_modes_combobox = LabelComboboxWidget(
-            parent=self, enum_class=AppModes, text_mapping=APP_MODE_TEXT
-        )
+        self._app_modes_combobox = LabelComboboxWidget(parent=self, enum_class=AppModes, text_mapping=APP_MODE_TEXT)
         self._preview_btn = QPushButton(self)
         self._rename_btn = QPushButton(self)
         self._clear_btn = QPushButton(self)

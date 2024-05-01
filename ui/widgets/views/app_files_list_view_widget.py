@@ -29,9 +29,7 @@ class AppFilesListViewWidget(BaseAbstractWidget):
         pass
 
     def create_event_handlers(self):
-        self._files_table_view.files_dropped_to_widget.connect(
-            self.handle_files_dropped
-        )
+        self._files_table_view.files_dropped_to_widget.connect(self.handle_files_dropped)
 
     @Slot()
     def handle_files_dropped(self, files_list: list[str]):

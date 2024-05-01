@@ -1,7 +1,7 @@
 import datetime
 from datetime import datetime
 
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import (
     ItemPositionWithReplacement,
     DateFormat,
@@ -13,7 +13,7 @@ from core.models.app_file import AppFile
 from core.utils.datetime_utils import make_datetime_string
 
 
-class DateTimeRenamePrepareCommand(BasePrepareCommand):
+class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command to rename files using date and time information.
 
@@ -64,13 +64,14 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
         self.custom_datetime: str = custom_datetime
         self.separator_for_name_and_datetime = separator_for_name_and_datetime
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Create a new name for the AppFile item based on the specified date and time formats and sources.
 
         Args:
             item (AppFile): The AppFile item for which the new name will be created.
             index (int): The index of current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile item with the new name.
@@ -82,9 +83,7 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
         if timestamp is None:
             return item
 
-        date_time_str: str = make_datetime_string(
-            self.datetime_format, self.date_format, self.time_format, timestamp
-        )
+        date_time_str: str = make_datetime_string(self.datetime_format, self.date_format, self.time_format, timestamp)
         next_name: str = self.build_next_name(current_name, date_time_str)
         next_name = self.fix_case_of_am_pm(next_name)
 
@@ -109,9 +108,7 @@ class DateTimeRenamePrepareCommand(BasePrepareCommand):
             case DateTimeSource.FILE_MODIFICATION_DATE:
                 timestamp = item.fs_modification_date
             case DateTimeSource.CONTENT_CREATION_DATE:
-                timestamp = (
-                    None if item.metadata is None else item.metadata.creation_date
-                )
+                timestamp = None if item.metadata is None else item.metadata.creation_date
             case DateTimeSource.CURRENT_DATE:
                 now: datetime = datetime.now()
                 timestamp = now.timestamp()

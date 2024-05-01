@@ -1,7 +1,6 @@
 from PySide6.QtCore import Slot
 
 from core.commands.prep_add_text import AddTextPrepareCommand
-from core.commons import PrepareCommand
 from core.enums import ItemPosition
 from core.text_values import ITEM_POSITION_TEXT
 from ui.widgets.base_abstract_widgets import (
@@ -50,10 +49,8 @@ class AddTextWidget(BasePrepareCommandWidget):
         self._radio_enum_widget.valueIsChanged.connect(self.handle_radio_changed)
         self._text_to_add.valueIsChanged.connect(self.handle_text_changed)
 
-    def request_command(self) -> PrepareCommand:
-        return AddTextPrepareCommand(
-            text=self._text_value, position=self._selected_radio_value
-        )
+    def request_command(self) -> AddTextPrepareCommand:
+        return AddTextPrepareCommand(text=self._text_value, position=self._selected_radio_value)
 
     @Slot()
     def handle_radio_changed(self, selected_radio: ItemPosition):

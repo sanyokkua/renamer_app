@@ -1,9 +1,9 @@
-from core.commons import BasePrepareCommand
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import TruncateOptions
 from core.models.app_file import AppFile
 
 
-class TruncateNamePrepareCommand(BasePrepareCommand):
+class TruncateNamePrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command class for truncating filenames.
 
@@ -31,13 +31,14 @@ class TruncateNamePrepareCommand(BasePrepareCommand):
         self.number_of_symbols: int = number_of_symbols
         self.truncate_options: TruncateOptions = truncate_options
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Creates a new filename by truncating the original filename.
 
         Args:
             item (AppFile): The AppFile item.
             index (int): The index of the current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile item with the new filename.
@@ -45,17 +46,11 @@ class TruncateNamePrepareCommand(BasePrepareCommand):
 
         next_name: str = item.file_name
 
-        if (
-            self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS
-            and self.number_of_symbols > len(next_name)
-        ):
+        if self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS and self.number_of_symbols > len(next_name):
             item.next_name = ""
             return item
 
-        if (
-            self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS
-            and self.number_of_symbols == 0
-        ):
+        if self.truncate_options != TruncateOptions.TRUNCATE_EMPTY_SYMBOLS and self.number_of_symbols == 0:
             item.next_name = next_name
             return item
 

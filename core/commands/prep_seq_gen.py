@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Optional
 
-from core.commons import BasePrepareCommand
+from core.abstract import StatusFunction
+from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import SortSource
 from core.models.app_file import AppFile
 
@@ -21,7 +22,7 @@ def get_default_for_none(value: any, default_val: any) -> any:
     return default_val
 
 
-class SequencePrepareCommand(BasePrepareCommand):
+class SequencePrepareCommand(AppFileItemByItemListProcessingCommand):
     """
     A command class for preparing filenames with sequential numbers.
 
@@ -83,13 +84,14 @@ class SequencePrepareCommand(BasePrepareCommand):
         formatted_string = "{:0{width}d}".format(number, width=self.padding)
         return formatted_string
 
-    def create_new_name(self, item: AppFile, index: int) -> AppFile:
+    def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
         Creates a new filename with sequential numbers.
 
         Args:
             item (AppFile): The AppFile item.
             index (int): The index of the current item.
+            data (list[AppFile]): The list of AppFile objects being processed.
 
         Returns:
             AppFile: The AppFile item with the new filename.
@@ -100,7 +102,21 @@ class SequencePrepareCommand(BasePrepareCommand):
 
         return item
 
-    def sort_date(self, data: List[AppFile]) -> List[AppFile]:
+    def preprocess_data(self, data: list[AppFile], status_callback: Optional[StatusFunction] = None) -> list[AppFile]:
+        """Preprocesses the data item by item.
+
+        Args:
+            data (list): Input data.
+            status_callback (Optional[StatusFunction]): Status callback function.
+
+        Returns:
+            list: Preprocessed data.
+        """
+        data_items = super().preprocess_data(data, status_callback)
+        data_items = self.sort_data(data_items)
+        return data_items
+
+    def sort_data(self, data: List[AppFile]) -> List[AppFile]:
         """
         Sorts the file list based on the specified source.
 
@@ -114,19 +130,13 @@ class SequencePrepareCommand(BasePrepareCommand):
             case SortSource.FILE_NAME:
                 return sorted(data, key=lambda x: get_default_for_none(x.file_name, ""))
             case SortSource.FILE_PATH:
-                return sorted(
-                    data, key=lambda x: get_default_for_none(x.absolute_path, "")
-                )
+                return sorted(data, key=lambda x: get_default_for_none(x.absolute_path, ""))
             case SortSource.FILE_SIZE:
                 return sorted(data, key=lambda x: get_default_for_none(x.file_size, 0))
             case SortSource.FILE_CREATION_DATETIME:
-                return sorted(
-                    data, key=lambda x: get_default_for_none(x.fs_creation_date, 0)
-                )
+                return sorted(data, key=lambda x: get_default_for_none(x.fs_creation_date, 0))
             case SortSource.FILE_MODIFICATION_DATETIME:
-                return sorted(
-                    data, key=lambda x: get_default_for_none(x.fs_modification_date, 0)
-                )
+                return sorted(data, key=lambda x: get_default_for_none(x.fs_modification_date, 0))
             case SortSource.FILE_CONTENT_CREATION_DATETIME:
 
                 def get_content_creation(app_file: AppFile):

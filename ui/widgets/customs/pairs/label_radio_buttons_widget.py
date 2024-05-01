@@ -61,9 +61,7 @@ class LabelRadioButtonsWidget(BaseLabelWidget):
                 btn.setChecked(True)
 
     def create_event_handlers(self):
-        self._radio_button_group.idToggled.connect(
-            lambda btn_id: self.valueIsChanged.emit(btn_id)
-        )
+        self._radio_button_group.idToggled.connect(lambda btn_id: self.valueIsChanged.emit(btn_id))
 
     def get_current_value(self) -> T:
         return self._radio_button_group.checkedId()
