@@ -1,19 +1,21 @@
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtGui import Qt, QCursor
-from PySide6.QtWidgets import QHBoxLayout, QPushButton
+from PySide6.QtWidgets import QHBoxLayout
 
 from core.enums import AppModes
 from core.text_values import APP_MODE_TEXT
+from ui.customs.app_widgets.combobox_form import ComboboxForm
+from ui.customs.qt_widgets import ComboBoxItem
+from ui.customs.qt_widgets.button import Button
 from ui.widgets.base_abstract_widgets import BaseAbstractWidget
-from ui.widgets.customs.pairs.label_combobox_widget import LabelComboboxWidget
 
 
 class AppControlsWidget(BaseAbstractWidget):
     _main_layout: QHBoxLayout
-    _app_modes_combobox: LabelComboboxWidget
-    _preview_btn: QPushButton
-    _rename_btn: QPushButton
-    _clear_btn: QPushButton
+    _app_modes_combobox: ComboboxForm
+    _preview_btn: Button
+    _rename_btn: Button
+    _clear_btn: Button
 
     appModeSelected = Signal(AppModes)
     previewBtnClicked = Signal()
@@ -25,10 +27,10 @@ class AppControlsWidget(BaseAbstractWidget):
 
     def init_widgets(self):
         self._main_layout = QHBoxLayout(self)
-        self._app_modes_combobox = LabelComboboxWidget(parent=self, enum_class=AppModes, text_mapping=APP_MODE_TEXT)
-        self._preview_btn = QPushButton(self)
-        self._rename_btn = QPushButton(self)
-        self._clear_btn = QPushButton(self)
+        self._app_modes_combobox = ComboboxForm(parent=self)
+        self._preview_btn = Button(self)
+        self._rename_btn = Button(self)
+        self._clear_btn = Button(self)
 
     def configure_widgets(self):
         self.setLayout(self._main_layout)
@@ -43,9 +45,13 @@ class AppControlsWidget(BaseAbstractWidget):
         self._preview_btn.setCursor(cursor)
         self._rename_btn.setCursor(cursor)
         self._clear_btn.setCursor(cursor)
+        items = []
+        for value, text in APP_MODE_TEXT.items():
+            items.append(ComboBoxItem[AppModes](value, text))
+        self._app_modes_combobox.set_widget_items(items)
 
     def add_text_to_widgets(self):
-        self._app_modes_combobox.set_label_text(self.tr("Select mode"))
+        self._app_modes_combobox.set_widget_label(self.tr("Select mode"))
         self._preview_btn.setText(self.tr("Preview"))
         self._rename_btn.setText(self.tr("Rename"))
         self._clear_btn.setText(self.tr("Clear"))

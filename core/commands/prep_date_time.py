@@ -41,6 +41,8 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
         use_uppercase: bool = True,
         custom_datetime: str = "",
         separator_for_name_and_datetime: str = "",
+        use_fallback_dates: bool = False,
+        use_fallback_date_str: str = "",
     ):
         """
         Initialize the DateTimeRenamePrepareCommand.
@@ -63,6 +65,8 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
         self.use_uppercase: bool = use_uppercase
         self.custom_datetime: str = custom_datetime
         self.separator_for_name_and_datetime = separator_for_name_and_datetime
+        self.use_fallback_dates: bool = use_fallback_dates
+        self.use_fallback_date_str: str = use_fallback_date_str
 
     def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
@@ -80,7 +84,7 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
 
         timestamp: float | None = self.get_timestamp(item)
 
-        if timestamp is None:
+        if timestamp is None or timestamp == 0:
             return item
 
         date_time_str: str = make_datetime_string(self.datetime_format, self.date_format, self.time_format, timestamp)
@@ -115,6 +119,18 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
             case DateTimeSource.CUSTOM_DATE:
                 dt: datetime = datetime.strptime(self.custom_datetime, "%Y%m%d_%H%M%S")
                 timestamp = dt.timestamp()
+
+        if self.use_fallback_dates and (timestamp is None or timestamp == 0):
+            if len(self.use_fallback_date_str.strip()) > 0:
+                dt: datetime = datetime.strptime(self.use_fallback_date_str, "%Y%m%d_%H%M%S")
+                timestamp = dt.timestamp()
+            else:
+                cr_d = item.fs_creation_date
+                mod_d = item.fs_modification_date
+                cc_d = None if item.metadata is None else item.metadata.creation_date
+                dates = [date for date in [cr_d, mod_d, cc_d] if date is not None]
+                timestamp = min(dates) if len(dates) > 0 else None
+
         return timestamp
 
     def build_next_name(self, current_name: str, date_time_str: str) -> str:

@@ -1016,10 +1016,12 @@ def test_command_params_combinations(
         file_name_origin=f_name,
         file_name_expected=n_name,
         file_creation_time=ts,
+        file_modification_time=ts,
+        file_content_creation_time=ts,
     )
 
 
-def test_command_params_combinations_for_empty_timestamp():
+def test_command_for_empty_timestamp():
     # Prepare
     from core.commands.prep_date_time import DateTimeRenamePrepareCommand
 
@@ -1031,6 +1033,7 @@ def test_command_params_combinations_for_empty_timestamp():
         datetime_source=DateTimeSource.CONTENT_CREATION_DATE,
         use_uppercase=True,
         custom_datetime="",
+        use_fallback_dates=False,
     )
 
     # Verify
@@ -1038,6 +1041,173 @@ def test_command_params_combinations_for_empty_timestamp():
         test_command,
         file_name_origin="FILE_NAME",
         file_name_expected="FILE_NAME",
-        file_creation_time=None,
+        file_content_creation_time=None,
         is_updated_name=False,
+    )
+
+
+datetime_20221025_151010 = datetime(2022, 10, 25, 15, 10, 10)
+datetime_20221025_151110 = datetime(2022, 10, 25, 15, 11, 10)
+datetime_20221025_151210 = datetime(2022, 10, 25, 15, 12, 10)
+datetime_20221025_151010_ts = datetime_20221025_151010.timestamp()
+datetime_20221025_151110_ts = datetime_20221025_151110.timestamp()
+
+
+@pytest.mark.parametrize(
+    "dts, file_creation, file_modification, file_content_creation, use_fallback_dates, custom_datetime, n_name, is_updated",
+    [
+        (
+            DateTimeSource.FILE_CREATION_DATE,
+            None,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            False,
+            "",
+            "FILE_NAME",
+            False,
+        ),
+        (
+            DateTimeSource.FILE_MODIFICATION_DATE,
+            datetime_20221025_151010_ts,
+            None,
+            datetime_20221025_151010_ts,
+            False,
+            "",
+            "FILE_NAME",
+            False,
+        ),
+        (
+            DateTimeSource.CONTENT_CREATION_DATE,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            None,
+            False,
+            "",
+            "FILE_NAME",
+            False,
+        ),
+        (
+            DateTimeSource.CONTENT_CREATION_DATE,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            None,
+            True,
+            "",
+            "20221025_151010",
+            True,
+        ),
+        (
+            DateTimeSource.CONTENT_CREATION_DATE,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            None,
+            True,
+            "",
+            "20221025_151010",
+            True,
+        ),
+        (
+            DateTimeSource.FILE_MODIFICATION_DATE,
+            datetime_20221025_151010_ts,
+            None,
+            datetime_20221025_151010_ts,
+            True,
+            "",
+            "20221025_151010",
+            True,
+        ),
+        (
+            DateTimeSource.FILE_MODIFICATION_DATE,
+            datetime_20221025_151010_ts,
+            None,
+            datetime_20221025_151010_ts,
+            True,
+            "",
+            "20221025_151010",
+            True,
+        ),
+        (
+            DateTimeSource.FILE_CREATION_DATE,
+            None,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            True,
+            "",
+            "20221025_151010",
+            True,
+        ),
+        (
+            DateTimeSource.FILE_CREATION_DATE,
+            None,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            True,
+            "",
+            "20221025_151010",
+            True,
+        ),
+        (
+            DateTimeSource.FILE_CREATION_DATE,
+            None,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            True,
+            "20081122_115900",
+            "20081122_115900",
+            False,
+        ),
+        (
+            DateTimeSource.FILE_MODIFICATION_DATE,
+            datetime_20221025_151010_ts,
+            None,
+            datetime_20221025_151010_ts,
+            True,
+            "20081122_115900",
+            "20081122_115900",
+            False,
+        ),
+        (
+            DateTimeSource.CONTENT_CREATION_DATE,
+            datetime_20221025_151010_ts,
+            datetime_20221025_151010_ts,
+            None,
+            True,
+            "20081122_115900",
+            "20081122_115900",
+            False,
+        ),
+    ],
+)
+def test_command_params_combinations_for_fallback(
+    dts: DateTimeSource,
+    file_creation: float | None,
+    file_modification: float | None,
+    file_content_creation: float | None,
+    use_fallback_dates: bool,
+    custom_datetime: str,
+    n_name: str,
+    is_updated: bool,
+):
+    # Prepare
+    from core.commands.prep_date_time import DateTimeRenamePrepareCommand
+
+    test_command = DateTimeRenamePrepareCommand(
+        position=ItemPositionWithReplacement.REPLACE,
+        date_format=DateFormat.YYYY_MM_DD_TOGETHER,
+        time_format=TimeFormat.HH_MM_SS_24_TOGETHER,
+        datetime_format=DateTimeFormat.DATE_TIME_UNDERSCORED,
+        datetime_source=dts,
+        use_fallback_date_str=custom_datetime,
+        use_fallback_dates=use_fallback_dates,
+    )
+
+    # Verify
+    verify_command_result(
+        test_command,
+        file_name_origin="FILE_NAME",
+        file_name_expected=n_name,
+        is_updated_name=False,
+        file_creation_time=file_creation,
+        file_modification_time=file_modification,
+        file_content_creation_time=file_content_creation,
     )

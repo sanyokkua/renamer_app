@@ -41,6 +41,20 @@ MUTAGEN_SUPPORTED_EXT: set[str] = {
 
 
 def validate_path(file_path: Path) -> None:
+    """
+    Validates whether the given file path exists and is not None.
+
+    Parameters:
+    - file_path (Path): A Path object representing the file path to be validated.
+
+    Raises:
+    - PassedArgumentIsNone: If the passed file path is None.
+    - AssertionError: If the passed file_path is not an instance of Path.
+    - FileNotFoundException: If the file specified by the file_path does not exist.
+
+    Returns:
+    - None: This function does not return anything.
+    """
     if file_path is None:
         raise PassedArgumentIsNone("Passed file path is None")
     assert isinstance(file_path, Path)
@@ -50,22 +64,54 @@ def validate_path(file_path: Path) -> None:
 
 
 def is_ext_supported(file_path: Path | None, set_of_ext: set[str]) -> bool:
+    """
+    Checks if the extension of the given file path is supported.
+
+    Parameters:
+    - file_path (Path | None): A Path object representing the file path. If None, the function returns False.
+    - set_of_ext (set[str]): A set containing supported file extensions, each as a string (e.g., {'.txt', '.csv'}).
+
+    Returns:
+    - bool: True if the extension of the file path is in the set_of_ext, False otherwise.
+
+    Raises:
+    - PassedArgumentIsNone: If the passed file_path is None.
+    - AssertionError: If the file_path parameter is not an instance of Path.
+    - FileNotFoundException: If the file specified by the file_path does not exist.
+    """
     validate_path(file_path)
 
     ext: str = file_path.suffix.lower()  # Extension with period
     return ext in set_of_ext
 
 
-def chose_correct_date(
+def chose_correct_date_from_metadata(
     date_time: float | None,
     date_time_original: float | None,
     date_time_digitized: float | None,
 ) -> float | None:
-    # Here will be chosen best option of the provided dates.
-    # In 99% cases, date_time_original is representing real datetime for the image and should be chosen
-    # But if date_time_original is absent, date_time or date_time_digitized should be chosen.
-    # Here is the logic to choose the earliest date
+    """
+    Chooses the most appropriate date from the provided metadata timestamps.
 
+    Parameters:
+    - date_time (float | None): The timestamp representing the date and time.
+    - date_time_original (float | None): The timestamp representing the original creation date and time.
+    - date_time_digitized (float | None): The timestamp representing the digitization date and time.
+
+    Returns:
+    - float | None: The chosen timestamp, or None if all provided timestamps are None.
+
+    Logic:
+    - If all timestamps are None, returns None.
+    - If all timestamps are present, chooses the earliest one.
+    - Otherwise, chooses the earliest non-None timestamp.
+
+    Note:
+    - In most cases, date_time_original is chosen if present, as it typically represents the real creation datetime.
+    - If date_time_original is absent, date_time or date_time_digitized is chosen.
+    - If multiple timestamps are present, the earliest one is chosen.
+
+    """
     # If all dates are absent, return None
     if date_time_original is None and date_time is None and date_time_digitized is None:
         return None
@@ -82,19 +128,69 @@ def chose_correct_date(
 
 
 def parse_date_time(date_time_str: Optional[str]) -> Union[float, int, None]:
+    """
+    Parses the given date/time string into a timestamp (seconds since epoch).
+
+    Parameters:
+    - date_time_str (Optional[str]): A string representing a date and time in various formats.
+
+    Returns:
+    - Union[float, int, None]: A timestamp (seconds since epoch) if the parsing is successful,
+      None if the input string is None or cannot be parsed.
+
+    Logic:
+    - Attempts to parse the input date/time string using a list of predefined format strings.
+    - Iterates through the format strings until a successful parsing is achieved or all formats fail.
+    - If parsing is successful, returns the corresponding timestamp.
+    - If parsing fails for all formats, returns None.
+
+    Example:
+    ```python
+    # Example usage:
+    date_time_str = "2024-10-29T15:00:59"
+    timestamp = parse_date_time(date_time_str)
+    if timestamp is not None:
+        print("Timestamp:", timestamp)
+    else:
+        print("Failed to parse the date/time string.")
+    ```
+
+    Supported Date/Time Formats (in order of priority):
+    - "%Y-%m-%dT%H:%M:%S": ISO 8601 format with timezone
+    - "%a, %d %b %Y %H:%M:%S %z": RFC 2822 format with timezone
+    - "%a, %d %b %Y %H:%M:%S": RFC 2822 format without timezone
+    - "%Y-%m-%d %H:%M:%S %z": Custom format with timezone
+    - "%Y-%m-%d %H:%M:%S": Custom format without timezone
+    - "%Y-%m-%dT%H:%M:%S%z": ISO 8601 format without space before timezone
+    - "%Y-%m-%dT%H:%M:%S": ISO 8601 format without timezone
+    - "%Y:%m:%d %H:%M:%S": Custom format with colon separator
+
+    Note:
+    - This function does not handle parsing of timezone offsets other than UTC.
+    """
     print(f"Will be a try to parse following date/time value: {date_time_str}")
     if date_time_str is None:
         return None
 
-    formats = ["%Y-%m-%dT%H:%M:%S%z", "%Y:%m:%d %H:%M:%S"]
+    formats = [
+        "%Y-%m-%dT%H:%M:%S",
+        "%a, %d %b %Y %H:%M:%S %z",
+        "%a, %d %b %Y %H:%M:%S",
+        "%Y-%m-%d %H:%M:%S %z",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S%z",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y:%m:%d %H:%M:%S",
+    ]
 
     for format_str in formats:
         try:
             print(f"Trying to parse {date_time_str} with format: {format_str}")
-            parsed_datetime = datetime.strptime(date_time_str, format_str).timestamp()
+            parsed_datetime = datetime.strptime(date_time_str.strip(), format_str).timestamp()
             print(f"Date/time parsed, new value is {parsed_datetime}")
             return parsed_datetime
-        except ValueError:
+        except ValueError as err:
+            print(f"Failed to parse date: {date_time_str} with format: {format_str}, {err}")
             pass
 
     print("There were no date/time values parsed, None will be returned")
@@ -121,7 +217,9 @@ def get_creation_datetime_by_exifread(file_path: Path) -> float | None:
             parsed_datetime = parse_date_time(get_value(tag_img_date_time))
             parsed_datetime_digitized = parse_date_time(get_value(tag_date_time_digit))
 
-            return chose_correct_date(parsed_datetime, parsed_datetime_original, parsed_datetime_digitized)
+            return chose_correct_date_from_metadata(
+                parsed_datetime, parsed_datetime_original, parsed_datetime_digitized
+            )
     except Exception as ex:
         # Any Exception or error during work with file and extraction of file is OK in this case,
         # so None should be returned
@@ -154,7 +252,9 @@ def get_creation_datetime_by_pil(file_path: Path) -> float | None:
             parsed_datetime = parse_date_time(image_datetime_str)
             parsed_datetime_digitized = parse_date_time(image_datetime_digitized_str)
 
-            return chose_correct_date(parsed_datetime, parsed_datetime_original, parsed_datetime_digitized)
+            return chose_correct_date_from_metadata(
+                parsed_datetime, parsed_datetime_original, parsed_datetime_digitized
+            )
     except Exception as ex:
         # Any Exception or error during work with file and extraction of file is OK in this case,
         # so None should be returned

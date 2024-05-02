@@ -85,16 +85,19 @@ def verify_command_result(
     img_height: int = 720,
     absolute_path: str = "",
     is_updated_name: bool = True,
+    file_modification_time: float | None = None,
+    file_content_creation_time: float | None = None,
 ):
+
     built_app_file: AppFile = build_app_file(
         file_name=file_name_origin,
-        mod_timestamp=file_creation_time,
+        mod_timestamp=file_modification_time,
         width=img_width,
         height=img_height,
         absolute_path=absolute_path,
         file_ext=file_ext,
         cr_timestamp=file_creation_time,
-        cc_timestamp=file_creation_time,
+        cc_timestamp=file_content_creation_time,
     )
 
     result: list[AppFile] = test_command.execute([built_app_file])
