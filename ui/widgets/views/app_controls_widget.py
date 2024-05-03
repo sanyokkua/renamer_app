@@ -4,10 +4,10 @@ from PySide6.QtWidgets import QHBoxLayout
 
 from core.enums import AppModes
 from core.text_values import APP_MODE_TEXT
-from ui.customs.app_widgets.combobox_form import ComboboxForm
-from ui.customs.qt_widgets import ComboBoxItem
-from ui.customs.qt_widgets.button import Button
 from ui.widgets.base_abstract_widgets import BaseAbstractWidget
+from ui.widgets.customs.form_widgets import ComboboxForm
+from ui.widgets.customs.single_widgets import ComboBoxItem
+from ui.widgets.customs.single_widgets.button import Button
 
 
 class AppControlsWidget(BaseAbstractWidget):

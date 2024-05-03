@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QApplication
 
-from ui.windows.application_main_window import ApplicationMainWindow
+from ui.windows.app_main_window import ApplicationMainWindow
 
 
 class RenamerApp(QApplication):

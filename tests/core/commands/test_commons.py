@@ -88,7 +88,6 @@ def verify_command_result(
     file_modification_time: float | None = None,
     file_content_creation_time: float | None = None,
 ):
-
     built_app_file: AppFile = build_app_file(
         file_name=file_name_origin,
         mod_timestamp=file_modification_time,

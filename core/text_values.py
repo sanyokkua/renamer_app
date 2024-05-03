@@ -69,9 +69,9 @@ TEXT_CASE_OPTIONS_TEXT: dict[TextCaseOptions, str] = {
 }
 
 TRUNCATE_OPTIONS_TEXT: dict[TruncateOptions, str] = {
-    TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN: "Remove Symbols In Begin",
-    TruncateOptions.REMOVE_SYMBOLS_FROM_END: "Remove Symbols From Begin",
-    TruncateOptions.TRUNCATE_EMPTY_SYMBOLS: "Remove empty symbols from begin and end",
+    TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN: "Start",
+    TruncateOptions.REMOVE_SYMBOLS_FROM_END: "End",
+    TruncateOptions.TRUNCATE_EMPTY_SYMBOLS: "Trim Empty",
 }
 
 DATE_FORMAT_TEXT: dict[DateFormat, str] = {

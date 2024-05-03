@@ -1,12 +1,5 @@
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtWidgets import (
-    QHBoxLayout,
-    QVBoxLayout,
-    QMainWindow,
-    QWidget,
-    QProgressBar,
-    QApplication,
-)
+from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QMainWindow, QWidget, QProgressBar, QApplication
 
 from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.commands.fix_same_names import FixSameNamesCommand
@@ -24,6 +17,7 @@ FIX_SAME_NAMES_COMMAND = FixSameNamesCommand()
 RENAME_COMMAND = RenameFilesCommand()
 
 
+# Deprecated
 class ApplicationMainWindow(QMainWindow):
     _main_widget_layout: QVBoxLayout
     _main_widget: QWidget
@@ -34,6 +28,7 @@ class ApplicationMainWindow(QMainWindow):
     _app_controls_widget: AppControlsWidget
     _app_modes_widget: AppModeSelectViewWidget
     _files_view_widget: AppFilesListViewWidget
+
     _progress_bar: QProgressBar
 
     _mapping_command: MapUrlToAppFileCommand

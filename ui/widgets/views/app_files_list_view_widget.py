@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QVBoxLayout
 
 from core.models.app_file import AppFile
 from ui.widgets.base_abstract_widgets import BaseAbstractWidget
-from ui.widgets.customs.files_table_widget import FilesTableView
+from ui.widgets.main.files_table_widget import FilesTableView
 
 
 class AppFilesListViewWidget(BaseAbstractWidget):
