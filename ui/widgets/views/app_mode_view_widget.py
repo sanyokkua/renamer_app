@@ -45,6 +45,9 @@ class AppModeSelectViewWidget(ModeBaseWidget):
         self._current_mode_widget = self._mode_widget_dict[AppModes.ADD_CUSTOM_TEXT]
         self._current_mode_widget.show()
 
+        self.setContentsMargins(0, 0, 0, 0)
+        self._main_layout.setContentsMargins(0, 0, 0, 0)
+
         self.setMinimumWidth(450)
         self.setMaximumWidth(450)
 

@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QModelIndex, QAbstractTableModel
+from PySide6.QtCore import Qt, QModelIndex, QAbstractTableModel, QItemSelectionModel
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtGui import QFont, QColor, QColorConstants
 from PySide6.QtWidgets import QTableView, QHeaderView
@@ -7,7 +7,7 @@ from core.models.app_file import AppFile
 
 
 class FilesTableModel(QAbstractTableModel):
-    columns = ["Original Name", "Type", "New Name"]
+    columns = ["Name", "Type", "New Name"]
     rows: list[AppFile] = []
 
     def __init__(self, parent=None):
@@ -25,12 +25,13 @@ class FilesTableModel(QAbstractTableModel):
             col = index.column()
 
             data_obj: AppFile = self.rows[row]
-            if col == 0:
-                return f"{data_obj.file_name}{data_obj.file_extension}"
-            elif col == 1:
-                return "Folder" if data_obj.is_folder else "File"
-            elif col == 2:
-                return f"{data_obj.next_name}{data_obj.file_extension_new}"
+            match col:
+                case 0:
+                    return f"{data_obj.file_name}{data_obj.file_extension}"
+                case 1:
+                    return "Folder" if data_obj.is_folder else "File"
+                case 2:
+                    return f"{data_obj.next_name}{data_obj.file_extension_new}"
 
         if role == Qt.ItemDataRole.BackgroundRole:
             row = index.row()
@@ -45,12 +46,12 @@ class FilesTableModel(QAbstractTableModel):
                 return QColor(QColorConstants.White)
 
     def headerData(self, section, orientation, role=...):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
             return self.columns[section]
         return super().headerData(section, orientation, role)
 
-    def flags(self, index: QModelIndex) -> Qt.ItemFlags:
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+    def flags(self, index: QModelIndex) -> Qt.ItemFlag:
+        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
 
     def insertRows(self, row, files):
         self.beginInsertRows(QModelIndex(), row, row + len(files) - 1)
@@ -66,21 +67,24 @@ class FilesTableModel(QAbstractTableModel):
 
 class FilesTableView(QTableView):
     files_dropped_to_widget = Signal(list)
+    file_selected = Signal(AppFile)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setModel(FilesTableModel())
-        self.setAcceptDrops(True)
         self.setDragEnabled(True)
+        self.setAcceptDrops(True)
         self.viewport().setAcceptDrops(True)
-        self.resizeColumnsToContents()
-        self.resizeRowsToContents()
+
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self.verticalHeader().setDefaultSectionSize(10)
         font = QFont("Arial", 10)
         self.setFont(font)
         self.setAutoFillBackground(False)
+        self.setContentsMargins(0, 0, 0, 0)
+
+        self.clicked.connect(self.handle_click)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -95,6 +99,36 @@ class FilesTableView(QTableView):
             file_paths = [url.toLocalFile() for url in urls]
             self.emit_files_dropped(file_paths)
 
+    def mousePressEvent(self, event):
+        index = self.indexAt(event.pos())
+        if index.isValid():
+            selection_model = self.selectionModel()
+            selection_model.clearSelection()
+            row = index.row()
+            for col in range(self.model().columnCount()):
+                selection_model.select(self.model().index(row, col), QItemSelectionModel.SelectionFlag.Select)
+        super().mousePressEvent(event)
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down):
+            selection_model = self.selectionModel()
+            current_index = self.currentIndex()
+            if current_index.isValid():
+                row = current_index.row()
+                if event.key() == Qt.Key.Key_Up:
+                    row -= 1
+                elif event.key() == Qt.Key.Key_Down:
+                    row += 1
+                row = max(0, min(row, self.model().rowCount() - 1))  # Ensure row is within bounds
+                new_index = self.model().index(row, 0)
+                selection_model.clearSelection()
+                for col in range(self.model().columnCount()):
+                    selection_model.select(self.model().index(row, col), QItemSelectionModel.SelectionFlag.Select)
+                self.setCurrentIndex(new_index)
+                self.handle_click(new_index)
+        else:
+            super().keyPressEvent(event)
+
     def emit_files_dropped(self, file_paths: list[str]) -> None:
         self.files_dropped_to_widget.emit(file_paths)
 
@@ -104,3 +138,9 @@ class FilesTableView(QTableView):
         model.clear()
         model.insertRows(len(model.rows), files)
         self.resizeColumnsToContents()
+
+    def handle_click(self, index: QModelIndex):
+        row = index.row()
+        model: FilesTableModel = self.model()
+        selected_file = model.rows[row]
+        self.file_selected.emit(selected_file)

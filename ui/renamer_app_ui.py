@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication
 from ui.windows.app_main_window import ApplicationMainWindow
 
 
-class RenamerApp(QApplication):
+class RenamerApplicationUI(QApplication):
     def __init__(self) -> None:
         super().__init__([])
         self._main_widget: ApplicationMainWindow = ApplicationMainWindow()
@@ -11,7 +11,7 @@ class RenamerApp(QApplication):
 
 
 def start_app() -> None:
-    app: RenamerApp = RenamerApp()
+    app: RenamerApplicationUI = RenamerApplicationUI()
     app.exec()
 
 

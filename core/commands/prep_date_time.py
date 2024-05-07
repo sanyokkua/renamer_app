@@ -29,6 +29,8 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
         use_uppercase (bool): A flag indicating whether AM/PM indicators should be in uppercase.
         custom_datetime (str): A custom date and time string to use if the source is set to CUSTOM_DATE.
         separator_for_name_and_datetime (str): The separator to use between the file name and the date-time string in the new name.
+        use_fallback_dates (bool): A flag indicating whether to use fallback dates if the original dates are not available.
+        use_fallback_date_timestamp (float | None): The timestamp to use as a fallback if original dates are not available.
     """
 
     def __init__(
@@ -42,7 +44,7 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
         custom_datetime: str = "",
         separator_for_name_and_datetime: str = "",
         use_fallback_dates: bool = False,
-        use_fallback_date_str: str = "",
+        use_fallback_date_timestamp: float | None = None,
     ):
         """
         Initialize the DateTimeRenamePrepareCommand.
@@ -56,6 +58,8 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
             use_uppercase (bool, optional): A flag indicating whether AM/PM indicators should be in uppercase. Defaults to True.
             custom_datetime (str, optional): A custom date and time string to use if the source is set to CUSTOM_DATE. Defaults to "".
             separator_for_name_and_datetime (str, optional): The separator to use between the file name and the date-time string in the new name. Defaults to "".
+            use_fallback_dates (bool, optional): A flag indicating whether to use fallback dates if the original dates are not available. Defaults to False.
+            use_fallback_date_timestamp (float | None, optional): The timestamp to use as a fallback if original dates are not available. Defaults to None.
         """
         self.position: ItemPositionWithReplacement = position
         self.date_format: DateFormat = date_format
@@ -66,7 +70,7 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
         self.custom_datetime: str = custom_datetime
         self.separator_for_name_and_datetime = separator_for_name_and_datetime
         self.use_fallback_dates: bool = use_fallback_dates
-        self.use_fallback_date_str: str = use_fallback_date_str
+        self.use_fallback_date_timestamp: float | None = use_fallback_date_timestamp
 
     def item_by_item_process(self, item: AppFile, index: int, data: list[AppFile]) -> AppFile:
         """
@@ -121,9 +125,8 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
                 timestamp = dt.timestamp()
 
         if self.use_fallback_dates and (timestamp is None or timestamp == 0):
-            if len(self.use_fallback_date_str.strip()) > 0:
-                dt: datetime = datetime.strptime(self.use_fallback_date_str, "%Y%m%d_%H%M%S")
-                timestamp = dt.timestamp()
+            if self.use_fallback_date_timestamp is not None:
+                timestamp = self.use_fallback_date_timestamp
             else:
                 cr_d = item.fs_creation_date
                 mod_d = item.fs_modification_date

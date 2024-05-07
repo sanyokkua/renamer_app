@@ -44,6 +44,10 @@ class ModeBaseWidget(BaseScrollableWidget, ABC, Generic[T]):
         self.setLayout(main_layout)
         self.setContentsMargins(0, 0, 0, 0)
 
+        self._main_widget.setContentsMargins(0, 0, 0, 0)
+        self._main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
     def add_widget(self, widget: QWidget):
         self._main_layout.addWidget(widget)
 

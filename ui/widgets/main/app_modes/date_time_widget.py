@@ -132,9 +132,8 @@ class DateTimeWidget(ModeBaseWidget):
             DateTimeSource.FILE_CREATION_DATE,
             DateTimeSource.FILE_MODIFICATION_DATE,
             DateTimeSource.CONTENT_CREATION_DATE,
-        ]:
-            if not use_fallback_date or not use_fallback_date_custom:
-                use_fallback_date_custom_value = ""
+        ] and (not use_fallback_date or not use_fallback_date_custom):
+            use_fallback_date_custom_value = None
 
         return DateTimeRenamePrepareCommand(
             position=datetime_position,
@@ -146,7 +145,7 @@ class DateTimeWidget(ModeBaseWidget):
             use_uppercase=use_uppercase_checkbox,
             custom_datetime=custom_date_time_edit,
             use_fallback_dates=use_fallback_date,
-            use_fallback_date_str=use_fallback_date_custom_value,
+            use_fallback_date_timestamp=use_fallback_date_custom_value,
         )
 
     @Slot()

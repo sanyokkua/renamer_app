@@ -24,7 +24,7 @@ APP_MODE_TEXT: dict[AppModes, str] = {
     AppModes.USE_PARENT_FOLDER_NAME: "Use parent folders",
     AppModes.REMOVE_CUSTOM_TEXT: "Remove custom text from existing file name",
     AppModes.REPLACE_CUSTOM_TEXT: "Replace custom text in existing file name",
-    AppModes.ADD_SEQUENCE: "Add sequence to the existing file name",
+    AppModes.ADD_SEQUENCE: "Replace File name with digit sequence",
     AppModes.TRUNCATE_FILE_NAME: "Truncate existing file name",
     AppModes.CHANGE_EXTENSION: "Change extension",
 }

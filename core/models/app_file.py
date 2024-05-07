@@ -116,3 +116,7 @@ class AppFile:
             return False, "Name is empty"
 
         return True, ""
+
+    def reset(self):
+        self.next_name = self.file_name
+        self.file_extension_new = self.file_extension

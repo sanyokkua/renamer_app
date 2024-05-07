@@ -31,6 +31,10 @@ You will be able to rename files based on the provided pattern or some propertie
 Also, there are cases when you don't need to use any file properties, but just want to remove from name prefixes or suffixes.
 This option also can be available.
 
+# Screenshots
+
+![file_screen](docs/app_screen_example.png)
+
 # Used libs
 
 - [ExifRead](https://pypi.org/project/ExifRead/), [Docs](https://github.com/ianare/exif-py) - Exif read tool for some types of images, reserve lib
