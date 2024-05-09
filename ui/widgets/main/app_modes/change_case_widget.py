@@ -1,11 +1,19 @@
+import logging
+
 from PySide6.QtCore import Slot
 
 from core.commands.prep_change_case import ChangeCasePreparePrepareCommand
 from core.enums import TextCaseOptions
 from core.text_values import TEXT_CASE_OPTIONS_TEXT
 from ui.widgets.customs.form_widgets import ComboboxForm
-from ui.widgets.customs.single_widgets import CheckBox, ComboBoxItem, build_combobox_items
+from ui.widgets.customs.single_widgets import (
+    CheckBox,
+    ComboBoxItem,
+    build_combobox_items,
+)
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 TEXT_CASE_CMB_ITEMS: list[ComboBoxItem] = build_combobox_items(TEXT_CASE_OPTIONS_TEXT)
 
@@ -42,10 +50,10 @@ class ChangeCaseWidget(ModeBaseWidget):
 
     @Slot()
     def handle_item_selected(self, text_case: TextCaseOptions):
-        print(f"handle_item_selected, {text_case}")
+        log.debug(f"handle_item_selected, {text_case}")
         self.tell_about_changes()
 
     @Slot()
     def handle_checked_changed(self, state: bool):
-        print(f"handle_checked_changed, {state}")
+        log.debug(f"handle_checked_changed, {state}")
         self.tell_about_changes()

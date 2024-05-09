@@ -10,8 +10,18 @@ Functions:
     - handle_exceptions: Decorator function for handling exceptions in slot functions.
 """
 
+import logging
+
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtWidgets import QVBoxLayout, QMainWindow, QWidget, QApplication, QHBoxLayout, QProgressBar, QMessageBox
+from PySide6.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QMainWindow,
+    QMessageBox,
+    QProgressBar,
+    QVBoxLayout,
+    QWidget,
+)
 
 from core.commands.fix_same_names import FixSameNamesCommand
 from core.commands.map_url_to_app_file import MapUrlToAppFileCommand
@@ -25,6 +35,8 @@ from ui.widgets.main import ControlsWidget
 from ui.widgets.main.file_info_widget import FileInfoWidget
 from ui.widgets.views.app_files_list_view_widget import AppFilesListViewWidget
 from ui.widgets.views.app_mode_view_widget import AppModeSelectViewWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 def handle_exceptions(func):
@@ -43,8 +55,8 @@ def handle_exceptions(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            print(f"An exception occurred in {func.__name__}: {e}")
-            print(sys.exc_info())
+            log.warning(f"An exception occurred in {func.__name__}: {e}")
+            log.warning((sys.exc_info()))
             msg_box = QMessageBox()
             msg_box.setWindowTitle("Error happened")
             msg_box.setText("Error occurred, check the logs (if possible) to figure out the reason")

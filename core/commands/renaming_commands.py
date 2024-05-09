@@ -3,7 +3,6 @@ from core.models.app_file import AppFile
 from core.utils.io_utils import rename_file
 from core.utils.other import build_app_file_from_path_str
 
-
 # TODO: Add unit tests
 
 

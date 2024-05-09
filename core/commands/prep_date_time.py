@@ -3,11 +3,11 @@ from datetime import datetime
 
 from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import (
-    ItemPositionWithReplacement,
     DateFormat,
-    TimeFormat,
     DateTimeFormat,
     DateTimeSource,
+    ItemPositionWithReplacement,
+    TimeFormat,
 )
 from core.models.app_file import AppFile
 from core.utils.datetime_utils import make_datetime_string
@@ -21,16 +21,20 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
     and sources.
 
     Attributes:
-        position (ItemPositionWithReplacement): The position where the date and time information should be placed in the new name.
+        position (ItemPositionWithReplacement): The position where the date and time information should be placed
+            in the new name.
         date_format (DateFormat): The format of the date to be included in the new name.
         time_format (TimeFormat): The format of the time to be included in the new name.
         datetime_format (DateTimeFormat): The format of the combined date and time to be included in the new name.
         datetime_source (DateTimeSource): The source of the date and time information.
         use_uppercase (bool): A flag indicating whether AM/PM indicators should be in uppercase.
         custom_datetime (str): A custom date and time string to use if the source is set to CUSTOM_DATE.
-        separator_for_name_and_datetime (str): The separator to use between the file name and the date-time string in the new name.
-        use_fallback_dates (bool): A flag indicating whether to use fallback dates if the original dates are not available.
-        use_fallback_date_timestamp (float | None): The timestamp to use as a fallback if original dates are not available.
+        separator_for_name_and_datetime (str): The separator to use between the file name and the date-time string
+            in the new name.
+        use_fallback_dates (bool): A flag indicating whether to use fallback dates if the original dates are
+            not available.
+        use_fallback_date_timestamp (float | None): The timestamp to use as a fallback if original dates are
+            not available.
     """
 
     def __init__(
@@ -50,16 +54,26 @@ class DateTimeRenamePrepareCommand(AppFileItemByItemListProcessingCommand):
         Initialize the DateTimeRenamePrepareCommand.
 
         Args:
-            position (ItemPositionWithReplacement, optional): The position where the date and time information should be placed in the new name. Defaults to ItemPositionWithReplacement.REPLACE.
-            date_format (DateFormat, optional): The format of the date to be included in the new name. Defaults to DateFormat.YYYY_MM_DD_TOGETHER.
-            time_format (TimeFormat, optional): The format of the time to be included in the new name. Defaults to TimeFormat.HH_MM_SS_24_TOGETHER.
-            datetime_format (DateTimeFormat, optional): The format of the combined date and time to be included in the new name. Defaults to DateTimeFormat.DATE_TIME_UNDERSCORED.
-            datetime_source (DateTimeSource, optional): The source of the date and time information. Defaults to DateTimeSource.CONTENT_CREATION_DATE.
-            use_uppercase (bool, optional): A flag indicating whether AM/PM indicators should be in uppercase. Defaults to True.
-            custom_datetime (str, optional): A custom date and time string to use if the source is set to CUSTOM_DATE. Defaults to "".
-            separator_for_name_and_datetime (str, optional): The separator to use between the file name and the date-time string in the new name. Defaults to "".
-            use_fallback_dates (bool, optional): A flag indicating whether to use fallback dates if the original dates are not available. Defaults to False.
-            use_fallback_date_timestamp (float | None, optional): The timestamp to use as a fallback if original dates are not available. Defaults to None.
+            position (ItemPositionWithReplacement, optional): The position where the date and time information should
+                be placed in the new name. Defaults to ItemPositionWithReplacement.REPLACE.
+            date_format (DateFormat, optional): The format of the date to be included in the new name.
+                Defaults to DateFormat.YYYY_MM_DD_TOGETHER.
+            time_format (TimeFormat, optional): The format of the time to be included in the new name.
+                Defaults to TimeFormat.HH_MM_SS_24_TOGETHER.
+            datetime_format (DateTimeFormat, optional): The format of the combined date and time to be included
+                in the new name. Defaults to DateTimeFormat.DATE_TIME_UNDERSCORED.
+            datetime_source (DateTimeSource, optional): The source of the date and time information.
+                Defaults to DateTimeSource.CONTENT_CREATION_DATE.
+            use_uppercase (bool, optional): A flag indicating whether AM/PM indicators should be in uppercase.
+                Defaults to True.
+            custom_datetime (str, optional): A custom date and time string to use if the source is set to CUSTOM_DATE.
+                Defaults to "".
+            separator_for_name_and_datetime (str, optional): The separator to use between the file name
+                and the date-time string in the new name. Defaults to "".
+            use_fallback_dates (bool, optional): A flag indicating whether to use fallback dates
+                if the original dates are not available. Defaults to False.
+            use_fallback_date_timestamp (float | None, optional): The timestamp to use as a fallback
+                if original dates are not available. Defaults to None.
         """
         self.position: ItemPositionWithReplacement = position
         self.date_format: DateFormat = date_format

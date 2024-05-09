@@ -1,3 +1,5 @@
+import logging
+
 from PySide6.QtCore import Slot
 
 from core.commands.prep_seq_gen import SequencePrepareCommand
@@ -6,6 +8,8 @@ from core.text_values import SORT_SOURCE_TEXT
 from ui.widgets.customs.form_widgets import ComboboxForm, NumberSpinForm
 from ui.widgets.customs.single_widgets import build_combobox_items
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 SOURCE_CMB_ITEMS = build_combobox_items(SORT_SOURCE_TEXT)
 
@@ -59,20 +63,20 @@ class SequenceGeneratorWidget(ModeBaseWidget):
 
     @Slot()
     def handle_start_number_changed(self, value: int):
-        print(f"handle_start_number_changed: {value}")
+        log.debug(f"handle_start_number_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_step_number_changed(self, value: int):
-        print(f"handle_step_number_changed: {value}")
+        log.debug(f"handle_step_number_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_padding_number_changed(self, value: int):
-        print(f"handle_padding_number_changed: {value}")
+        log.debug(f"handle_padding_number_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_sort_source_changed(self, value: SortSource):
-        print(f"handle_sort_source_changed: {value}")
+        log.debug(f"handle_sort_source_changed: {value}")
         self.tell_about_changes()

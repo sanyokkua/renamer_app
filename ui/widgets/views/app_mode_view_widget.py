@@ -1,3 +1,5 @@
+import logging
+
 from PySide6.QtCore import Slot
 
 from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
@@ -9,13 +11,15 @@ from ui.widgets.main.app_modes import (
     ChangeExtensionWidget,
     DateTimeWidget,
     ImageDimensionsWidget,
+    ModeBaseWidget,
     ParentFoldersWidget,
     RemoveTextWidget,
     ReplaceTextWidget,
     SequenceGeneratorWidget,
     TruncateTextWidget,
-    ModeBaseWidget,
 )
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class AppModeSelectViewWidget(ModeBaseWidget):

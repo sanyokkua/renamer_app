@@ -1,11 +1,18 @@
+import logging
+
 from PySide6.QtCore import Slot
 
 from core.commands.prep_replace_text import ReplaceTextPrepareCommand
 from core.enums import ItemPositionExtended
 from core.text_values import ITEM_POSITION_EXTENDED_TEXT
-from ui.widgets.customs.form_widgets import LineTextEditForm
-from ui.widgets.customs.form_widgets import RadioButtonForm, build_radio_button_items
+from ui.widgets.customs.form_widgets import (
+    LineTextEditForm,
+    RadioButtonForm,
+    build_radio_button_items,
+)
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 POSITION_RADIO_BTN_ITEMS = build_radio_button_items(ITEM_POSITION_EXTENDED_TEXT)
 
@@ -49,15 +56,15 @@ class ReplaceTextWidget(ModeBaseWidget):
 
     @Slot()
     def handle_position_changed(self, value: ItemPositionExtended):
-        print(f"handle_position_changed: {value}")
+        log.debug(f"handle_position_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_text_to_replace_changed(self, value: str):
-        print(f"handle_text_to_replace_changed: {value}")
+        log.debug(f"handle_text_to_replace_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_text_to_add_changed(self, value: str):
-        print(f"handle_text_to_add_changed: {value}")
+        log.debug(f"handle_text_to_add_changed: {value}")
         self.tell_about_changes()

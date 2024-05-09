@@ -2,9 +2,7 @@ import pytest
 
 import tests.core.commands.test_base_command_tests as base
 from core.commands.prep_ext_change import ExtensionChangePrepareCommand
-from tests.core.commands.test_commons import (
-    check_extension_after_command_applied,
-)
+from tests.core.commands.test_commons import check_extension_after_command_applied
 
 
 def test_command_with_none_arguments():

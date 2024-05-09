@@ -1,8 +1,12 @@
+import logging
+
 from PySide6.QtCore import Slot
 
 from core.commands.prep_ext_change import ExtensionChangePrepareCommand
 from ui.widgets.customs.form_widgets import LineTextEditForm
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class ChangeExtensionWidget(ModeBaseWidget):
@@ -25,5 +29,5 @@ class ChangeExtensionWidget(ModeBaseWidget):
 
     @Slot()
     def handle_text_changed(self, text: str):
-        print(f"handle_text_changed, {text}")
+        log.debug(f"handle_text_changed, {text}")
         self.tell_about_changes()

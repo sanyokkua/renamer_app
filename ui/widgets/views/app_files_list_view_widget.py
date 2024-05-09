@@ -1,9 +1,13 @@
+import logging
+
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QVBoxLayout
 
 from core.models.app_file import AppFile
 from ui.widgets.base_abstract_widgets import BaseAbstractWidget
 from ui.widgets.main.files_table_view import FilesTableView
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class AppFilesListViewWidget(BaseAbstractWidget):
@@ -12,9 +16,6 @@ class AppFilesListViewWidget(BaseAbstractWidget):
 
     files_list_updated = Signal(list)
     file_selected = Signal(AppFile)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
 
     def init_widgets(self):
         self._main_layout = QVBoxLayout(self)

@@ -4,11 +4,11 @@ import pytest
 
 import tests.core.commands.test_base_command_tests as base
 from core.enums import (
-    ItemPositionWithReplacement,
     DateFormat,
-    TimeFormat,
     DateTimeFormat,
     DateTimeSource,
+    ItemPositionWithReplacement,
+    TimeFormat,
 )
 from tests.core.commands.test_commons import verify_command_result
 

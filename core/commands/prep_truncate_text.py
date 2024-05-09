@@ -12,7 +12,8 @@ class TruncateNamePrepareCommand(AppFileItemByItemListProcessingCommand):
         truncate_options (TruncateOptions): The options for truncating filenames.
 
     Methods:
-        create_new_name(item: AppFile, index: int) -> AppFile: Creates a new filename by truncating the original filename.
+        create_new_name(item: AppFile, index: int) -> AppFile: Creates a new filename by truncating
+            the original filename.
     """
 
     def __init__(

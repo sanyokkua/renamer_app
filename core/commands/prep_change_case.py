@@ -1,7 +1,11 @@
+import logging
+
 from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.enums import TextCaseOptions
 from core.models.app_file import AppFile
 from core.utils.case_utils import convert_case_of_string
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class ChangeCasePreparePrepareCommand(AppFileItemByItemListProcessingCommand):
@@ -24,7 +28,8 @@ class ChangeCasePreparePrepareCommand(AppFileItemByItemListProcessingCommand):
         Initialize the ChangeCasePreparePrepareCommand.
 
         Args:
-            capitalize (bool, optional): Flag indicating whether to capitalize the first letter of the new name. Defaults to False.
+            capitalize (bool, optional): Flag indicating whether to capitalize the first letter of the new name.
+                Defaults to False.
             text_case (TextCaseOptions, optional): The desired text case option. Defaults to TextCaseOptions.TITLE_CASE.
         """
         self.capitalize: bool = capitalize
@@ -47,6 +52,6 @@ class ChangeCasePreparePrepareCommand(AppFileItemByItemListProcessingCommand):
         if self.capitalize:
             next_file_name = next_file_name[0].upper() + next_file_name[1:]
 
-        print(f"Orig: {item.file_name}, next: {next_file_name}, func: {self.text_case}, is cap: {self.capitalize}")
+        log.debug(f"Orig: {item.file_name}, next: {next_file_name}, func: {self.text_case}, is cap: {self.capitalize}")
         item.next_name = next_file_name
         return item

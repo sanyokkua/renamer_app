@@ -6,9 +6,7 @@ import pytest
 from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
 from core.exceptions import PassedArgumentIsNone
 from core.models.app_file import AppFile
-from tests.core.commands.test_commons import (
-    build_app_file,
-)
+from tests.core.commands.test_commons import build_app_file
 
 
 def command_validates_none_input(command: AppFileItemByItemListProcessingCommand):
@@ -16,7 +14,9 @@ def command_validates_none_input(command: AppFileItemByItemListProcessingCommand
         command.execute(None, None)
 
 
-def command_returns_empty_array_on_empty_input(command: AppFileItemByItemListProcessingCommand):
+def command_returns_empty_array_on_empty_input(
+    command: AppFileItemByItemListProcessingCommand,
+):
     result = command.execute([], None)
     assert result == []
 
@@ -31,7 +31,9 @@ def command_validates_data_input_type(command: AppFileItemByItemListProcessingCo
 
 
 def command_calls_callback_in_each_stage(
-    command: AppFileItemByItemListProcessingCommand, number_of_calls: int = 12, list_of_calls: list | None = None
+    command: AppFileItemByItemListProcessingCommand,
+    number_of_calls: int = 12,
+    list_of_calls: list | None = None,
 ):
     mock_function = MagicMock()
 

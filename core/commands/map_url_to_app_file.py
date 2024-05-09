@@ -12,9 +12,6 @@ class MapUrlToAppFileCommand(InputValidationCommand):
 
     Inherits from InputValidationCommand.
 
-    Attributes:
-        None
-
     Methods:
         execute(data: List[str], status_callback: Optional[StatusFunction]) -> List[AppFile]:
             Execute the command to map URL paths to AppFile objects.

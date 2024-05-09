@@ -1,6 +1,9 @@
+import logging
 from datetime import datetime
 
-from core.enums import DateFormat, TimeFormat, DateTimeFormat
+from core.enums import DateFormat, DateTimeFormat, TimeFormat
+
+log: logging.Logger = logging.getLogger(__name__)
 
 # Mapping of date formats to their respective format strings
 DATE_FORMAT_MAPPING: dict[DateFormat, str] = {
@@ -78,7 +81,7 @@ def make_date_string(date_format: DateFormat, timestamp: float) -> str:
     dt = datetime.fromtimestamp(timestamp)
 
     formatted_string = dt.strftime(date_format_pattern)
-    print(f"Pattern: {date_format_pattern}, Result: {formatted_string}")
+    log.debug(f"make_date_string. Pattern: {date_format_pattern}, Result: {formatted_string}")
     return formatted_string
 
 
@@ -97,7 +100,7 @@ def make_time_string(time_format: TimeFormat, timestamp: float) -> str:
     dt = datetime.fromtimestamp(timestamp)
 
     formatted_string = dt.strftime(date_format_pattern)
-    print(f"Pattern: {date_format_pattern}, Result: {formatted_string}")
+    log.debug(f"make_time_string.Pattern: {date_format_pattern}, Result: {formatted_string}")
     return formatted_string.lower()
 
 
@@ -124,8 +127,10 @@ def make_datetime_string(
     time_str: str = make_time_string(time_format, timestamp)
 
     if date_format == DateFormat.DO_NOT_USE_DATE and time_format != TimeFormat.DO_NOT_USE_TIME:
+        log.debug(f"make_datetime_string. Returning time string because Date is not used {date_format}")
         return time_str
     elif time_format == TimeFormat.DO_NOT_USE_TIME and date_format != DateFormat.DO_NOT_USE_DATE:
+        log.debug(f"make_datetime_string. Returning date string because Time is not used {time_format}")
         return date_str
 
     match date_time_format:

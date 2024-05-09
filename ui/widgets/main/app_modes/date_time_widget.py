@@ -1,27 +1,39 @@
+import logging
+
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QFrame
 
 from core.commands.prep_date_time import DateTimeRenamePrepareCommand
 from core.enums import (
-    ItemPositionWithReplacement,
     DateFormat,
     DateTimeFormat,
     DateTimeSource,
+    ItemPositionWithReplacement,
     TimeFormat,
 )
 from core.text_values import (
-    ITEM_POSITION_WITH_REPLACEMENT_TEXT,
     DATE_FORMAT_TEXT,
     DATE_TIME_FORMAT_TEXT,
     DATE_TIME_SOURCE_TEXT,
+    ITEM_POSITION_WITH_REPLACEMENT_TEXT,
     TIME_FORMAT_TEXT,
 )
-from ui.widgets.customs.form_widgets import ComboboxForm, DateTimeForm
-from ui.widgets.customs.form_widgets import LineTextEditForm
-from ui.widgets.customs.form_widgets import RadioButtonForm, RadioButtonItem, build_radio_button_items
-from ui.widgets.customs.single_widgets import CheckBox, build_combobox_items
-from ui.widgets.customs.single_widgets import ComboBoxItem
+from ui.widgets.customs.form_widgets import (
+    ComboboxForm,
+    DateTimeForm,
+    LineTextEditForm,
+    RadioButtonForm,
+    RadioButtonItem,
+    build_radio_button_items,
+)
+from ui.widgets.customs.single_widgets import (
+    CheckBox,
+    ComboBoxItem,
+    build_combobox_items,
+)
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 POSITION_RADIO_BTN_ITEMS: list[RadioButtonItem] = build_radio_button_items(ITEM_POSITION_WITH_REPLACEMENT_TEXT)
 DATE_FORMAT_CMB_ITEMS: list[ComboBoxItem] = build_combobox_items(DATE_FORMAT_TEXT)
@@ -150,61 +162,61 @@ class DateTimeWidget(ModeBaseWidget):
 
     @Slot()
     def handle_position_changed(self, value: ItemPositionWithReplacement):
-        print(f"handle_position_changed: {value}")
+        log.debug(f"handle_position_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_date_format_changed(self, value: DateFormat):
-        print(f"handle_date_format_changed: {value}")
+        log.debug(f"handle_date_format_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_time_format_changed(self, value: TimeFormat):
-        print(f"handle_time_format_changed: {value}")
+        log.debug(f"handle_time_format_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_datetime_format_changed(self, value: DateTimeFormat):
-        print(f"handle_datetime_format_changed: {value}")
+        log.debug(f"handle_datetime_format_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_use_uppercase_changed(self, value: bool):
-        print(f"handle_use_uppercase_changed: {value}")
+        log.debug(f"handle_use_uppercase_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_source_changed(self, value: DateTimeSource):
-        print(f"handle_source_changed: {value}")
+        log.debug(f"handle_source_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_custom_datetime_changed(self, value: int):
-        print(f"handle_custom_datetime_changed: {value}")
+        log.debug(f"handle_custom_datetime_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_fallback_checkbox_changed(self, value: bool):
-        print(f"handle_fallback_checkbox_changed: {value}")
+        log.debug(f"handle_fallback_checkbox_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_fallback_custom_checkbox_changed(self, value: bool):
-        print(f"handle_fallback_custom_checkbox_changed: {value}")
+        log.debug(f"handle_fallback_custom_checkbox_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
     @Slot()
     def handle_fallback_datetime_changed(self, value: int):
-        print(f"handle_fallback_datetime_changed: {value}")
+        log.debug(f"handle_fallback_datetime_changed: {value}")
         self.manage_displayed_widgets()
         self.tell_about_changes()
 
@@ -220,7 +232,10 @@ class DateTimeWidget(ModeBaseWidget):
         time_format_combobox = self._time_format_combobox.get_widget_value()
         datetime_source_combobox = self._datetime_source_combobox.get_widget_value()
 
-        if position_radio_btn in [ItemPositionWithReplacement.BEGIN, ItemPositionWithReplacement.END]:
+        if position_radio_btn in [
+            ItemPositionWithReplacement.BEGIN,
+            ItemPositionWithReplacement.END,
+        ]:
             self._datetime_separator.show()
 
         am_pm_time_formats = [

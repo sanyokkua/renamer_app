@@ -62,8 +62,8 @@ def test_command_call_callback(monkeypatch):
 
 
 def test_command_with_none_arguments():
-    from core.exceptions import PassedArgumentIsNone
     from core.commands.map_url_to_app_file import MapUrlToAppFileCommand
+    from core.exceptions import PassedArgumentIsNone
 
     test_command = MapUrlToAppFileCommand()
     with pytest.raises(PassedArgumentIsNone):

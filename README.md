@@ -1,60 +1,108 @@
-# renamer_app
-Desktop tool to help with renaming files on your PC
+# Renamer App
 
-# Problem
+Welcome to the Renamer App repository! This is a desktop tool designed to streamline the process of renaming files on
+your PC. Say goodbye to manual file renaming and hello to a more efficient workflow.
 
-Usually during work with files on the PC you need to rename several files using some pattern.
+[For more detailed documentation, click here](docs/documentation.md)
 
-For example, you have a list of images with names:
+## Problem
 
-- IMG_0001.jpg
-- IMG_0002.jpg
-- IMG_0003.jpg
-- IMG_0004.jpg
-- IMG_0005.jpg
+When working with files on your PC, you often find yourself needing to rename multiple files according to a specific
+pattern or based on certain properties of the files themselves.
 
-Also, you know that these files has creation date, or modification date, or exif data that can be used as name.
- 
-As a result you want to have names like these:
+For instance, let's say you have a collection of images with generic names like "IMG_0001.jpg", "IMG_0002.jpg", and so
+on.
 
-- 20240506_172055.jpg
-- 20240507_123011.jpg
-- 20240507_134022.jpg
-- 20240508_050033.jpg
-- 20240508_105066.jpg
+You know these files contain valuable metadata like creation dates or EXIF data, which you'd like to use to rename them
+to something more descriptive, such as "20240506_172055.jpg", "20240507_123011.jpg", and so forth.
 
-Currently, you have only one way to rename it - manually check properties and create name.
+Currently, your only option is to tediously inspect each file's properties and manually craft new names. This app aims
+to change that by providing a simple and intuitive way to rename files based on predefined patterns or file properties.
+Whether you need to add prefixes or suffixes, replace text, or utilize file metadata, this tool has got you covered.
 
-This app should simplify such renaming.
-You will be able to rename files based on the provided pattern or some properties of the file.
+Also, there can be different options of renaming as:
 
-Also, there are cases when you don't need to use any file properties, but just want to remove from name prefixes or suffixes.
-This option also can be available.
+- Adding text to the name
+- Replacing text
+- Generation of the digit sequence
+- Adding files metadata like width\height for images
+- Changing file extension (if it absent or any other cases)
+- Removing text
+- Removing empty symbols
+- etc.
 
-# Screenshots
+## Screenshots
 
-![file_screen](docs/app_screen_example.png)
+Some examples of the working app
 
-# Used libs
+![File Renamer App - ex1](docs/app_screen_example.png)
+![File Renamer App - ex2](docs/4_img_dimensions.png)
+![File Renamer App - ex3](docs/8_seq.png)
 
-- [ExifRead](https://pypi.org/project/ExifRead/), [Docs](https://github.com/ianare/exif-py) - Exif read tool for some types of images, reserve lib
-- [Pillow](https://pypi.org/project/pillow/), [Docs](https://pillow.readthedocs.io/en/stable/) - Parsing Image Data
-- [Pillow Heif](https://pypi.org/project/pillow-heif/), [Docs](https://pillow-heif.readthedocs.io/en/latest/) - Support for HEIF codec and file types like **".heic"** for Pillow
-- [Mutagen](https://pypi.org/project/mutagen/), [Docs](https://mutagen.readthedocs.io/en/latest/) - Support for extracting audio metadata for MP3, FLAC, OGG, etc.
-- [PySide6](https://pypi.org/project/PySide6/), [Docs](https://doc.qt.io/qtforpython-6/api.html) - UI Widgets
+## Used Libraries
 
-# How to run app from sources
+### Application Logic
 
-Following should be installed:
-- Python 3
-- Pipenv
+- **ExifRead**: A tool for reading EXIF data from certain types of
+  images. [ExifRead](https://pypi.org/project/ExifRead/), [Docs](https://github.com/ianare/exif-py)
+- **Pillow**: A library for parsing image
+  data. [Pillow](https://pypi.org/project/pillow/), [Docs](https://pillow.readthedocs.io/en/stable/)
+- **Pillow Heif**: Adds support for HEIF codec and file types like ".heic" to
+  Pillow. [Pillow Heif](https://pypi.org/project/pillow-heif/), [Docs](https://pillow-heif.readthedocs.io/en/latest/)
+- **Mutagen**: Provides support for extracting audio metadata for MP3, FLAC, OGG,
+  etc. [Mutagen](https://pypi.org/project/mutagen/), [Docs](https://mutagen.readthedocs.io/en/latest/)
+- **PySide6**: A Python binding for the Qt framework, used for building the
+  UI. [PySide6](https://pypi.org/project/PySide6/), [Docs](https://doc.qt.io/qtforpython-6/api.html)
 
-```shell
-pipenv install
-```
+### Development
 
-# Code Style
+- **PyInstaller**: A tool for bundling Python applications into standalone
+  executables. [pyinstaller](https://pypi.org/project/pyinstaller/), [Docs](https://pyinstaller.org/en/stable/)
+- **pytest**: A testing framework for running unit
+  tests. [pytest](https://pypi.org/project/pytest/), [Docs](https://docs.pytest.org/en/latest/)
+- **black**: A code formatter for maintaining consistent code
+  style. [black](https://pypi.org/project/black/), [Docs](https://github.com/psf/black)
 
-Formatted by black formatter with params: --line-length 120
+## How to Build and Run the App from Source
 
-TODO:
+To build and run the app from source, follow these steps:
+
+**(Expected that Python 3.10+ and Pipenv are installed)**
+
+- [Python Official](https://www.python.org/downloads/), [Installation on macOS via Homebrew](https://docs.brew.sh/Homebrew-and-Python)
+- [Pipenv](https://pypi.org/project/pipenv/), [Docs](https://pipenv.pypa.io/en/latest/), [Installation on macOS via Homebrew](https://formulae.brew.sh/formula/pipenv)
+
+1. Navigate to the folder containing the source code.
+   ```shell
+   cd /path/to/renamer_app
+   ```
+2. Install all dependencies using Pipenv.
+   ```shell
+   pipenv install
+   ```
+3. Run the script to build the UI App.
+   ```shell
+   pipenv run pyinstaller renamer_app_ui.spec
+   ```
+4. Once the build process is complete, you'll find the executable for your OS in the `renamer_app/dist` folder. On
+   macOS, it will be named "File Renamer.app".
+
+## Code Style
+
+The codebase is formatted using the black formatter with a line length limit of 120 characters (**black . --line-length
+120**).
+
+## Code Coverage
+
+The core module is extensively covered by unit tests, ensuring robust functionality across all non-UI related aspects of
+the application. We strive to maintain high code coverage to ensure stability and reliability.
+
+# Nothing is good... TODO list for this app
+
+- Investigate [ExifTool by Phil Harvey](https://exiftool.org) in order to use it as metadata parser for files
+- Investigate other libs that can extract metadata for video files
+- Implement extracting metadata for video files
+- Implement using metadata for audio files (artist name, song name, creation date, etc)
+- Improve UI/UX
+- Review the app, find what can be improved or added
+- Add more unit tests

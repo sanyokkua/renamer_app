@@ -1,11 +1,19 @@
+import logging
+
 from PySide6.QtCore import Slot
 
 from core.commands.prep_add_text import AddTextPrepareCommand
 from core.enums import ItemPosition
 from core.text_values import ITEM_POSITION_TEXT
-from ui.widgets.customs.form_widgets import LineTextEditForm
-from ui.widgets.customs.form_widgets import RadioButtonForm, RadioButtonItem, build_radio_button_items
+from ui.widgets.customs.form_widgets import (
+    LineTextEditForm,
+    RadioButtonForm,
+    RadioButtonItem,
+    build_radio_button_items,
+)
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 RADIO_BTN_ITEMS: list[RadioButtonItem] = build_radio_button_items(ITEM_POSITION_TEXT)
 
@@ -39,10 +47,10 @@ class AddTextWidget(ModeBaseWidget):
 
     @Slot()
     def handle_radio_changed(self, selected_radio: ItemPosition):
-        print(f"handle_radio_changed, {selected_radio}")
+        log.debug(f"handle_radio_changed, {selected_radio}")
         self.tell_about_changes()
 
     @Slot()
     def handle_text_changed(self, text: str):
-        print(f"handle_text_changed, {text}")
+        log.debug(f"handle_text_changed, {text}")
         self.tell_about_changes()

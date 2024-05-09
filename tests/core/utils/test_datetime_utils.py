@@ -2,11 +2,12 @@ from datetime import datetime
 
 import pytest
 
-from core.enums import DateFormat
-from core.enums import TimeFormat, DateTimeFormat
-from core.utils.datetime_utils import make_date_string
-from core.utils.datetime_utils import make_datetime_string
-from core.utils.datetime_utils import make_time_string
+from core.enums import DateFormat, DateTimeFormat, TimeFormat
+from core.utils.datetime_utils import (
+    make_date_string,
+    make_datetime_string,
+    make_time_string,
+)
 
 
 @pytest.mark.parametrize(

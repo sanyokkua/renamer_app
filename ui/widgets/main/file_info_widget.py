@@ -1,9 +1,12 @@
+import logging
 from datetime import datetime
 
-from PySide6.QtWidgets import QVBoxLayout, QTextEdit
+from PySide6.QtWidgets import QTextEdit, QVBoxLayout
 
 from core.models.app_file import AppFile
 from ui.widgets.customs import BaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class FileInfoWidget(BaseWidget):
@@ -112,7 +115,7 @@ def build_app_file_info(app_file: AppFile | None) -> str:
         f"<h3>{app_file.file_name}</h3>",
         f"<div>File path: {app_file.absolute_path}</div>",
         f"<div>File type: {file_type}</div>",
-        f"<div>File extension: <b>{app_file.file_extension}</b></div>" if not app_file.is_folder else "",
+        (f"<div>File extension: <b>{app_file.file_extension}</b></div>" if not app_file.is_folder else ""),
         f"<div>File creation date: {file_cr_date_text}</div>",
         f"<div>File modification date: {file_mod_date_text}</div>",
         f"<div>File content creation date: {file_cc_date_text}</div>",

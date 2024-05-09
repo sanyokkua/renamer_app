@@ -1,23 +1,46 @@
+import logging
 from pathlib import Path
 
 from core.exceptions import (
-    PassedArgumentIsNone,
     FileNotFoundException,
+    PassedArgumentIsNone,
     PathStringIsEmpty,
 )
 from core.models.app_file import AppFile, Metadata
 from core.utils.io_utils import (
+    get_metadata_audio,
     get_metadata_creation_time,
     get_metadata_dimensions,
     get_metadata_tags,
-    get_metadata_audio,
 )
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 # TODO: Add unit tests
 
 
 def build_metadata_from_path(file_path: Path | None) -> Metadata | None:
+    """
+    Builds metadata from a given file path.
+
+    Args:
+        file_path (Path | None): The path to the file.
+
+    Returns:
+        Metadata | None: The metadata extracted from the file, or None if the file path is None.
+
+    Raises:
+        PassedArgumentIsNone: If the file path is None.
+        FileNotFoundException: If the file specified by the file path does not exist.
+
+    Example:
+        > file_path = Path("example.jpg")
+        > build_metadata_from_path(file_path)
+        Metadata(creation_date=1617744061.0, img_vid_width=1920, img_vid_height=1080,
+                 audio_artist_name=None, audio_album_name=None, audio_song_name=None,
+                 audio_year=None, other_found_tag_values={'Model': 'Canon EOS 5D Mark IV', ...})
+    """
     if file_path is None:
         raise PassedArgumentIsNone()
     assert isinstance(file_path, Path)
@@ -43,6 +66,30 @@ def build_metadata_from_path(file_path: Path | None) -> Metadata | None:
 
 
 def build_app_file_from_path_str(path: str | None) -> AppFile:
+    """
+    Builds an AppFile object from a given file path string.
+
+    Args:
+        path (str | None): The path to the file.
+
+    Returns:
+        AppFile: The AppFile object created from the file path.
+
+    Raises:
+        PassedArgumentIsNone: If the path is None.
+        PathStringIsEmpty: If the path string is empty after stripping.
+        FileNotFoundException: If the file specified by the path does not exist.
+
+    Example:
+        > path = "example.jpg"
+        > build_app_file_from_path_str(path)
+        AppFile(absolute_path='/path/to/example.jpg', is_folder=False, file_extension='.jpg',
+                file_extension_new='.jpg', file_name='example', file_size=1024,
+                next_name='example', fs_creation_date=1617744061.0, fs_modification_date=1617744061.0,
+                metadata=Metadata(creation_date=1617744061.0, img_vid_width=1920, img_vid_height=1080,
+                                   audio_artist_name=None, audio_album_name=None, audio_song_name=None,
+                                   audio_year=None, other_found_tag_values={'Model': 'Canon EOS 5D Mark IV', ...}))
+    """
     if path is None:
         raise PassedArgumentIsNone()
 

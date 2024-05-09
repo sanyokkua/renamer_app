@@ -1,5 +1,5 @@
 from core.commands.abstract_commons import AppFileItemByItemListProcessingCommand
-from core.enums import ItemPositionWithReplacement, ImageDimensionOptions
+from core.enums import ImageDimensionOptions, ItemPositionWithReplacement
 from core.models.app_file import AppFile
 
 
@@ -32,10 +32,10 @@ class ImageDimensionsPrepareCommand(AppFileItemByItemListProcessingCommand):
         Args:
             position (ItemPositionWithReplacement, optional): The position where the dimensions will be inserted.
                 Defaults to ItemPositionWithReplacement.BEGIN.
-            left_side (ImageDimensionOptions, optional): Determines which dimension (width or height) will be on the left side.
-                Defaults to ImageDimensionOptions.WIDTH.
-            right_side (ImageDimensionOptions, optional): Determines which dimension (width or height) will be on the right side.
-                Defaults to ImageDimensionOptions.HEIGHT.
+            left_side (ImageDimensionOptions, optional): Determines which dimension (width or height) will be
+                on the left side. Defaults to ImageDimensionOptions.WIDTH.
+            right_side (ImageDimensionOptions, optional): Determines which dimension (width or height) will be
+                on the right side. Defaults to ImageDimensionOptions.HEIGHT.
             dimension_separator (str, optional): The separator between the two dimensions.
                 Defaults to "x".
             name_separator (str, optional): The separator to be placed before or after the dimensions.

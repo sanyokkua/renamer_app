@@ -1,7 +1,8 @@
+import logging
 from datetime import datetime
 from os import rename
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional, Union
 
 import PIL
 from PIL import Image
@@ -9,11 +10,13 @@ from PIL.ExifTags import TAGS
 from PIL.Image import Exif, ExifTags
 from exifread import process_file
 from exifread.classes import IfdTag
-from mutagen import flac, mp3, ogg, apev2, wavpack, aiff, mp4
-from pillow_heif import register_heif_opener, register_avif_opener
+from mutagen import aiff, apev2, flac, mp3, mp4, ogg, wavpack
+from pillow_heif import register_avif_opener, register_heif_opener
 
-from core.exceptions import PassedArgumentIsNone, FileNotFoundException
+from core.exceptions import FileNotFoundException, PassedArgumentIsNone
 from core.models.app_file import AppFile
+
+log: logging.Logger = logging.getLogger(__name__)
 
 register_heif_opener()
 register_avif_opener()
@@ -168,7 +171,7 @@ def parse_date_time(date_time_str: Optional[str]) -> Union[float, int, None]:
     Note:
     - This function does not handle parsing of timezone offsets other than UTC.
     """
-    print(f"Will be a try to parse following date/time value: {date_time_str}")
+    log.debug(f"Will be a try to parse following date/time value: {date_time_str}")
     if date_time_str is None:
         return None
 
@@ -185,29 +188,57 @@ def parse_date_time(date_time_str: Optional[str]) -> Union[float, int, None]:
 
     for format_str in formats:
         try:
-            print(f"Trying to parse {date_time_str} with format: {format_str}")
+            log.debug(f"Trying to parse {date_time_str} with format: {format_str}")
             parsed_datetime = datetime.strptime(date_time_str.strip(), format_str).timestamp()
-            print(f"Date/time parsed, new value is {parsed_datetime}")
+            log.debug(f"Date/time parsed, new value is {parsed_datetime}")
             return parsed_datetime
         except ValueError as err:
-            print(f"Failed to parse date: {date_time_str} with format: {format_str}, {err}")
-            pass
+            log.debug(f"Failed to parse date: {date_time_str} with format: {format_str}, {err}")
 
-    print("There were no date/time values parsed, None will be returned")
+    log.debug("There were no date/time values parsed, None will be returned")
     return None
 
 
 def get_creation_datetime_by_exifread(file_path: Path) -> float | None:
+    """
+    Retrieves the creation date and time of an image using exifread library.
+
+    Args:
+        file_path (Path): The path to the image file.
+
+    Returns:
+        float | None: The creation time of the image in seconds since the epoch,
+        or None if the creation time cannot be determined.
+
+    Raises:
+        Any Exception: Any error during work with the file and extraction of metadata.
+            This function handles any exception and returns None.
+
+    Example:
+        > file_path = Path("example.jpg")
+        > get_creation_datetime_by_exifread(file_path)
+        1617744061.0
+    """
+
     # Expected valid path, with existing file or folder and supported by exifread.
     # Should be verified before passing to the function
     def get_value(tag: IfdTag) -> str | None:
+        """
+        Helper function for extracting required field from tag.
+
+        Args:
+            tag (IfdTag): The tag object.
+
+        Returns:
+            str | None: The printable value of the tag, or None if the tag is None.
+        """
         # Helper function for extracting required field from tag
         return tag.printable if tag is not None else None
 
     try:
         with open(file_path, "rb") as opened_file:
             exif_by_exifread = process_file(opened_file)
-            print(exif_by_exifread)
+            log.debug(exif_by_exifread)
 
             tag_date_time_original: IfdTag | None = exif_by_exifread.get(TAG_EXIF_DATE_TIME_ORIGINAL)
             tag_img_date_time: IfdTag | None = exif_by_exifread.get(TAG_EXIF_IMAGE_DATE_TIME)
@@ -223,11 +254,30 @@ def get_creation_datetime_by_exifread(file_path: Path) -> float | None:
     except Exception as ex:
         # Any Exception or error during work with file and extraction of file is OK in this case,
         # so None should be returned
-        print(ex)
+        log.warning(ex)
         return None
 
 
 def get_creation_datetime_by_pil(file_path: Path) -> float | None:
+    """
+    Retrieves the creation date and time of an image using PIL (Python Imaging Library).
+
+    Args:
+        file_path (Path): The path to the image file.
+
+    Returns:
+        float | None: The creation time of the image in seconds since the epoch,
+        or None if the creation time cannot be determined.
+
+    Raises:
+        Any Exception: Any error during work with the file and extraction of metadata.
+            This function handles any exception and returns None.
+
+    Example:
+        > file_path = Path("example.jpg")
+        > get_creation_datetime_by_pil(file_path)
+        1617744061.0
+    """
     # Expected valid path, with existing file or folder and supported by exifread.
     # Should be verified before passing to the function
     try:
@@ -258,11 +308,31 @@ def get_creation_datetime_by_pil(file_path: Path) -> float | None:
     except Exception as ex:
         # Any Exception or error during work with file and extraction of file is OK in this case,
         # so None should be returned
-        print(ex)
+        log.warning(ex)
         return None
 
 
 def get_metadata_creation_time(file_path: Path) -> float | None:
+    """
+    Retrieves the creation time of a file from its metadata.
+
+    Args:
+        file_path (Path): The path to the file.
+
+    Returns:
+        float | None: The creation time of the file in seconds since the epoch,
+        or None if the creation time cannot be determined.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+        ValueError: If the file extension is not supported.
+        TypeError: If the file format is not recognized.
+
+    Example:
+        file_path = Path("example.jpg")
+        get_metadata_creation_time(file_path)
+        1617744061.0
+    """
     validate_path(file_path)
 
     try:
@@ -281,11 +351,27 @@ def get_metadata_creation_time(file_path: Path) -> float | None:
 
         return min([date for date in [exifread_creation_val, pil_creation_val] if date is not None])
 
-    except Exception:
+    except Exception as ex:
+        log.warning(ex)
         return None
 
 
 def get_metadata_tags(file_path: Path) -> dict[str, any]:
+    """
+    Retrieves metadata tags from an image file.
+
+    Args:
+        file_path (Path): The path to the image file.
+
+    Returns:
+        dict[str, any]: A dictionary containing metadata tags and their corresponding values.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+        ValueError: If the file extension is not supported.
+        TypeError: If the file format is not recognized.
+        PIL.UnidentifiedImageError: If the image file cannot be identified and opened.
+    """
     validate_path(file_path)
     metadata: dict[str, any] = {}
 
@@ -296,8 +382,8 @@ def get_metadata_tags(file_path: Path) -> dict[str, any]:
 
                 for key, value in exif_by_exifread.items():
                     metadata[key] = str(value)
-        except Exception:
-            pass
+        except Exception as ex:
+            log.warning(ex)
 
     if is_ext_supported(file_path, PIL_SUPPORTED_EXT):
         try:
@@ -313,13 +399,29 @@ def get_metadata_tags(file_path: Path) -> dict[str, any]:
                     for tag, value in ifd_exif_data.items():
                         tag_name = TAGS.get(tag, tag)
                         metadata[str(tag_name)] = value
-        except FileNotFoundError | PIL.UnidentifiedImageError | ValueError | TypeError:
-            pass
+        except FileNotFoundError | PIL.UnidentifiedImageError | ValueError | TypeError as ex:
+            log.warning(ex)
 
     return metadata
 
 
 def get_metadata_dimensions(file_path: Path) -> tuple[int | None, int | None]:
+    """
+    Retrieves the dimensions (width and height) of an image file.
+
+    Args:
+        file_path (Path): The path to the image file.
+
+    Returns:
+        tuple[int | None, int | None]: A tuple containing the width and height of the image,
+            or None if metadata retrieval fails.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+        ValueError: If the file extension is not supported.
+        TypeError: If the file format is not recognized.
+        PIL.UnidentifiedImageError: If the image file cannot be identified and opened.
+    """
     validate_path(file_path)
 
     if is_ext_supported(file_path, PIL_SUPPORTED_EXT):
@@ -327,8 +429,8 @@ def get_metadata_dimensions(file_path: Path) -> tuple[int | None, int | None]:
             with Image.open(file_path) as image:
                 width, height = image.size
                 return width, height
-        except FileNotFoundError | PIL.UnidentifiedImageError | ValueError | TypeError:
-            pass
+        except FileNotFoundError | PIL.UnidentifiedImageError | ValueError | TypeError as ex:
+            log.warning(ex)
 
     return None, None
 
@@ -336,6 +438,23 @@ def get_metadata_dimensions(file_path: Path) -> tuple[int | None, int | None]:
 def get_metadata_audio(
     file_path: Path,
 ) -> tuple[str | None, str | None, str | None, str | None]:
+    """
+    Extracts audio metadata such as artist name, album name, song name, and year from the specified audio file.
+
+    Args:
+        file_path (Path): The path to the audio file.
+
+    Returns:
+        tuple[str | None, str | None, str | None, str | None]: A tuple containing the extracted metadata:
+            - audio_artist_name: The artist name.
+            - audio_album_name: The album name.
+            - audio_song_name: The song name.
+            - audio_year: The year.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+        ValueError: If the file extension is not supported.
+    """
     validate_path(file_path)
 
     if not is_ext_supported(file_path, MUTAGEN_SUPPORTED_EXT):
@@ -398,6 +517,20 @@ def get_metadata_audio(
 
 
 def rename_file(app_file: AppFile | None) -> tuple[bool, str]:
+    """
+    Renames a file represented by the provided AppFile object.
+
+    Args:
+        app_file (AppFile | None): The AppFile object representing the file to be renamed.
+
+    Returns:
+        tuple[bool, str]: A tuple indicating whether the file was successfully renamed (True or False)
+        and the new absolute path of the file.
+
+    Raises:
+        PassedArgumentIsNone: If the app_file argument is None.
+        TypeError: If the app_file argument is not an instance of AppFile.
+    """
     if app_file is None:
         raise PassedArgumentIsNone("Passed appFile for renaming is none")
 
@@ -411,7 +544,7 @@ def rename_file(app_file: AppFile | None) -> tuple[bool, str]:
         return False, app_file.absolute_path
 
     file_absolute_path: str = app_file.absolute_path
-    print(f"Original File Name: {file_absolute_path}")
+    log.debug(f"Original File Name: {file_absolute_path}")
 
     path_without_file = file_absolute_path.removesuffix(f"{app_file.file_name}{app_file.file_extension}")
 
@@ -419,17 +552,36 @@ def rename_file(app_file: AppFile | None) -> tuple[bool, str]:
     if not app_file.is_folder:
         new_file_path = new_file_path + app_file.file_extension_new
 
-    print(f"New File Name: {new_file_path}")
+    log.debug(f"New File Name: {new_file_path}")
     try:
         rename(app_file.absolute_path, new_file_path)
     except Exception as ex:
-        print(ex)
+        log.warning(ex)
         return False, app_file.absolute_path
 
     return True, new_file_path
 
 
 def get_parent_folders(file_path: str) -> list[str]:
+    """
+    Retrieves the parent folders of a file or directory given its path.
+
+    Args:
+        file_path (str): The path of the file or directory.
+
+    Returns:
+        list[str]: A list containing the names of the parent folders.
+
+    Raises:
+        None
+
+    Notes:
+        - If the file_path is None or an empty string, an empty list is returned.
+        - The function normalizes the file path by replacing backslashes with forward slashes and removing
+            redundant slashes.
+        - The function excludes the root element (drive letter for Windows or empty string for Unix)
+            and the last item (filename or directory) from the split path items.
+    """
     if file_path is None or len(file_path.strip()) == 0:
         return []
 

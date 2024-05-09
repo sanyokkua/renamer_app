@@ -149,7 +149,7 @@ class ThreeStepsListProcessingCommand(InputValidationCommand):
             status_callback (Optional[StatusFunction]): Status callback function.
 
         Returns:
-            list: Postprocessed data.
+            list: Post Processed data.
         """
         pass
 
@@ -165,7 +165,7 @@ class ItemByItemListProcessingCommand(ThreeStepsListProcessingCommand):
             status_callback (Optional[StatusFunction]): Status callback function.
 
         Returns:
-            list: Preprocessed data.
+            list: Post Processed data.
         """
         data_items: list = []
         index = 0
@@ -188,7 +188,7 @@ class ItemByItemListProcessingCommand(ThreeStepsListProcessingCommand):
             status_callback (Optional[StatusFunction]): Status callback function.
 
         Returns:
-            list: Processed data.
+            list: Post Processed data.
         """
         data_items: list = []
         index = 0

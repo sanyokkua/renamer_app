@@ -1,7 +1,7 @@
 import pytest
 
 import tests.core.commands.test_base_command_tests as base
-from core.enums import ItemPositionWithReplacement, ImageDimensionOptions
+from core.enums import ImageDimensionOptions, ItemPositionWithReplacement
 from tests.core.commands.test_commons import verify_command_result
 
 

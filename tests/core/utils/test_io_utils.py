@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from core.exceptions import PassedArgumentIsNone, FileNotFoundException
+from core.exceptions import FileNotFoundException, PassedArgumentIsNone
 from core.utils.io_utils import (
-    get_parent_folders,
-    validate_path,
-    is_ext_supported,
     chose_correct_date_from_metadata,
+    get_parent_folders,
+    is_ext_supported,
     parse_date_time,
+    validate_path,
 )
 
 

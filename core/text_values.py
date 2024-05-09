@@ -1,16 +1,16 @@
 from core.enums import (
-    ItemPosition,
     AppModes,
+    DateFormat,
+    DateTimeFormat,
+    DateTimeSource,
+    ImageDimensionOptions,
+    ItemPosition,
     ItemPositionExtended,
     ItemPositionWithReplacement,
     SortSource,
     TextCaseOptions,
-    TruncateOptions,
-    ImageDimensionOptions,
-    DateFormat,
-    DateTimeFormat,
-    DateTimeSource,
     TimeFormat,
+    TruncateOptions,
 )
 
 APP_MODE_LABEL_VALUE: str = "Select mode"

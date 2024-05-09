@@ -1,16 +1,27 @@
-from PySide6.QtCore import Slot, Qt
-from PySide6.QtWidgets import QWidget, QLabel, QGridLayout
+import logging
+
+from PySide6.QtCore import Qt, Slot
+from PySide6.QtWidgets import QGridLayout, QLabel, QWidget
 
 from core.commands.prep_image_dimensions import ImageDimensionsPrepareCommand
-from core.enums import ItemPositionWithReplacement, ImageDimensionOptions
+from core.enums import ImageDimensionOptions, ItemPositionWithReplacement
 from core.text_values import (
-    ITEM_POSITION_WITH_REPLACEMENT_TEXT,
     IMAGE_DIMENSION_OPTIONS_TEXT,
+    ITEM_POSITION_WITH_REPLACEMENT_TEXT,
 )
-from ui.widgets.customs.form_widgets import LineTextEditForm
-from ui.widgets.customs.form_widgets import RadioButtonForm, build_radio_button_items
-from ui.widgets.customs.single_widgets import ComboBox, LineTextEdit, build_combobox_items
+from ui.widgets.customs.form_widgets import (
+    LineTextEditForm,
+    RadioButtonForm,
+    build_radio_button_items,
+)
+from ui.widgets.customs.single_widgets import (
+    ComboBox,
+    LineTextEdit,
+    build_combobox_items,
+)
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 POSITION_RADIO_BTN_ITEMS = build_radio_button_items(ITEM_POSITION_WITH_REPLACEMENT_TEXT)
 DIMENSIONS_CMB_ITEMS = build_combobox_items(IMAGE_DIMENSION_OPTIONS_TEXT)
@@ -91,25 +102,25 @@ class ImageDimensionsWidget(ModeBaseWidget):
 
     @Slot()
     def handle_position_changed(self, value: ItemPositionWithReplacement):
-        print(f"handle_position_changed: {value}")
+        log.debug(f"handle_position_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_left_side_changed(self, value: ImageDimensionOptions):
-        print(f"handle_left_side_changed: {value}")
+        log.debug(f"handle_left_side_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_separator_between_changed(self, value: str):
-        print(f"handle_separator_between_changed: {value}")
+        log.debug(f"handle_separator_between_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_right_side_changed(self, value: ImageDimensionOptions):
-        print(f"handle_right_side_changed: {value}")
+        log.debug(f"handle_right_side_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_separator_with_dimensions_changed(self, value: str):
-        print(f"handle_separator_with_dimensions_changed: {value}")
+        log.debug(f"handle_separator_with_dimensions_changed: {value}")
         self.tell_about_changes()

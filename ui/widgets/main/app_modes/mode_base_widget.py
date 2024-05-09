@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QScrollArea, QVBoxLayout, QWidget

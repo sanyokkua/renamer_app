@@ -1,12 +1,19 @@
+import logging
+
 from PySide6.QtCore import Slot
 
 from core.commands.prep_parent_folders import ParentFoldersPrepareCommand
 from core.enums import ItemPosition
 from core.text_values import ITEM_POSITION_TEXT
-from ui.widgets.customs.form_widgets import LineTextEditForm
-from ui.widgets.customs.form_widgets import NumberSpinForm
-from ui.widgets.customs.form_widgets import RadioButtonForm, build_radio_button_items
+from ui.widgets.customs.form_widgets import (
+    LineTextEditForm,
+    NumberSpinForm,
+    RadioButtonForm,
+    build_radio_button_items,
+)
 from ui.widgets.main.app_modes.mode_base_widget import ModeBaseWidget
+
+log: logging.Logger = logging.getLogger(__name__)
 
 POSITION_RADIO_BTN_ITEMS = build_radio_button_items(ITEM_POSITION_TEXT)
 
@@ -52,15 +59,15 @@ class ParentFoldersWidget(ModeBaseWidget):
 
     @Slot()
     def handle_position_changed(self, value: ItemPosition):
-        print(f"handle_position_changed: {value}")
+        log.debug(f"handle_position_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_parents_number_changed(self, value: int):
-        print(f"handle_parents_number_changed: {value}")
+        log.debug(f"handle_parents_number_changed: {value}")
         self.tell_about_changes()
 
     @Slot()
     def handle_separator_changed(self, value: str):
-        print(f"handle_separator_changed: {value}")
+        log.debug(f"handle_separator_changed: {value}")
         self.tell_about_changes()

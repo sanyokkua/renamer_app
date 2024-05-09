@@ -1,9 +1,19 @@
-from PySide6.QtCore import Qt, QModelIndex, QAbstractTableModel, QItemSelectionModel
-from PySide6.QtCore import Signal, Slot
-from PySide6.QtGui import QFont, QColor, QColorConstants
-from PySide6.QtWidgets import QTableView, QHeaderView
+import logging
+
+from PySide6.QtCore import (
+    QAbstractTableModel,
+    QItemSelectionModel,
+    QModelIndex,
+    Qt,
+    Signal,
+    Slot,
+)
+from PySide6.QtGui import QColor, QColorConstants, QFont
+from PySide6.QtWidgets import QHeaderView, QTableView
 
 from core.models.app_file import AppFile
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class FilesTableModel(QAbstractTableModel):
@@ -38,7 +48,7 @@ class FilesTableModel(QAbstractTableModel):
             data_obj: AppFile = self.rows[row]
             [is_valid, err] = data_obj.is_valid()
             if not is_valid:
-                print(f"FilesTableModel.data. err {err}")
+                log.debug(f"FilesTableModel.data. err {err}")
                 return QColor(QColorConstants.Red)
             elif data_obj.is_name_changed:
                 return QColor(QColorConstants.Green)
@@ -106,7 +116,10 @@ class FilesTableView(QTableView):
             selection_model.clearSelection()
             row = index.row()
             for col in range(self.model().columnCount()):
-                selection_model.select(self.model().index(row, col), QItemSelectionModel.SelectionFlag.Select)
+                selection_model.select(
+                    self.model().index(row, col),
+                    QItemSelectionModel.SelectionFlag.Select,
+                )
         super().mousePressEvent(event)
 
     def keyPressEvent(self, event):
@@ -123,7 +136,10 @@ class FilesTableView(QTableView):
                 new_index = self.model().index(row, 0)
                 selection_model.clearSelection()
                 for col in range(self.model().columnCount()):
-                    selection_model.select(self.model().index(row, col), QItemSelectionModel.SelectionFlag.Select)
+                    selection_model.select(
+                        self.model().index(row, col),
+                        QItemSelectionModel.SelectionFlag.Select,
+                    )
                 self.setCurrentIndex(new_index)
                 self.handle_click(new_index)
         else:

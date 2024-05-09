@@ -1,6 +1,9 @@
+import logging
 from typing import Callable
 
 from core.enums import TextCaseOptions
+
+log: logging.Logger = logging.getLogger(__name__)
 
 
 def to_camel_case(input_string: str) -> str:
@@ -20,6 +23,7 @@ def to_camel_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_camel_case. {input_string} is not appropriate value")
         return ""
     replace_symbols = input_string.replace("_", " ")
     replace_symbols = replace_symbols.replace("-", " ")
@@ -51,6 +55,7 @@ def to_pascal_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_pascal_case. {input_string} is not appropriate value")
         return ""
 
     replace_symbols = input_string.replace("_", " ")
@@ -83,6 +88,7 @@ def to_snake_case(input_string: str) -> str:
         an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_snake_case. {input_string} is not appropriate value")
         return ""
 
     replace_symbols = input_string.replace("-", " ")
@@ -111,6 +117,7 @@ def to_screaming_snake_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_screaming_snake_case. {input_string} is not appropriate value")
         return ""
 
     replace_symbols = input_string.replace("-", " ")
@@ -139,6 +146,7 @@ def to_kebab_case(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_kebab_case. {input_string} is not appropriate value")
         return ""
 
     replace_symbols = input_string.replace("_", " ")
@@ -166,6 +174,7 @@ def to_uppercase(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_uppercase. {input_string} is not appropriate value")
         return ""
 
     uppercase_string = input_string.upper()
@@ -186,6 +195,7 @@ def to_lowercase(input_string: str) -> str:
         is None, an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_lowercase. {input_string} is not appropriate value")
         return ""
 
     lowercase_string = input_string.lower()
@@ -207,6 +217,7 @@ def to_title_case(input_string):
         is None, an empty string is returned.
     """
     if input_string is None or not isinstance(input_string, str) or len(input_string.strip()) == 0:
+        log.info(f"to_title_case. {input_string} is not appropriate value")
         return ""
 
     replace_symbols = input_string.replace("_", " ")

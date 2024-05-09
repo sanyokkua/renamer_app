@@ -2,7 +2,11 @@ from abc import ABC
 
 from PySide6.QtWidgets import QWidget
 
-from ui.widgets.customs.abstracts import WidgetApi, MultipleValueWidgetWithLabelApi, ValueWidgetWithLabelApi
+from ui.widgets.customs.abstracts import (
+    MultipleValueWidgetWithLabelApi,
+    ValueWidgetWithLabelApi,
+    WidgetApi,
+)
 
 
 class Meta(type(ABC), type(QWidget)):

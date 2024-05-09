@@ -1,11 +1,32 @@
+import logging
+
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QGridLayout, QMessageBox
 
 from ui.widgets.customs import BaseWidget, Button, CheckBox
 
+log: logging.Logger = logging.getLogger(__name__)
+
 
 class ControlsWidget(BaseWidget):
+    """
+    Widget for displaying controls related to file renaming operations.
+
+    Attributes:
+        _main_layout (QGridLayout): Layout for organizing the controls.
+        _auto_preview (CheckBox): Checkbox for enabling auto-preview mode.
+        _preview_btn (Button): Button for previewing renaming.
+        _rename_btn (Button): Button for executing renaming.
+        _clear_btn (Button): Button for clearing the file table.
+        _confirmation_dialog (QMessageBox): Confirmation dialog for renaming.
+
+    Signals:
+        previewBtnClicked: Signal emitted when the preview button is clicked.
+        renameBtnClicked: Signal emitted when the rename button is clicked.
+        clearBtnClicked: Signal emitted when the clear button is clicked.
+    """
+
     _main_layout: QGridLayout
     _auto_preview: CheckBox
     _preview_btn: Button
@@ -56,7 +77,7 @@ class ControlsWidget(BaseWidget):
 
     @Slot()
     def handle_auto_preview_changed(self, checked: bool) -> None:
-        print(f"handle_auto_preview_changed: {checked}")
+        log.debug(f"handle_auto_preview_changed: {checked}")
         if checked:
             self._preview_btn.setDisabled(True)
             self.handle_preview_btn_clicked()
@@ -65,23 +86,22 @@ class ControlsWidget(BaseWidget):
 
     @Slot()
     def handle_preview_btn_clicked(self) -> None:
-        print("handle_preview_btn_clicked")
+        log.debug("handle_preview_btn_clicked")
         self.previewBtnClicked.emit()
 
     @Slot()
     def handle_rename_btn_clicked(self) -> None:
-        print("handle_rename_btn_clicked")
+        log.debug("handle_rename_btn_clicked")
         result = self._confirmation_dialog.exec()
         if result == QMessageBox.StandardButton.Yes:
-            print("User clicked Yes.")
-            # Add code here to proceed with the action
+            log.debug("User clicked Yes.")
             self.renameBtnClicked.emit()
         else:
-            print("User clicked No.")
+            log.debug("User clicked No.")
 
     @Slot()
     def handle_clear_btn_clicked(self) -> None:
-        print("handle_clear_btn_clicked")
+        log.debug("handle_clear_btn_clicked")
         self.clearBtnClicked.emit()
 
     def is_auto_preview_enabled(self) -> bool:
