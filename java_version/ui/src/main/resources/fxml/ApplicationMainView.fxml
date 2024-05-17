@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ua.renamer.app.ui.widgets.controllers.ApplicationMainViewController"
+      prefHeight="400.0" prefWidth="900.0"
+      minHeight="400.0" minWidth="900.0"
+      fx:id="mainVBox"
+>
+    <HBox VBox.vgrow="ALWAYS">
+
+        <VBox minWidth="400" prefWidth="400" HBox.hgrow="SOMETIMES">
+
+            <GridPane VBox.vgrow="NEVER">
+                <columnConstraints>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints valignment="CENTER" vgrow="NEVER"/>
+                </rowConstraints>
+
+                <Label text="%app_mode_label" GridPane.columnIndex="0"/>
+                <ChoiceBox fx:id="appModeChoiceBox" GridPane.columnIndex="1" onAction="#handleModeChanged">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </ChoiceBox>
+            </GridPane>
+
+            <StackPane fx:id="appModeContainer" VBox.vgrow="ALWAYS"/>
+
+            <GridPane VBox.vgrow="NEVER">
+                <columnConstraints>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints valignment="CENTER" vgrow="NEVER"/>
+                </rowConstraints>
+
+                <CheckBox fx:id="autoPreviewCheckBox" GridPane.columnIndex="0" text="%check_box_auto_preview">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </CheckBox>
+                <Button fx:id="previewBtn" GridPane.columnIndex="1" text="%btn_preview">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <Button fx:id="renameBtn" GridPane.columnIndex="2" text="%btn_rename">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <Button fx:id="clearBtn" GridPane.columnIndex="3" text="%btn_clear">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+            </GridPane>
+        </VBox>
+
+        <VBox minWidth="500" prefWidth="500">
+            <TableView fx:id="filesTableView" minHeight="200" prefHeight="200" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="originalNameColumn" minWidth="100.0" text="%table_column_name"/>
+                    <TableColumn fx:id="itemTypeColumn" minWidth="50.0" resizable="false" text="%table_column_type"/>
+                    <TableColumn fx:id="newNameColumn" minWidth="100.0" text="%table_column_new_name"/>
+                </columns>
+            </TableView>
+            <WebView fx:id="fileInfoWebView" minHeight="20" prefHeight="20" VBox.vgrow="ALWAYS"/>
+        </VBox>
+
+    </HBox>
+
+    <ProgressBar fx:id="appProgressBar" maxWidth="Infinity"/>
+
+</VBox>
