@@ -2,16 +2,17 @@ package ua.renamer.app.core.commands;
 
 import lombok.NoArgsConstructor;
 import ua.renamer.app.core.abstracts.ListProcessingCommand;
-import ua.renamer.app.core.model.AppFile;
-import ua.renamer.app.core.utils.AppFileUtils;
+import ua.renamer.app.core.model.FileInformation;
+import ua.renamer.app.core.utils.FileInformationUtils;
 
 import java.io.File;
 
 @NoArgsConstructor
-public class MapFileToAppFileCommand extends ListProcessingCommand<File, AppFile> {
+public class MapFileToAppFileCommand extends ListProcessingCommand<File, FileInformation> {
 
     @Override
-    public AppFile processItem(File item) {
-        return AppFileUtils.createAppFile(item);
+    public FileInformation processItem(File item) {
+        return FileInformationUtils.createFileInformationFromFile(item);
     }
+
 }

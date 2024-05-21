@@ -38,4 +38,5 @@ public class TruncateOptionsConverter extends StringConverter<TruncateOptions> {
     public TruncateOptions fromString(String string) {
         return null;
     }
+
 }

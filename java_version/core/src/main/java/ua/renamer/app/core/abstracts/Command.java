@@ -16,4 +16,5 @@ public interface Command<I, O> {
      * @return the output of the command.
      */
     O execute(I input, ProgressCallback callback);
+
 }

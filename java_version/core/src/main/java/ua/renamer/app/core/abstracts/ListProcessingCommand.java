@@ -1,5 +1,7 @@
 package ua.renamer.app.core.abstracts;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +12,7 @@ import java.util.Objects;
  * @param <I> the type of input items for the command.
  * @param <O> the type of output items for the command.
  */
+@Slf4j
 public abstract class ListProcessingCommand<I, O> implements Command<List<I>, List<O>> {
 
     /**
@@ -22,6 +25,7 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
     @Override
     public List<O> execute(List<I> input, ProgressCallback callback) {
         if (Objects.isNull(input) || input.isEmpty()) {
+            log.debug("Command Execution returns an empty list.");
             return List.of();
         }
 
@@ -35,6 +39,7 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
         for (I item : preparedInput) {
             result.add(processItem(item));
             index++;
+            log.debug("Processed item: {}, index: {}", item, index);
             updateProgress(index, total, callback);
         }
 
@@ -50,6 +55,7 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      * @param callback     the progress callback to be invoked.
      */
     protected void updateProgress(int currentValue, int maxValue, ProgressCallback callback) {
+        log.debug("Updating progress of {} to {}", currentValue, maxValue);
         if (Objects.nonNull(callback)) {
             callback.updateProgress(currentValue, maxValue);
         }
@@ -72,4 +78,5 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      * @return the result of processing the item.
      */
     public abstract O processItem(I item);
+
 }

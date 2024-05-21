@@ -9,8 +9,8 @@
       fx:controller="ua.renamer.app.ui.widgets.controllers.ApplicationMainViewController"
       prefHeight="400.0" prefWidth="900.0"
       minHeight="400.0" minWidth="900.0"
-      fx:id="mainVBox"
->
+      fx:id="mainVBox">
+
     <HBox VBox.vgrow="ALWAYS">
 
         <VBox minWidth="400" prefWidth="400" HBox.hgrow="SOMETIMES">
@@ -25,7 +25,7 @@
                 </rowConstraints>
 
                 <Label text="%app_mode_label" GridPane.columnIndex="0"/>
-                <ChoiceBox fx:id="appModeChoiceBox" GridPane.columnIndex="1" onAction="#handleModeChanged">
+                <ChoiceBox fx:id="appModeChoiceBox" GridPane.columnIndex="1">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>

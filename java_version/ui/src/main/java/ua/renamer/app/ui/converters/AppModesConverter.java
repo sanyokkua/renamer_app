@@ -45,4 +45,5 @@ public class AppModesConverter extends StringConverter<AppModes> {
     public AppModes fromString(String string) {
         return null;
     }
+
 }

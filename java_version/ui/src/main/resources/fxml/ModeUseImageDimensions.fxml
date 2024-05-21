@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.*?>
+<?import ua.renamer.app.ui.widgets.view.ItemPositionWithReplacementRadioSelector?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeUseImageDimensionsController"
       prefHeight="400.0" prefWidth="600.0">
+
+    <ItemPositionWithReplacementRadioSelector fx:id="itemPositionRadioSelector"
+                                              labelValue="%mode_img_vid_dimensions_label_position"/>
+
+    <GridPane VBox.vgrow="NEVER">
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints valignment="BOTTOM" vgrow="NEVER"/>
+            <RowConstraints valignment="TOP" vgrow="NEVER"/>
+            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
+        </rowConstraints>
+
+        <Label text="%mode_img_vid_dimensions_label_left_side" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <ChoiceBox fx:id="leftDimensionChoiceBox" GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ChoiceBox>
+
+        <Label text="%mode_img_vid_dimensions_label_separator_between" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <TextField fx:id="dimensionsSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="30"/>
+
+        <Label text="%mode_img_vid_dimensions_label_right_side" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <ChoiceBox fx:id="rightDimensionChoiceBox" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ChoiceBox>
+
+        <Label text="%mode_img_vid_dimensions_label_name_separator" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="dimensionsAndFileSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                   GridPane.columnSpan="2" maxWidth="Infinity"/>
+    </GridPane>
 
 </VBox>

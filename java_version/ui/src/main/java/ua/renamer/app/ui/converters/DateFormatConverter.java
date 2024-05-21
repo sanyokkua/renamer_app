@@ -38,4 +38,5 @@ public class DateFormatConverter extends StringConverter<DateFormat> {
     public DateFormat fromString(String string) {
         return null;
     }
+
 }

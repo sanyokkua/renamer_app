@@ -38,4 +38,5 @@ public class ItemPositionWithReplacementConverter extends StringConverter<ItemPo
     public ItemPositionWithReplacement fromString(String string) {
         return null;
     }
+
 }

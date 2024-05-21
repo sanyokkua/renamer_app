@@ -9,10 +9,12 @@ module ua.renamer.app.ui {
     requires javafx.web;
     requires java.desktop;
 
+    requires org.slf4j;
+    requires ch.qos.logback.core;
+
     exports ua.renamer.app;
     exports ua.renamer.app.ui;
     exports ua.renamer.app.ui.constants;
-    exports ua.renamer.app.ui.widgets;
     exports ua.renamer.app.ui.widgets.controllers;
     exports ua.renamer.app.ui.widgets.controllers.modes;
     exports ua.renamer.app.ui.abstracts;

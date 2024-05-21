@@ -3,15 +3,16 @@ package ua.renamer.app.core.commands.preparation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import ua.renamer.app.core.abstracts.AppFileCommand;
+import ua.renamer.app.core.abstracts.FileInformationCommand;
 import ua.renamer.app.core.enums.ImageDimensionOptions;
 import ua.renamer.app.core.enums.ItemPositionWithReplacement;
-import ua.renamer.app.core.model.AppFile;
+import ua.renamer.app.core.model.FileInformation;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageDimensionsPrepareCommand extends AppFileCommand {
+public class ImageDimensionsPrepareInformationCommand extends FileInformationCommand {
+
     @Builder.Default
     private ItemPositionWithReplacement position = ItemPositionWithReplacement.BEGIN;
     @Builder.Default
@@ -24,7 +25,8 @@ public class ImageDimensionsPrepareCommand extends AppFileCommand {
     private String nameSeparator = "";
 
     @Override
-    public AppFile processItem(AppFile item) {
+    public FileInformation processItem(FileInformation item) {
         return null;
     }
+
 }

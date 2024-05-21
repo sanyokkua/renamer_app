@@ -38,4 +38,5 @@ public class ItemPositionExtendedConverter extends StringConverter<ItemPositionE
     public ItemPositionExtended fromString(String string) {
         return null;
     }
+
 }

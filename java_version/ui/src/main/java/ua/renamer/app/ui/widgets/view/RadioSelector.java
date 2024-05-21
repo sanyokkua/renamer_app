@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+@Slf4j
 @Getter
 public abstract class RadioSelector<T extends Enum<T>> extends HBox {
 
@@ -26,6 +28,11 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
 
     protected RadioSelector(String labelValue, Class<T> enumClass, StringConverter<T> convertor) {
         super();
+        log.debug("Created new RadioSelector, with labelValue: {}, enumClass: {}, convertor: {}",
+                  labelValue,
+                  enumClass.getName(),
+                  convertor.getClass().getName()
+                 );
         this.labelValue = labelValue;
         this.enumClass = enumClass;
         this.convertor = convertor;
@@ -65,6 +72,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
     }
 
     public void setLabelValue(String labelValue) {
+        log.debug("Set labelValue: {}", labelValue);
         this.labelValue = labelValue;
         labelWidget.setText(labelValue);
     }
@@ -78,13 +86,14 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
     }
 
     public void addValueSelectedHandler(Consumer<T> callback) {
-        this.addEventHandler(RadioSelector.RadioSelectorEvent.RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE, (event) -> {
+        this.addEventHandler(RadioSelector.RadioSelectorEvent.RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE, event -> {
             T selectedValue = (T) event.getSelectedValue();
             callback.accept(selectedValue);
         });
     }
 
     public static class ValueRadioBtn<T> extends RadioButton {
+
         private final T value;
 
         public ValueRadioBtn(T value) {
@@ -94,12 +103,17 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
         public T getValue() {
             return value;
         }
+
     }
 
     public static class RadioSelectorEvent<T> extends Event {
-        public static final EventType<RadioSelectorEvent<?>> RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE = new EventType<>(Event.ANY, "RADIO BUTTON VALUE CHANGED");
 
-        private final T selectedValue;
+        public static final EventType<RadioSelectorEvent<?>> RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE = new EventType<>(
+                Event.ANY,
+                "RADIO BUTTON VALUE CHANGED"
+        );
+
+        private final transient T selectedValue;
 
         public RadioSelectorEvent(T selectedValue) {
             super(RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE);
@@ -109,6 +123,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
         public T getSelectedValue() {
             return selectedValue;
         }
+
     }
 
 }

@@ -13,4 +13,5 @@ public interface ProgressCallback {
      * @param maxValue     the maximum value of the progress.
      */
     void updateProgress(int currentValue, int maxValue);
+
 }

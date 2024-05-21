@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeChangeCaseController"
       prefHeight="400.0" prefWidth="600.0">
+
+    <GridPane VBox.vgrow="NEVER">
+        <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
+            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
+        </rowConstraints>
+
+        <Label text="%mode_change_case_label_text_case" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <ChoiceBox fx:id="caseChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ChoiceBox>
+
+        <CheckBox fx:id="capitalizeCheckBox" text="%mode_change_case_label_capitalize" maxWidth="Infinity"
+                  GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </CheckBox>
+    </GridPane>
+
 
 </VBox>

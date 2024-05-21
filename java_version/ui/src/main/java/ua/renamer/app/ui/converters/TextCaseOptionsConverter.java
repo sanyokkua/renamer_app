@@ -31,4 +31,5 @@ public class TextCaseOptionsConverter extends StringConverter<TextCaseOptions> {
     public TextCaseOptions fromString(String string) {
         return null;
     }
+
 }

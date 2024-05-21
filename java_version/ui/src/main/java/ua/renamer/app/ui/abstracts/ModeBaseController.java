@@ -2,13 +2,16 @@ package ua.renamer.app.ui.abstracts;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.Initializable;
-import ua.renamer.app.core.abstracts.AppFileCommand;
+import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.core.abstracts.FileInformationCommand;
 import ua.renamer.app.ui.models.CommandModel;
 
 /**
  * An abstract base controller for modes.
  */
+@Slf4j
 public abstract class ModeBaseController implements ControllerApi, Initializable {
+
     private final CommandModel commandModel;
 
     /**
@@ -19,17 +22,21 @@ public abstract class ModeBaseController implements ControllerApi, Initializable
     }
 
     @Override
-    public AppFileCommand getCommand() {
+    public FileInformationCommand getCommand() {
+        log.debug("getCommand()");
         return commandModel.getAppFileCommand();
     }
 
     @Override
-    public void setCommand(AppFileCommand appFileCommand) {
-        commandModel.setAppFileCommand(appFileCommand);
+    public void setCommand(FileInformationCommand fileInformationCommand) {
+        log.debug("setCommand()");
+        commandModel.setAppFileCommand(fileInformationCommand);
     }
 
     @Override
-    public ObjectProperty<AppFileCommand> commandProperty() {
+    public ObjectProperty<FileInformationCommand> commandProperty() {
+        log.debug("commandProperty()");
         return commandModel.appFileCommandProperty();
     }
+
 }

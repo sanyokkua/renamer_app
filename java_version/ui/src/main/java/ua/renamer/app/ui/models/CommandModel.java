@@ -2,13 +2,16 @@ package ua.renamer.app.ui.models;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import ua.renamer.app.core.abstracts.AppFileCommand;
+import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.core.abstracts.FileInformationCommand;
 
 /**
  * Model class representing a command.
  */
+@Slf4j
 public class CommandModel {
-    private final ObjectProperty<AppFileCommand> appFileCommand;
+
+    private final ObjectProperty<FileInformationCommand> appFileCommand;
 
     /**
      * Constructs a CommandModel object.
@@ -18,29 +21,33 @@ public class CommandModel {
     }
 
     /**
-     * Gets the current AppFileCommand.
+     * Gets the current FileInformationCommand.
      *
-     * @return The current AppFileCommand.
+     * @return The current FileInformationCommand.
      */
-    public AppFileCommand getAppFileCommand() {
+    public FileInformationCommand getAppFileCommand() {
+        log.info("getAppFileCommand");
         return appFileCommand.get();
     }
 
     /**
-     * Sets the AppFileCommand.
+     * Sets the FileInformationCommand.
      *
-     * @param appFileCommand The AppFileCommand to set.
+     * @param fileInformationCommand The FileInformationCommand to set.
      */
-    public void setAppFileCommand(AppFileCommand appFileCommand) {
-        this.appFileCommand.set(appFileCommand);
+    public void setAppFileCommand(FileInformationCommand fileInformationCommand) {
+        log.info("setAppFileCommand");
+        this.appFileCommand.set(fileInformationCommand);
     }
 
     /**
-     * Gets the property representing the AppFileCommand.
+     * Gets the property representing the FileInformationCommand.
      *
-     * @return The property representing the AppFileCommand.
+     * @return The property representing the FileInformationCommand.
      */
-    public ObjectProperty<AppFileCommand> appFileCommandProperty() {
+    public ObjectProperty<FileInformationCommand> appFileCommandProperty() {
+        log.info("appFileCommandProperty");
         return appFileCommand;
     }
+
 }

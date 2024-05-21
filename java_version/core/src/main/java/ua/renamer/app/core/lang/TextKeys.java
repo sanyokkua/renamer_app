@@ -43,6 +43,7 @@ public enum TextKeys {
     MODE_DATETIME_LABEL_TIME_SOURCE("mode_datetime_label_time_source"),
     MODE_DATETIME_LABEL_USE_FALLBACK("mode_datetime_label_use_fallback"),
     MODE_DATETIME_LABEL_USE_FALLBACK_CUSTOM_DATE("mode_datetime_label_use_fallback_custom_date"),
+    MODE_DATETIME_LABEL_USE_AM_PM_IN_UPPERCASE("mode_datetime_label_use_am_pm_in_uppercase"),
     MODE_IMG_VID_DIMENSIONS_LABEL_POSITION("mode_img_vid_dimensions_label_position"),
     MODE_IMG_VID_DIMENSIONS_LABEL_LEFT_SIDE("mode_img_vid_dimensions_label_left_side"),
     MODE_IMG_VID_DIMENSIONS_LABEL_RIGHT_SIDE("mode_img_vid_dimensions_label_right_side"),
@@ -79,7 +80,9 @@ public enum TextKeys {
     FILE_SORTING_SOURCE_FILE_MODIFICATION_DATETIME("file_sorting_source_file_modification_datetime"),
     FILE_SORTING_SOURCE_FILE_CONTENT_CREATION_DATETIME("file_sorting_source_file_content_creation_datetime"),
     FILE_SORTING_SOURCE_IMG_VID_WIDTH("file_sorting_source_img_vid_width"),
-    FILE_SORTING_SOURCE_IMG_VID_HEIGHT("file_sorting_source_img_vid_height");
+    FILE_SORTING_SOURCE_IMG_VID_HEIGHT("file_sorting_source_img_vid_height"),
+    TYPE_FILE("type_file"),
+    TYPE_FOLDER("type_folder");
 
     private final String keyString;
 

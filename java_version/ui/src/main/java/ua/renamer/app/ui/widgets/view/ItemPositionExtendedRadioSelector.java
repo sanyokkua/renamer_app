@@ -12,4 +12,5 @@ public class ItemPositionExtendedRadioSelector extends RadioSelector<ItemPositio
     public ItemPositionExtendedRadioSelector(String labelText) {
         super(labelText, ItemPositionExtended.class, new ItemPositionExtendedConverter());
     }
+
 }

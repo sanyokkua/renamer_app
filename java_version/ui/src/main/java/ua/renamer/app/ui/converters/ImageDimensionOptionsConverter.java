@@ -38,4 +38,5 @@ public class ImageDimensionOptionsConverter extends StringConverter<ImageDimensi
     public ImageDimensionOptions fromString(String string) {
         return null;
     }
+
 }

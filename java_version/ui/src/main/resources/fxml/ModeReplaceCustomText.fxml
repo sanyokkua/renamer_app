@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<?import ua.renamer.app.ui.widgets.view.ItemPositionExtendedRadioSelector?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeReplaceCustomTextController"
       prefHeight="400.0" prefWidth="600.0">
+
+    <ItemPositionExtendedRadioSelector fx:id="itemPositionRadioSelector"
+                                       labelValue="%mode_replace_text_label_position"/>
+
+    <GridPane VBox.vgrow="NEVER">
+        <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
+            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
+        </rowConstraints>
+
+        <Label text="%mode_replace_text_label_text_to_replace" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="textToReplaceTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="%mode_replace_text_label_text_to_add" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="textToAddTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </GridPane>
 
 </VBox>

@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeChangeExtensionController"
       prefHeight="400.0" prefWidth="600.0">
+
+    <GridPane VBox.vgrow="NEVER">
+        <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
+            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
+        </rowConstraints>
+
+        <Label text="%mode_change_extension_label_new_extension" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="extensionTextField" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity"/>
+    </GridPane>
 
 </VBox>

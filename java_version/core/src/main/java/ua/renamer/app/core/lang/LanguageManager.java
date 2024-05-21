@@ -3,6 +3,7 @@ package ua.renamer.app.core.lang;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -11,8 +12,10 @@ import java.util.ResourceBundle;
 /**
  * A class for managing language resources and providing localized strings.
  */
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LanguageManager {
+
     @Getter
     private static ResourceBundle resourceBundle;
 
@@ -22,6 +25,7 @@ public class LanguageManager {
      * @param locale the locale to set.
      */
     public static void setLocale(Locale locale) {
+        log.debug("Locale set to {}", locale);
         resourceBundle = ResourceBundle.getBundle("langs/lang", locale);
     }
 
@@ -54,8 +58,11 @@ public class LanguageManager {
      */
     public static String getString(String key, String defaultValue) {
         try {
+            log.debug("Getting key {}", key);
             return resourceBundle.getString(key);
         } catch (MissingResourceException ex) {
+            log.warn(ex.getMessage(), ex);
+            log.debug("Returning default value {}", defaultValue);
             return defaultValue;
         }
     }
@@ -68,6 +75,8 @@ public class LanguageManager {
      * @return the localized string if found, or the default value otherwise.
      */
     public static String getString(TextKeys key, String defaultValue) {
+        log.debug("Getting key {}", key);
         return getString(key.getKeyString(), defaultValue);
     }
+
 }

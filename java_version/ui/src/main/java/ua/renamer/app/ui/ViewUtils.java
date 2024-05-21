@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.RenamerApplication;
 import ua.renamer.app.core.lang.LanguageManager;
 import ua.renamer.app.ui.constants.ViewNames;
@@ -15,6 +16,7 @@ import java.util.Objects;
 /**
  * Utility class for loading FXML files with associated resource bundles.
  */
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ViewUtils {
 
@@ -26,6 +28,7 @@ public class ViewUtils {
      * @throws IOException if the FXML file cannot be loaded.
      */
     public static Parent loadFXML(ViewNames viewName) throws IOException {
+        log.debug("Loading FXML file: {}", viewName);
         return loadFXML(viewName.getViewName());
     }
 
@@ -37,6 +40,7 @@ public class ViewUtils {
      * @throws IOException if the FXML file cannot be loaded.
      */
     private static Parent loadFXML(String fxml) throws IOException {
+        log.debug("Loading FXML file: {}", fxml);
         FXMLLoader loader = createLoader(fxml);
         return loader.load();
     }
@@ -48,6 +52,7 @@ public class ViewUtils {
      * @return the created FXMLLoader instance.
      */
     public static FXMLLoader createLoader(ViewNames viewName) {
+        log.debug("Creating FXML loader: {}", viewName);
         return createLoader(viewName.getViewName());
     }
 
@@ -59,6 +64,7 @@ public class ViewUtils {
      * @throws IllegalArgumentException if the FXML filename or resource bundle is invalid.
      */
     private static FXMLLoader createLoader(String fxml) {
+        log.debug("Creating FXML loader: {}", fxml);
         if (Objects.isNull(fxml) || fxml.isBlank()) {
             throw new IllegalArgumentException("Name of the FXML file cannot be empty");
         }
@@ -81,4 +87,5 @@ public class ViewUtils {
 
         return loader;
     }
+
 }

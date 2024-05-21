@@ -2,7 +2,8 @@ package ua.renamer.app.ui.widgets.controllers.modes;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import ua.renamer.app.core.commands.preparation.AddTextPrepareCommand;
+import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.core.commands.preparation.AddTextPrepareInformationCommand;
 import ua.renamer.app.core.enums.ItemPosition;
 import ua.renamer.app.ui.abstracts.ModeBaseController;
 import ua.renamer.app.ui.widgets.view.ItemPositionRadioSelector;
@@ -10,35 +11,48 @@ import ua.renamer.app.ui.widgets.view.ItemPositionRadioSelector;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class ModeAddCustomTextController extends ModeBaseController {
+
     @FXML
     private TextField textField;
     @FXML
     private ItemPositionRadioSelector itemPositionRadioSelector;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
+        configItemPosition();
+        configTextField();
+    }
+
+    private void configItemPosition() {
+        log.info("configItemPosition");
         itemPositionRadioSelector.addValueSelectedHandler(this::handlePositionChanged);
     }
 
+    private void configTextField() {
+        log.info("configTextField");
+        textField.textProperty().addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
+    }
+
     public void handleTextChanged(String newTextValue) {
-        System.out.println(newTextValue);
-        this.updateCommand();
+        log.debug("handleTextChanged {}", newTextValue);
+        updateCommand();
     }
 
     public void handlePositionChanged(ItemPosition itemPosition) {
-        System.out.println(itemPosition);
-        this.updateCommand();
+        log.debug("handlePositionChanged {}", itemPosition);
+        updateCommand();
     }
 
     @Override
     public void updateCommand() {
         var textToAdd = textField.getText();
         var position = itemPositionRadioSelector.getSelectedValue();
-        var curCmd = AddTextPrepareCommand.builder().text(textToAdd).position(position).build();
-        this.setCommand(curCmd);
+        var curCmd = AddTextPrepareInformationCommand.builder().text(textToAdd).position(position).build();
 
+        log.debug("updateCommand {}", curCmd);
+        this.setCommand(curCmd);
     }
+
 }

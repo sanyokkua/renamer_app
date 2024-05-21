@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.lang.LanguageManager;
 import ua.renamer.app.core.lang.TextKeys;
 import ua.renamer.app.ui.ViewUtils;
@@ -12,6 +13,7 @@ import ua.renamer.app.ui.constants.ViewNames;
 import java.io.IOException;
 import java.util.Locale;
 
+@Slf4j
 public class RenamerApplication extends Application {
 
     // Define minimum width and height for the application window
@@ -23,7 +25,7 @@ public class RenamerApplication extends Application {
         // Set the default locale to English and initialize the language manager
         Locale.setDefault(Locale.ENGLISH);
         LanguageManager.setLocale(Locale.ENGLISH);
-
+        log.debug("Application started");
         // Launch the JavaFX application
         launch();
     }
@@ -38,7 +40,9 @@ public class RenamerApplication extends Application {
         stage.setTitle(title);
         stage.setMinWidth(MINIMAL_WIDTH);
         stage.setMinHeight(MINIMAL_HEIGHT);
-
+        log.debug("title: {}", title);
+        log.debug("minimal width: {}", MINIMAL_WIDTH);
+        log.debug("minimal height: {}", MINIMAL_HEIGHT);
         // Load the main view from the FXML file
         Parent root = ViewUtils.loadFXML(ViewNames.APP_MAIN_VIEW);
 
@@ -49,4 +53,5 @@ public class RenamerApplication extends Application {
         // Show the stage
         stage.show();
     }
+
 }
