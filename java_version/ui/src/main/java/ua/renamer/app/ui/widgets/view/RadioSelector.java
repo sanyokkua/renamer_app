@@ -3,6 +3,7 @@ package ua.renamer.app.ui.widgets.view;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventType;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
@@ -52,12 +53,14 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
             btn.setText(btnLabel);
             btn.setToggleGroup(toggleGroup);
 
+            HBox.setMargin(btn, new Insets(0, 2, 0, 2));
             buttons.add(btn);
         }
 
         buttons.stream().findFirst().ifPresent(toggleGroup::selectToggle);
 
         getChildren().add(labelWidget);
+        HBox.setMargin(labelWidget, new Insets(0, 5, 0, 0));
         getChildren().addAll(buttons);
 
         toggleGroup.selectedToggleProperty().addListener(this::toggleChangeListener);

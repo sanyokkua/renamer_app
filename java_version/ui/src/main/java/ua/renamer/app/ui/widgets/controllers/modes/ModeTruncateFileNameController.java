@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.widgets.controllers.modes;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import java.util.ResourceBundle;
 public class ModeTruncateFileNameController extends ModeBaseController {
 
     @FXML
+    private Label amountOfSymbolsLabel;
+    @FXML
     private ItemPositionTruncateRadioSelector itemPositionRadioSelector;
     @FXML
     private Spinner<Integer> amountOfSymbolsSpinner;
@@ -24,6 +27,7 @@ public class ModeTruncateFileNameController extends ModeBaseController {
     public void initialize(URL location, ResourceBundle resources) {
         configItemPositionRadioSelector();
         configAmountOfSymbolsSpinner();
+        updateDisplayedItems();
     }
 
     private void configItemPositionRadioSelector() {
@@ -45,6 +49,7 @@ public class ModeTruncateFileNameController extends ModeBaseController {
 
     private void handlePositionChanged(TruncateOptions truncateOptions) {
         log.debug("handlePositionChanged(): {}", truncateOptions);
+        updateDisplayedItems();
         updateCommand();
     }
 
@@ -65,6 +70,18 @@ public class ModeTruncateFileNameController extends ModeBaseController {
 
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);
+    }
+
+    private void updateDisplayedItems() {
+        if (itemPositionRadioSelector.getSelectedValue() == TruncateOptions.TRUNCATE_EMPTY_SYMBOLS) {
+            amountOfSymbolsSpinner.setDisable(true);
+            amountOfSymbolsSpinner.setVisible(false);
+            amountOfSymbolsLabel.setVisible(false);
+        } else {
+            amountOfSymbolsSpinner.setDisable(false);
+            amountOfSymbolsSpinner.setVisible(true);
+            amountOfSymbolsLabel.setVisible(true);
+        }
     }
 
 }

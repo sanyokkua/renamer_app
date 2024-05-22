@@ -8,12 +8,11 @@
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.widgets.controllers.ApplicationMainViewController"
       prefHeight="400.0" prefWidth="900.0"
-      minHeight="400.0" minWidth="900.0"
-      fx:id="mainVBox">
+      minHeight="400.0" minWidth="900.0">
 
     <HBox VBox.vgrow="ALWAYS">
 
-        <VBox minWidth="400" prefWidth="400" HBox.hgrow="SOMETIMES">
+        <VBox minWidth="400" prefWidth="400" maxWidth="400" HBox.hgrow="SOMETIMES">
 
             <GridPane VBox.vgrow="NEVER">
                 <columnConstraints>
@@ -24,8 +23,8 @@
                     <RowConstraints valignment="CENTER" vgrow="NEVER"/>
                 </rowConstraints>
 
-                <Label text="%app_mode_label" GridPane.columnIndex="0"/>
-                <ChoiceBox fx:id="appModeChoiceBox" GridPane.columnIndex="1">
+                <Label text="%app_mode_label" GridPane.columnIndex="0" maxWidth="100"/>
+                <ChoiceBox fx:id="appModeChoiceBox" GridPane.columnIndex="1" maxWidth="300">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>
@@ -68,13 +67,16 @@
             </GridPane>
         </VBox>
 
-        <VBox minWidth="500" prefWidth="500">
+        <VBox minWidth="500" prefWidth="500" HBox.hgrow="ALWAYS">
             <TableView fx:id="filesTableView" minHeight="200" prefHeight="200" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="originalNameColumn" minWidth="100.0" text="%table_column_name"/>
                     <TableColumn fx:id="itemTypeColumn" minWidth="50.0" resizable="false" text="%table_column_type"/>
                     <TableColumn fx:id="newNameColumn" minWidth="100.0" text="%table_column_new_name"/>
                 </columns>
+                <placeholder>
+                    <Label text="%empty_files_table_placeholder"/>
+                </placeholder>
             </TableView>
             <WebView fx:id="fileInfoWebView" minHeight="20" prefHeight="20" VBox.vgrow="ALWAYS"/>
         </VBox>

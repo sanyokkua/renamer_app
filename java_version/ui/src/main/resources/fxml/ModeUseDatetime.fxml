@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.layout.*?>
@@ -8,10 +9,14 @@
       fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeUseDatetimeController"
       prefHeight="400.0" prefWidth="600.0">
 
-    <ItemPositionWithReplacementRadioSelector fx:id="itemPositionRadioSelector"
-                                              labelValue="%mode_datetime_label_position"/>
+    <ItemPositionWithReplacementRadioSelector fx:id="dateTimePositionInTheNameRadioSelector"
+                                              labelValue="%mode_datetime_label_position">
+        <VBox.margin>
+            <Insets bottom="5"/>
+        </VBox.margin>
+    </ItemPositionWithReplacementRadioSelector>
 
-    <GridPane VBox.vgrow="NEVER">
+    <GridPane VBox.vgrow="NEVER" hgap="5" vgap="10">
         <columnConstraints>
             <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
             <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
@@ -20,8 +25,9 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_datetime_label_datetime_name_separator" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="datetimeAndNameSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label fx:id="datetimeAndNameSeparatorLabel" text="%mode_datetime_label_datetime_name_separator"
+               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="dateTimeAndNameSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
         <Label text="%mode_datetime_label_date_format" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <ChoiceBox fx:id="dateFormatChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity">
@@ -44,45 +50,60 @@
             </cursor>
         </ChoiceBox>
 
-        <Label text="%mode_datetime_label_time_source" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <ChoiceBox fx:id="timeSourceChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="4" maxWidth="Infinity">
+        <CheckBox fx:id="useUppercaseForAmPmCheckBox" text="%mode_datetime_label_use_am_pm_in_uppercase"
+                  maxWidth="Infinity"
+                  GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </CheckBox>
+
+        <Label text="%mode_datetime_label_time_source" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <ChoiceBox fx:id="dateTimeSourceChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="5" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
         <CheckBox fx:id="useFallbackDateTimeCheckBox" text="%mode_datetime_label_use_fallback" maxWidth="Infinity"
-                  GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2">
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </CheckBox>
-
-        <CheckBox fx:id="useCustomFallbackDateTimeCheckBox" text="%mode_datetime_label_use_fallback_custom_date"
-                  maxWidth="Infinity"
                   GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </CheckBox>
 
-        <CheckBox fx:id="useAmPmInUppercaseCheckBox" text="%mode_datetime_label_use_am_pm_in_uppercase"
+        <CheckBox fx:id="useCustomDateTimeAsFallbackCheckBox" text="%mode_datetime_label_use_fallback_custom_date"
                   maxWidth="Infinity"
                   GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </CheckBox>
+
     </GridPane>
 
-    <HBox alignment="CENTER" maxWidth="Infinity">
-        <DatePicker fx:id="datePicker"/>
-        <Label text="Hour:"/>
-        <Spinner fx:id="hourSpinner"/>
-        <Label text="Minute:"/>
-        <Spinner fx:id="minuteSpinner"/>
-        <Label text="Second:"/>
-        <Spinner fx:id="secondSpinner"/>
-    </HBox>
+    <GridPane fx:id="dateTimePicker" VBox.vgrow="NEVER" hgap="2">
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
+        </rowConstraints>
+
+        <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <DatePicker fx:id="datePicker" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+
+        <Label text="Hour:" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Spinner fx:id="hourSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Minute:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <Spinner fx:id="minuteSpinner" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+
+        <Label text="Second:" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+        <Spinner fx:id="secondSpinner" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+    </GridPane>
 
 </VBox>

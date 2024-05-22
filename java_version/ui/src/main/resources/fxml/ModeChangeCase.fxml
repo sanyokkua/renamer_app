@@ -10,7 +10,7 @@
       fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeChangeCaseController"
       prefHeight="400.0" prefWidth="600.0">
 
-    <GridPane VBox.vgrow="NEVER">
+    <GridPane VBox.vgrow="NEVER" hgap="5" vgap="10">
         <columnConstraints>
             <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
             <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>

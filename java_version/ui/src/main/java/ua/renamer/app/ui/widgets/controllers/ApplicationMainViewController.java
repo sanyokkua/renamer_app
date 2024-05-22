@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
@@ -19,6 +20,8 @@ import ua.renamer.app.core.abstracts.FileInformationCommand;
 import ua.renamer.app.core.abstracts.ListProcessingCommand;
 import ua.renamer.app.core.commands.MapFileToAppFileCommand;
 import ua.renamer.app.core.enums.AppModes;
+import ua.renamer.app.core.lang.LanguageManager;
+import ua.renamer.app.core.lang.TextKeys;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.ui.ViewUtils;
 import ua.renamer.app.ui.abstracts.ControllerApi;
@@ -71,10 +74,7 @@ public class ApplicationMainViewController implements Initializable {
     }
 
     private static <I, O> void executeListProcessingCommand(
-            ListProcessingCommand<I, O> command,
-            List<I> items,
-            ProgressBar progressBar,
-            Consumer<List<O>> callback) {
+            ListProcessingCommand<I, O> command, List<I> items, ProgressBar progressBar, Consumer<List<O>> callback) {
         log.debug("Executing list processing command: {}", command);
 
         var optCallback = Optional.ofNullable(callback);
@@ -97,6 +97,22 @@ public class ApplicationMainViewController implements Initializable {
         Thread thread = new Thread(runCommandTask);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private static boolean showConfirmationDialog(String message, String title) {
+        var alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        var confirmButton = new ButtonType(LanguageManager.getString(TextKeys.DIALOG_CONFIRM_BTN_OK));
+        var cancelButton = new ButtonType(LanguageManager.getString(TextKeys.DIALOG_CONFIRM_BTN_CANCEL));
+
+        alert.getButtonTypes().setAll(confirmButton, cancelButton);
+
+        alert.showAndWait();
+
+        return alert.getResult() == confirmButton;
     }
 
     @Override
@@ -174,6 +190,13 @@ public class ApplicationMainViewController implements Initializable {
         filesTableView.getSelectionModel()
                       .selectedItemProperty()
                       .addListener((obs, oldSelection, newSelection) -> handleFileInTableSelectedEvent(newSelection));
+
+        filesTableView.widthProperty().addListener((obs, oldWidth, newWidth) -> {
+            double availableWidth = newWidth.doubleValue() - itemTypeColumn.getWidth();
+            double columnWidth = availableWidth / 2;
+            originalNameColumn.setPrefWidth(columnWidth);
+            newNameColumn.setPrefWidth(columnWidth);
+        });
     }
 
     private void configureFilesTableViewColumns() {
@@ -213,12 +236,11 @@ public class ApplicationMainViewController implements Initializable {
 
     private void configureModeCommandChangedListener() {
         log.info("Configuring modeCommandChangedListener");
-        appModeToControllerMap.forEach((key, value) ->
-                                               value.commandProperty().addListener((observable, oldValue, newValue) ->
-                                                                                           this.handleCommandInTheModeViewUpdated(
-                                                                                                   key,
-                                                                                                   newValue
-                                                                                                                                 )));
+        appModeToControllerMap.forEach((key, value) -> value.commandProperty()
+                                                            .addListener((observable, oldValue, newValue) -> this.handleCommandInTheModeViewUpdated(
+                                                                    key,
+                                                                    newValue
+                                                                                                                                                   )));
     }
 
     private void configureControlWidgetsState() {
@@ -258,12 +280,10 @@ public class ApplicationMainViewController implements Initializable {
         var success = false;
         if (dragboard.hasFiles()) {
             MapFileToAppFileCommand command = new MapFileToAppFileCommand();
-            executeListProcessingCommand(command, dragboard.getFiles(), appProgressBar,
-                                         result -> {
-                                             loadedAppFilesList.addAll(result);
-                                             configureControlWidgetsState();
-                                         }
-                                        );
+            executeListProcessingCommand(command, dragboard.getFiles(), appProgressBar, result -> {
+                loadedAppFilesList.addAll(result);
+                configureControlWidgetsState();
+            });
             success = true;
         }
         event.setDropCompleted(success);
@@ -277,9 +297,7 @@ public class ApplicationMainViewController implements Initializable {
 
         if (newSelection != null) {
             var result = generateHtml(newSelection);
-            WebEngine engine = this.fileInfoWebView.getEngine();
-            fileInfoWebView.setFontScale(0.7);
-            engine.loadContent(result);
+            setTextToTheFileDetailsView(result);
         }
     }
 
@@ -290,6 +308,7 @@ public class ApplicationMainViewController implements Initializable {
 
         appModeContainer.getChildren().clear();
         var view = appModeToViewMap.get(appMode);
+        StackPane.setMargin(view, new Insets(10, 10, 10, 10));
         appModeContainer.getChildren().add(view);
 
         log.debug("handleModeChanged: {}", appMode.name());
@@ -318,12 +337,20 @@ public class ApplicationMainViewController implements Initializable {
 
     private void handleRenameBtnClicked() {
         log.debug("handleRenameBtnClicked");
+        var confirmed = showConfirmationDialog(LanguageManager.getString(TextKeys.DIALOG_CONFIRM_CONTENT),
+                                               LanguageManager.getString(TextKeys.DIALOG_CONFIRM_HEADER)
+                                              );
+        if (confirmed) {
+            log.debug("handleRenameBtnClicked. Confirmed");
+            renameFiles();
+        }
         this.configureControlWidgetsState();
     }
 
     private void handleClearBtnClicked() {
         log.debug("handleClearBtnClicked");
         loadedAppFilesList.clear();
+        setTextToTheFileDetailsView("");
         this.configureControlWidgetsState();
     }
 
@@ -338,13 +365,22 @@ public class ApplicationMainViewController implements Initializable {
 
     private void updatePreview(FileInformationCommand command) {
         log.debug("updatePreview");
-        executeListProcessingCommand(command, loadedAppFilesList, appProgressBar,
-                                     result -> {
-                                         loadedAppFilesList.clear();
-                                         loadedAppFilesList.addAll(result);
-                                         filesTableView.setItems(loadedAppFilesList);
-                                     }
-                                    );
+        executeListProcessingCommand(command, loadedAppFilesList, appProgressBar, result -> {
+            loadedAppFilesList.clear();
+            loadedAppFilesList.addAll(result);
+            filesTableView.setItems(loadedAppFilesList);
+        });
+    }
+
+    private void setTextToTheFileDetailsView(String text) {
+        WebEngine engine = this.fileInfoWebView.getEngine();
+        fileInfoWebView.setFontScale(0.7);
+        engine.loadContent(text);
+    }
+
+    private void renameFiles() {
+        log.debug("renameFiles");
+        // TODO: implement
     }
 
 }

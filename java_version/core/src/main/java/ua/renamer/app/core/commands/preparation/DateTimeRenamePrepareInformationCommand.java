@@ -7,13 +7,15 @@ import ua.renamer.app.core.abstracts.FileInformationCommand;
 import ua.renamer.app.core.enums.*;
 import ua.renamer.app.core.model.FileInformation;
 
+import java.time.LocalDateTime;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class DateTimeRenamePrepareInformationCommand extends FileInformationCommand {
 
     @Builder.Default
-    private ItemPositionWithReplacement position = ItemPositionWithReplacement.BEGIN;
+    private ItemPositionWithReplacement dateTimePositionInTheName = ItemPositionWithReplacement.BEGIN;
     @Builder.Default
     private DateFormat dateFormat = DateFormat.DO_NOT_USE_DATE;
     @Builder.Default
@@ -23,15 +25,15 @@ public class DateTimeRenamePrepareInformationCommand extends FileInformationComm
     @Builder.Default
     private DateTimeSource dateTimeSource = DateTimeSource.FILE_CREATION_DATE;
     @Builder.Default
-    private boolean useUppercase = false;
+    private boolean useUppercaseForAmPm = false;
     @Builder.Default
-    private String customDatetime = "";
+    private LocalDateTime customDateTime = LocalDateTime.now();
     @Builder.Default
-    private String separatorForNameAndDatetime = "";
+    private String dateTimeAndNameSeparator = "";
     @Builder.Default
-    private boolean useFallbackDates = false;
+    private boolean useFallbackDateTime = false;
     @Builder.Default
-    private float useFallbackDateTimestamp = 0;
+    private boolean useCustomDateTimeAsFallback = false;
 
     @Override
     public FileInformation processItem(FileInformation item) {

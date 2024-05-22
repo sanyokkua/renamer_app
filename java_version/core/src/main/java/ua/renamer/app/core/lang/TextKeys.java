@@ -82,7 +82,12 @@ public enum TextKeys {
     FILE_SORTING_SOURCE_IMG_VID_WIDTH("file_sorting_source_img_vid_width"),
     FILE_SORTING_SOURCE_IMG_VID_HEIGHT("file_sorting_source_img_vid_height"),
     TYPE_FILE("type_file"),
-    TYPE_FOLDER("type_folder");
+    TYPE_FOLDER("type_folder"),
+    EMPTY_FILES_TABLE_PLACEHOLDER("empty_files_table_placeholder"),
+    DIALOG_CONFIRM_HEADER("dialog_confirm_header"),
+    DIALOG_CONFIRM_CONTENT("dialog_confirm_content"),
+    DIALOG_CONFIRM_BTN_OK("dialog_confirm_btn_ok"),
+    DIALOG_CONFIRM_BTN_CANCEL("dialog_confirm_btn_cancel");
 
     private final String keyString;
 

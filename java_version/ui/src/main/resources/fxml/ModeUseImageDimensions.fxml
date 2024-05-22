@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
@@ -10,9 +11,13 @@
       prefHeight="400.0" prefWidth="600.0">
 
     <ItemPositionWithReplacementRadioSelector fx:id="itemPositionRadioSelector"
-                                              labelValue="%mode_img_vid_dimensions_label_position"/>
+                                              labelValue="%mode_img_vid_dimensions_label_position">
+        <VBox.margin>
+            <Insets bottom="5"/>
+        </VBox.margin>
+    </ItemPositionWithReplacementRadioSelector>
 
-    <GridPane VBox.vgrow="NEVER">
+    <GridPane VBox.vgrow="NEVER" hgap="5">
         <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
             <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
@@ -32,7 +37,7 @@
         </ChoiceBox>
 
         <Label text="%mode_img_vid_dimensions_label_separator_between" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        <TextField fx:id="dimensionsSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="30"/>
+        <TextField fx:id="dimensionsSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
         <Label text="%mode_img_vid_dimensions_label_right_side" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
         <ChoiceBox fx:id="rightDimensionChoiceBox" GridPane.columnIndex="2" GridPane.rowIndex="1">

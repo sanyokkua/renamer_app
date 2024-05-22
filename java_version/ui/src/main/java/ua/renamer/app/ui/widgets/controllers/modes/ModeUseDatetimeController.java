@@ -3,6 +3,7 @@ package ua.renamer.app.ui.widgets.controllers.modes;
 import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.commands.preparation.DateTimeRenamePrepareInformationCommand;
 import ua.renamer.app.core.enums.*;
@@ -17,15 +18,18 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 @Slf4j
 public class ModeUseDatetimeController extends ModeBaseController {
 
     @FXML
-    private ItemPositionWithReplacementRadioSelector itemPositionRadioSelector;
+    private ItemPositionWithReplacementRadioSelector dateTimePositionInTheNameRadioSelector;
     @FXML
-    private TextField datetimeAndNameSeparatorTextField;
+    private Label datetimeAndNameSeparatorLabel;
+    @FXML
+    private TextField dateTimeAndNameSeparatorTextField;
     @FXML
     private ChoiceBox<DateFormat> dateFormatChoiceBox;
     @FXML
@@ -33,11 +37,13 @@ public class ModeUseDatetimeController extends ModeBaseController {
     @FXML
     private ChoiceBox<DateTimeFormat> dateTimeFormatChoiceBox;
     @FXML
-    private ChoiceBox<DateTimeSource> timeSourceChoiceBox;
+    private ChoiceBox<DateTimeSource> dateTimeSourceChoiceBox;
     @FXML
     private CheckBox useFallbackDateTimeCheckBox;
     @FXML
-    private CheckBox useCustomFallbackDateTimeCheckBox;
+    private CheckBox useCustomDateTimeAsFallbackCheckBox;
+    @FXML
+    private GridPane dateTimePicker;
     @FXML
     private DatePicker datePicker;
     @FXML
@@ -47,7 +53,7 @@ public class ModeUseDatetimeController extends ModeBaseController {
     @FXML
     private Spinner<Integer> secondSpinner;
     @FXML
-    private CheckBox useAmPmInUppercaseCheckBox;
+    private CheckBox useUppercaseForAmPmCheckBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -61,16 +67,17 @@ public class ModeUseDatetimeController extends ModeBaseController {
         configUseCustomFallbackDateTimeCheckBox();
         configDateTimePickerWidgets();
         configUseAmPmInUppercaseCheckBox();
+        updateDisplayedItems();
     }
 
     private void configItemPositionSelector() {
         log.info("configItemPositionSelector()");
-        itemPositionRadioSelector.addValueSelectedHandler(this::handlePositionChanged);
+        dateTimePositionInTheNameRadioSelector.addValueSelectedHandler(this::handlePositionChanged);
     }
 
     private void configDateTimeAndNameSeparatorTextField() {
         log.info("configDateTimeAndNameSeparatorTextField()");
-        datetimeAndNameSeparatorTextField.textProperty()
+        dateTimeAndNameSeparatorTextField.textProperty()
                                          .addListener((observable, oldValue, newValue) -> this.handleDateTimeAndNameSeparatorChanged(
                                                  newValue));
     }
@@ -101,10 +108,10 @@ public class ModeUseDatetimeController extends ModeBaseController {
 
     private void configDateTimeSourceChoiceBox() {
         log.info("configDateTimeSourceChoiceBox()");
-        timeSourceChoiceBox.getItems().addAll(DateTimeSource.values());
-        timeSourceChoiceBox.setValue(DateTimeSource.FILE_CREATION_DATE);
-        timeSourceChoiceBox.setConverter(new DateTimeSourceConverter());
-        timeSourceChoiceBox.setOnAction(event -> handleTimeSourceChanged());
+        dateTimeSourceChoiceBox.getItems().addAll(DateTimeSource.values());
+        dateTimeSourceChoiceBox.setValue(DateTimeSource.FILE_CREATION_DATE);
+        dateTimeSourceChoiceBox.setConverter(new DateTimeSourceConverter());
+        dateTimeSourceChoiceBox.setOnAction(event -> handleTimeSourceChanged());
     }
 
     private void configUseFallbackDateTimeCheckBox() {
@@ -116,17 +123,20 @@ public class ModeUseDatetimeController extends ModeBaseController {
 
     private void configUseCustomFallbackDateTimeCheckBox() {
         log.info("configUseCustomFallbackDateTimeCheckBox()");
-        BooleanProperty useCustomFallbackDateTimeProperty = useCustomFallbackDateTimeCheckBox.selectedProperty();
+        BooleanProperty useCustomFallbackDateTimeProperty = useCustomDateTimeAsFallbackCheckBox.selectedProperty();
         useCustomFallbackDateTimeProperty.addListener((observable, oldValue, newValue) -> this.handleUseCustomFallbackDateTimeChanged(
                 newValue));
     }
 
     private void configDateTimePickerWidgets() {
         log.info("configDateTimePickerWidgets()");
+        var currentDateTime = LocalDateTime.now();
 
-        SpinnerValueFactory<Integer> hourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0);
-        SpinnerValueFactory<Integer> minuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
-        SpinnerValueFactory<Integer> secondValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
+        datePicker.setValue(currentDateTime.toLocalDate());
+
+        var hourValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, currentDateTime.getHour());
+        var minuteValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, currentDateTime.getMinute());
+        var secondValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, currentDateTime.getSecond());
 
         hourSpinner.setValueFactory(hourValueFactory);
         hourSpinner.setEditable(true);
@@ -145,7 +155,7 @@ public class ModeUseDatetimeController extends ModeBaseController {
 
     private void configUseAmPmInUppercaseCheckBox() {
         log.info("configUseAmPmInUppercaseCheckBox()");
-        BooleanProperty useAmPmUppercaseProperty = useAmPmInUppercaseCheckBox.selectedProperty();
+        BooleanProperty useAmPmUppercaseProperty = useUppercaseForAmPmCheckBox.selectedProperty();
         useAmPmUppercaseProperty.addListener((observable, oldValue, newValue) -> this.handleUseAmPmUppercaseChanged(
                 newValue));
     }
@@ -202,43 +212,113 @@ public class ModeUseDatetimeController extends ModeBaseController {
 
     @Override
     public void updateCommand() {
-        LocalDate date = datePicker.getValue();
-        int hour = hourSpinner.getValue();
-        int minute = minuteSpinner.getValue();
-        int second = secondSpinner.getValue();
+        updateDisplayedItems();
 
-        if (date != null) {
-            LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(hour, minute, second));
-            log.debug("dateTime: {}", dateTime);
-//             Add your handling code here TODO:
-        }
-
-        var position = itemPositionRadioSelector.getSelectedValue();
+        var dateTimePositionInTheName = dateTimePositionInTheNameRadioSelector.getSelectedValue();
         var dateFormat = dateFormatChoiceBox.getSelectionModel().getSelectedItem();
         var timeFormat = timeFormatChoiceBox.getSelectionModel().getSelectedItem();
         var dateTimeFormat = dateTimeFormatChoiceBox.getSelectionModel().getSelectedItem();
-        var dateTimeSource = timeSourceChoiceBox.getSelectionModel().getSelectedItem();
-        var useUppercase = useAmPmInUppercaseCheckBox.isSelected();
-//        var customDatetime =
-        var separatorForNameAndDatetime = datetimeAndNameSeparatorTextField.getText();
-        var useFallbackDates = useFallbackDateTimeCheckBox.isSelected();
-        var useFallbackDateTimestamp = useCustomFallbackDateTimeCheckBox.isSelected();
+        var dateTimeSource = dateTimeSourceChoiceBox.getSelectionModel().getSelectedItem();
+        var useUppercaseForAmPm = useUppercaseForAmPmCheckBox.isSelected();
+        var customDateTime = getCustomLocalDateTime();
+        var dateTimeAndNameSeparator = dateTimeAndNameSeparatorTextField.getText();
+        var useFallbackDateTime = useFallbackDateTimeCheckBox.isSelected();
+        var useCustomDateTimeAsFallback = useCustomDateTimeAsFallbackCheckBox.isSelected();
 
         var cmd = DateTimeRenamePrepareInformationCommand.builder()
-                                                         .position(position)
+                                                         .dateTimePositionInTheName(dateTimePositionInTheName)
                                                          .dateFormat(dateFormat)
                                                          .timeFormat(timeFormat)
                                                          .dateTimeFormat(dateTimeFormat)
                                                          .dateTimeSource(dateTimeSource)
-                                                         .useUppercase(useUppercase)
-//                .customDatetime(customDatetime)
-                                                         .separatorForNameAndDatetime(separatorForNameAndDatetime)
-                                                         .useFallbackDates(useFallbackDates)
-//                .useFallbackDateTimestamp(useFallbackDateTimestamp)
+                                                         .useUppercaseForAmPm(useUppercaseForAmPm)
+                                                         .customDateTime(customDateTime)
+                                                         .dateTimeAndNameSeparator(dateTimeAndNameSeparator)
+                                                         .useFallbackDateTime(useFallbackDateTime)
+                                                         .useCustomDateTimeAsFallback(useCustomDateTimeAsFallback)
                                                          .build();
-
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);
+    }
+
+    private void updateDisplayedItems() {
+        log.debug("updateDisplayedItems");
+        var position = dateTimePositionInTheNameRadioSelector.getSelectedValue();
+        var dateTimeSource = dateTimeSourceChoiceBox.getSelectionModel().getSelectedItem();
+
+        var isNotReplaceMode = position != ItemPositionWithReplacement.REPLACE;
+        datetimeAndNameSeparatorLabel.setVisible(isNotReplaceMode);
+        dateTimeAndNameSeparatorTextField.setVisible(isNotReplaceMode);
+
+        switch (dateTimeSource) {
+            case CURRENT_DATE:
+                setVisibleDateTimeChooser(false);
+                setVisibleUseFallbackCheckBox(false);
+                setVisibleUseCustomFallbackCheckBox(false);
+                break;
+            case CUSTOM_DATE:
+                setVisibleDateTimeChooser(true);
+                setVisibleUseFallbackCheckBox(false);
+                setVisibleUseCustomFallbackCheckBox(false);
+                break;
+            default:
+                setVisibleDateTimeChooser(false);
+                setVisibleUseFallbackCheckBox(true);
+
+                // Show additional controls based on checkboxes
+                boolean useFallback = useFallbackDateTimeCheckBox.isSelected();
+                setVisibleUseCustomFallbackCheckBox(useFallback);
+
+                boolean useCustomDateTime = useCustomDateTimeAsFallbackCheckBox.isSelected();
+                setVisibleDateTimeChooser(useFallback && useCustomDateTime);
+                break;
+        }
+    }
+
+    private void setVisibleDateTimeChooser(boolean visible) {
+        log.debug("setVisibleDateTimeChooser: {}", visible);
+        dateTimePicker.setVisible(visible);
+    }
+
+    private void setVisibleUseFallbackCheckBox(boolean visible) {
+        log.debug("setVisibleUseFallbackCheckBox: {}", visible);
+        if (visible) {
+            useFallbackDateTimeCheckBox.setDisable(false);
+            useFallbackDateTimeCheckBox.setVisible(true);
+        } else {
+            useFallbackDateTimeCheckBox.setDisable(true);
+            useFallbackDateTimeCheckBox.setVisible(false);
+        }
+    }
+
+    private void setVisibleUseCustomFallbackCheckBox(boolean visible) {
+        log.debug("setVisibleUseCustomFallbackCheckBox: {}", visible);
+        if (visible) {
+            useCustomDateTimeAsFallbackCheckBox.setDisable(false);
+            useCustomDateTimeAsFallbackCheckBox.setVisible(true);
+        } else {
+            useCustomDateTimeAsFallbackCheckBox.setDisable(true);
+            useCustomDateTimeAsFallbackCheckBox.setVisible(false);
+        }
+    }
+
+    private LocalDateTime getCustomLocalDateTime() {
+        LocalDate date = datePicker.getValue();
+
+        if (Objects.isNull(date)) {
+            log.warn("Date was null, current date will be used");
+            date = LocalDate.now();
+            datePicker.setValue(date);
+        }
+
+        int hour = hourSpinner.getValue();
+        int minute = minuteSpinner.getValue();
+        int second = secondSpinner.getValue();
+
+        LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(hour, minute, second));
+
+        log.debug("getCustomLocalDateTime: {}", dateTime);
+        return dateTime;
     }
 
 }

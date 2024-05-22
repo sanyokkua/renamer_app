@@ -28,7 +28,6 @@ public class ViewUtils {
      * @throws IOException if the FXML file cannot be loaded.
      */
     public static Parent loadFXML(ViewNames viewName) throws IOException {
-        log.debug("Loading FXML file: {}", viewName);
         return loadFXML(viewName.getViewName());
     }
 
@@ -52,7 +51,6 @@ public class ViewUtils {
      * @return the created FXMLLoader instance.
      */
     public static FXMLLoader createLoader(ViewNames viewName) {
-        log.debug("Creating FXML loader: {}", viewName);
         return createLoader(viewName.getViewName());
     }
 
