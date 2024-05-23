@@ -5,8 +5,11 @@ import lombok.NoArgsConstructor;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -71,8 +74,11 @@ public class FileInformationHtmlGenerator {
         if (timestamp == null) {
             return DATA_IS_NOT_FOUND;
         }
-        SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return isoFormat.format(new Date(timestamp));
+        var instant = Instant.ofEpochMilli(timestamp);
+        var localDateTime = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.ofHours(0)));
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // TODO: think about processing zone info
+        return localDateTime.format(formatter);
     }
 
     private static long toKilobytes(long bytes) {
