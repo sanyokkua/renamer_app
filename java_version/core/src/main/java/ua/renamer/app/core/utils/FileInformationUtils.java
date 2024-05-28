@@ -2,7 +2,9 @@ package ua.renamer.app.core.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.abstracts.FileToMetadataMapper;
+import ua.renamer.app.core.mappers.NullMapper;
 import ua.renamer.app.core.mappers.audio.Mp3Mapper;
 import ua.renamer.app.core.mappers.audio.WavMapper;
 import ua.renamer.app.core.mappers.images.*;
@@ -12,37 +14,33 @@ import ua.renamer.app.core.mappers.video.QuickTimeMapper;
 import ua.renamer.app.core.model.FileInformation;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 
-import static ua.renamer.app.core.utils.FileUtils.getFileExtension;
+import static ua.renamer.app.core.utils.FileUtils.validateFileInstance;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileInformationUtils {
 
-    public static final AviMapper AVI_MAPPER = new AviMapper();
-    public static final BmpMapper BMP_MAPPER = new BmpMapper();
-    public static final EpsMapper EPS_MAPPER = new EpsMapper();
-    public static final GifMapper GIF_MAPPER = new GifMapper();
-    public static final HeifMapper HEIF_MAPPER = new HeifMapper();
-    public static final IcoMapper ICO_MAPPER = new IcoMapper();
-    public static final JpegMapper JPEG_MAPPER = new JpegMapper();
-    public static final Mp3Mapper MP_3_MAPPER = new Mp3Mapper();
-    public static final Mp4Mapper MP_4_MAPPER = new Mp4Mapper();
-    public static final PcxMapper PCX_MAPPER = new PcxMapper();
-    public static final PngMapper PNG_MAPPER = new PngMapper();
-    public static final PsdMapper PSD_MAPPER = new PsdMapper();
-    public static final QuickTimeMapper QUICK_TIME_MAPPER = new QuickTimeMapper();
-    public static final TiffMapper TIFF_MAPPER = new TiffMapper();
-    public static final WavMapper WAV_MAPPER = new WavMapper();
-    public static final WebPMapper WEB_PMAPPER = new WebPMapper();
-
-    public static final FileToMetadataMapper MAIN_FILE_TO_METADATA_MAPPER = new NullMapper();
+    private static final AviMapper AVI_MAPPER = new AviMapper();
+    private static final BmpMapper BMP_MAPPER = new BmpMapper();
+    private static final EpsMapper EPS_MAPPER = new EpsMapper();
+    private static final GifMapper GIF_MAPPER = new GifMapper();
+    private static final HeifMapper HEIF_MAPPER = new HeifMapper();
+    private static final IcoMapper ICO_MAPPER = new IcoMapper();
+    private static final JpegMapper JPEG_MAPPER = new JpegMapper();
+    private static final Mp3Mapper MP_3_MAPPER = new Mp3Mapper();
+    private static final Mp4Mapper MP_4_MAPPER = new Mp4Mapper();
+    private static final PcxMapper PCX_MAPPER = new PcxMapper();
+    private static final PngMapper PNG_MAPPER = new PngMapper();
+    private static final PsdMapper PSD_MAPPER = new PsdMapper();
+    private static final QuickTimeMapper QUICK_TIME_MAPPER = new QuickTimeMapper();
+    private static final TiffMapper TIFF_MAPPER = new TiffMapper();
+    private static final WavMapper WAV_MAPPER = new WavMapper();
+    private static final WebPMapper WEB_PMAPPER = new WebPMapper();
+    private static final FileToMetadataMapper FILE_TO_METADATA_MAPPER = new NullMapper();
 
     static {
-        MAIN_FILE_TO_METADATA_MAPPER.setNext(AVI_MAPPER);
+        FILE_TO_METADATA_MAPPER.setNext(AVI_MAPPER);
         AVI_MAPPER.setNext(BMP_MAPPER);
         BMP_MAPPER.setNext(EPS_MAPPER);
         EPS_MAPPER.setNext(GIF_MAPPER);
@@ -61,55 +59,33 @@ public class FileInformationUtils {
     }
 
     public static FileInformation createFileInformationFromFile(File file) {
-        if (!file.exists()) {
-            throw new IllegalArgumentException("File does not exist");
-        }
+        validateFileInstance(file);
 
-        try {
-            final var filePath = file.toPath();
-            final var fileAttributes = Files.readAttributes(filePath, BasicFileAttributes.class);
-            final var fileNameAndExtension = file.getName();
-            final var fileAbsolutePath = file.getAbsolutePath();
-            final var isFile = file.isFile();
-            final var fileNameWithoutExtension = removeFileExtension(fileNameAndExtension);
-            final var fileExtension = getFileExtension(file);
-            final var fsCreationDate = getTimeValue(fileAttributes.creationTime());
-            final var fsModificationDate = getTimeValue(fileAttributes.lastModifiedTime());
-            final var fileSize = file.length();
-            final var metadata = MAIN_FILE_TO_METADATA_MAPPER.map(file);
+        final var fileNameWithoutExtension = FileUtils.getFileNameWithoutExtension(file);
+        final var fileAbsolutePath = FileUtils.getFileAbsolutePath(file);
+        final var isFile = FileUtils.isFile(file);
+        final var fileExtension = FileUtils.getFileExtension(file);
+        final var fsCreationDate = FileUtils.getFileCreationTime(file);
+        final var fsModificationDate = FileUtils.getFileModificationTime(file);
+        final var fileSize = FileUtils.getFileSize(file);
+        final var metadata = FILE_TO_METADATA_MAPPER.map(file);
 
-            return FileInformation.builder()
-                                  .originalFile(file)
-                                  .fileAbsolutePath(fileAbsolutePath)
-                                  .isFile(isFile)
-                                  .fileName(fileNameWithoutExtension)
-                                  .newName(fileNameWithoutExtension) // Initial value is current file name
-                                  .fileExtension(fileExtension)
-                                  .newExtension(fileExtension) // Initial value is current file extension
-                                  .fileSize(fileSize)
-                                  .fsCreationDate(fsCreationDate)
-                                  .fsModificationDate(fsModificationDate)
-                                  .metadata(metadata)
-                                  .build();
-        } catch (IOException ex) {
-            throw new IllegalArgumentException("Failed to read file information", ex);
-        }
-    }
+        final var creationDateTime = fsCreationDate.orElse(null);
+        final var modificationDateTime = fsModificationDate.orElse(null);
 
-    private static Long getTimeValue(FileTime fileTime) {
-        var result = fileTime.toMillis();
-        if (result < 0 || result == 0) {
-            return null;
-        }
-        return result;
-    }
-
-    private static String removeFileExtension(String fileName) {
-        int dotIndex = fileName.lastIndexOf(".");
-        if (dotIndex == -1) {
-            return fileName;
-        }
-        return fileName.substring(0, dotIndex);
+        return FileInformation.builder()
+                              .originalFile(file)
+                              .fileAbsolutePath(fileAbsolutePath)
+                              .isFile(isFile)
+                              .fileName(fileNameWithoutExtension)
+                              .newName(fileNameWithoutExtension) // Initial value is current file name
+                              .fileExtension(fileExtension)
+                              .newExtension(fileExtension) // Initial value is current file extension
+                              .fileSize(fileSize)
+                              .fsCreationDate(creationDateTime)
+                              .fsModificationDate(modificationDateTime)
+                              .metadata(metadata)
+                              .build();
     }
 
 }

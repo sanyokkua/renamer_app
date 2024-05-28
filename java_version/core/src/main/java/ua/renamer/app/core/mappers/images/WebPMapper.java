@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
 
 @Slf4j
-public class WebPMapper extends CommonImageMapper {
+public class WebPMapper extends ImageBaseMapper {
 
     @Override
     protected Set<String> getSupportedExtensions() {
@@ -16,17 +16,17 @@ public class WebPMapper extends CommonImageMapper {
     }
 
     @Override
-    protected Class<? extends Directory> getBaseDirectory() {
+    protected Class<? extends Directory> getBaseDirectoryClass() {
         return WebpDirectory.class;
     }
 
     @Override
-    protected Integer getWidthTag() {
+    protected Integer getBaseWidthTag() {
         return WebpDirectory.TAG_IMAGE_WIDTH;
     }
 
     @Override
-    protected Integer getHeightTag() {
+    protected Integer getBaseHeightTag() {
         return WebpDirectory.TAG_IMAGE_HEIGHT;
     }
 

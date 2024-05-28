@@ -5,11 +5,7 @@ import lombok.NoArgsConstructor;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,8 +17,7 @@ public class FileInformationHtmlGenerator {
         StringBuilder html = new StringBuilder();
 
         html.append("<html><body>");
-        html.append("<h1>Absolute Path: ").append(fileInfo.getFileAbsolutePath()).append("</h1>");
-
+        html.append("<h2>Absolute Path: ").append(fileInfo.getFileAbsolutePath()).append("</h2>");
         html.append("<p>File Extension: ").append(getFieldValue(fileInfo.getFileExtension())).append("</p>");
 
         long fileSize = fileInfo.getFileSize();
@@ -66,19 +61,8 @@ public class FileInformationHtmlGenerator {
         return value != null ? value : DATA_IS_NOT_FOUND;
     }
 
-    private static String formatTimestamp(Optional<Long> timestamp) {
-        return timestamp.map(FileInformationHtmlGenerator::formatTimestamp).orElse(DATA_IS_NOT_FOUND);
-    }
-
-    private static String formatTimestamp(Long timestamp) {
-        if (timestamp == null) {
-            return DATA_IS_NOT_FOUND;
-        }
-        var instant = Instant.ofEpochMilli(timestamp);
-        var localDateTime = LocalDateTime.ofInstant(instant, ZoneId.ofOffset("", ZoneOffset.ofHours(0)));
-        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        // TODO: think about processing zone info
-        return localDateTime.format(formatter);
+    private static String formatTimestamp(Optional<LocalDateTime> localDateTime) {
+        return localDateTime.map(DateTimeUtils::formatLocalDateTime).orElse(DATA_IS_NOT_FOUND);
     }
 
     private static long toKilobytes(long bytes) {

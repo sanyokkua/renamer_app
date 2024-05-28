@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
 
 @Slf4j
-public class JpegMapper extends CommonImageMapper {
+public class JpegMapper extends ImageBaseMapper {
 
     @Override
     protected Set<String> getSupportedExtensions() {
@@ -16,17 +16,17 @@ public class JpegMapper extends CommonImageMapper {
     }
 
     @Override
-    protected Class<? extends Directory> getBaseDirectory() {
+    protected Class<? extends Directory> getBaseDirectoryClass() {
         return JpegDirectory.class;
     }
 
     @Override
-    protected Integer getWidthTag() {
+    protected Integer getBaseWidthTag() {
         return JpegDirectory.TAG_IMAGE_WIDTH;
     }
 
     @Override
-    protected Integer getHeightTag() {
+    protected Integer getBaseHeightTag() {
         return JpegDirectory.TAG_IMAGE_HEIGHT;
     }
 

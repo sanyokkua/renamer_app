@@ -5,6 +5,7 @@ import ua.renamer.app.core.lang.LanguageManager;
 import ua.renamer.app.core.lang.TextKeys;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,8 +33,8 @@ public class FileInformation {
     private final long fileSize; // file size in Bytes
 
     // Possible Null VALUES
-    private final Long fsCreationDate; // file creation datetime timestamp
-    private final Long fsModificationDate; // file modification datetime timestamp
+    private final LocalDateTime fsCreationDate; // file creation datetime timestamp
+    private final LocalDateTime fsModificationDate; // file modification datetime timestamp
     private final FileInformationMetadata metadata;
 
     // Values that can be changed after obj creation
@@ -44,11 +45,11 @@ public class FileInformation {
     @Setter
     private String newExtension; // extension, like .jpg, or empty string
 
-    public Optional<Long> getFsCreationDate() {
+    public Optional<LocalDateTime> getFsCreationDate() {
         return Optional.ofNullable(fsCreationDate);
     }
 
-    public Optional<Long> getFsModificationDate() {
+    public Optional<LocalDateTime> getFsModificationDate() {
         return Optional.ofNullable(fsModificationDate);
     }
 

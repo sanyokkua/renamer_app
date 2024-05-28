@@ -1,4 +1,4 @@
-package ua.renamer.app.core.mappers.images;
+package ua.renamer.app.core.mappers;
 
 import ua.renamer.app.core.abstracts.FileToMetadataMapper;
 import ua.renamer.app.core.model.FileInformationMetadata;

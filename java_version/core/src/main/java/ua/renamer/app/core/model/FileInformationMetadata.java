@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class FileInformationMetadata {
 
-    private final Long creationDate;
+    private final LocalDateTime creationDate;
     private final Integer imgVidWidth;
     private final Integer imgVidHeight;
     private final String audioArtistName;
@@ -24,7 +25,7 @@ public class FileInformationMetadata {
     @Builder.Default
     private final Map<String, String> otherFoundTagValues = new HashMap<>();
 
-    public Optional<Long> getCreationDate() {
+    public Optional<LocalDateTime> getCreationDate() {
         return Optional.ofNullable(creationDate);
     }
 

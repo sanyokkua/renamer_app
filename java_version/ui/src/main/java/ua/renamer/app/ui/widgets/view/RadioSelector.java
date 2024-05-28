@@ -48,7 +48,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
     private void initWidgets() {
         for (T enumConstant : enumClass.getEnumConstants()) {
             var btnLabel = convertor.toString(enumConstant);
-            var btn = new ValueRadioBtn<T>(enumConstant);
+            var btn = new ValueRadioBtn<>(enumConstant);
 
             btn.setText(btnLabel);
             btn.setToggleGroup(toggleGroup);

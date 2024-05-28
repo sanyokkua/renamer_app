@@ -7,7 +7,6 @@ module ua.renamer.app.ui {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
-    requires java.desktop;
 
     requires org.slf4j;
     requires ch.qos.logback.core;

@@ -12,6 +12,7 @@ module ua.renamer.app.core {
     exports ua.renamer.app.core.utils;
     exports ua.renamer.app.core.commands;
     exports ua.renamer.app.core.commands.preparation;
+    exports ua.renamer.app.core.mappers;
     exports ua.renamer.app.core.mappers.audio;
     exports ua.renamer.app.core.mappers.video;
     exports ua.renamer.app.core.mappers.images;
