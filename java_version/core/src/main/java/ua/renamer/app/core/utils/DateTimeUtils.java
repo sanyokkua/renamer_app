@@ -3,15 +3,16 @@ package ua.renamer.app.core.utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.core.enums.DateFormat;
+import ua.renamer.app.core.enums.DateTimeFormat;
+import ua.renamer.app.core.enums.TimeFormat;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -87,6 +88,76 @@ public class DateTimeUtils {
     public static String formatLocalDateTime(LocalDateTime localDateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return localDateTime.format(formatter);
+    }
+
+    public static String formatDate(LocalDateTime localDateTime, DateFormat format) {
+        if (Objects.isNull(format) || DateFormat.DO_NOT_USE_DATE.equals(format)) {
+            return "";
+        }
+
+        if (Objects.isNull(localDateTime)) {
+            return "";
+        }
+
+        var enumFormatter = format.getFormatter();
+        if (enumFormatter.isEmpty()) {
+            return "";
+        }
+
+        DateTimeFormatter formatter = enumFormatter.get();
+        return formatter.format(localDateTime);
+    }
+
+    public static String formatTime(LocalDateTime localDateTime, TimeFormat format) {
+        if (Objects.isNull(format) || TimeFormat.DO_NOT_USE_TIME.equals(format)) {
+            return "";
+        }
+
+        if (Objects.isNull(localDateTime)) {
+            return "";
+        }
+
+        var enumFormatter = format.getFormatter();
+        if (enumFormatter.isEmpty()) {
+            return "";
+        }
+
+        DateTimeFormatter formatter = enumFormatter.get();
+        return formatter.format(localDateTime);
+    }
+
+    public static String formatDateTime(
+            LocalDateTime localDateTime,
+            DateFormat dateFormat,
+            TimeFormat timeFormat,
+            DateTimeFormat dateTimeFormat) {
+        if (Objects.isNull(localDateTime)) {
+            return "";
+        }
+
+        if (DateTimeFormat.NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970.equals(dateTimeFormat)) {
+            Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
+            return "%d".formatted(instant.toEpochMilli()); // Check what is better seconds or millis. Probably millis should be better
+        }
+
+        final String dateFormatted = formatDate(localDateTime, dateFormat);
+        final String timeFormatted = formatTime(localDateTime, timeFormat);
+
+        if (StringUtils.isEmpty(dateFormatted) && StringUtils.isEmpty(timeFormatted)) {
+            return "";
+        }
+
+        if (StringUtils.isEmpty(dateFormatted) && !StringUtils.isEmpty(timeFormatted)) {
+            return timeFormatted;
+        }
+
+        if (StringUtils.isEmpty(timeFormatted) && !StringUtils.isEmpty(dateFormatted)) {
+            return dateFormatted;
+        }
+
+        Optional<String> formatString = dateTimeFormat.getFormatString();
+
+        return formatString.map(fs -> fs.formatted(dateFormatted, timeFormatted)).orElse("");
     }
 
 }

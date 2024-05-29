@@ -3,6 +3,7 @@ package ua.renamer.app.core.utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.core.enums.TextCaseOptions;
 
 import java.util.List;
 import java.util.Objects;
@@ -58,9 +59,7 @@ public class StringUtils {
             return List.of();
         }
 
-        return Stream.of(text.split("\\s+"))
-                     .filter(word -> !word.isBlank())
-                     .toList();
+        return Stream.of(text.split("\\s+")).filter(word -> !word.isBlank()).toList();
     }
 
     /**
@@ -111,9 +110,7 @@ public class StringUtils {
 
         var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
 
-        return separateWords.stream()
-                            .map(StringUtils::capitalize)
-                            .collect(Collectors.joining());
+        return separateWords.stream().map(StringUtils::capitalize).collect(Collectors.joining());
     }
 
     /**
@@ -128,8 +125,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("-", SPACE_SYMBOL)
-                                                    .replace(".", SPACE_SYMBOL);
+        var stringWithReplacedDividers = inputString.replace("-", SPACE_SYMBOL).replace(".", SPACE_SYMBOL);
 
         var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
 
@@ -148,8 +144,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("-", SPACE_SYMBOL)
-                                                    .replace(".", SPACE_SYMBOL);
+        var stringWithReplacedDividers = inputString.replace("-", SPACE_SYMBOL).replace(".", SPACE_SYMBOL);
 
         var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
 
@@ -168,8 +163,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("_", SPACE_SYMBOL)
-                                                    .replace(".", SPACE_SYMBOL);
+        var stringWithReplacedDividers = inputString.replace("_", SPACE_SYMBOL).replace(".", SPACE_SYMBOL);
 
         var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
 
@@ -222,9 +216,31 @@ public class StringUtils {
 
         var separateWords = divideStringToListOfWords(replaceSymbols);
 
-        return separateWords.stream()
-                            .map(StringUtils::capitalize)
-                            .collect(Collectors.joining(SPACE_SYMBOL));
+        return separateWords.stream().map(StringUtils::capitalize).collect(Collectors.joining(SPACE_SYMBOL));
+    }
+
+    /**
+     * Converts a string to a specified case based on the provided TextCaseOptions.
+     *
+     * @param inputString     the string to convert
+     * @param textCaseOptions the case option to apply
+     * @return the string converted to the specified case, or the original string if it is empty or null
+     */
+    public static String toProvidedCase(final String inputString, TextCaseOptions textCaseOptions) {
+        if (isEmpty(inputString)) {
+            return inputString;
+        }
+
+        return switch (textCaseOptions) {
+            case CAMEL_CASE -> toCamelCase(inputString);
+            case PASCAL_CASE -> toPascalCase(inputString);
+            case SNAKE_CASE -> toSnakeCase(inputString);
+            case SNAKE_CASE_SCREAMING -> toScreamingSnakeCase(inputString);
+            case KEBAB_CASE -> toKebabCase(inputString);
+            case UPPERCASE -> toUppercase(inputString);
+            case LOWERCASE -> toLowercase(inputString);
+            case TITLE_CASE -> toTitleCase(inputString);
+        };
     }
 
 }

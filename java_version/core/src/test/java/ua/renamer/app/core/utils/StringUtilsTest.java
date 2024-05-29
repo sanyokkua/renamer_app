@@ -5,6 +5,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import ua.renamer.app.core.enums.TextCaseOptions;
 
 import java.util.stream.Stream;
 
@@ -130,6 +131,39 @@ class StringUtilsTest {
                         );
     }
 
+    static Stream<Arguments> testToProvidedCaseArguments() {
+        return Stream.of(
+                arguments(null, null, null),
+                arguments("", TextCaseOptions.CAMEL_CASE, ""),
+                arguments(" This text.should_Be-converted  ", TextCaseOptions.CAMEL_CASE, "thisTextShouldBeConverted"),
+                arguments(" This text.should_Be-converted  ", TextCaseOptions.PASCAL_CASE, "ThisTextShouldBeConverted"),
+                arguments(" This text.should_Be-converted  ",
+                          TextCaseOptions.SNAKE_CASE,
+                          "this_text_should_be_converted"
+                         ),
+                arguments(" This text.should_Be-converted  ",
+                          TextCaseOptions.SNAKE_CASE_SCREAMING,
+                          "THIS_TEXT_SHOULD_BE_CONVERTED"
+                         ),
+                arguments(" This text.should_Be-converted  ",
+                          TextCaseOptions.KEBAB_CASE,
+                          "this-text-should-be-converted"
+                         ),
+                arguments(" This text.should_Be-converted  ",
+                          TextCaseOptions.UPPERCASE,
+                          " THIS TEXT.SHOULD_BE-CONVERTED  "
+                         ),
+                arguments(" This text.should_Be-converted  ",
+                          TextCaseOptions.LOWERCASE,
+                          " this text.should_be-converted  "
+                         ),
+                arguments(" This text.should_Be-converted  ",
+                          TextCaseOptions.TITLE_CASE,
+                          "This Text Should Be Converted"
+                         )
+                        );
+    }
+
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", "  ", "\n", "\t"})
@@ -211,6 +245,14 @@ class StringUtilsTest {
     @MethodSource("toTitleCaseArguments")
     void testToTitleCase(String actualValue, String expectedValue) {
         var result = StringUtils.toTitleCase(actualValue);
+
+        assertEquals(expectedValue, result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testToProvidedCaseArguments")
+    void testToProvidedCase(String actualValue, TextCaseOptions options, String expectedValue) {
+        var result = StringUtils.toProvidedCase(actualValue, options);
 
         assertEquals(expectedValue, result);
     }
