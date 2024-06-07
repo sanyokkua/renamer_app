@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -75,6 +77,7 @@ public class FileUtils {
 
     public static Optional<LocalDateTime> getFileCreationTime(File file) {
         validateFileInstance(file);
+
         var attr = getFileAttributes(file);
         if (attr.isEmpty()) {
             return Optional.empty();
@@ -99,6 +102,30 @@ public class FileUtils {
         validateFileInstance(file);
 
         return file.length();
+    }
+
+    /**
+     * Retrieves the parent folders of a file or directory given its path.
+     *
+     * @param filePath The path of the file or directory.
+     * @return A list containing the names of the parent folders.
+     */
+    public static List<String> getParentFolders(String filePath) {
+        if (Objects.isNull(filePath) || filePath.trim().isEmpty()) {
+            return List.of();
+        }
+
+        // Normalize the file path by replacing backslashes with forward slashes
+        // and removing redundant slashes and trailing slash
+        filePath = filePath.replace("\\", "/")
+                           .replaceAll("//+", "/")
+                           .replaceAll("/$", "");
+
+        String[] splitPathItems = filePath.split("/");
+
+        // Exclude the root element (drive letter for Windows or empty string for Unix)
+        // and exclude last item (filename or directory)
+        return Arrays.asList(splitPathItems).subList(1, splitPathItems.length - 1);
     }
 
     private static String removeFileExtension(String fileName) {

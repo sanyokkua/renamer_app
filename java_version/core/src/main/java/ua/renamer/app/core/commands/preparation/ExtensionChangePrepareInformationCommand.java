@@ -1,22 +1,31 @@
 package ua.renamer.app.core.commands.preparation;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ua.renamer.app.core.abstracts.FileInformationCommand;
 import ua.renamer.app.core.model.FileInformation;
 
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExtensionChangePrepareInformationCommand extends FileInformationCommand {
 
+    @NonNull
     @Builder.Default
-    private String newExtension = "";
+    private final String newExtension = "";
 
     @Override
     public FileInformation processItem(FileInformation item) {
-        return null;
+        if (item.isFile()) {
+            var newExt = newExtension.strip();
+            if (!newExt.isEmpty() && !newExt.startsWith(".")) {
+                newExt = "." + newExt;
+            }
+
+            item.setNewExtension(newExt);
+        }
+
+        return item;
     }
 
 }

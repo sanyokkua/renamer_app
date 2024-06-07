@@ -35,8 +35,11 @@ class StringUtilsTest {
                 arguments("THIS_IS_CAMEL_CASE", "thisIsCamelCase"),
                 arguments("this-IS-camel-CASE", "thisIsCamelCase"),
                 arguments("THIS.IS.CAMEL.CASE", "thisIsCamelCase"),
-                arguments("this_IS   .caMel-CASE", "thisIsCamelCase"),
-                arguments("  .-_", "  .-_")
+                arguments("this_IS   .camel-CASE", "thisIsCamelCase"),
+                arguments("  .-_", "  .-_"),
+                arguments("ThisShouldBeCamelCase", "thisShouldBeCamelCase"),
+                arguments("thisShouldBeCamelCase", "thisShouldBeCamelCase"),
+                arguments("This Should Be Camel Case", "thisShouldBeCamelCase")
                         );
     }
 
@@ -47,7 +50,7 @@ class StringUtilsTest {
                 arguments("    ", "    "),
                 arguments("THIS IS PASCAL CASE", "ThisIsPascalCase"),
                 arguments("THIS_IS_PASCAL_CASE", "ThisIsPascalCase"),
-                arguments("this-IS-pascal-casE", "ThisIsPascalCase"),
+                arguments("this-IS-pascal-case", "ThisIsPascalCase"),
                 arguments("this.is.pascal.case", "ThisIsPascalCase"),
                 arguments("this_IS   .pascal-CASE", "ThisIsPascalCase")
                         );
@@ -60,7 +63,7 @@ class StringUtilsTest {
                 arguments("    ", "    "),
                 arguments("THIS IS SNAKE CASE", "this_is_snake_case"),
                 arguments("THIS_IS_SNAKE_CASE", "this_is_snake_case"),
-                arguments("this-IS-snake-casE", "this_is_snake_case"),
+                arguments("this-IS-snake-case", "this_is_snake_case"),
                 arguments("this.is.snake.case", "this_is_snake_case"),
                 arguments("this_IS   .snake-CASE", "this_is_snake_case")
                         );
@@ -73,7 +76,7 @@ class StringUtilsTest {
                 arguments("    ", "    "),
                 arguments("THIS IS SCREAMING SNAKE CASE", "THIS_IS_SCREAMING_SNAKE_CASE"),
                 arguments("THIS_IS_SCREAMING_SNAKE_CASE", "THIS_IS_SCREAMING_SNAKE_CASE"),
-                arguments("this-IS-sCreaming-snake-casE", "THIS_IS_SCREAMING_SNAKE_CASE"),
+                arguments("this-IS-Screaming-snake-case", "THIS_IS_SCREAMING_SNAKE_CASE"),
                 arguments("this.is.screaming.snake.case", "THIS_IS_SCREAMING_SNAKE_CASE"),
                 arguments("this_IS screaming  .snake-CASE", "THIS_IS_SCREAMING_SNAKE_CASE")
                         );
@@ -86,7 +89,7 @@ class StringUtilsTest {
                 arguments("    ", "    "),
                 arguments("THIS IS KEBAB CASE", "this-is-kebab-case"),
                 arguments("THIS_IS_KEBAB_CASE", "this-is-kebab-case"),
-                arguments("this-IS-kebab-casE", "this-is-kebab-case"),
+                arguments("this-IS-kebab-case", "this-is-kebab-case"),
                 arguments("this.is.kebab.case", "this-is-kebab-case"),
                 arguments("this_IS   .kebab-CASE", "this-is-kebab-case")
                         );
@@ -125,7 +128,7 @@ class StringUtilsTest {
                 arguments("    ", "    "),
                 arguments("THIS IS TITLE CASE", "This Is Title Case"),
                 arguments("THIS_IS_TITLE_CASE", "This Is Title Case"),
-                arguments("this-IS-title-casE", "This Is Title Case"),
+                arguments("this-IS-title-case", "This Is Title Case"),
                 arguments("this.is.title.case", "This Is Title Case"),
                 arguments("this_IS   .title-CASE", "This Is Title Case")
                         );
@@ -161,6 +164,34 @@ class StringUtilsTest {
                           TextCaseOptions.TITLE_CASE,
                           "This Text Should Be Converted"
                          )
+                        );
+    }
+
+    static Stream<Arguments> getSeparateWordsFromInputStringArguments() {
+        return Stream.of(
+                arguments(null, 0),
+                arguments("", 0),
+                arguments("    ", 0),
+                arguments("THIS IS TITLE CASE", 4),
+                arguments("this_is-a_file name", 5),
+                arguments("THIS_IS_A_FILE_NAME", 5),
+                arguments("this-is-a-file-name", 5),
+                arguments("THIS_IS-A_FILE NAME", 5),
+                arguments("FileNameOriginal", 3),
+                arguments("fileNameOriginal", 3),
+                arguments("File_name_original", 3),
+                arguments("        File_name_original", 3),
+                arguments("        File_name_original         ", 3),
+                arguments("        File_     name     _  original         ", 3),
+                arguments("        _file_     name     _  original         ", 3),
+                arguments("        _file_     ___name   _____  _  original         ", 3),
+                arguments("Resume_JohnDoe", 3),
+                arguments("Resume_JohnDoe", 3),
+                arguments("download", 1),
+                arguments("IMG_20230606_123456", 3),
+                arguments("Shopping_List_2024", 3),
+                arguments("12345qwerty", 2),
+                arguments("12345qwerty12345", 3)
                         );
     }
 
@@ -255,6 +286,15 @@ class StringUtilsTest {
         var result = StringUtils.toProvidedCase(actualValue, options);
 
         assertEquals(expectedValue, result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSeparateWordsFromInputStringArguments")
+    void testGetSeparateWordsFromInputString(String input, int amountOfWords) {
+        var result = StringUtils.getSeparateWordsFromInputString(input);
+
+        assertNotNull(result);
+        assertEquals(amountOfWords, result.size());
     }
 
 }

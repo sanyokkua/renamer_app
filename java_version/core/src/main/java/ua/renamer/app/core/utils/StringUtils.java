@@ -7,6 +7,7 @@ import ua.renamer.app.core.enums.TextCaseOptions;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,7 +50,30 @@ public class StringUtils {
     }
 
     /**
-     * Divides a string into a list of words separated by whitespace.
+     * Replaces certain delimiters in the input string with spaces and then divides the string
+     * into a list of words.
+     * <p>
+     * The delimiters that are replaced with spaces are:
+     * - Underscores '_'
+     * - Hyphens '-'
+     * - Periods '.'
+     *
+     * @param inputString the string to process
+     * @return a list of words from the processed string
+     */
+    static List<String> getSeparateWordsFromInputString(String inputString) {
+        if (isEmpty(inputString)) {
+            return List.of();
+        }
+        var stringWithReplacedDividers = inputString.replace("_", SPACE_SYMBOL)
+                                                    .replace("-", SPACE_SYMBOL)
+                                                    .replace(".", SPACE_SYMBOL);
+
+        return divideStringToListOfWords(stringWithReplacedDividers);
+    }
+
+    /**
+     * Divides a string into a list of words separated by whitespace, numbers, case change.
      *
      * @param text the string to divide
      * @return a list of words, or an empty list if the input string is empty or null
@@ -59,7 +83,18 @@ public class StringUtils {
             return List.of();
         }
 
-        return Stream.of(text.split("\\s+")).filter(word -> !word.isBlank()).toList();
+        // Split by spaces first
+        String[] splitResult = text.split("\\s+");
+
+        // Further split each part by camelCase, PascalCase, and alphanumeric boundaries
+        Pattern camelCasePattern = Pattern.compile("(?<=[a-z])(?=[A-Z])");
+        Pattern alphanumericPattern = Pattern.compile("(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)");
+
+        return Stream.of(splitResult)
+                     .flatMap(part -> Stream.of(camelCasePattern.split(part)))
+                     .flatMap(part -> Stream.of(alphanumericPattern.split(part)))
+                     .filter(word -> !word.isBlank())
+                     .collect(Collectors.toList());
     }
 
     /**
@@ -74,11 +109,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("_", SPACE_SYMBOL)
-                                                    .replace("-", SPACE_SYMBOL)
-                                                    .replace(".", SPACE_SYMBOL);
-
-        var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
+        var separateWords = getSeparateWordsFromInputString(inputString);
 
         if (separateWords.isEmpty()) {
             return inputString;
@@ -104,11 +135,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("_", SPACE_SYMBOL)
-                                                    .replace("-", SPACE_SYMBOL)
-                                                    .replace(".", SPACE_SYMBOL);
-
-        var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
+        var separateWords = getSeparateWordsFromInputString(inputString);
 
         return separateWords.stream().map(StringUtils::capitalize).collect(Collectors.joining());
     }
@@ -125,9 +152,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("-", SPACE_SYMBOL).replace(".", SPACE_SYMBOL);
-
-        var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
+        var separateWords = getSeparateWordsFromInputString(inputString);
 
         return String.join("_", separateWords).toLowerCase();
     }
@@ -144,9 +169,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("-", SPACE_SYMBOL).replace(".", SPACE_SYMBOL);
-
-        var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
+        var separateWords = getSeparateWordsFromInputString(inputString);
 
         return String.join("_", separateWords).toUpperCase();
     }
@@ -163,9 +186,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var stringWithReplacedDividers = inputString.replace("_", SPACE_SYMBOL).replace(".", SPACE_SYMBOL);
-
-        var separateWords = divideStringToListOfWords(stringWithReplacedDividers);
+        var separateWords = getSeparateWordsFromInputString(inputString);
 
         return String.join("-", separateWords).toLowerCase();
     }
@@ -210,11 +231,7 @@ public class StringUtils {
             return inputString;
         }
 
-        var replaceSymbols = inputString.replace("_", SPACE_SYMBOL)
-                                        .replace("-", SPACE_SYMBOL)
-                                        .replace(".", SPACE_SYMBOL);
-
-        var separateWords = divideStringToListOfWords(replaceSymbols);
+        var separateWords = getSeparateWordsFromInputString(inputString);
 
         return separateWords.stream().map(StringUtils::capitalize).collect(Collectors.joining(SPACE_SYMBOL));
     }

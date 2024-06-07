@@ -1,29 +1,28 @@
 package ua.renamer.app.core.commands.preparation;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ua.renamer.app.core.abstracts.FileInformationCommand;
 import ua.renamer.app.core.enums.ItemPosition;
 import ua.renamer.app.core.model.FileInformation;
 
-import java.util.Objects;
-
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AddTextPrepareInformationCommand extends FileInformationCommand {
 
+    @NonNull
     @Builder.Default
-    private ItemPosition position = ItemPosition.BEGIN;
+    private final ItemPosition position = ItemPosition.BEGIN;
+    @NonNull
     @Builder.Default
-    private String text = "";
+    private final String text = "";
 
     @Override
     public FileInformation processItem(FileInformation item) {
-        if (Objects.requireNonNull(position) == ItemPosition.BEGIN) {
+        if (ItemPosition.BEGIN.equals(position)) {
             item.setNewName(text + item.getFileName());
-        } else if (position == ItemPosition.END) {
+        } else {
             item.setNewName(item.getFileName() + text);
         }
 
