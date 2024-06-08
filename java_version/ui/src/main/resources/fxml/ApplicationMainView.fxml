@@ -6,7 +6,7 @@
 <?import javafx.scene.web.WebView?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="ua.renamer.app.ui.widgets.controllers.ApplicationMainViewController"
+      fx:controller="ua.renamer.app.ui.controller.ApplicationMainViewController"
       prefHeight="400.0" prefWidth="900.0"
       minHeight="400.0" minWidth="900.0">
 

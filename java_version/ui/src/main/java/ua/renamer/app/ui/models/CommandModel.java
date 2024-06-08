@@ -3,7 +3,7 @@ package ua.renamer.app.ui.models;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.abstracts.FileInformationCommand;
+import ua.renamer.app.core.service.command.FileInformationCommand;
 
 /**
  * Model class representing a command.
@@ -17,7 +17,7 @@ public class CommandModel {
      * Constructs a CommandModel object.
      */
     public CommandModel() {
-        this.appFileCommand = new SimpleObjectProperty<>(this, null);
+        this.appFileCommand = new SimpleObjectProperty<>(this, "appFileCommand");
     }
 
     /**
@@ -26,7 +26,7 @@ public class CommandModel {
      * @return The current FileInformationCommand.
      */
     public FileInformationCommand getAppFileCommand() {
-        log.info("getAppFileCommand");
+        log.info("getAppFileCommand()");
         return appFileCommand.get();
     }
 
@@ -36,7 +36,7 @@ public class CommandModel {
      * @param fileInformationCommand The FileInformationCommand to set.
      */
     public void setAppFileCommand(FileInformationCommand fileInformationCommand) {
-        log.info("setAppFileCommand");
+        log.info("setAppFileCommand()");
         this.appFileCommand.set(fileInformationCommand);
     }
 
@@ -46,7 +46,7 @@ public class CommandModel {
      * @return The property representing the FileInformationCommand.
      */
     public ObjectProperty<FileInformationCommand> appFileCommandProperty() {
-        log.info("appFileCommandProperty");
+        log.info("appFileCommandProperty()");
         return appFileCommand;
     }
 

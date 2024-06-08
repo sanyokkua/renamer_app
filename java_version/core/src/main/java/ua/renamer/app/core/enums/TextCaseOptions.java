@@ -1,7 +1,5 @@
 package ua.renamer.app.core.enums;
 
-import ua.renamer.app.core.abstracts.EnumWithExample;
-
 /**
  * An enumeration representing different options for text casing.
  * Each enum constant provides an example string of the casing.

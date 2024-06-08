@@ -1,7 +1,5 @@
 package ua.renamer.app.core.enums;
 
-import ua.renamer.app.core.abstracts.EnumWithExample;
-
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -34,8 +32,8 @@ public enum DateFormat implements EnumWithExample {
     DD_MM_YYYY_TOGETHER("DDMMYYYY", "ddMMyyyy"),
     DD_MM_YYYY_WHITE_SPACED("DD MM YYYY", "dd MM yyyy"),
     DD_MM_YYYY_UNDERSCORED("DD_MM_YYYY", "dd_MM_yyyy"),
-    DD_MM_YYYY_DOTTED("MM.DD.MM.YYYY", "MM.dd.MM.yyyy"),
-    DD_MM_YYYY_DASHED("MM-DD-MM-YYYY", "MM-dd-MM-yyyy"),
+    DD_MM_YYYY_DOTTED("DD.MM.YYYY", "dd.MM.yyyy"),
+    DD_MM_YYYY_DASHED("DD-MM-YYYY", "dd-MM-yyyy"),
     DD_MM_YY_TOGETHER("DDMMYY", "ddMMyy"),
     DD_MM_YY_WHITE_SPACED("DD MM YY", "dd MM yy"),
     DD_MM_YY_UNDERSCORED("DD_MM_YY", "dd_MM_yy"),

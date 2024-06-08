@@ -1,12 +1,9 @@
 package ua.renamer.app.core.model;
 
 import lombok.*;
-import ua.renamer.app.core.lang.LanguageManager;
-import ua.renamer.app.core.lang.TextKeys;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 
 @Builder
@@ -55,20 +52,6 @@ public class FileInformation {
 
     public Optional<FileInformationMetadata> getMetadata() {
         return Optional.ofNullable(metadata);
-    }
-
-    public String formatOriginalFileName() {
-        return fileName + fileExtension;
-    }
-
-    public String formatFileType() {
-        return isFile ? LanguageManager.getString(TextKeys.TYPE_FILE) : LanguageManager.getString(TextKeys.TYPE_FOLDER);
-    }
-
-    public String formatNextFileName() {
-        var name = Objects.nonNull(newName) ? newName : "";
-        var ext = Objects.nonNull(newExtension) ? newExtension : "";
-        return name + ext;
     }
 
 }

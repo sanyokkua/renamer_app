@@ -1,7 +1,5 @@
 package ua.renamer.app.core.enums;
 
-import ua.renamer.app.core.abstracts.EnumWithExample;
-
 import java.util.Objects;
 import java.util.Optional;
 

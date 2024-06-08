@@ -3,10 +3,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.*?>
-<?import ua.renamer.app.ui.widgets.view.ItemPositionExtendedRadioSelector?>
+<?import ua.renamer.app.ui.widget.impl.ItemPositionExtendedRadioSelector?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeReplaceCustomTextController"
+      fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeReplaceCustomTextController"
       prefHeight="400.0" prefWidth="600.0">
 
     <ItemPositionExtendedRadioSelector fx:id="itemPositionRadioSelector" labelValue="%mode_replace_text_label_position">

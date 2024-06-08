@@ -6,10 +6,10 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<?import ua.renamer.app.ui.widgets.view.ItemPositionRadioSelector?>
+<?import ua.renamer.app.ui.widget.impl.ItemPositionRadioSelector?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeUseParentFolderNameController"
+      fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeUseParentFolderNameController"
       prefHeight="400.0" prefWidth="600.0">
 
     <ItemPositionRadioSelector fx:id="itemPositionRadioSelector" labelValue="%mode_parent_folders_label_position">

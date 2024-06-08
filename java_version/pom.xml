@@ -28,6 +28,7 @@
         <mockito-core.version>5.12.0</mockito-core.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <powermock-core.version>2.0.9</powermock-core.version>
+        <guice.version>7.0.0</guice.version>
     </properties>
 
     <modules>
@@ -78,6 +79,12 @@
                 <artifactId>metadata-extractor</artifactId>
                 <version>${metadata-extractor.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.junit</groupId>

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="ua.renamer.app.ui.widgets.controllers.modes.ModeChangeCaseController"
+      fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeChangeCaseController"
       prefHeight="400.0" prefWidth="600.0">
 
     <GridPane VBox.vgrow="NEVER" hgap="5" vgap="10">
