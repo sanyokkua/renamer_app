@@ -41,11 +41,8 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
      */
     protected RadioSelector(String labelValue, Class<T> enumClass, StringConverter<T> converter) {
         super();
-        log.debug("Created new RadioSelector, with labelValue: {}, enumClass: {}, converter: {}",
-                  labelValue,
-                  enumClass.getName(),
-                  converter.getClass().getName()
-                 );
+        log.debug("Created new RadioSelector, with labelValue: {}, enumClass: {}, converter: {}", labelValue, enumClass.getName(), converter.getClass()
+                                                                                                                                            .getName());
         this.labelValue = labelValue;
         this.enumClass = enumClass;
         this.converter = converter;
@@ -101,6 +98,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
      * Gets the currently selected enum value.
      *
      * @return The currently selected enum value.
+     *
      * @throws IllegalStateException If no radio button is selected.
      */
     public T getSelectedValue() {
@@ -162,10 +160,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
         /**
          * The event type for radio button selection change events.
          */
-        public static final EventType<RadioSelectorEvent<?>> RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE = new EventType<>(
-                Event.ANY,
-                "RADIO BUTTON VALUE CHANGED"
-        );
+        public static final EventType<RadioSelectorEvent<?>> RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE = new EventType<>(Event.ANY, "RADIO BUTTON VALUE CHANGED");
 
         private final transient T selectedValue;
 

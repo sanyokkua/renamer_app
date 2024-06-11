@@ -18,7 +18,9 @@ public interface BasicFileAttributesExtractor {
      * @param type    The type of the attributes to retrieve.
      * @param options Optional link options to use when accessing the file.
      * @param <A>     The type of the file attributes.
+     *
      * @return The basic file attributes of the specified file or directory.
+     *
      * @throws IOException If an I/O error occurs.
      */
     <A extends BasicFileAttributes> A getAttributes(Path path, Class<A> type, LinkOption... options) throws IOException;

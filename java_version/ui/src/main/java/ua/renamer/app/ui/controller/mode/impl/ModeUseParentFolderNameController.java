@@ -49,10 +49,7 @@ public class ModeUseParentFolderNameController extends ModeBaseController {
 
     private void configParentNumberSpinner() {
         log.info("configParentNumberSpinner");
-        SpinnerValueFactory<Integer> startSeqFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,
-                                                                                                          Integer.MAX_VALUE,
-                                                                                                          1
-        );
+        SpinnerValueFactory<Integer> startSeqFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1);
         parentsNumberSpinner.setValueFactory(startSeqFactory);
         parentsNumberSpinner.setEditable(true);
         parentsNumberSpinner.valueProperty()

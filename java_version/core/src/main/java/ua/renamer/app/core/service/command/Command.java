@@ -15,6 +15,7 @@ public interface Command<I, O> {
      *
      * @param input    the input for the command.
      * @param callback the progress callback to track the execution progress.
+     *
      * @return the output of the command.
      */
     O execute(I input, ProgressCallback callback);

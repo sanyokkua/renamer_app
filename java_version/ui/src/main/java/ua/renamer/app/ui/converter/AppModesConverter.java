@@ -23,6 +23,7 @@ public class AppModesConverter extends StringConverter<AppModes> {
      * representation using the {@link LanguageTextRetrieverApi}.
      *
      * @param object The {@link AppModes} enum constant to be converted to a string.
+     *
      * @return The string representation of the provided {@link AppModes} constant.
      */
     @Override
@@ -46,6 +47,7 @@ public class AppModesConverter extends StringConverter<AppModes> {
      * Currently, this method is not implemented and always returns {@code null}.
      *
      * @param string The string to be converted back to an {@link AppModes} enum constant.
+     *
      * @return The corresponding {@link AppModes} enum constant, or {@code null} if not implemented.
      */
     @Override

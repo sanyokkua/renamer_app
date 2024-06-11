@@ -14,9 +14,7 @@ import java.util.Set;
 public class IcoMapper extends ImageBaseMapper {
 
     @Inject
-    public IcoMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public IcoMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

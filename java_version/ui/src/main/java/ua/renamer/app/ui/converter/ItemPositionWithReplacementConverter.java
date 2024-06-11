@@ -21,6 +21,7 @@ public class ItemPositionWithReplacementConverter extends StringConverter<ItemPo
      * representation using {@link LanguageTextRetrieverApi}.
      *
      * @param object The {@link ItemPositionWithReplacement} enum constant to be converted to a string.
+     *
      * @return The string representation of the provided {@link ItemPositionWithReplacement} constant.
      */
     @Override
@@ -37,6 +38,7 @@ public class ItemPositionWithReplacementConverter extends StringConverter<ItemPo
      * Currently, this method is not implemented and always returns {@code null}.
      *
      * @param string The string to be converted back to an {@link ItemPositionWithReplacement} enum constant.
+     *
      * @return The corresponding {@link ItemPositionWithReplacement} enum constant, or {@code null} if not implemented.
      */
     @Override

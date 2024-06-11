@@ -14,9 +14,7 @@ import java.util.Set;
 public class BmpMapper extends ImageBaseMapper {
 
     @Inject
-    public BmpMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public BmpMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

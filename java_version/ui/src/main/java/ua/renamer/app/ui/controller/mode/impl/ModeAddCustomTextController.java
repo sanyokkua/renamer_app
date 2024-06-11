@@ -38,13 +38,13 @@ public class ModeAddCustomTextController extends ModeBaseController {
         textField.textProperty().addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
     }
 
-    public void handleTextChanged(String newTextValue) {
-        log.debug("handleTextChanged {}", newTextValue);
+    public void handlePositionChanged(ItemPosition itemPosition) {
+        log.debug("handlePositionChanged {}", itemPosition);
         updateCommand();
     }
 
-    public void handlePositionChanged(ItemPosition itemPosition) {
-        log.debug("handlePositionChanged {}", itemPosition);
+    public void handleTextChanged(String newTextValue) {
+        log.debug("handleTextChanged {}", newTextValue);
         updateCommand();
     }
 

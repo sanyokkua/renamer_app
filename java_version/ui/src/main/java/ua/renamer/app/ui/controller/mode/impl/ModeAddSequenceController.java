@@ -40,10 +40,7 @@ public class ModeAddSequenceController extends ModeBaseController {
 
     private void configStartSeqNumberSpinner() {
         log.info("configStartSeqNumberSpinner()");
-        SpinnerValueFactory<Integer> startSeqFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,
-                                                                                                          Integer.MAX_VALUE,
-                                                                                                          0
-        );
+        SpinnerValueFactory<Integer> startSeqFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0);
         startSeqNumberSpinner.setValueFactory(startSeqFactory);
         startSeqNumberSpinner.setEditable(true);
         startSeqNumberSpinner.valueProperty()
@@ -52,10 +49,7 @@ public class ModeAddSequenceController extends ModeBaseController {
 
     private void configStepValueSpinner() {
         log.info("configStepValueSpinner()");
-        SpinnerValueFactory<Integer> stepValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,
-                                                                                                           Integer.MAX_VALUE,
-                                                                                                           1
-        );
+        SpinnerValueFactory<Integer> stepValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1);
         stepValueSpinner.setValueFactory(stepValueFactory);
         stepValueSpinner.setEditable(true);
         stepValueSpinner.valueProperty()
@@ -64,10 +58,7 @@ public class ModeAddSequenceController extends ModeBaseController {
 
     private void configMinDigitAmountSpinner() {
         log.info("configMinDigitAmountSpinner()");
-        SpinnerValueFactory<Integer> minDigitAmountFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,
-                                                                                                                Integer.MAX_VALUE,
-                                                                                                                0
-        );
+        SpinnerValueFactory<Integer> minDigitAmountFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0);
         minDigitAmountSpinner.setValueFactory(minDigitAmountFactory);
         minDigitAmountSpinner.setEditable(true);
         minDigitAmountSpinner.valueProperty()
@@ -96,13 +87,6 @@ public class ModeAddSequenceController extends ModeBaseController {
         updateCommand();
     }
 
-    @FXML
-    private void handleSortingSourceChanged() {
-        SortSource sortSource = sortingSourceChoiceBox.getValue();
-        log.debug("handleSortingSourceChanged: {}", sortSource);
-        updateCommand();
-    }
-
     @Override
     public void updateCommand() {
         var start = startSeqNumberSpinner.getValue();
@@ -119,6 +103,13 @@ public class ModeAddSequenceController extends ModeBaseController {
 
         log.debug("updateCommand {}", curCmd);
         this.setCommand(curCmd);
+    }
+
+    @FXML
+    private void handleSortingSourceChanged() {
+        SortSource sortSource = sortingSourceChoiceBox.getValue();
+        log.debug("handleSortingSourceChanged: {}", sortSource);
+        updateCommand();
     }
 
 }

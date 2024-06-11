@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.service.command.ListProcessingCommand;
-import ua.renamer.app.core.service.command.impl.MapFileToAppFileCommand;
+import ua.renamer.app.core.service.command.impl.MapFileToFileInformation;
 import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
 import ua.renamer.app.core.service.helper.DateTimeOperations;
 import ua.renamer.app.core.service.mapper.DataMapper;
@@ -49,16 +49,6 @@ public class DIAppModule extends AbstractModule {
     private Injector injector;
 
     /**
-     * Creates a ResourceBundle based on the default locale.
-     *
-     * @return The created ResourceBundle.
-     */
-    private ResourceBundle createResourceBundle() {
-        Locale locale = Locale.getDefault();
-        return ResourceBundle.getBundle("langs/lang", locale);
-    }
-
-    /**
      * Configures the bindings for dependency injection.
      */
     @Override
@@ -70,16 +60,16 @@ public class DIAppModule extends AbstractModule {
         bind(BasicFileAttributesExtractor.class).toInstance(Files::readAttributes);
 
         // Bind DataMapper<FileInformation, String> to FileInformationToHtmlMapper with Singleton scope
-        bind(new TypeLiteral<DataMapper<FileInformation, String>>() {}).to(FileInformationToHtmlMapper.class)
-                                                                       .in(Singleton.class);
+        bind(new TypeLiteral<DataMapper<FileInformation, String>>() {
+        }).to(FileInformationToHtmlMapper.class).in(Singleton.class);
 
         // Bind DataMapper<File, FileInformation> to FileToFileInformationMapper with Singleton scope
-        bind(new TypeLiteral<DataMapper<File, FileInformation>>() {}).to(FileToFileInformationMapper.class)
-                                                                     .in(Singleton.class);
+        bind(new TypeLiteral<DataMapper<File, FileInformation>>() {
+        }).to(FileToFileInformationMapper.class).in(Singleton.class);
 
-        // Bind ListProcessingCommand<File, FileInformation> to MapFileToAppFileCommand with Singleton scope
-        bind(new TypeLiteral<ListProcessingCommand<File, FileInformation>>() {}).to(MapFileToAppFileCommand.class)
-                                                                                .in(Singleton.class);
+        // Bind ListProcessingCommand<File, FileInformation> to MapFileToFileInformation with Singleton scope
+        bind(new TypeLiteral<ListProcessingCommand<File, FileInformation>>() {
+        }).to(MapFileToFileInformation.class).in(Singleton.class);
 
         // Bind ResourceBundle to the instance created by createResourceBundle
         bind(ResourceBundle.class).toInstance(createResourceBundle());
@@ -146,6 +136,16 @@ public class DIAppModule extends AbstractModule {
     }
 
     /**
+     * Creates a ResourceBundle based on the default locale.
+     *
+     * @return The created ResourceBundle.
+     */
+    private ResourceBundle createResourceBundle() {
+        Locale locale = Locale.getDefault();
+        return ResourceBundle.getBundle("langs/lang", locale);
+    }
+
+    /**
      * Provides a FileToMetadataMapper with a chain of responsibility pattern.
      *
      * @param aviMapper       The AVI metadata mapper.
@@ -165,28 +165,12 @@ public class DIAppModule extends AbstractModule {
      * @param wavMapper       The WAV metadata mapper.
      * @param webPmapper      The WebP metadata mapper.
      * @param nullMapper      The Null metadata mapper used as the starting point in the chain.
+     *
      * @return The configured FileToMetadataMapper.
      */
     @Provides
     @Singleton
-    public FileToMetadataMapper provideFileToMetadataMapper(
-            AviMapper aviMapper,
-            BmpMapper bmpMapper,
-            EpsMapper epsMapper,
-            GifMapper gifMapper,
-            HeifMapper heifMapper,
-            IcoMapper icoMapper,
-            JpegMapper jpegMapper,
-            Mp3Mapper mp3Mapper,
-            Mp4Mapper mp4Mapper,
-            PcxMapper pcxMapper,
-            PngMapper pngMapper,
-            PsdMapper psdMapper,
-            QuickTimeMapper quickTimeMapper,
-            TiffMapper tiffMapper,
-            WavMapper wavMapper,
-            WebPMapper webPmapper,
-            NullMapper nullMapper) {
+    public FileToMetadataMapper provideFileToMetadataMapper(AviMapper aviMapper, BmpMapper bmpMapper, EpsMapper epsMapper, GifMapper gifMapper, HeifMapper heifMapper, IcoMapper icoMapper, JpegMapper jpegMapper, Mp3Mapper mp3Mapper, Mp4Mapper mp4Mapper, PcxMapper pcxMapper, PngMapper pngMapper, PsdMapper psdMapper, QuickTimeMapper quickTimeMapper, TiffMapper tiffMapper, WavMapper wavMapper, WebPMapper webPmapper, NullMapper nullMapper) {
         // Set the chain of responsibility for metadata mappers
         nullMapper.setNext(aviMapper);
         aviMapper.setNext(bmpMapper);

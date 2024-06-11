@@ -13,9 +13,7 @@ import java.util.Set;
 public class TiffMapper extends ImageBaseMapper {
 
     @Inject
-    public TiffMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public TiffMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

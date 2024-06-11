@@ -7,4 +7,9 @@ import ua.renamer.app.core.model.FileInformation;
  * Extends {@link ListProcessingCommand} with {@link FileInformation} type for both input and output.
  */
 public abstract class FileInformationCommand extends ListProcessingCommand<FileInformation, FileInformation> {
+
+    @Override
+    public FileInformation processItem(FileInformation item) {
+        return item;
+    }
 }

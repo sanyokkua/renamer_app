@@ -20,6 +20,7 @@ public class TimeFormatConverter extends StringConverter<TimeFormat> {
      * Converts a {@link TimeFormat} enum constant to its corresponding string representation.
      *
      * @param object The {@link TimeFormat} enum constant to be converted to a string.
+     *
      * @return The string representation of the provided {@link TimeFormat} constant.
      */
     @Override
@@ -34,7 +35,9 @@ public class TimeFormatConverter extends StringConverter<TimeFormat> {
      * Converts a string back to a {@link TimeFormat} enum constant.
      *
      * @param string The string to be converted back to a {@link TimeFormat} enum constant.
+     *
      * @return The corresponding {@link TimeFormat} enum constant, or {@code null} if not implemented.
+     *
      * @implNote This method is not yet implemented and always returns {@code null}.
      */
     @Override

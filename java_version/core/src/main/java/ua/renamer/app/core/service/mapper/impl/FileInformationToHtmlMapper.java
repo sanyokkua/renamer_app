@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class FileInformationToHtmlMapper implements DataMapper<FileInformation, String> {
 
-    public final String DATA_IS_NOT_FOUND = "Data Is Not Found";
+    public static final String DATA_IS_NOT_FOUND = "Data Is Not Found";
     private final DateTimeOperations dateTimeOperations;
 
     @Override
@@ -28,9 +28,13 @@ public class FileInformationToHtmlMapper implements DataMapper<FileInformation, 
         html.append("<p>File Extension: ").append(getFieldValue(fileInfo.getFileExtension())).append("</p>");
 
         long fileSize = fileInfo.getFileSize();
-        html.append("<p>File Size: ").append(fileSize).append(" Bytes, ")
-            .append(CalculationUtils.toKilobytes(fileSize)).append(" KB, ")
-            .append(CalculationUtils.toMegabytes(fileSize)).append(" MB</p>");
+        html.append("<p>File Size: ")
+            .append(fileSize)
+            .append(" Bytes, ")
+            .append(CalculationUtils.toKilobytes(fileSize))
+            .append(" KB, ")
+            .append(CalculationUtils.toMegabytes(fileSize))
+            .append(" MB</p>");
 
         html.append("<p>Creation Time: ").append(formatTimestamp(fileInfo.getFsCreationDate())).append("</p>");
         html.append("<p>Modification Time: ").append(formatTimestamp(fileInfo.getFsModificationDate())).append("</p>");
@@ -60,16 +64,16 @@ public class FileInformationToHtmlMapper implements DataMapper<FileInformation, 
         return html.toString();
     }
 
-    private String getFieldValue(Optional<?> optional) {
-        return optional.map(Object::toString).orElse(DATA_IS_NOT_FOUND);
-    }
-
     private String getFieldValue(String value) {
         return value != null ? value : DATA_IS_NOT_FOUND;
     }
 
     private String formatTimestamp(Optional<LocalDateTime> localDateTime) {
         return localDateTime.map(dateTimeOperations::formatLocalDateTime).orElse(DATA_IS_NOT_FOUND);
+    }
+
+    private String getFieldValue(Optional<?> optional) {
+        return optional.map(Object::toString).orElse(DATA_IS_NOT_FOUND);
     }
 
 }

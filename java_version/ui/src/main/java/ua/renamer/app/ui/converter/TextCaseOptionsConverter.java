@@ -19,6 +19,7 @@ public class TextCaseOptionsConverter extends StringConverter<TextCaseOptions> {
      * Converts a {@link TextCaseOptions} enum constant to its corresponding string representation.
      *
      * @param object The {@link TextCaseOptions} enum constant to be converted to a string.
+     *
      * @return The string representation of the provided {@link TextCaseOptions} constant.
      */
     @Override
@@ -30,7 +31,9 @@ public class TextCaseOptionsConverter extends StringConverter<TextCaseOptions> {
      * Converts a string back to a {@link TextCaseOptions} enum constant.
      *
      * @param string The string to be converted back to a {@link TextCaseOptions} enum constant.
+     *
      * @return The corresponding {@link TextCaseOptions} enum constant, or {@code null} if not implemented.
+     *
      * @implNote This method is not yet implemented and always returns {@code null}.
      */
     @Override

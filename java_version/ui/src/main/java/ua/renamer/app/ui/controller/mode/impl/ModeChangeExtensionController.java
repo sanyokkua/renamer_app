@@ -38,9 +38,7 @@ public class ModeChangeExtensionController extends ModeBaseController {
     public void updateCommand() {
         var newExtension = extensionTextField.getText();
 
-        var cmd = ExtensionChangePrepareInformationCommand.builder()
-                                                          .newExtension(newExtension)
-                                                          .build();
+        var cmd = ExtensionChangePrepareInformationCommand.builder().newExtension(newExtension).build();
 
         log.debug("updateCommand: {}", cmd);
         setCommand(cmd);

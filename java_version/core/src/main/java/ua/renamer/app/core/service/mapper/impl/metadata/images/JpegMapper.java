@@ -14,9 +14,7 @@ import java.util.Set;
 public class JpegMapper extends ImageBaseMapper {
 
     @Inject
-    public JpegMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public JpegMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

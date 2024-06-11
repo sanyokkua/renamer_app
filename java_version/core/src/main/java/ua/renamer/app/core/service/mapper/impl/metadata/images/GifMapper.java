@@ -14,9 +14,7 @@ import java.util.Set;
 public class GifMapper extends ImageBaseMapper {
 
     @Inject
-    public GifMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public GifMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

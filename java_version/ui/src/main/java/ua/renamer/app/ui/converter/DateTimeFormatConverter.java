@@ -24,6 +24,7 @@ public class DateTimeFormatConverter extends StringConverter<DateTimeFormat> {
      * it uses the {@link LanguageTextRetrieverApi} to get the appropriate string.
      *
      * @param object The {@link DateTimeFormat} enum constant to be converted to a string.
+     *
      * @return The string representation of the provided {@link DateTimeFormat} constant.
      */
     @Override
@@ -39,6 +40,7 @@ public class DateTimeFormatConverter extends StringConverter<DateTimeFormat> {
      * Currently, this method is not implemented and always returns {@code null}.
      *
      * @param string The string to be converted back to a {@link DateTimeFormat} enum constant.
+     *
      * @return The corresponding {@link DateTimeFormat} enum constant, or {@code null} if not implemented.
      */
     @Override

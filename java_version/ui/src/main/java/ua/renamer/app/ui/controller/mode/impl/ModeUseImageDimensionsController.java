@@ -58,8 +58,7 @@ public class ModeUseImageDimensionsController extends ModeBaseController {
     private void configDimensionsSeparatorTextField() {
         log.info("configDimensionsSeparatorTextField");
         dimensionsSeparatorTextField.textProperty()
-                                    .addListener((observable, oldValue, newValue) -> this.handleDimensionsSeparatorChanged(
-                                            newValue));
+                                    .addListener((observable, oldValue, newValue) -> this.handleDimensionsSeparatorChanged(newValue));
     }
 
     private void configRightDimensionChoiceBox() {
@@ -73,8 +72,7 @@ public class ModeUseImageDimensionsController extends ModeBaseController {
     private void configDimensionsAndFileNameSeparatorTextField() {
         log.info("configDimensionsAndFileNameSeparatorTextField");
         dimensionsAndFileSeparatorTextField.textProperty()
-                                           .addListener((observable, oldValue, newValue) -> this.handleDimensionsAndFileNameSeparatorChanged(
-                                                   newValue));
+                                           .addListener((observable, oldValue, newValue) -> this.handleDimensionsAndFileNameSeparatorChanged(newValue));
     }
 
     private void handlePositionChanged(ItemPositionWithReplacement itemPositionWithReplacement) {

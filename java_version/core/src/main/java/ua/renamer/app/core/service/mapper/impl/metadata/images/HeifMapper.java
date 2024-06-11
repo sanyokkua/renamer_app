@@ -14,9 +14,7 @@ import java.util.Set;
 public class HeifMapper extends ImageBaseMapper {
 
     @Inject
-    public HeifMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public HeifMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

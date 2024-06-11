@@ -14,11 +14,34 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Provides various operations for handling file attributes and information.
+ */
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class FilesOperations {
 
     private final BasicFileAttributesExtractor basicFileAttributesExtractor;
 
+    /**
+     * Gets the absolute path of a file.
+     *
+     * @param file The file whose absolute path is to be retrieved.
+     *
+     * @return The absolute path of the file.
+     */
+    public String getFileAbsolutePath(File file) {
+        validateFileInstance(file);
+
+        return file.getAbsolutePath();
+    }
+
+    /**
+     * Validates that the file instance is not null and exists.
+     *
+     * @param file The file to be validated.
+     *
+     * @throws IllegalArgumentException If the file does not exist.
+     */
     public void validateFileInstance(File file) {
         Objects.requireNonNull(file);
         if (!file.exists()) {
@@ -26,12 +49,13 @@ public class FilesOperations {
         }
     }
 
-    public String getFileAbsolutePath(File file) {
-        validateFileInstance(file);
-
-        return file.getAbsolutePath();
-    }
-
+    /**
+     * Gets the file name without its extension.
+     *
+     * @param file The file whose name is to be retrieved.
+     *
+     * @return The name of the file without its extension.
+     */
     public String getFileNameWithoutExtension(File file) {
         validateFileInstance(file);
 
@@ -43,6 +67,29 @@ public class FilesOperations {
         return removeFileExtension(fileNameAndExtension);
     }
 
+    /**
+     * Removes the extension from a file name.
+     *
+     * @param fileName The name of the file.
+     *
+     * @return The name of the file without its extension.
+     */
+    private String removeFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex == -1) {
+            return fileName;
+        }
+
+        return fileName.substring(0, dotIndex);
+    }
+
+    /**
+     * Gets the file extension.
+     *
+     * @param file The file whose extension is to be retrieved.
+     *
+     * @return The extension of the file.
+     */
     public String getFileExtension(File file) {
         validateFileInstance(file);
 
@@ -60,23 +107,26 @@ public class FilesOperations {
         return extension.toLowerCase();
     }
 
+    /**
+     * Checks if the given file is a regular file.
+     *
+     * @param file The file to be checked.
+     *
+     * @return true if the file is a regular file, false if it is a directory.
+     */
     public boolean isFile(File file) {
         validateFileInstance(file);
 
         return file.isFile();
     }
 
-    private Optional<BasicFileAttributes> getFileAttributes(File file) {
-        validateFileInstance(file);
-        try {
-            var path = file.toPath();
-            var fileAttributes = basicFileAttributesExtractor.getAttributes(path, BasicFileAttributes.class);
-            return Optional.ofNullable(fileAttributes);
-        } catch (IOException ex) {
-            return Optional.empty();
-        }
-    }
-
+    /**
+     * Gets the creation time of the file.
+     *
+     * @param file The file whose creation time is to be retrieved.
+     *
+     * @return An Optional containing the creation time if available, otherwise empty.
+     */
     public Optional<LocalDateTime> getFileCreationTime(File file) {
         validateFileInstance(file);
 
@@ -89,6 +139,31 @@ public class FilesOperations {
         return Optional.of(LocalDateTime.ofInstant(time.toInstant(), ZoneId.systemDefault()));
     }
 
+    /**
+     * Gets the file attributes.
+     *
+     * @param file The file whose attributes are to be retrieved.
+     *
+     * @return An Optional containing the file attributes if available, otherwise empty.
+     */
+    private Optional<BasicFileAttributes> getFileAttributes(File file) {
+        validateFileInstance(file);
+        try {
+            var path = file.toPath();
+            var fileAttributes = basicFileAttributesExtractor.getAttributes(path, BasicFileAttributes.class);
+            return Optional.ofNullable(fileAttributes);
+        } catch (IOException ex) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Gets the modification time of the file.
+     *
+     * @param file The file whose modification time is to be retrieved.
+     *
+     * @return An Optional containing the modification time if available, otherwise empty.
+     */
     public Optional<LocalDateTime> getFileModificationTime(File file) {
         validateFileInstance(file);
         var attr = getFileAttributes(file);
@@ -100,6 +175,13 @@ public class FilesOperations {
         return Optional.of(LocalDateTime.ofInstant(time.toInstant(), ZoneId.systemDefault()));
     }
 
+    /**
+     * Gets the size of the file.
+     *
+     * @param file The file whose size is to be retrieved.
+     *
+     * @return The size of the file in bytes.
+     */
     public long getFileSize(File file) {
         validateFileInstance(file);
 
@@ -110,6 +192,7 @@ public class FilesOperations {
      * Retrieves the parent folders of a file or directory given its path.
      *
      * @param filePath The path of the file or directory.
+     *
      * @return A list containing the names of the parent folders.
      */
     public List<String> getParentFolders(String filePath) {
@@ -119,9 +202,7 @@ public class FilesOperations {
 
         // Normalize the file path by replacing backslashes with forward slashes
         // and removing redundant slashes and trailing slash
-        filePath = filePath.replace("\\", "/")
-                           .replaceAll("//+", "/")
-                           .replaceAll("/$", "");
+        filePath = filePath.replace("\\", "/").replaceAll("//+", "/").replaceAll("/$", "");
 
         String[] splitPathItems = filePath.split("/");
 
@@ -133,15 +214,6 @@ public class FilesOperations {
         // Exclude the root element (drive letter for Windows or empty string for Unix)
         // and exclude last item (filename or directory)
         return Arrays.asList(splitPathItems).subList(1, splitPathItems.length - 1);
-    }
-
-    private String removeFileExtension(String fileName) {
-        int dotIndex = fileName.lastIndexOf(".");
-        if (dotIndex == -1) {
-            return fileName;
-        }
-
-        return fileName.substring(0, dotIndex);
     }
 
 }

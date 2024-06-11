@@ -23,6 +23,7 @@ public class DateTimeSourceConverter extends StringConverter<DateTimeSource> {
      * based on the type of DateTimeSource.
      *
      * @param object The {@link DateTimeSource} enum constant to be converted to a string.
+     *
      * @return The string representation of the provided {@link DateTimeSource} constant.
      */
     @Override
@@ -43,6 +44,7 @@ public class DateTimeSourceConverter extends StringConverter<DateTimeSource> {
      * Currently, this method is not implemented and always returns {@code null}.
      *
      * @param string The string to be converted back to a {@link DateTimeSource} enum constant.
+     *
      * @return The corresponding {@link DateTimeSource} enum constant, or {@code null} if not implemented.
      */
     @Override

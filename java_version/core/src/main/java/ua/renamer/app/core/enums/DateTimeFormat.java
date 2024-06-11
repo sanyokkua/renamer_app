@@ -8,16 +8,16 @@ import java.util.Optional;
  * Each enum constant provides an example string of the format.
  */
 public enum DateTimeFormat implements EnumWithExample {
-    DATE_TIME_TOGETHER("DateTime", "%1$%2$"),
-    DATE_TIME_WHITE_SPACED("Date Time", "%1$ %2$"),
-    DATE_TIME_UNDERSCORED("Date_Time", "%1$_%2$"),
-    DATE_TIME_DOTTED("Date.Time", "%1$.%2$"),
-    DATE_TIME_DASHED("Date-Time", "%1$-%2$"),
-    REVERSE_DATE_TIME_TOGETHER("TimeDate", "%2$%1$"),
-    REVERSE_DATE_TIME_WHITE_SPACED("Time Date", "%2$ %1$"),
-    REVERSE_DATE_TIME_UNDERSCORED("Time_Date", "%2$_%1$"),
-    REVERSE_DATE_TIME_DOTTED("Time.Date", "%2$.%1$"),
-    REVERSE_DATE_TIME_DASHED("Time-Date", "%2$-%1$"),
+    DATE_TIME_TOGETHER("DateTime", "%1$s%2$s"),
+    DATE_TIME_WHITE_SPACED("Date Time", "%1$s %2$s"),
+    DATE_TIME_UNDERSCORED("Date_Time", "%1$s_%2$s"),
+    DATE_TIME_DOTTED("Date.Time", "%1$s.%2$s"),
+    DATE_TIME_DASHED("Date-Time", "%1$s-%2$s"),
+    REVERSE_DATE_TIME_TOGETHER("TimeDate", "%2$s%1$s"),
+    REVERSE_DATE_TIME_WHITE_SPACED("Time Date", "%2$s %1$s"),
+    REVERSE_DATE_TIME_UNDERSCORED("Time_Date", "%2$s_%1$s"),
+    REVERSE_DATE_TIME_DOTTED("Time.Date", "%2$s.%1$s"),
+    REVERSE_DATE_TIME_DASHED("Time-Date", "%2$s-%1$s"),
     NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970("181888128183818381", "");
 
     private final String example;

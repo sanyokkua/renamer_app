@@ -40,14 +40,23 @@ public class ModeTruncateFileNameController extends ModeBaseController {
 
     private void configAmountOfSymbolsSpinner() {
         log.info("configAmountOfSymbolsSpinner()");
-        SpinnerValueFactory<Integer> stepValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0,
-                                                                                                           Integer.MAX_VALUE,
-                                                                                                           0
-        );
+        SpinnerValueFactory<Integer> stepValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0);
         amountOfSymbolsSpinner.setValueFactory(stepValueFactory);
         amountOfSymbolsSpinner.setEditable(true);
         amountOfSymbolsSpinner.valueProperty()
                               .addListener((observable, oldValue, newValue) -> handleAmountOfSymbolsChanged(newValue));
+    }
+
+    private void updateDisplayedItems() {
+        if (itemPositionRadioSelector.getSelectedValue() == TruncateOptions.TRUNCATE_EMPTY_SYMBOLS) {
+            amountOfSymbolsSpinner.setDisable(true);
+            amountOfSymbolsSpinner.setVisible(false);
+            amountOfSymbolsLabel.setVisible(false);
+        } else {
+            amountOfSymbolsSpinner.setDisable(false);
+            amountOfSymbolsSpinner.setVisible(true);
+            amountOfSymbolsLabel.setVisible(true);
+        }
     }
 
     private void handlePositionChanged(TruncateOptions truncateOptions) {
@@ -73,18 +82,6 @@ public class ModeTruncateFileNameController extends ModeBaseController {
 
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);
-    }
-
-    private void updateDisplayedItems() {
-        if (itemPositionRadioSelector.getSelectedValue() == TruncateOptions.TRUNCATE_EMPTY_SYMBOLS) {
-            amountOfSymbolsSpinner.setDisable(true);
-            amountOfSymbolsSpinner.setVisible(false);
-            amountOfSymbolsLabel.setVisible(false);
-        } else {
-            amountOfSymbolsSpinner.setDisable(false);
-            amountOfSymbolsSpinner.setVisible(true);
-            amountOfSymbolsLabel.setVisible(true);
-        }
     }
 
 }

@@ -1,4 +1,4 @@
-package ua.renamer.app.core.service.command.preparation;
+package ua.renamer.app.core.service.command.impl.preparation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,7 +7,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.service.command.Command;
-import ua.renamer.app.core.service.command.impl.preparation.ExtensionChangePrepareInformationCommand;
 
 import java.io.File;
 import java.util.List;
@@ -16,32 +15,17 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static ua.renamer.app.core.service.command.preparation.TestUtils.*;
+import static ua.renamer.app.core.TestUtilities.*;
 
-class ExtensionChangePrepareInformationCommandTest extends BaseCommandTest {
+class ExtensionChangePrepareInformationCommandTest extends BaseRenamePreparationCommandTest {
 
-    static Stream<Arguments> commandArguments() {
-        return Stream.of(
-                arguments("", "", "", "", true, ""),
-                arguments("name", "name", "", "", true, ""),
-                arguments("   ", "   ", "", "", true, ""),
-                arguments("fileName", "fileName", "ext", ".jpg", true, "jpg"),
-                arguments("fileName", "fileName", "ext", ".heif", true, ".heif"),
-                arguments("fileName", "fileName", "ext", "", true, ""),
-                arguments("fileName", "fileName", "", "", false, ".ext"),
-                arguments("fileName", "fileName", "", ".ext", true, ".ext")
-                        );
+    static Stream<Arguments> provideCommandArguments() {
+        return Stream.of(arguments("", "", "", "", true, ""), arguments("name", "name", "", "", true, ""), arguments("   ", "   ", "", "", true, ""), arguments("fileName", "fileName", "ext", ".jpg", true, "jpg"), arguments("fileName", "fileName", "ext", ".heif", true, ".heif"), arguments("fileName", "fileName", "ext", "", true, ""), arguments("fileName", "fileName", "", "", false, ".ext"), arguments("fileName", "fileName", "", ".ext", true, ".ext"));
     }
 
     @ParameterizedTest
-    @MethodSource("commandArguments")
-    void testCommandExecution(
-            String originalName,
-            String expectedName,
-            String originalExt,
-            String expectedExt,
-            boolean isFile,
-            String newExtension) {
+    @MethodSource("provideCommandArguments")
+    void commandExecution_ShouldChangeFileExtension(String originalName, String expectedName, String originalExt, String expectedExt, boolean isFile, String newExtension) {
         // Prepare Test Data
         var fileInfoMeta = FileInformationMetadata.builder().build();
         var fileInfo = FileInformation.builder()
@@ -61,17 +45,16 @@ class ExtensionChangePrepareInformationCommandTest extends BaseCommandTest {
         List<FileInformation> inputList = List.of(fileInfo);
 
         // Build the command for test
-        Command<List<FileInformation>, List<FileInformation>> command =
-                ExtensionChangePrepareInformationCommand.builder()
-                                                        .newExtension(newExtension)
-                                                        .build();
+        Command<List<FileInformation>, List<FileInformation>> command = ExtensionChangePrepareInformationCommand.builder()
+                                                                                                                .newExtension(newExtension)
+                                                                                                                .build();
 
         testCommandWithItemChanged(command, inputList, expectedName, expectedExt);
     }
 
     @Test
     @Override
-    void testCommandDefaultCreation() {
+    void defaultCommandCreation_ShouldSetDefaultValues() {
         var command = ExtensionChangePrepareInformationCommand.builder().build();
 
         assertNotNull(command);
@@ -80,9 +63,7 @@ class ExtensionChangePrepareInformationCommandTest extends BaseCommandTest {
 
     @Override
     Command<List<FileInformation>, List<FileInformation>> getCommand() {
-        return ExtensionChangePrepareInformationCommand.builder()
-                                                       .newExtension("heic")
-                                                       .build();
+        return ExtensionChangePrepareInformationCommand.builder().newExtension("heic").build();
     }
 
     @Override

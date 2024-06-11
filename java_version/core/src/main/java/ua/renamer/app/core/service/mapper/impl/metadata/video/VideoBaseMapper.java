@@ -27,34 +27,6 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
         this.dateTimeOperations = dateTimeOperations;
     }
 
-    private static List<Integer> findIntegerValues(List<? extends Directory> directories, List<Integer> tags) {
-        return tags.stream()
-                   .filter(Objects::nonNull)
-                   .flatMap(tag -> directories.stream()
-                                              .filter(Objects::nonNull)
-                                              .map(dir -> dir.getInteger(tag))
-                                              .filter(Objects::nonNull))
-                   .toList();
-    }
-
-    private static List<String> findStringValues(List<? extends Directory> directories, List<Integer> tags) {
-        return tags.stream()
-                   .filter(Objects::nonNull)
-                   .flatMap(tag -> directories.stream()
-                                              .filter(Objects::nonNull)
-                                              .map(dir -> dir.getString(tag))
-                                              .filter(Objects::nonNull))
-                   .toList();
-    }
-
-    protected abstract List<Class<? extends Directory>> getAvailableDirectories();
-
-    protected abstract List<Integer> getContentCreationTags();
-
-    protected abstract List<Integer> getVideoWidthTags();
-
-    protected abstract List<Integer> getVideoHeightTags();
-
     @Override
     public FileInformationMetadata process(File input) {
         var directories = getDirectories(input);
@@ -112,5 +84,33 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
 
         return result.stream().filter(Objects::nonNull).min(Integer::compareTo);
     }
+
+    private static List<String> findStringValues(List<? extends Directory> directories, List<Integer> tags) {
+        return tags.stream()
+                   .filter(Objects::nonNull)
+                   .flatMap(tag -> directories.stream()
+                                              .filter(Objects::nonNull)
+                                              .map(dir -> dir.getString(tag))
+                                              .filter(Objects::nonNull))
+                   .toList();
+    }
+
+    private static List<Integer> findIntegerValues(List<? extends Directory> directories, List<Integer> tags) {
+        return tags.stream()
+                   .filter(Objects::nonNull)
+                   .flatMap(tag -> directories.stream()
+                                              .filter(Objects::nonNull)
+                                              .map(dir -> dir.getInteger(tag))
+                                              .filter(Objects::nonNull))
+                   .toList();
+    }
+
+    protected abstract List<Class<? extends Directory>> getAvailableDirectories();
+
+    protected abstract List<Integer> getContentCreationTags();
+
+    protected abstract List<Integer> getVideoWidthTags();
+
+    protected abstract List<Integer> getVideoHeightTags();
 
 }

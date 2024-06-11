@@ -14,9 +14,7 @@ import java.util.Set;
 public class PngMapper extends ImageBaseMapper {
 
     @Inject
-    public PngMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public PngMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

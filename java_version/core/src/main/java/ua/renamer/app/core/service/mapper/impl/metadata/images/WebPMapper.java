@@ -14,9 +14,7 @@ import java.util.Set;
 public class WebPMapper extends ImageBaseMapper {
 
     @Inject
-    public WebPMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public WebPMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

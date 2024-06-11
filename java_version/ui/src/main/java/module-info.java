@@ -2,6 +2,7 @@ module ua.renamer.app.ui {
     requires static lombok;
     requires ch.qos.logback.core;
     requires org.slf4j;
+    requires jakarta.annotation;
 
     requires com.google.common;
     requires com.google.guice;

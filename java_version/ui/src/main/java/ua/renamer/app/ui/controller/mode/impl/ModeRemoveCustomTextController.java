@@ -54,10 +54,7 @@ public class ModeRemoveCustomTextController extends ModeBaseController {
         var textToRemove = removeTextField.getText();
         var position = itemPositionRadioSelector.getSelectedValue();
 
-        var cmd = RemoveTextPrepareInformationCommand.builder()
-                                                     .text(textToRemove)
-                                                     .position(position)
-                                                     .build();
+        var cmd = RemoveTextPrepareInformationCommand.builder().text(textToRemove).position(position).build();
 
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);

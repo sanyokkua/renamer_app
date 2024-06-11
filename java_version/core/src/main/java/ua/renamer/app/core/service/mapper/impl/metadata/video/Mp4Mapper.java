@@ -19,9 +19,7 @@ import java.util.Set;
 public class Mp4Mapper extends VideoBaseMapper {
 
     @Inject
-    public Mp4Mapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public Mp4Mapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 
@@ -32,20 +30,12 @@ public class Mp4Mapper extends VideoBaseMapper {
 
     @Override
     protected List<Class<? extends Directory>> getAvailableDirectories() {
-        return List.of(Mp4VideoDirectory.class,
-                       Mp4MediaDirectory.class,
-                       QuickTimeDirectory.class,
-                       QuickTimeMediaDirectory.class,
-                       QuickTimeVideoDirectory.class
-                      );
+        return List.of(Mp4VideoDirectory.class, Mp4MediaDirectory.class, QuickTimeDirectory.class, QuickTimeMediaDirectory.class, QuickTimeVideoDirectory.class);
     }
 
     @Override
     protected List<Integer> getContentCreationTags() {
-        return List.of(Mp4MediaDirectory.TAG_CREATION_TIME,
-                       QuickTimeDirectory.TAG_CREATION_TIME,
-                       QuickTimeDirectory.TAG_MODIFICATION_TIME
-                      );
+        return List.of(Mp4MediaDirectory.TAG_CREATION_TIME, QuickTimeDirectory.TAG_CREATION_TIME, QuickTimeDirectory.TAG_MODIFICATION_TIME);
     }
 
     @Override

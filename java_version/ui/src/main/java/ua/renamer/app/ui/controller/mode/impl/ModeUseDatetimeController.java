@@ -88,8 +88,7 @@ public class ModeUseDatetimeController extends ModeBaseController {
     private void configDateTimeAndNameSeparatorTextField() {
         log.info("configDateTimeAndNameSeparatorTextField()");
         dateTimeAndNameSeparatorTextField.textProperty()
-                                         .addListener((observable, oldValue, newValue) -> this.handleDateTimeAndNameSeparatorChanged(
-                                                 newValue));
+                                         .addListener((observable, oldValue, newValue) -> this.handleDateTimeAndNameSeparatorChanged(newValue));
     }
 
     private void configDateFormatChoiceBox() {
@@ -127,15 +126,13 @@ public class ModeUseDatetimeController extends ModeBaseController {
     private void configUseFallbackDateTimeCheckBox() {
         log.info("configUseFallbackDateTimeCheckBox()");
         BooleanProperty useFallbackDateTimeProperty = useFallbackDateTimeCheckBox.selectedProperty();
-        useFallbackDateTimeProperty.addListener((observable, oldValue, newValue) -> this.handleUseFallbackDateTimeChanged(
-                newValue));
+        useFallbackDateTimeProperty.addListener((observable, oldValue, newValue) -> this.handleUseFallbackDateTimeChanged(newValue));
     }
 
     private void configUseCustomFallbackDateTimeCheckBox() {
         log.info("configUseCustomFallbackDateTimeCheckBox()");
         BooleanProperty useCustomFallbackDateTimeProperty = useCustomDateTimeAsFallbackCheckBox.selectedProperty();
-        useCustomFallbackDateTimeProperty.addListener((observable, oldValue, newValue) -> this.handleUseCustomFallbackDateTimeChanged(
-                newValue));
+        useCustomFallbackDateTimeProperty.addListener((observable, oldValue, newValue) -> this.handleUseCustomFallbackDateTimeChanged(newValue));
     }
 
     private void configDateTimePickerWidgets() {
@@ -166,8 +163,7 @@ public class ModeUseDatetimeController extends ModeBaseController {
     private void configUseAmPmInUppercaseCheckBox() {
         log.info("configUseAmPmInUppercaseCheckBox()");
         BooleanProperty useAmPmUppercaseProperty = useUppercaseForAmPmCheckBox.selectedProperty();
-        useAmPmUppercaseProperty.addListener((observable, oldValue, newValue) -> this.handleUseAmPmUppercaseChanged(
-                newValue));
+        useAmPmUppercaseProperty.addListener((observable, oldValue, newValue) -> this.handleUseAmPmUppercaseChanged(newValue));
     }
 
     private void handlePositionChanged(ItemPositionWithReplacement itemPositionWithReplacement) {

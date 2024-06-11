@@ -21,7 +21,7 @@ import ua.renamer.app.core.enums.AppModes;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.service.command.FileInformationCommand;
 import ua.renamer.app.core.service.command.ListProcessingCommand;
-import ua.renamer.app.core.service.command.impl.MapFileToAppFileCommand;
+import ua.renamer.app.core.service.command.impl.MapFileToFileInformation;
 import ua.renamer.app.core.service.mapper.impl.FileInformationToHtmlMapper;
 import ua.renamer.app.ui.controller.mode.ModeControllerApi;
 import ua.renamer.app.ui.converter.AppModesConverter;
@@ -44,7 +44,7 @@ public class ApplicationMainViewController implements Initializable {
     private final ObservableList<FileInformation> loadedAppFilesList;
 
     private final FileInformationToHtmlMapper fileInformationToHtmlMapper;
-    private final MapFileToAppFileCommand mapFileToAppFileCommand;
+    private final MapFileToFileInformation mapFileToFileInformation;
     private final ViewLoaderApi viewLoaderApi;
     private final AppModesConverter appModesConverter;
     private final LanguageTextRetrieverApi languageTextRetriever;
@@ -75,13 +75,10 @@ public class ApplicationMainViewController implements Initializable {
     private ProgressBar appProgressBar;
 
     @Inject
-    public ApplicationMainViewController(
-            FileInformationToHtmlMapper fileInformationToHtmlMapper,
-            MapFileToAppFileCommand mapFileToAppFileCommand, ViewLoaderApi viewLoaderApi,
-            AppModesConverter appModesConverter, LanguageTextRetrieverApi languageTextRetriever) {
+    public ApplicationMainViewController(FileInformationToHtmlMapper fileInformationToHtmlMapper, MapFileToFileInformation mapFileToFileInformation, ViewLoaderApi viewLoaderApi, AppModesConverter appModesConverter, LanguageTextRetrieverApi languageTextRetriever) {
 
         this.fileInformationToHtmlMapper = fileInformationToHtmlMapper;
-        this.mapFileToAppFileCommand = mapFileToAppFileCommand;
+        this.mapFileToFileInformation = mapFileToFileInformation;
         this.viewLoaderApi = viewLoaderApi;
         this.appModesConverter = appModesConverter;
         this.languageTextRetriever = languageTextRetriever;
@@ -89,48 +86,6 @@ public class ApplicationMainViewController implements Initializable {
         appModeToViewMap = new EnumMap<>(AppModes.class);
         appModeToControllerMap = new EnumMap<>(AppModes.class);
         loadedAppFilesList = FXCollections.observableArrayList();
-    }
-
-    private static <I, O> void executeListProcessingCommand(
-            ListProcessingCommand<I, O> command, List<I> items, ProgressBar progressBar, Consumer<List<O>> callback) {
-        log.debug("Executing list processing command: {}", command);
-
-        var optCallback = Optional.ofNullable(callback);
-
-        var runCommandTask = new Task<>() {
-            @Override
-            protected Void call() {
-                log.debug("Background task is started");
-
-                var result = command.execute(items, this::updateProgress);
-                optCallback.ifPresent(callback -> callback.accept(result));
-                updateProgress(0, 0);
-
-                log.debug("Background task is finished");
-                return null;
-            }
-        };
-        progressBar.progressProperty().bind(runCommandTask.progressProperty());
-
-        Thread thread = new Thread(runCommandTask);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private boolean showConfirmationDialog(String message, String title) {
-        var alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-
-        var confirmButton = new ButtonType(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_OK));
-        var cancelButton = new ButtonType(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_CANCEL));
-
-        alert.getButtonTypes().setAll(confirmButton, cancelButton);
-
-        alert.showAndWait();
-
-        return alert.getResult() == confirmButton;
     }
 
     @Override
@@ -165,17 +120,8 @@ public class ApplicationMainViewController implements Initializable {
         var modeTruncateFileNameLoader = viewLoaderApi.createLoader(ViewNames.MODE_TRUNCATE_FILE_NAME);
         var modeChangeExtensionLoader = viewLoaderApi.createLoader(ViewNames.MODE_CHANGE_EXTENSION);
 
-        var viewLoaderIsMissed = Stream.of(modeAddCustomTextLoader,
-                                           modeChangeCaseLoader,
-                                           modeUseDatetimeLoader,
-                                           modeUseImageDimensionsLoader,
-                                           modeUseParentFolderNameLoader,
-                                           modeRemoveCustomTextLoader,
-                                           modeReplaceCustomTextLoader,
-                                           modeAddSequenceLoader,
-                                           modeTruncateFileNameLoader,
-                                           modeChangeExtensionLoader
-                                          ).anyMatch(Optional::isEmpty);
+        var viewLoaderIsMissed = Stream.of(modeAddCustomTextLoader, modeChangeCaseLoader, modeUseDatetimeLoader, modeUseImageDimensionsLoader, modeUseParentFolderNameLoader, modeRemoveCustomTextLoader, modeReplaceCustomTextLoader, modeAddSequenceLoader, modeTruncateFileNameLoader, modeChangeExtensionLoader)
+                                       .anyMatch(Optional::isEmpty);
         if (viewLoaderIsMissed) {
             throw new IllegalStateException("At least one of ViewLoaders is missing");
         }
@@ -195,12 +141,10 @@ public class ApplicationMainViewController implements Initializable {
             appModeToControllerMap.put(AppModes.ADD_CUSTOM_TEXT, modeAddCustomTextLoader.get().getController());
             appModeToControllerMap.put(AppModes.CHANGE_CASE, modeChangeCaseLoader.get().getController());
             appModeToControllerMap.put(AppModes.USE_DATETIME, modeUseDatetimeLoader.get().getController());
-            appModeToControllerMap.put(AppModes.USE_IMAGE_DIMENSIONS,
-                                       modeUseImageDimensionsLoader.get().getController()
-                                      );
-            appModeToControllerMap.put(AppModes.USE_PARENT_FOLDER_NAME,
-                                       modeUseParentFolderNameLoader.get().getController()
-                                      );
+            appModeToControllerMap.put(AppModes.USE_IMAGE_DIMENSIONS, modeUseImageDimensionsLoader.get()
+                                                                                                  .getController());
+            appModeToControllerMap.put(AppModes.USE_PARENT_FOLDER_NAME, modeUseParentFolderNameLoader.get()
+                                                                                                     .getController());
             appModeToControllerMap.put(AppModes.REMOVE_CUSTOM_TEXT, modeRemoveCustomTextLoader.get().getController());
             appModeToControllerMap.put(AppModes.REPLACE_CUSTOM_TEXT, modeReplaceCustomTextLoader.get().getController());
             appModeToControllerMap.put(AppModes.ADD_SEQUENCE, modeAddSequenceLoader.get().getController());
@@ -209,6 +153,18 @@ public class ApplicationMainViewController implements Initializable {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to load view", e);
         }
+    }
+
+    private void configureModeCommandChangedListener() {
+        log.info("Configuring modeCommandChangedListener");
+        appModeToControllerMap.forEach((key, value) -> value.commandProperty()
+                                                            .addListener((observable, oldValue, newValue) -> this.handleCommandInTheModeViewUpdated(key, newValue)));
+    }
+
+    public String formatFileType(FileInformation fileInformation) {
+        return fileInformation.isFile()
+                ? languageTextRetriever.getString(TextKeys.TYPE_FILE)
+                : languageTextRetriever.getString(TextKeys.TYPE_FOLDER);
     }
 
     private void configureModeChoiceBox() {
@@ -247,10 +203,22 @@ public class ApplicationMainViewController implements Initializable {
         return fileInformation.getFileName() + fileInformation.getFileExtension();
     }
 
-    public String formatFileType(FileInformation fileInformation) {
-        return fileInformation.isFile() ?
-                languageTextRetriever.getString(TextKeys.TYPE_FILE) :
-                languageTextRetriever.getString(TextKeys.TYPE_FOLDER);
+    private void handleFilesDroppedEvent(DragEvent event) {
+        log.debug("handleFilesDroppedEvent");
+
+        var dragboard = event.getDragboard();
+        var success = false;
+        if (dragboard.hasFiles()) {
+            executeListProcessingCommand(mapFileToFileInformation, dragboard.getFiles(), appProgressBar, result -> {
+                loadedAppFilesList.addAll(result);
+                configureControlWidgetsState();
+            });
+            success = true;
+        }
+        event.setDropCompleted(success);
+        event.consume();
+
+        configureControlWidgetsState();
     }
 
     public String formatNextFileName(FileInformation fileInformation) {
@@ -285,13 +253,29 @@ public class ApplicationMainViewController implements Initializable {
         appProgressBar.setProgress(0);
     }
 
-    private void configureModeCommandChangedListener() {
-        log.info("Configuring modeCommandChangedListener");
-        appModeToControllerMap.forEach((key, value) -> value.commandProperty()
-                                                            .addListener((observable, oldValue, newValue) -> this.handleCommandInTheModeViewUpdated(
-                                                                    key,
-                                                                    newValue
-                                                                                                                                                   )));
+    private static <I, O> void executeListProcessingCommand(ListProcessingCommand<I, O> command, List<I> items, ProgressBar progressBar, Consumer<List<O>> callback) {
+        log.debug("Executing list processing command: {}", command);
+
+        var optCallback = Optional.ofNullable(callback);
+
+        var runCommandTask = new Task<>() {
+            @Override
+            protected Void call() {
+                log.debug("Background task is started");
+
+                var result = command.execute(items, this::updateProgress);
+                optCallback.ifPresent(callback -> callback.accept(result));
+                updateProgress(0, 0);
+
+                log.debug("Background task is finished");
+                return null;
+            }
+        };
+        progressBar.progressProperty().bind(runCommandTask.progressProperty());
+
+        Thread thread = new Thread(runCommandTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void configureControlWidgetsState() {
@@ -324,22 +308,14 @@ public class ApplicationMainViewController implements Initializable {
         event.consume();
     }
 
-    private void handleFilesDroppedEvent(DragEvent event) {
-        log.debug("handleFilesDroppedEvent");
-
-        var dragboard = event.getDragboard();
-        var success = false;
-        if (dragboard.hasFiles()) {
-            executeListProcessingCommand(mapFileToAppFileCommand, dragboard.getFiles(), appProgressBar, result -> {
-                loadedAppFilesList.addAll(result);
-                configureControlWidgetsState();
-            });
-            success = true;
+    private void handleRenameBtnClicked() {
+        log.debug("handleRenameBtnClicked");
+        var confirmed = showConfirmationDialog(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_CONTENT), languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_HEADER));
+        if (confirmed) {
+            log.debug("handleRenameBtnClicked. Confirmed");
+            renameFiles();
         }
-        event.setDropCompleted(success);
-        event.consume();
-
-        configureControlWidgetsState();
+        this.configureControlWidgetsState();
     }
 
     private void handleFileInTableSelectedEvent(FileInformation newSelection) {
@@ -385,16 +361,20 @@ public class ApplicationMainViewController implements Initializable {
         this.configureControlWidgetsState();
     }
 
-    private void handleRenameBtnClicked() {
-        log.debug("handleRenameBtnClicked");
-        var confirmed = showConfirmationDialog(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_CONTENT),
-                                               languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_HEADER)
-                                              );
-        if (confirmed) {
-            log.debug("handleRenameBtnClicked. Confirmed");
-            renameFiles();
-        }
-        this.configureControlWidgetsState();
+    private boolean showConfirmationDialog(String message, String title) {
+        var alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        var confirmButton = new ButtonType(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_OK));
+        var cancelButton = new ButtonType(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_CANCEL));
+
+        alert.getButtonTypes().setAll(confirmButton, cancelButton);
+
+        alert.showAndWait();
+
+        return alert.getResult() == confirmButton;
     }
 
     private void handleClearBtnClicked() {

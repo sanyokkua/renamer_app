@@ -15,6 +15,7 @@ public interface ViewLoaderApi {
      * Loads the FXML view corresponding to the provided view name.
      *
      * @param viewName The name of the view to load.
+     *
      * @return An optional containing the loaded parent node, or an empty optional if the view could not be loaded.
      */
     Optional<Parent> loadFXML(ViewNames viewName);
@@ -23,6 +24,7 @@ public interface ViewLoaderApi {
      * Creates an FXMLLoader instance for the FXML view corresponding to the provided view name.
      *
      * @param viewName The name of the view to load.
+     *
      * @return An optional containing the FXMLLoader instance, or an empty optional if the view could not be loaded.
      */
     Optional<FXMLLoader> createLoader(ViewNames viewName);

@@ -14,9 +14,7 @@ import java.util.Set;
 public class EpsMapper extends ImageBaseMapper {
 
     @Inject
-    public EpsMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public EpsMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

@@ -14,9 +14,7 @@ import java.util.Set;
 public class PsdMapper extends ImageBaseMapper {
 
     @Inject
-    public PsdMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public PsdMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

@@ -5,6 +5,7 @@ module ua.renamer.app.core {
     requires metadata.extractor;
     requires java.desktop;
     requires com.google.guice;
+    requires jakarta.annotation;
 
     exports ua.renamer.app.core.enums;
     exports ua.renamer.app.core.model;

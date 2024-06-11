@@ -24,11 +24,7 @@ public class Mp3Mapper extends FileToMetadataMapper {
 
     @Override
     public FileInformationMetadata process(File input) {
-        return FileInformationMetadata.builder()
-                                      .creationDate(null)
-                                      .audioArtistName(null)
-                                      .audioSongName(null)
-                                      .build();
+        return FileInformationMetadata.builder().creationDate(null).audioArtistName(null).audioSongName(null).build();
     }
 
 }

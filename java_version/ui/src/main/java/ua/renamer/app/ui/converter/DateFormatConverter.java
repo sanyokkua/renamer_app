@@ -23,6 +23,7 @@ public class DateFormatConverter extends StringConverter<DateFormat> {
      * it uses the {@link LanguageTextRetrieverApi} to get the appropriate string.
      *
      * @param object The {@link DateFormat} enum constant to be converted to a string.
+     *
      * @return The string representation of the provided {@link DateFormat} constant.
      */
     @Override
@@ -38,6 +39,7 @@ public class DateFormatConverter extends StringConverter<DateFormat> {
      * Currently, this method is not implemented and always returns {@code null}.
      *
      * @param string The string to be converted back to a {@link DateFormat} enum constant.
+     *
      * @return The corresponding {@link DateFormat} enum constant, or {@code null} if not implemented.
      */
     @Override

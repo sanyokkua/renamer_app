@@ -21,6 +21,7 @@ public class ImageDimensionOptionsConverter extends StringConverter<ImageDimensi
      * representation using the {@link LanguageTextRetrieverApi}.
      *
      * @param object the {@link ImageDimensionOptions} enum constant to be converted to a string.
+     *
      * @return the string representation of the provided {@link ImageDimensionOptions} constant.
      */
     @Override
@@ -37,6 +38,7 @@ public class ImageDimensionOptionsConverter extends StringConverter<ImageDimensi
      * Currently, this method is not implemented and always returns {@code null}.
      *
      * @param string the string to be converted back to an {@link ImageDimensionOptions} enum constant.
+     *
      * @return the corresponding {@link ImageDimensionOptions} enum constant, or {@code null} if not implemented.
      */
     @Override

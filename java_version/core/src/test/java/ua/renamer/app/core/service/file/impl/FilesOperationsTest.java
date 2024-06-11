@@ -31,52 +31,42 @@ class FilesOperationsTest {
     @Mock
     BasicFileAttributesExtractor basicFileAttributesExtractor;
 
-    static Stream<Arguments> testGetParentFoldersArguments() {
+    static Stream<Arguments> getParentFoldersArguments() {
+        // @formatter:off
         return Stream.of(arguments("", List.of()),
                          arguments("/", List.of()),
                          arguments("/file", List.of()),
                          arguments("/file/path", List.of("file")),
-                         arguments("/root/user/home/projects/sources/config/app.json",
-                                   List.of("root", "user", "home", "projects", "sources", "config")
-                                  ),
-                         arguments("\\root\\user\\home\\projects\\sources\\config\\app.json",
-                                   List.of("root", "user", "home", "projects", "sources", "config")
-                                  ),
-                         arguments("c:\\root\\user\\home\\projects\\sources\\config\\app.json",
-                                   List.of("root", "user", "home", "projects", "sources", "config")
-                                  )
+                         arguments("/root/user/home/projects/sources/config/app.json", List.of("root", "user", "home", "projects", "sources", "config")),
+                         arguments("\\root\\user\\home\\projects\\sources\\config\\app.json", List.of("root", "user", "home", "projects", "sources", "config")),
+                         arguments("c:\\root\\user\\home\\projects\\sources\\config\\app.json", List.of("root", "user", "home", "projects", "sources", "config"))
                         );
+        // @formatter:on
     }
 
     @Test
-    void testValidateFileInstanceNull() {
+    void validateFileInstance_NullArgument_ThrowsNullPointerException() {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor);
 
-        NullPointerException ex = assertThrows(NullPointerException.class,
-                                               () -> filesOperations.validateFileInstance(null),
-                                               "Expected that NullPointer exception will be thrown"
-                                              );
+        NullPointerException ex = assertThrows(NullPointerException.class, () -> filesOperations.validateFileInstance(null), "Expected that NullPointer exception will be thrown");
         assertNotNull(ex);
     }
 
     @Test
-    void testValidateFileInstanceDoesNotExist() {
+    void validateFileInstance_NonexistentFile_ThrowsIllegalArgumentException() {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor);
 
         var mock = mock(File.class);
         when(mock.exists()).thenReturn(false);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                                                   () -> filesOperations.validateFileInstance(mock),
-                                                   "Expected that IllegalArgumentException exception will be thrown"
-                                                  );
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> filesOperations.validateFileInstance(mock), "Expected that IllegalArgumentException exception will be thrown");
         assertNotNull(ex);
         assertTrue(ex.getMessage().contains("File does not exist"));
         verify(mock, Mockito.times(1)).exists();
     }
 
     @Test
-    void testGetFileAbsolutePath() {
+    void getFileAbsolutePath_ExistingFile_ReturnsAbsolutePath() {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor);
 
         var mock = mock(File.class);
@@ -93,7 +83,7 @@ class FilesOperationsTest {
     }
 
     @Test
-    void testGetFileNameWithoutExtensionForDirectory() {
+    void getFileNameWithoutExtension_Directory_ReturnsDirectoryName() {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor);
 
         var mock = mock(File.class);
@@ -260,9 +250,7 @@ class FilesOperationsTest {
         when(mockFile.toPath()).thenReturn(mockPath);
         when(mockAttributes.creationTime()).thenReturn(mockFileTime);
         when(mockFileTime.toInstant()).thenReturn(instantNow);
-        when(basicFileAttributesExtractor.getAttributes(mockPath,
-                                                        BasicFileAttributes.class
-                                                       )).thenReturn(mockAttributes);
+        when(basicFileAttributesExtractor.getAttributes(mockPath, BasicFileAttributes.class)).thenReturn(mockAttributes);
 
         var result = filesOperations.getFileCreationTime(mockFile);
 
@@ -311,9 +299,7 @@ class FilesOperationsTest {
 
         when(mockFile.exists()).thenReturn(true);
         when(mockFile.toPath()).thenReturn(mockPath);
-        when(basicFileAttributesExtractor.getAttributes(mockPath,
-                                                        BasicFileAttributes.class
-                                                       )).thenThrow(new IOException());
+        when(basicFileAttributesExtractor.getAttributes(mockPath, BasicFileAttributes.class)).thenThrow(new IOException());
 
         var result = filesOperations.getFileCreationTime(mockFile);
 
@@ -385,9 +371,7 @@ class FilesOperationsTest {
 
         when(mockFile.exists()).thenReturn(true);
         when(mockFile.toPath()).thenReturn(mockPath);
-        when(basicFileAttributesExtractor.getAttributes(mockPath,
-                                                        BasicFileAttributes.class
-                                                       )).thenThrow(new IOException());
+        when(basicFileAttributesExtractor.getAttributes(mockPath, BasicFileAttributes.class)).thenThrow(new IOException());
 
         var result = filesOperations.getFileModificationTime(mockFile);
 
@@ -401,7 +385,7 @@ class FilesOperationsTest {
     }
 
     @Test
-    void getFileSize() {
+    void testGetFileSize() {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor);
         long size = 1000L;
         var mock = mock(File.class);
@@ -415,8 +399,8 @@ class FilesOperationsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testGetParentFoldersArguments")
-    void testGetParentFolders(String path, List<String> parents) {
+    @MethodSource("getParentFoldersArguments")
+    void getParentFolders_VariousPaths_ReturnsExpectedParentFolders(String path, List<String> parents) {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor);
 
         var result = filesOperations.getParentFolders(path);

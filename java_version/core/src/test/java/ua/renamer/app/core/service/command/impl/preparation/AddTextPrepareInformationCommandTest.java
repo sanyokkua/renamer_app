@@ -1,4 +1,4 @@
-package ua.renamer.app.core.service.command.preparation;
+package ua.renamer.app.core.service.command.impl.preparation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,7 +8,6 @@ import ua.renamer.app.core.enums.ItemPosition;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.service.command.Command;
-import ua.renamer.app.core.service.command.impl.preparation.AddTextPrepareInformationCommand;
 
 import java.io.File;
 import java.util.List;
@@ -17,37 +16,17 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static ua.renamer.app.core.service.command.preparation.TestUtils.*;
+import static ua.renamer.app.core.TestUtilities.*;
 
-class AddTextPrepareInformationCommandTest extends BaseCommandTest {
+class AddTextPrepareInformationCommandTest extends BaseRenamePreparationCommandTest {
 
-    static Stream<Arguments> commandArguments() {
-        return Stream.of(
-                arguments("", "", "", "", true, ItemPosition.BEGIN, ""),
-                arguments("name", "name", "", "", true, ItemPosition.BEGIN, ""),
-                arguments("   ", "   ", "", "", true, ItemPosition.BEGIN, ""),
-                arguments("name", "name", "ext", "ext", true, ItemPosition.BEGIN, ""),
-                arguments("name", "name", "ext", "ext", false, ItemPosition.BEGIN, ""),
-                arguments("name", "new_name", "ext", "ext", true, ItemPosition.BEGIN, "new_"),
-                arguments("name", "  name", "ext", "ext", true, ItemPosition.BEGIN, "  "),
-                arguments("name", "name", "ext", "ext", true, ItemPosition.END, ""),
-                arguments("name", "nametest", "ext", "ext", true, ItemPosition.END, "test"),
-                arguments("name", "name ", "ext", "ext", true, ItemPosition.END, " "),
-                arguments("name", "name_test", "ext", "ext", true, ItemPosition.END, "_test"),
-                arguments("name", "namesomething", "", "", true, ItemPosition.END, "something")
-                        );
+    static Stream<Arguments> provideCommandArguments() {
+        return Stream.of(arguments("", "", "", "", true, ItemPosition.BEGIN, ""), arguments("name", "name", "", "", true, ItemPosition.BEGIN, ""), arguments("   ", "   ", "", "", true, ItemPosition.BEGIN, ""), arguments("name", "name", "ext", "ext", true, ItemPosition.BEGIN, ""), arguments("name", "name", "ext", "ext", false, ItemPosition.BEGIN, ""), arguments("name", "new_name", "ext", "ext", true, ItemPosition.BEGIN, "new_"), arguments("name", "  name", "ext", "ext", true, ItemPosition.BEGIN, "  "), arguments("name", "name", "ext", "ext", true, ItemPosition.END, ""), arguments("name", "nametest", "ext", "ext", true, ItemPosition.END, "test"), arguments("name", "name ", "ext", "ext", true, ItemPosition.END, " "), arguments("name", "name_test", "ext", "ext", true, ItemPosition.END, "_test"), arguments("name", "namesomething", "", "", true, ItemPosition.END, "something"));
     }
 
     @ParameterizedTest
-    @MethodSource("commandArguments")
-    void testCommandExecution(
-            String originalName,
-            String expectedName,
-            String originalExt,
-            String expectedExt,
-            boolean isFile,
-            ItemPosition position,
-            String textToAdd) {
+    @MethodSource("provideCommandArguments")
+    void commandExecution_ShouldAddTextToNameAndExtension(String originalName, String expectedName, String originalExt, String expectedExt, boolean isFile, ItemPosition position, String textToAdd) {
         // Prepare Test Data
         var fileInfoMeta = FileInformationMetadata.builder().build();
         var fileInfo = FileInformation.builder()
@@ -67,18 +46,17 @@ class AddTextPrepareInformationCommandTest extends BaseCommandTest {
         List<FileInformation> inputList = List.of(fileInfo);
 
         // Build the command for test
-        Command<List<FileInformation>, List<FileInformation>> command =
-                AddTextPrepareInformationCommand.builder()
-                                                .position(position)
-                                                .text(textToAdd)
-                                                .build();
+        Command<List<FileInformation>, List<FileInformation>> command = AddTextPrepareInformationCommand.builder()
+                                                                                                        .position(position)
+                                                                                                        .text(textToAdd)
+                                                                                                        .build();
 
         testCommandWithItemChanged(command, inputList, expectedName, expectedExt);
     }
 
     @Test
     @Override
-    void testCommandDefaultCreation() {
+    void defaultCommandCreation_ShouldSetDefaultValues() {
         var command = AddTextPrepareInformationCommand.builder().build();
 
         assertNotNull(command);

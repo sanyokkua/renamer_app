@@ -14,9 +14,7 @@ import java.util.Set;
 public class PcxMapper extends ImageBaseMapper {
 
     @Inject
-    public PcxMapper(
-            FilesOperations filesOperations,
-            DateTimeOperations dateTimeOperations) {
+    public PcxMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
         super(filesOperations, dateTimeOperations);
     }
 

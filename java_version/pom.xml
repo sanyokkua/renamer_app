@@ -29,6 +29,7 @@
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <powermock-core.version>2.0.9</powermock-core.version>
         <guice.version>7.0.0</guice.version>
+        <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
     </properties>
 
     <modules>
@@ -83,6 +84,11 @@
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
                 <version>${guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api.version}</version>
             </dependency>
 
 

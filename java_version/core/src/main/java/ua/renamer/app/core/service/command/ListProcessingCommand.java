@@ -21,6 +21,7 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      *
      * @param input    the list of input items for the command.
      * @param callback the progress callback to track the execution progress.
+     *
      * @return the list of output items produced by the command.
      */
     @Override
@@ -66,6 +67,7 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      * Preprocesses the input list before processing each item.
      *
      * @param input the input list to be preprocessed.
+     *
      * @return the preprocessed input list.
      */
     protected List<I> preprocessInput(List<I> input) {
@@ -76,6 +78,7 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      * Processes an individual item from the input list.
      *
      * @param item the item to be processed.
+     *
      * @return the result of processing the item.
      */
     public abstract O processItem(I item);
