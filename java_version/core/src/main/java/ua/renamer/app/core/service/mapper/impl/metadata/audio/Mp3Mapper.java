@@ -18,7 +18,7 @@ public class Mp3Mapper extends FileToMetadataMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of("mp3");
     }
 

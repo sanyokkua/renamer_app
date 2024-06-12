@@ -5,6 +5,7 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.util.BuilderFactory;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.TextExtractorByKey;
@@ -17,8 +18,8 @@ import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
 import ua.renamer.app.core.service.helper.DateTimeOperations;
 import ua.renamer.app.core.service.mapper.DataMapper;
 import ua.renamer.app.core.service.mapper.FileToMetadataMapper;
-import ua.renamer.app.core.service.mapper.impl.FileInformationToHtmlMapper;
 import ua.renamer.app.core.service.mapper.impl.FileToFileInformationMapper;
+import ua.renamer.app.core.service.mapper.impl.RenameModelToHtmlMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.NullMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.audio.Mp3Mapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.audio.WavMapper;
@@ -32,6 +33,7 @@ import ua.renamer.app.ui.controller.mode.impl.*;
 import ua.renamer.app.ui.converter.*;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.service.ViewLoaderApi;
+import ua.renamer.app.ui.service.impl.AppCoreFunctionalityHelper;
 import ua.renamer.app.ui.service.impl.LanguageTextRetrieverService;
 import ua.renamer.app.ui.service.impl.ViewLoaderService;
 import ua.renamer.app.ui.widget.builder.ItemPositionExtendedRadioSelectorBuilder;
@@ -44,10 +46,13 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Dependency Injection module configuration for the application.
  */
+@Slf4j
 @Getter
 public class DIAppModule extends AbstractModule {
 
@@ -65,9 +70,9 @@ public class DIAppModule extends AbstractModule {
         // Bind BasicFileAttributesExtractor to a lambda using Files.readAttributes
         bind(BasicFileAttributesExtractor.class).toInstance(Files::readAttributes);
 
-        // Bind DataMapper<FileInformation, String> to FileInformationToHtmlMapper with Singleton scope
+        // Bind DataMapper<FileInformation, String> to RenameModelToHtmlMapper with Singleton scope
         bind(new TypeLiteral<DataMapper<RenameModel, String>>() {
-        }).to(FileInformationToHtmlMapper.class).in(Singleton.class);
+        }).to(RenameModelToHtmlMapper.class).in(Singleton.class);
 
         // Bind DataMapper<File, FileInformation> to FileToFileInformationMapper with Singleton scope
         bind(new TypeLiteral<DataMapper<File, FileInformation>>() {
@@ -133,6 +138,7 @@ public class DIAppModule extends AbstractModule {
         bind(TruncateOptionsConverter.class).in(Singleton.class);
 
         // Bind various mode controllers with Singleton scope
+        bind(AppCoreFunctionalityHelper.class).in(Singleton.class);
         bind(ModeAddCustomTextController.class).in(Singleton.class);
         bind(ModeAddSequenceController.class).in(Singleton.class);
         bind(ModeChangeCaseController.class).in(Singleton.class);
@@ -207,6 +213,26 @@ public class DIAppModule extends AbstractModule {
         quickTimeMapper.setNext(tiffMapper);
         tiffMapper.setNext(wavMapper);
         wavMapper.setNext(webPmapper);
+
+        var supportedExtensions = Stream.of(nullMapper,
+                                            aviMapper,
+                                            bmpMapper,
+                                            epsMapper,
+                                            gifMapper,
+                                            heifMapper,
+                                            icoMapper,
+                                            jpegMapper,
+                                            mp3Mapper,
+                                            mp4Mapper,
+                                            pcxMapper,
+                                            pngMapper,
+                                            psdMapper,
+                                            quickTimeMapper,
+                                            tiffMapper,
+                                            wavMapper)
+                                        .flatMap(v -> v.getSupportedExtensions().stream())
+                                        .collect(Collectors.joining(","));
+        log.info("Supported extensions: {}", supportedExtensions);
         return nullMapper;
     }
 

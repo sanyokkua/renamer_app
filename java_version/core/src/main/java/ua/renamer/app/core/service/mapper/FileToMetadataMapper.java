@@ -71,7 +71,16 @@ public abstract class FileToMetadataMapper implements ChainedDataMapper<File, Fi
     @Override
     public boolean canHandle(File input) {
         log.debug("Can handle: {}", input);
+        var mime = filesOperations.getMimeType(input);
+        var mimeExt = filesOperations.getExtensionFromMimeType(mime);
         var extension = filesOperations.getFileExtension(input);
+
+        if (!mimeExt.isEmpty() && extension.isEmpty()) {
+            extension = mimeExt;
+        } else if (!mimeExt.isEmpty()) {
+            extension = mimeExt;
+        }
+
         var supportedExtensions = getSupportedExtensions();
 
         if (extension.isEmpty() && supportedExtensions.isEmpty()) {
@@ -95,6 +104,6 @@ public abstract class FileToMetadataMapper implements ChainedDataMapper<File, Fi
      *
      * @return a set containing the supported file extensions
      */
-    protected abstract Set<String> getSupportedExtensions();
+    public abstract Set<String> getSupportedExtensions();
 
 }

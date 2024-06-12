@@ -24,7 +24,7 @@ public class Mp4Mapper extends VideoBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Mp4.getAllExtensions());
     }
 

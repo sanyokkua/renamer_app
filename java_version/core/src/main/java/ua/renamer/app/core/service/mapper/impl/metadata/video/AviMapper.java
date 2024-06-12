@@ -20,7 +20,7 @@ public class AviMapper extends VideoBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Avi.getAllExtensions());
     }
 

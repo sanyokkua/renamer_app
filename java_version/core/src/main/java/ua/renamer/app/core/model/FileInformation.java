@@ -47,6 +47,14 @@ public class FileInformation {
     @Getter
     @Builder.Default
     private final String fileExtension = ""; // extension, like .jpg, or empty string
+    @NonNull
+    @Getter
+    @Builder.Default
+    private final String detectedExtension = ""; // extension, like .jpg, or empty string
+    @NonNull
+    @Getter
+    @Builder.Default
+    private final String detectedMimeType = ""; // example: "text/json", or empty string
     /**
      * The size of the file in bytes.
      */

@@ -30,6 +30,7 @@
         <powermock-core.version>2.0.9</powermock-core.version>
         <guice.version>7.0.0</guice.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
+        <tika-core.version>2.9.2</tika-core.version>
     </properties>
 
     <modules>
@@ -89,6 +90,16 @@
                 <groupId>jakarta.annotation</groupId>
                 <artifactId>jakarta.annotation-api</artifactId>
                 <version>${jakarta.annotation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-core</artifactId>
+                <version>${tika-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parsers-standard-package</artifactId>
+                <version>${tika-core.version}</version>
             </dependency>
 
 

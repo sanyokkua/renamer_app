@@ -19,7 +19,7 @@ public class PngMapper extends ImageBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Png.getAllExtensions());
     }
 

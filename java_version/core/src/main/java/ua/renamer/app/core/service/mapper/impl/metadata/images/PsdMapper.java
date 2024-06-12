@@ -19,7 +19,7 @@ public class PsdMapper extends ImageBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Psd.getAllExtensions());
     }
 

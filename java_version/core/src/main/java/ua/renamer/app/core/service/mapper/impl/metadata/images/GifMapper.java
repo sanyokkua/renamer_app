@@ -19,7 +19,7 @@ public class GifMapper extends ImageBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Gif.getAllExtensions());
     }
 

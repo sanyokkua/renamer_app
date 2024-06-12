@@ -6,6 +6,8 @@ module ua.renamer.app.core {
     requires java.desktop;
     requires com.google.guice;
     requires jakarta.annotation;
+    requires jdk.xml.dom;
+    requires org.apache.tika.core;
 
     exports ua.renamer.app.core.enums;
     exports ua.renamer.app.core.model;

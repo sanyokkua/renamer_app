@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +43,8 @@ class FileToFileInformationMapperTest {
         when(filesOperations.getFileCreationTime(file)).thenReturn(Optional.of(localDateTime));
         when(filesOperations.getFileModificationTime(file)).thenReturn(Optional.of(localDateTime));
         when(filesOperations.getFileSize(file)).thenReturn(fileSize);
+        when(filesOperations.getMimeType(file)).thenReturn("");
+        when(filesOperations.getExtensionFromMimeType(anyString())).thenReturn("");
         when(fileToMetadataMapper.map(file)).thenReturn(metadata);
 
         var mapper = new FileToFileInformationMapper(fileToMetadataMapper, filesOperations);

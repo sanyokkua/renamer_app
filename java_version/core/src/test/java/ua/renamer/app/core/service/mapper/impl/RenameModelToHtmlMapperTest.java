@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class FileInformationToHtmlMapperTest {
+class RenameModelToHtmlMapperTest {
 
     @Spy
     private DateTimeOperations dateTimeOperations;
@@ -66,7 +66,7 @@ class FileInformationToHtmlMapperTest {
         MapFileInformationToRenameModel mapperToModel = new MapFileInformationToRenameModel();
         RenameModel model = mapperToModel.execute(List.of(fileInformation), null).get(0);
 
-        var mapper = new FileInformationToHtmlMapper(dateTimeOperations, (value) -> value);
+        var mapper = new RenameModelToHtmlMapper(dateTimeOperations, (value) -> value);
         var resultHtml = mapper.map(model);
 
         assertNotNull(resultHtml);

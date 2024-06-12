@@ -18,7 +18,7 @@ public class TiffMapper extends ImageBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Tiff.getAllExtensions());
     }
 

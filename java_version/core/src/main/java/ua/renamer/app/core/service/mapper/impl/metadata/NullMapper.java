@@ -18,7 +18,7 @@ public class NullMapper extends FileToMetadataMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of();
     }
 

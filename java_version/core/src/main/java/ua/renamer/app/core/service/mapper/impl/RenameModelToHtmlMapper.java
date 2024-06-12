@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class FileInformationToHtmlMapper implements DataMapper<RenameModel, String> {
+public class RenameModelToHtmlMapper implements DataMapper<RenameModel, String> {
 
     private static final String IS_FOLDER = "is_folder";
     private static final String IS_FILE = "is_file";
@@ -26,6 +26,7 @@ public class FileInformationToHtmlMapper implements DataMapper<RenameModel, Stri
     private static final String FILE_NAME = "file_name";
     private static final String FILE_EXTENSION = "file_extension";
     private static final String FILE_TYPE = "file_type";
+    private static final String FILE_MIME_TYPE = "file_mime_type";
     private static final String FILE_CREATION_TIME = "file_creation_time";
     private static final String FILE_MODIFICATION_TIME = "file_modification_time";
     private static final String FILE_CONTENT_CREATION_TIME = "file_content_creation_time";
@@ -41,11 +42,15 @@ public class FileInformationToHtmlMapper implements DataMapper<RenameModel, Stri
 
     @Override
     public String map(RenameModel renameModel) {
+        if (Objects.isNull(renameModel)) {
+            return "";
+        }
         // @formatter:off
         var absolutePath = getString(renameModel, model -> model.getFileInformation().getFileAbsolutePath());
         var fileName = getString(renameModel, model -> model.getFileInformation().getFileName());
         var fileExt = getString(renameModel, model -> model.getFileInformation().getFileExtension());
         var fileType = getString(renameModel, this::getType);
+        var fileMime = getString(renameModel, model -> model.getFileInformation().getDetectedMimeType());
         var fcTime = getDateTimeOptional(renameModel, model -> model.getFileInformation().getFsCreationDate());
         var fmTime = getDateTimeOptional(renameModel, model -> model.getFileInformation().getFsModificationDate());
         var ccTime = getDateTimeOptional(renameModel, model -> model.getFileInformation().getMetadata().flatMap(FileInformationMetadata::getCreationDate));
@@ -59,7 +64,7 @@ public class FileInformationToHtmlMapper implements DataMapper<RenameModel, Stri
         var value = List.of(new TableItem(ABSOLUTE_PATH, absolutePath),
                             new TableItem(FILE_NAME, fileName),
                             new TableItem(FILE_EXTENSION, fileExt),
-                            new TableItem(FILE_TYPE, fileType),
+                            new TableItem(FILE_TYPE, fileType), new TableItem(FILE_MIME_TYPE, fileMime),
                             new TableItem(FILE_CREATION_TIME, fcTime),
                             new TableItem(FILE_MODIFICATION_TIME, fmTime),
                             new TableItem(FILE_CONTENT_CREATION_TIME, ccTime),

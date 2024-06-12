@@ -19,7 +19,7 @@ public class IcoMapper extends ImageBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Ico.getAllExtensions());
     }
 

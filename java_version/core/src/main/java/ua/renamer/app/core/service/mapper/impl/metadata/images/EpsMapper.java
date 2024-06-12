@@ -19,7 +19,7 @@ public class EpsMapper extends ImageBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Eps.getAllExtensions());
     }
 

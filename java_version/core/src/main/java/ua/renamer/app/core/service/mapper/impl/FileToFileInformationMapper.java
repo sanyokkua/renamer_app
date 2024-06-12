@@ -40,8 +40,10 @@ public class FileToFileInformationMapper implements DataMapper<File, FileInforma
         final var fsCreationDate = filesOperations.getFileCreationTime(file);
         final var fsModificationDate = filesOperations.getFileModificationTime(file);
         final var fileSize = filesOperations.getFileSize(file);
-        final var metadata = fileToMetadataMapper.map(file);
+        final var mime = filesOperations.getMimeType(file);
+        final var extFromMime = filesOperations.getExtensionFromMimeType(mime);
 
+        final var metadata = fileToMetadataMapper.map(file);
         final var creationDateTime = fsCreationDate.orElse(null);
         final var modificationDateTime = fsModificationDate.orElse(null);
 
@@ -56,6 +58,8 @@ public class FileToFileInformationMapper implements DataMapper<File, FileInforma
                               .fileSize(fileSize)
                               .fsCreationDate(creationDateTime)
                               .fsModificationDate(modificationDateTime)
+                              .detectedMimeType(mime)
+                              .detectedExtension(extFromMime)
                               .metadata(metadata)
                               .build();
     }

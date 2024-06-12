@@ -29,7 +29,7 @@ public class WavMapper extends FileToMetadataMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.Wav.getAllExtensions());
     }
 

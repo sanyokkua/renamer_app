@@ -24,7 +24,7 @@ public class QuickTimeMapper extends VideoBaseMapper {
     }
 
     @Override
-    protected Set<String> getSupportedExtensions() {
+    public Set<String> getSupportedExtensions() {
         return Set.of(FileType.QuickTime.getAllExtensions());
     }
 
