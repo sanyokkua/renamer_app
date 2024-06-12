@@ -43,4 +43,5 @@ module ua.renamer.app.core {
     opens ua.renamer.app.core.service.file.impl;
     opens ua.renamer.app.core.service.validator;
     opens ua.renamer.app.core.service.validator.impl;
+    opens ua.renamer.app.core.enums;
 }

@@ -60,7 +60,8 @@ public class ReplaceTextPrepareInformationCommand extends FileInformationCommand
 
             StringBuilder reversedNewValue = new StringBuilder(newValueToAdd).reverse();
             String reversedResult = reversedName.toString()
-                                                .replaceFirst(reversedValueToReplace.toString(), reversedNewValue.toString());
+                                                .replaceFirst(reversedValueToReplace.toString(),
+                                                              reversedNewValue.toString());
             nextName = reversedResult.isEmpty()
                     ? reversedResult
                     : new StringBuilder(reversedResult).reverse().toString();

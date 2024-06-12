@@ -80,7 +80,16 @@ public class DateTimeOperations {
      * @return An Optional containing the parsed LocalDateTime if successful, or an empty Optional otherwise.
      */
     private Optional<LocalDateTime> parseDateTimeStringWithZoneInfo(String dateTimeString) {
-        var formatsWithZoneInfo = List.of("EEE, dd MMM yyyy HH:mm:ss Z", "EEE, dd MMM yyyy HH:mm:ss Z", "EEE, dd MMM yyyy HH:mm:ss z", "EEE, dd MMM yyyy HH:mm:ss ZZZZ", "EEE, dd MMM yyyy HH:mm:ss zzzz", "EEE, dd MMM yyyy HH:mm:ss SSSZ", "E MMM dd HH:mm:ss z yyyy", "yyyy-MM-dd HH:mm:ss Z", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ssXXX");
+        var formatsWithZoneInfo = List.of("EEE, dd MMM yyyy HH:mm:ss Z",
+                                          "EEE, dd MMM yyyy HH:mm:ss Z",
+                                          "EEE, dd MMM yyyy HH:mm:ss z",
+                                          "EEE, dd MMM yyyy HH:mm:ss ZZZZ",
+                                          "EEE, dd MMM yyyy HH:mm:ss zzzz",
+                                          "EEE, dd MMM yyyy HH:mm:ss SSSZ",
+                                          "E MMM dd HH:mm:ss z yyyy",
+                                          "yyyy-MM-dd HH:mm:ss Z",
+                                          "yyyy-MM-dd'T'HH:mm:ssZ",
+                                          "yyyy-MM-dd'T'HH:mm:ssXXX");
 
         // Try parsing with zone info formats first
         for (String format : formatsWithZoneInfo) {
@@ -113,7 +122,15 @@ public class DateTimeOperations {
             return Optional.empty();
         }
 
-        var formatsWithoutZoneInfo = List.of("yyyy:MM:dd HH:mm:ss", "yyyy:MM:dd HH:mm", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm", "EEE, dd MMM yyyy HH:mm:ss");
+        var formatsWithoutZoneInfo = List.of("yyyy:MM:dd HH:mm:ss",
+                                             "yyyy:MM:dd HH:mm",
+                                             "yyyy-MM-dd HH:mm:ss",
+                                             "yyyy-MM-dd HH:mm",
+                                             "yyyy.MM.dd HH:mm:ss",
+                                             "yyyy.MM.dd HH:mm",
+                                             "yyyy-MM-dd'T'HH:mm:ss",
+                                             "yyyy-MM-dd'T'HH:mm",
+                                             "EEE, dd MMM yyyy HH:mm:ss");
 
         // Try parsing without zone info formats next
         for (String format : formatsWithoutZoneInfo) {
@@ -203,7 +220,8 @@ public class DateTimeOperations {
      *
      * @return The formatted date-time string.
      */
-    public String formatDateTime(LocalDateTime localDateTime, DateFormat dateFormat, TimeFormat timeFormat, DateTimeFormat dateTimeFormat) {
+    public String formatDateTime(LocalDateTime localDateTime, DateFormat dateFormat, TimeFormat timeFormat,
+                                 DateTimeFormat dateTimeFormat) {
         if (Objects.isNull(localDateTime)) {
             return "";
         }

@@ -85,6 +85,10 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
         return result.stream().filter(Objects::nonNull).min(Integer::compareTo);
     }
 
+    protected abstract List<Class<? extends Directory>> getAvailableDirectories();
+
+    protected abstract List<Integer> getContentCreationTags();
+
     private static List<String> findStringValues(List<? extends Directory> directories, List<Integer> tags) {
         return tags.stream()
                    .filter(Objects::nonNull)
@@ -95,6 +99,8 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
                    .toList();
     }
 
+    protected abstract List<Integer> getVideoWidthTags();
+
     private static List<Integer> findIntegerValues(List<? extends Directory> directories, List<Integer> tags) {
         return tags.stream()
                    .filter(Objects::nonNull)
@@ -104,12 +110,6 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
                                               .filter(Objects::nonNull))
                    .toList();
     }
-
-    protected abstract List<Class<? extends Directory>> getAvailableDirectories();
-
-    protected abstract List<Integer> getContentCreationTags();
-
-    protected abstract List<Integer> getVideoWidthTags();
 
     protected abstract List<Integer> getVideoHeightTags();
 

@@ -70,15 +70,18 @@ public class SequencePrepareInformationCommand extends FileInformationCommand {
                                                                                                             .orElse(null))));
             case FILE_CONTENT_CREATION_DATETIME ->
                     input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                            .flatMap(FileInformationMetadata::getCreationDate)
+                                                                                                            .flatMap(
+                                                                                                                    FileInformationMetadata::getCreationDate)
                                                                                                             .orElse(null))));
             case IMAGE_WIDTH ->
                     input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                            .flatMap(FileInformationMetadata::getImgVidWidth)
+                                                                                                            .flatMap(
+                                                                                                                    FileInformationMetadata::getImgVidWidth)
                                                                                                             .orElse(null))));
             case IMAGE_HEIGHT ->
                     input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                            .flatMap(FileInformationMetadata::getImgVidHeight)
+                                                                                                            .flatMap(
+                                                                                                                    FileInformationMetadata::getImgVidHeight)
                                                                                                             .orElse(null))));
         }
 

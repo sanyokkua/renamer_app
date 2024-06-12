@@ -122,7 +122,9 @@ public class DateTimeRenamePrepareInformationCommand extends FileInformationComm
             if (useCustomDateTimeAsFallback) {
                 localDateTime = customDateTime;
             } else {
-                localDateTime = dateTimeOperations.findMinOrNull(fileCreationDateTime, fileModificationDateTime, fileContentCreationDateTime);
+                localDateTime = dateTimeOperations.findMinOrNull(fileCreationDateTime,
+                                                                 fileModificationDateTime,
+                                                                 fileContentCreationDateTime);
             }
         }
 
@@ -131,7 +133,16 @@ public class DateTimeRenamePrepareInformationCommand extends FileInformationComm
         }
 
         var resultDateTime = dateTimeOperations.formatDateTime(localDateTime, dateFormat, timeFormat, dateTimeFormat);
-        var caseFormats = List.of(TimeFormat.HH_MM_SS_AM_PM_TOGETHER, TimeFormat.HH_MM_SS_AM_PM_WHITE_SPACED, TimeFormat.HH_MM_SS_AM_PM_UNDERSCORED, TimeFormat.HH_MM_SS_AM_PM_DOTTED, TimeFormat.HH_MM_SS_AM_PM_DASHED, TimeFormat.HH_MM_AM_PM_TOGETHER, TimeFormat.HH_MM_AM_PM_WHITE_SPACED, TimeFormat.HH_MM_AM_PM_UNDERSCORED, TimeFormat.HH_MM_AM_PM_DOTTED, TimeFormat.HH_MM_AM_PM_DASHED);
+        var caseFormats = List.of(TimeFormat.HH_MM_SS_AM_PM_TOGETHER,
+                                  TimeFormat.HH_MM_SS_AM_PM_WHITE_SPACED,
+                                  TimeFormat.HH_MM_SS_AM_PM_UNDERSCORED,
+                                  TimeFormat.HH_MM_SS_AM_PM_DOTTED,
+                                  TimeFormat.HH_MM_SS_AM_PM_DASHED,
+                                  TimeFormat.HH_MM_AM_PM_TOGETHER,
+                                  TimeFormat.HH_MM_AM_PM_WHITE_SPACED,
+                                  TimeFormat.HH_MM_AM_PM_UNDERSCORED,
+                                  TimeFormat.HH_MM_AM_PM_DOTTED,
+                                  TimeFormat.HH_MM_AM_PM_DASHED);
 
         if (caseFormats.contains(timeFormat)) {
             if (useUppercaseForAmPm) {

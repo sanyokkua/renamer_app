@@ -12,11 +12,42 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 class CalculationUtilsTest {
 
     static Stream<Arguments> toKilobytesArguments() {
-        return Stream.of(arguments(-10, -0), arguments(-100, -0), arguments(-1000, -0), arguments(-1024, -1), arguments(-1500, -1), arguments(-2000, -1), arguments(-2048, -2), arguments(0, 0), arguments(10, 0), arguments(100, 0), arguments(1000, 0), arguments(1024, 1), arguments(1500, 1), arguments(2000, 1), arguments(2048, 2));
+        return Stream.of(arguments(-10, -0),
+                         arguments(-100, -0),
+                         arguments(-1000, -0),
+                         arguments(-1024, -1),
+                         arguments(-1500, -1),
+                         arguments(-2000, -1),
+                         arguments(-2048, -2),
+                         arguments(0, 0),
+                         arguments(10, 0),
+                         arguments(100, 0),
+                         arguments(1000, 0),
+                         arguments(1024, 1),
+                         arguments(1500, 1),
+                         arguments(2000, 1),
+                         arguments(2048, 2));
     }
 
     static Stream<Arguments> toMegabytesArguments() {
-        return Stream.of(arguments(-10, -0), arguments(-100, -0), arguments(-1000, 0), arguments(-1024, 0), arguments(-1500, 0), arguments(-2000, 0), arguments(-2048, 0), arguments(-1048576, -1), arguments(-2097152, -2), arguments(0, 0), arguments(10, 0), arguments(100, 0), arguments(1000, 0), arguments(1024, 0), arguments(1500, 0), arguments(2000, 0), arguments(2048, 0), arguments(2097152, 2));
+        return Stream.of(arguments(-10, -0),
+                         arguments(-100, -0),
+                         arguments(-1000, 0),
+                         arguments(-1024, 0),
+                         arguments(-1500, 0),
+                         arguments(-2000, 0),
+                         arguments(-2048, 0),
+                         arguments(-1048576, -1),
+                         arguments(-2097152, -2),
+                         arguments(0, 0),
+                         arguments(10, 0),
+                         arguments(100, 0),
+                         arguments(1000, 0),
+                         arguments(1024, 0),
+                         arguments(1500, 0),
+                         arguments(2000, 0),
+                         arguments(2048, 0),
+                         arguments(2097152, 2));
     }
 
     @ParameterizedTest

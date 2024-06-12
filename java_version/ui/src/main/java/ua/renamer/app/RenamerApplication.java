@@ -14,7 +14,6 @@ import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.service.ViewLoaderApi;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
@@ -28,7 +27,7 @@ public class RenamerApplication extends Application {
     // Main method to launch the application
     public static void main(String[] args) {
         // Launch the JavaFX application
-        Locale.setDefault(Locale.ENGLISH);
+        // Locale.setDefault(Locale.ENGLISH);
         injector = Guice.createInjector(new DIAppModule());
         log.debug("Application started");
         launch();

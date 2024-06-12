@@ -33,20 +33,30 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
     }
 
     protected LocalDateTime extractCreationDateTimeFromExif(File input) {
-        var originalDateTime = findDateTimeInDirectories(input, ExifDirectoryBase.TAG_DATETIME_ORIGINAL, ExifDirectoryBase.TAG_TIME_ZONE_ORIGINAL);
-        var imageDateTime = findDateTimeInDirectories(input, ExifDirectoryBase.TAG_DATETIME, ExifDirectoryBase.TAG_TIME_ZONE);
-        var digitizedDateTime = findDateTimeInDirectories(input, ExifDirectoryBase.TAG_DATETIME_DIGITIZED, ExifDirectoryBase.TAG_TIME_ZONE_DIGITIZED);
+        var originalDateTime = findDateTimeInDirectories(input,
+                                                         ExifDirectoryBase.TAG_DATETIME_ORIGINAL,
+                                                         ExifDirectoryBase.TAG_TIME_ZONE_ORIGINAL);
+        var imageDateTime = findDateTimeInDirectories(input,
+                                                      ExifDirectoryBase.TAG_DATETIME,
+                                                      ExifDirectoryBase.TAG_TIME_ZONE);
+        var digitizedDateTime = findDateTimeInDirectories(input,
+                                                          ExifDirectoryBase.TAG_DATETIME_DIGITIZED,
+                                                          ExifDirectoryBase.TAG_TIME_ZONE_DIGITIZED);
 
-        var earliestDateTime = dateTimeOperations.findMinOrNull(originalDateTime.orElse(null), imageDateTime.orElse(null), digitizedDateTime.orElse(null));
+        var earliestDateTime = dateTimeOperations.findMinOrNull(originalDateTime.orElse(null),
+                                                                imageDateTime.orElse(null),
+                                                                digitizedDateTime.orElse(null));
         log.debug("Extracted creationDateTime: {}", earliestDateTime);
         return earliestDateTime;
     }
 
     private Optional<LocalDateTime> findDateTimeInDirectories(File input, int dateTimeTag, int offsetTag) {
         return extractExifDirectories(input).stream()
-                                            .map(dir -> new Pair<>(dir.getString(dateTimeTag), dir.getString(offsetTag)))
+                                            .map(dir -> new Pair<>(dir.getString(dateTimeTag),
+                                                                   dir.getString(offsetTag)))
                                             .filter(pair -> pair.first() != null)
-                                            .map(pair -> dateTimeOperations.parseDateTimeString(pair.first(), pair.second()))
+                                            .map(pair -> dateTimeOperations.parseDateTimeString(pair.first(),
+                                                                                                pair.second()))
                                             .filter(Objects::nonNull)
                                             .min(LocalDateTime::compareTo);
     }
@@ -65,7 +75,9 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
                 return List.of();
             }
 
-            return Stream.of(metadata.getFirstDirectoryOfType(ExifImageDirectory.class), metadata.getFirstDirectoryOfType(ExifIFD0Directory.class), metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class))
+            return Stream.of(metadata.getFirstDirectoryOfType(ExifImageDirectory.class),
+                             metadata.getFirstDirectoryOfType(ExifIFD0Directory.class),
+                             metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class))
                          .filter(Objects::nonNull)
                          .toList();
         } catch (Exception e) {
@@ -75,14 +87,16 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
     }
 
     private Integer extractWidthFromExif(File input) {
-        return Stream.of(findIntegerInDirectories(input, ExifDirectoryBase.TAG_IMAGE_WIDTH), findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_WIDTH))
+        return Stream.of(findIntegerInDirectories(input, ExifDirectoryBase.TAG_IMAGE_WIDTH),
+                         findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_WIDTH))
                      .flatMap(Optional::stream)
                      .findFirst()
                      .orElse(null);
     }
 
     private Integer extractHeightFromExif(File input) {
-        return Stream.of(findIntegerInDirectories(input, ExifDirectoryBase.TAG_IMAGE_HEIGHT), findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_HEIGHT))
+        return Stream.of(findIntegerInDirectories(input, ExifDirectoryBase.TAG_IMAGE_HEIGHT),
+                         findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_HEIGHT))
                      .flatMap(Optional::stream)
                      .findFirst()
                      .orElse(null);

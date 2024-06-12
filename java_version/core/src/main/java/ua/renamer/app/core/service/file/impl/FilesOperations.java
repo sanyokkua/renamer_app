@@ -2,10 +2,15 @@ package ua.renamer.app.core.service.file.impl;
 
 import com.google.inject.Inject;
 import lombok.RequiredArgsConstructor;
+import ua.renamer.app.core.enums.RenameResult;
+import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -216,4 +221,39 @@ public class FilesOperations {
         return Arrays.asList(splitPathItems).subList(1, splitPathItems.length - 1);
     }
 
+    /**
+     * Renames a file based on the provided RenameModel.
+     *
+     * @param renameModel The RenameModel containing information about the renaming operation.
+     *
+     * @return The updated RenameModel with the result of the renaming operation.
+     */
+    public RenameModel renameFile(RenameModel renameModel) {
+        if (!renameModel.isNeedRename()) {
+            renameModel.setRenamed(false);
+            renameModel.setRenameResult(RenameResult.NOT_RENAMED_BECAUSE_NOT_NEEDED);
+            return renameModel;
+        }
+        String oldName = renameModel.getOldName();
+        String newName = renameModel.getNewName();
+        String absolute = renameModel.getAbsolutePathWithoutName();
+        String oldAbsolutePath = absolute + oldName;
+        String newAbsolutePath = absolute + newName;
+
+        Path oldPath = Paths.get(oldAbsolutePath);
+        Path newPath = Paths.get(newAbsolutePath);
+
+        try {
+            Files.move(oldPath, newPath);
+            renameModel.setRenamed(true);
+            renameModel.setRenameResult(RenameResult.RENAMED_WITHOUT_ERRORS);
+            return renameModel;
+        } catch (IOException e) {
+            renameModel.setRenamed(false);
+            renameModel.setRenameResult(RenameResult.NOT_RENAMED_BECAUSE_OF_ERROR);
+            renameModel.setHasRenamingError(true);
+            renameModel.setRenamingErrorMessage(e.getMessage());
+            return renameModel;
+        }
+    }
 }

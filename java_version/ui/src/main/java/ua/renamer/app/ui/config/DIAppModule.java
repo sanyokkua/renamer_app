@@ -6,8 +6,13 @@ import javafx.util.BuilderFactory;
 import lombok.Getter;
 import lombok.Setter;
 import ua.renamer.app.core.model.FileInformation;
+import ua.renamer.app.core.model.RenameModel;
+import ua.renamer.app.core.service.TextExtractorByKey;
 import ua.renamer.app.core.service.command.ListProcessingCommand;
+import ua.renamer.app.core.service.command.impl.FixEqualNamesCommand;
+import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModel;
 import ua.renamer.app.core.service.command.impl.MapFileToFileInformation;
+import ua.renamer.app.core.service.command.impl.RenameCommand;
 import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
 import ua.renamer.app.core.service.helper.DateTimeOperations;
 import ua.renamer.app.core.service.mapper.DataMapper;
@@ -21,6 +26,7 @@ import ua.renamer.app.core.service.mapper.impl.metadata.images.*;
 import ua.renamer.app.core.service.mapper.impl.metadata.video.AviMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.video.Mp4Mapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.video.QuickTimeMapper;
+import ua.renamer.app.core.service.validator.impl.NameValidator;
 import ua.renamer.app.ui.controller.ApplicationMainViewController;
 import ua.renamer.app.ui.controller.mode.impl.*;
 import ua.renamer.app.ui.converter.*;
@@ -60,16 +66,21 @@ public class DIAppModule extends AbstractModule {
         bind(BasicFileAttributesExtractor.class).toInstance(Files::readAttributes);
 
         // Bind DataMapper<FileInformation, String> to FileInformationToHtmlMapper with Singleton scope
-        bind(new TypeLiteral<DataMapper<FileInformation, String>>() {
+        bind(new TypeLiteral<DataMapper<RenameModel, String>>() {
         }).to(FileInformationToHtmlMapper.class).in(Singleton.class);
 
         // Bind DataMapper<File, FileInformation> to FileToFileInformationMapper with Singleton scope
         bind(new TypeLiteral<DataMapper<File, FileInformation>>() {
         }).to(FileToFileInformationMapper.class).in(Singleton.class);
 
-        // Bind ListProcessingCommand<File, FileInformation> to MapFileToFileInformation with Singleton scope
+        // Bind commands with Singleton scope
         bind(new TypeLiteral<ListProcessingCommand<File, FileInformation>>() {
         }).to(MapFileToFileInformation.class).in(Singleton.class);
+        bind(FixEqualNamesCommand.class).in(Singleton.class);
+        bind(MapFileInformationToRenameModel.class).in(Singleton.class);
+        bind(RenameCommand.class).in(Singleton.class);
+
+        bind(NameValidator.class).in(Singleton.class);
 
         // Bind ResourceBundle to the instance created by createResourceBundle
         bind(ResourceBundle.class).toInstance(createResourceBundle());
@@ -170,7 +181,15 @@ public class DIAppModule extends AbstractModule {
      */
     @Provides
     @Singleton
-    public FileToMetadataMapper provideFileToMetadataMapper(AviMapper aviMapper, BmpMapper bmpMapper, EpsMapper epsMapper, GifMapper gifMapper, HeifMapper heifMapper, IcoMapper icoMapper, JpegMapper jpegMapper, Mp3Mapper mp3Mapper, Mp4Mapper mp4Mapper, PcxMapper pcxMapper, PngMapper pngMapper, PsdMapper psdMapper, QuickTimeMapper quickTimeMapper, TiffMapper tiffMapper, WavMapper wavMapper, WebPMapper webPmapper, NullMapper nullMapper) {
+    public FileToMetadataMapper provideFileToMetadataMapper(AviMapper aviMapper, BmpMapper bmpMapper,
+                                                            EpsMapper epsMapper, GifMapper gifMapper,
+                                                            HeifMapper heifMapper, IcoMapper icoMapper,
+                                                            JpegMapper jpegMapper, Mp3Mapper mp3Mapper,
+                                                            Mp4Mapper mp4Mapper, PcxMapper pcxMapper,
+                                                            PngMapper pngMapper, PsdMapper psdMapper,
+                                                            QuickTimeMapper quickTimeMapper, TiffMapper tiffMapper,
+                                                            WavMapper wavMapper, WebPMapper webPmapper,
+                                                            NullMapper nullMapper) {
         // Set the chain of responsibility for metadata mappers
         nullMapper.setNext(aviMapper);
         aviMapper.setNext(bmpMapper);
@@ -189,6 +208,12 @@ public class DIAppModule extends AbstractModule {
         tiffMapper.setNext(wavMapper);
         wavMapper.setNext(webPmapper);
         return nullMapper;
+    }
+
+    @Provides
+    @Singleton
+    public TextExtractorByKey provideTextExtractorByKey(LanguageTextRetrieverApi languageTextRetrieverApi) {
+        return s -> languageTextRetrieverApi.getString(s, "");
     }
 
 }
