@@ -10,6 +10,7 @@
       prefHeight="400.0" prefWidth="600.0">
 
     <ItemPositionWithReplacementRadioSelector fx:id="dateTimePositionInTheNameRadioSelector"
+                                              id="dateTimePositionInTheNameRadioSelector"
                                               labelValue="%mode_datetime_label_position">
         <VBox.margin>
             <Insets bottom="5"/>
@@ -93,16 +94,16 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%date_picker_date" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <DatePicker fx:id="datePicker" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
 
-        <Label text="Hour:" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="%date_picker_hour" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
         <Spinner fx:id="hourSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <Label text="Minute:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <Label text="%date_picker_minute" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
         <Spinner fx:id="minuteSpinner" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
 
-        <Label text="Second:" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+        <Label text="%date_picker_second" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
         <Spinner fx:id="secondSpinner" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
     </GridPane>
 

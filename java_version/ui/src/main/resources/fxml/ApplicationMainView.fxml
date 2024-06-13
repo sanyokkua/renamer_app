@@ -35,10 +35,10 @@
 
             <GridPane VBox.vgrow="NEVER">
                 <columnConstraints>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
                 </columnConstraints>
                 <rowConstraints>
                     <RowConstraints valignment="CENTER" vgrow="NEVER"/>
@@ -73,6 +73,7 @@
                     <TableColumn fx:id="originalNameColumn" minWidth="100.0" text="%table_column_name"/>
                     <TableColumn fx:id="itemTypeColumn" minWidth="50.0" resizable="false" text="%table_column_type"/>
                     <TableColumn fx:id="newNameColumn" minWidth="100.0" text="%table_column_new_name"/>
+                    <TableColumn fx:id="statusColumn" minWidth="100.0" text="%table_column_status"/>
                 </columns>
                 <placeholder>
                     <Label text="%empty_files_table_placeholder"/>

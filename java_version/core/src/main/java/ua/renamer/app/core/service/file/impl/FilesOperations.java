@@ -39,7 +39,6 @@ public class FilesOperations {
      */
     public String getFileAbsolutePath(File file) {
         validateFileInstance(file);
-
         return file.getAbsolutePath();
     }
 
@@ -66,11 +65,9 @@ public class FilesOperations {
      */
     public String getFileNameWithoutExtension(File file) {
         validateFileInstance(file);
-
         if (file.isDirectory()) {
             return file.getName();
         }
-
         final var fileNameAndExtension = file.getName();
         return removeFileExtension(fileNameAndExtension);
     }
@@ -87,7 +84,6 @@ public class FilesOperations {
         if (dotIndex == -1) {
             return fileName;
         }
-
         return fileName.substring(0, dotIndex);
     }
 
@@ -100,19 +96,15 @@ public class FilesOperations {
      */
     public String getFileExtension(File file) {
         validateFileInstance(file);
-
         if (file.isDirectory()) {
             return "";
         }
-
         var fileName = file.getName();
         int dotIndex = fileName.lastIndexOf(".");
         if (dotIndex == -1) {
             return "";
         }
-
-        var extension = fileName.substring(dotIndex);
-        return extension.toLowerCase();
+        return fileName.substring(dotIndex);
     }
 
     /**
@@ -124,7 +116,6 @@ public class FilesOperations {
      */
     public boolean isFile(File file) {
         validateFileInstance(file);
-
         return file.isFile();
     }
 
@@ -137,12 +128,10 @@ public class FilesOperations {
      */
     public Optional<LocalDateTime> getFileCreationTime(File file) {
         validateFileInstance(file);
-
         var attr = getFileAttributes(file);
         if (attr.isEmpty()) {
             return Optional.empty();
         }
-
         var time = attr.get().creationTime();
         return Optional.of(LocalDateTime.ofInstant(time.toInstant(), ZoneId.systemDefault()));
     }
@@ -178,7 +167,6 @@ public class FilesOperations {
         if (attr.isEmpty()) {
             return Optional.empty();
         }
-
         var time = attr.get().lastModifiedTime();
         return Optional.of(LocalDateTime.ofInstant(time.toInstant(), ZoneId.systemDefault()));
     }
@@ -192,7 +180,6 @@ public class FilesOperations {
      */
     public long getFileSize(File file) {
         validateFileInstance(file);
-
         return file.length();
     }
 
@@ -207,18 +194,14 @@ public class FilesOperations {
         if (Objects.isNull(filePath) || filePath.trim().isEmpty()) {
             return List.of();
         }
-
         // Normalize the file path by replacing backslashes with forward slashes
         // and removing redundant slashes and trailing slash
         filePath = filePath.replace("\\", "/").replaceAll("//+", "/").replaceAll("/$", "");
-
         String[] splitPathItems = filePath.split("/");
-
         if (splitPathItems.length == 0 || splitPathItems.length == 1) {
             // If path is empty or file in the root
             return List.of();
         }
-
         // Exclude the root element (drive letter for Windows or empty string for Unix)
         // and exclude last item (filename or directory)
         return Arrays.asList(splitPathItems).subList(1, splitPathItems.length - 1);
@@ -242,10 +225,8 @@ public class FilesOperations {
         String absolute = renameModel.getAbsolutePathWithoutName();
         String oldAbsolutePath = absolute + oldName;
         String newAbsolutePath = absolute + newName;
-
         Path oldPath = Paths.get(oldAbsolutePath);
         Path newPath = Paths.get(newAbsolutePath);
-
         try {
             Files.move(oldPath, newPath);
             renameModel.setRenamed(true);
@@ -260,16 +241,30 @@ public class FilesOperations {
         }
     }
 
+    /**
+     * Gets the MIME type of the file.
+     *
+     * @param file The file whose MIME type is to be retrieved.
+     *
+     * @return The MIME type of the file.
+     */
     @Nonnull
     public String getMimeType(File file) {
         try {
             return tika.detect(file);
         } catch (IOException e) {
-            log.warn("Could not detect MIME type: " + e.getMessage());
+            log.warn("Could not detect MIME type: {}", e.getMessage());
             return "";
         }
     }
 
+    /**
+     * Gets the extensions associated with a MIME type.
+     *
+     * @param mimeType The MIME type for which extensions are to be retrieved.
+     *
+     * @return A set of file extensions associated with the MIME type.
+     */
     @Nonnull
     public Set<String> getExtensionsFromMimeType(String mimeType) {
         return MimeTypes.getExtensionsByMimeString(mimeType);

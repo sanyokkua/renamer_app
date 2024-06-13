@@ -2,16 +2,14 @@ package ua.renamer.app.ui.service.impl;
 
 import com.google.inject.Inject;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.RenameModel;
+import ua.renamer.app.core.service.ProgressCallback;
 import ua.renamer.app.core.service.command.FileInformationCommand;
-import ua.renamer.app.core.service.command.ListProcessingCommand;
 import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModel;
 import ua.renamer.app.core.service.command.impl.MapFileToFileInformation;
 import ua.renamer.app.core.service.command.impl.RenameCommand;
@@ -22,42 +20,36 @@ import ua.renamer.app.ui.service.ListCallback;
 
 import java.io.File;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class AppCoreFunctionalityHelper {
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(3);
-
+    private final ExecutorService executorService;
     private final MapFileToFileInformation mapFileToFileInformation;
     private final MapFileInformationToRenameModel mapFileInformationToRenameModel;
     private final RenameModelToHtmlMapper renameModelToHtmlMapper;
     private final RenameCommand renameCommand;
     private final LanguageTextRetrieverApi languageTextRetriever;
 
-    public void mapFileInstancesToFileInformation(List<File> files, ListCallback<FileInformation> resultCallback,
-                                                  ProgressBar progressBar) {
-        executeListProcessingCommand(mapFileToFileInformation, files, progressBar, resultCallback);
+    public void mapFileToRenameModel(List<File> list, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
+        var task = buildTask(progressCallback -> {
+            var fileInfoList = mapFileToFileInformation.execute(list, progressCallback);
+            var renameModelList = mapFileInformationToRenameModel.execute(fileInfoList, progressCallback);
+            resultCallback.accept(renameModelList);
+        }, bar);
+        executorService.execute(task);
     }
 
-    public <I, O> void executeListProcessingCommand(ListProcessingCommand<I, O> command, List<I> items,
-                                                    ProgressBar progressBar, ListCallback<O> resultCallback) {
-        log.debug("Executing list processing command: {}", command);
-
-        var resultCallbackOptional = Optional.ofNullable(resultCallback);
-
+    private Task<Void> buildTask(Consumer<ProgressCallback> runnable, ProgressBar progressBar) {
         Task<Void> runCommandTask = new Task<>() {
             @Override
             protected Void call() {
                 log.debug("Background task is started");
-
-                var result = command.execute(items, this::updateProgress);
-                resultCallbackOptional.ifPresent(callback -> callback.accept(result));
+                runnable.accept(this::updateProgress);
                 updateProgress(0, 0);
-
                 log.debug("Background task is finished");
                 return null;
             }
@@ -67,40 +59,27 @@ public class AppCoreFunctionalityHelper {
             log.error("Background task failed", exception);
         });
         progressBar.progressProperty().bind(runCommandTask.progressProperty());
-
-        executorService.execute(runCommandTask);
+        return runCommandTask;
     }
 
-    public void mapFileInformationToRenameModel(List<FileInformation> files, ListCallback<RenameModel> resultCallback,
-                                                ProgressBar progressBar) {
-        executeListProcessingCommand(mapFileInformationToRenameModel, files, progressBar, resultCallback);
+    public void processCommand(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
+                               ListCallback<RenameModel> resultCallback) {
+        var task = buildTask(progressCallback -> {
+            var listOfFileInfo = list.stream().map(RenameModel::getFileInformation).toList();
+            var fileInfoList = cmd.execute(listOfFileInfo, progressCallback);
+            var renameModelList = mapFileInformationToRenameModel.execute(fileInfoList, progressCallback);
+
+            resultCallback.accept(renameModelList);
+        }, bar);
+        executorService.execute(task);
     }
 
-    public void updateModelListByCommand(ObservableList<RenameModel> listOfModels, FileInformationCommand command,
-                                         ProgressBar progressBar, ListCallback<RenameModel> resultCallback) {
-        log.debug("updateModelListByCommand");
-        ListCallback<RenameModel> renameModelListCallback = listOfRenameModel -> {
-            log.debug("renameModelListCallback");
-            listOfModels.clear();
-            listOfModels.addAll(listOfRenameModel);
-            resultCallback.accept(listOfModels);
-        };
-
-        ListCallback<FileInformation> fileInformationListCallback = listOfFileItems -> {
-            log.debug("fileInformationListCallback");
-            executeListProcessingCommand(mapFileInformationToRenameModel,
-                                         listOfFileItems,
-                                         progressBar,
-                                         renameModelListCallback);
-        };
-
-        var list = listOfModels.stream().map(RenameModel::getFileInformation).toList();
-        executeListProcessingCommand(command, list, progressBar, fileInformationListCallback);
-    }
-
-    public void renameFiles(List<RenameModel> files, ListCallback<RenameModel> resultCallback,
-                            ProgressBar progressBar) {
-        executeListProcessingCommand(renameCommand, files, progressBar, resultCallback);
+    public void renameFiles(List<RenameModel> files, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
+        var task = buildTask(progressCallback -> {
+            var renameResult = renameCommand.execute(files, progressCallback);
+            resultCallback.accept(renameResult);
+        }, bar);
+        executorService.execute(task);
     }
 
     public String mapRenameModelToHtmlString(RenameModel renameModel) {
@@ -133,6 +112,17 @@ public class AppCoreFunctionalityHelper {
 
     private String getNewFileName(RenameModel fileInformation) {
         return fileInformation.getNewName();
+    }
+
+    public SimpleStringProperty extractStatusFromRenameModel(TableColumn.CellDataFeatures<RenameModel, String> cell) {
+        RenameModel model = cell.getValue();
+        String value = "";
+        if (model.isHasRenamingError()) {
+            value = model.getRenamingErrorMessage();
+        } else {
+            value = model.getRenameResult().name();
+        }
+        return new SimpleStringProperty(value);
     }
 
 }

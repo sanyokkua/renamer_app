@@ -32,18 +32,20 @@ public class LanguageTextRetrieverService implements LanguageTextRetrieverApi {
 
     @Override
     public String getString(TextKeys key, String defaultValue) {
-        log.debug("Getting key {}", key);
+        log.debug("Getting string for TextKey {}", key);
         return getString(key.getKeyString(), defaultValue);
     }
 
     @Override
     public String getString(String key, String defaultValue) {
         try {
-            log.debug("Getting key {}", key);
-            return getResourceBundle().getString(key);
+            log.debug("Getting string for key {}", key);
+            var value = getResourceBundle().getString(key);
+            log.debug("KeyValue mapping result: {} -> {}", key, value);
+            return value;
         } catch (MissingResourceException ex) {
             log.warn(ex.getMessage(), ex);
-            log.debug("Returning default value {}", defaultValue);
+            log.debug("Returning default value {} for key {}", defaultValue, key);
             return defaultValue;
         }
     }

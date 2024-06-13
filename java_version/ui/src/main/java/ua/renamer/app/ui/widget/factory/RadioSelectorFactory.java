@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.widget.factory;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.util.Builder;
 import javafx.util.BuilderFactory;
@@ -20,21 +21,18 @@ import ua.renamer.app.ui.widget.impl.ItemPositionWithReplacementRadioSelector;
 public class RadioSelectorFactory implements BuilderFactory {
 
     private final JavaFXBuilderFactory defaultBuilderFactory;
-    private final ItemPositionExtendedRadioSelectorBuilder itemPositionExtendedRadioSelector;
-    private final ItemPositionRadioSelectorBuilder itemPositionRadioSelector;
-    private final ItemPositionTruncateRadioSelectorBuilder itemPositionTruncateRadioSelector;
-    private final ItemPositionWithReplacementRadioSelectorBuilder itemPositionWithReplacementRadioSelector;
+    private final Injector injector;
 
     @Override
     public Builder<?> getBuilder(Class<?> type) {
         if (type.equals(ItemPositionExtendedRadioSelector.class)) {
-            return itemPositionExtendedRadioSelector;
+            return injector.getInstance(ItemPositionExtendedRadioSelectorBuilder.class);
         } else if (type.equals(ItemPositionRadioSelector.class)) {
-            return itemPositionRadioSelector;
+            return injector.getInstance(ItemPositionRadioSelectorBuilder.class);
         } else if (type.equals(ItemPositionTruncateRadioSelector.class)) {
-            return itemPositionTruncateRadioSelector;
+            return injector.getInstance(ItemPositionTruncateRadioSelectorBuilder.class);
         } else if (type.equals(ItemPositionWithReplacementRadioSelector.class)) {
-            return itemPositionWithReplacementRadioSelector;
+            return injector.getInstance(ItemPositionWithReplacementRadioSelectorBuilder.class);
         } else {
             return defaultBuilderFactory.getBuilder(type);
         }

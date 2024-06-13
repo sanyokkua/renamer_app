@@ -6,6 +6,7 @@ import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ import java.util.function.Consumer;
  */
 @Slf4j
 @Getter
-public abstract class RadioSelector<T extends Enum<T>> extends HBox {
+public abstract class RadioSelector<T extends Enum<T>> extends VBox {
 
     private final Class<T> enumClass;
     private final StringConverter<T> converter; // Renamed from 'convertor' to 'converter' for consistency.
@@ -41,8 +42,10 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
      */
     protected RadioSelector(String labelValue, Class<T> enumClass, StringConverter<T> converter) {
         super();
-        log.debug("Created new RadioSelector, with labelValue: {}, enumClass: {}, converter: {}", labelValue, enumClass.getName(), converter.getClass()
-                                                                                                                                            .getName());
+        log.debug("Created new RadioSelector, with labelValue: {}, enumClass: {}, converter: {}",
+                  labelValue,
+                  enumClass.getName(),
+                  converter.getClass().getName());
         this.labelValue = labelValue;
         this.enumClass = enumClass;
         this.converter = converter;
@@ -61,8 +64,9 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
 
             btn.setText(btnLabel);
             btn.setToggleGroup(toggleGroup);
+            btn.setTooltip(new Tooltip(btnLabel));
 
-            HBox.setMargin(btn, new Insets(0, 2, 0, 2));
+            HBox.setMargin(btn, new Insets(2, 0, 2, 0));
             buttons.add(btn);
         }
 
@@ -92,6 +96,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
         log.debug("Set labelValue: {}", labelValue);
         this.labelValue = labelValue;
         labelWidget.setText(labelValue);
+        labelWidget.setTooltip(new Tooltip(labelValue));
     }
 
     /**
@@ -160,7 +165,9 @@ public abstract class RadioSelector<T extends Enum<T>> extends HBox {
         /**
          * The event type for radio button selection change events.
          */
-        public static final EventType<RadioSelectorEvent<?>> RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE = new EventType<>(Event.ANY, "RADIO BUTTON VALUE CHANGED");
+        public static final EventType<RadioSelectorEvent<?>> RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE = new EventType<>(
+                Event.ANY,
+                "RADIO BUTTON VALUE CHANGED");
 
         private final transient T selectedValue;
 

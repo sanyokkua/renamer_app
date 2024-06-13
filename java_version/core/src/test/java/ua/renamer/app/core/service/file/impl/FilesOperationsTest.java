@@ -230,7 +230,7 @@ class FilesOperationsTest {
         var result = filesOperations.getFileExtension(mock);
 
         assertNotNull(result);
-        assertEquals(extension.toLowerCase(), result);
+        assertEquals(extension, result);
         verify(mock, Mockito.times(1)).isDirectory();
         verify(mock, Mockito.times(1)).getName();
     }
@@ -465,12 +465,11 @@ class FilesOperationsTest {
     }
 
     @Test
-    void testRenameWhenThrowsError() throws IOException {
+    void testRenameWhenThrowsError() {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
         var pathToTmp = baseTestFolder.toAbsolutePath() + File.pathSeparator;
         var oldName = "fileNameOld.txt";
         var newName = "fileNameNew.txt";
-//        var file = Files.createFile(Paths.get(oldName));
 
         var model = mock(RenameModel.class);
 
