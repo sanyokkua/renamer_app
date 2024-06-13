@@ -1,5 +1,6 @@
 package ua.renamer.app.core.service.file.impl;
 
+import org.apache.tika.Tika;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,9 @@ class FilesOperationsTest {
     static Path baseTestFolder;
 
     @Mock
-    BasicFileAttributesExtractor basicFileAttributesExtractor;
+    private BasicFileAttributesExtractor basicFileAttributesExtractor;
+    @Mock
+    private Tika tika;
 
     @BeforeAll
     static void setup() throws IOException {
@@ -74,7 +77,7 @@ class FilesOperationsTest {
 
     @Test
     void validateFileInstance_NullArgument_ThrowsNullPointerException() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         NullPointerException ex = assertThrows(NullPointerException.class,
                                                () -> filesOperations.validateFileInstance(null),
@@ -84,7 +87,7 @@ class FilesOperationsTest {
 
     @Test
     void validateFileInstance_NonexistentFile_ThrowsIllegalArgumentException() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         when(mock.exists()).thenReturn(false);
@@ -99,7 +102,7 @@ class FilesOperationsTest {
 
     @Test
     void getFileAbsolutePath_ExistingFile_ReturnsAbsolutePath() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         var path = "/absolute/path";
@@ -116,7 +119,7 @@ class FilesOperationsTest {
 
     @Test
     void getFileNameWithoutExtension_Directory_ReturnsDirectoryName() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         var fileName = "FileName";
@@ -135,7 +138,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileNameWithoutExtensionForFileWithoutExtension() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         var fileName = "FileName";
@@ -154,7 +157,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileNameWithoutExtensionForFileWithExtension() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         var separator = ".";
@@ -177,7 +180,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileExtensionForDirectory() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
 
@@ -194,7 +197,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileExtensionForFileWithoutExtension() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         var fileFullName = "FileName";
@@ -213,7 +216,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileExtensionForFileWithExtensionInUpperCase() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         var extension = ".JPG";
@@ -234,7 +237,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileExtensionForFileWithExtensionInLowerCase() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
         var extension = ".jpg";
@@ -255,7 +258,7 @@ class FilesOperationsTest {
 
     @Test
     void testIsFile() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mock = mock(File.class);
 
@@ -269,7 +272,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileCreationTimeSuccess() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mockFile = mock(File.class);
         var mockPath = mock(Path.class);
@@ -299,7 +302,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileCreationTimeReturnedNullAttributes() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mockFile = mock(File.class);
         var mockPath = mock(Path.class);
@@ -323,7 +326,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileCreationTimeExceptionHappen() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mockFile = mock(File.class);
         var mockPath = mock(Path.class);
@@ -348,7 +351,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileModificationTime() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mockFile = mock(File.class);
         var mockPath = mock(Path.class);
@@ -372,7 +375,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileModificationTimeReturnedNullAttributes() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mockFile = mock(File.class);
         var mockPath = mock(Path.class);
@@ -396,7 +399,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileModificationTimeExceptionHappen() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var mockFile = mock(File.class);
         var mockPath = mock(Path.class);
@@ -421,7 +424,7 @@ class FilesOperationsTest {
 
     @Test
     void testGetFileSize() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
         long size = 1000L;
         var mock = mock(File.class);
 
@@ -436,7 +439,7 @@ class FilesOperationsTest {
     @ParameterizedTest
     @MethodSource("getParentFoldersArguments")
     void getParentFolders_VariousPaths_ReturnsExpectedParentFolders(String path, List<String> parents) {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         var result = filesOperations.getParentFolders(path);
 
@@ -449,7 +452,7 @@ class FilesOperationsTest {
 
     @Test
     void testRenameWhenNotNeeded() {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
         var model = mock(RenameModel.class);
 
         when(model.isNeedRename()).thenReturn(false);
@@ -463,7 +466,7 @@ class FilesOperationsTest {
 
     @Test
     void testRenameWhenThrowsError() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
         var pathToTmp = baseTestFolder.toAbsolutePath() + File.pathSeparator;
         var oldName = "fileNameOld.txt";
         var newName = "fileNameNew.txt";
@@ -488,7 +491,7 @@ class FilesOperationsTest {
 
     @Test
     void testRenameSuccess() throws IOException {
-        var filesOperations = new FilesOperations(basicFileAttributesExtractor);
+        var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
         var pathToTmp = baseTestFolder.toAbsolutePath() + File.separator;
         var oldName = "fileNameOld.txt";
         var newName = "fileNameNew.txt";

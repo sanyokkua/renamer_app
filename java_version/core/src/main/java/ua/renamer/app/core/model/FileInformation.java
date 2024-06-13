@@ -5,6 +5,7 @@ import lombok.*;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents information about a file, including its path, type, size, and metadata.
@@ -50,7 +51,7 @@ public class FileInformation {
     @NonNull
     @Getter
     @Builder.Default
-    private final String detectedExtension = ""; // extension, like .jpg, or empty string
+    private final Set<String> detectedExtension = Set.of(); // extensions, like [.jpg, .png], or empty string
     @NonNull
     @Getter
     @Builder.Default

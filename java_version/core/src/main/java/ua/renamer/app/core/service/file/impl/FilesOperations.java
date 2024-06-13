@@ -5,6 +5,7 @@ import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
+import ua.renamer.app.core.enums.MimeTypes;
 import ua.renamer.app.core.enums.RenameResult;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
@@ -26,41 +27,8 @@ import java.util.*;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class FilesOperations {
 
-    private static final Map<String, String> mimeTypeToExtensionMap = new HashMap<>();
-
-    static {
-        mimeTypeToExtensionMap.put("image/vnd.adobe.photoshop", ".psd");
-        mimeTypeToExtensionMap.put("image/tiff", ".tiff");
-        mimeTypeToExtensionMap.put("image/bmp", ".bmp");
-        mimeTypeToExtensionMap.put("image/gif", ".gif");
-        mimeTypeToExtensionMap.put("audio/wav", ".wave");
-        mimeTypeToExtensionMap.put("image/tiff", ".tif");
-        mimeTypeToExtensionMap.put("application/postscript", ".epsf");
-        mimeTypeToExtensionMap.put("image/x-icon", ".ico");
-        mimeTypeToExtensionMap.put("video/x-msvideo", ".avi");
-        mimeTypeToExtensionMap.put("video/quicktime", ".mov");
-        mimeTypeToExtensionMap.put("image/jpeg", ".jpeg");
-        mimeTypeToExtensionMap.put("audio/mp4", ".m4b");
-        mimeTypeToExtensionMap.put("audio/mp4", ".m4a");
-        mimeTypeToExtensionMap.put("image/jpeg", ".jpe");
-        mimeTypeToExtensionMap.put("image/jpeg", ".jpg");
-        mimeTypeToExtensionMap.put("video/quicktime", ".qt");
-        mimeTypeToExtensionMap.put("image/x-pcx", ".pcx");
-        mimeTypeToExtensionMap.put("image/heic", ".heic");
-        mimeTypeToExtensionMap.put("audio/mp4", ".m4p");
-        mimeTypeToExtensionMap.put("image/png", ".png");
-        mimeTypeToExtensionMap.put("application/postscript", ".eps");
-        mimeTypeToExtensionMap.put("image/heif", ".heif");
-        mimeTypeToExtensionMap.put("audio/mp4", ".m4r");
-        mimeTypeToExtensionMap.put("image/webp", ".webp");
-        mimeTypeToExtensionMap.put("audio/wav", ".wav");
-        mimeTypeToExtensionMap.put("application/postscript", ".epsi");
-        mimeTypeToExtensionMap.put("video/mp4", ".m4v");
-        mimeTypeToExtensionMap.put("video/mp4", ".mp4");
-        mimeTypeToExtensionMap.put("audio/mpeg", ".mp3");
-    }
-
     private final BasicFileAttributesExtractor basicFileAttributesExtractor;
+    private final Tika tika;
 
     /**
      * Gets the absolute path of a file.
@@ -294,8 +262,6 @@ public class FilesOperations {
 
     @Nonnull
     public String getMimeType(File file) {
-        Tika tika = new Tika();
-
         try {
             return tika.detect(file);
         } catch (IOException e) {
@@ -305,10 +271,7 @@ public class FilesOperations {
     }
 
     @Nonnull
-    public String getExtensionFromMimeType(String mimeType) {
-        if (mimeType == null || mimeType.isEmpty()) {
-            return "";
-        }
-        return mimeTypeToExtensionMap.getOrDefault(mimeType, "");
+    public Set<String> getExtensionsFromMimeType(String mimeType) {
+        return MimeTypes.getExtensionsByMimeString(mimeType);
     }
 }

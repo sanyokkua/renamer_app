@@ -13,6 +13,7 @@ module ua.renamer.app.ui {
     requires javafx.web;
 
     requires ua.renamer.app.core;
+    requires org.apache.tika.core;
 
     exports ua.renamer.app.ui.config;
     exports ua.renamer.app.ui.controller.mode.impl;

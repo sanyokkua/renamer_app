@@ -1,5 +1,6 @@
 package ua.renamer.app.core.service.command.impl.preparation;
 
+import org.apache.tika.Tika;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,8 @@ class ParentFoldersPrepareInformationCommandTest extends BaseRenamePreparationCo
 
     @Mock
     private FilesOperations filesOperations;
+    @Mock
+    private Tika tika;
     private FilesOperations realFileOperations;
 
     static Stream<Arguments> provideCommandArguments() {
@@ -56,12 +59,13 @@ class ParentFoldersPrepareInformationCommandTest extends BaseRenamePreparationCo
 
     @BeforeEach
     void setUp() {
-        realFileOperations = new FilesOperations(Files::readAttributes);
+        realFileOperations = new FilesOperations(Files::readAttributes, tika);
     }
 
     @ParameterizedTest
     @MethodSource("provideCommandArguments")
-    void commandExecution_ShouldAddParentFoldersToTheName(String originalName, String expectedName, String absolutePath, ItemPosition position, int numberOfParents, String nameSep) {
+    void commandExecution_ShouldAddParentFoldersToTheName(String originalName, String expectedName, String absolutePath,
+                                                          ItemPosition position, int numberOfParents, String nameSep) {
         // Prepare Test Data
         var fileInfoMeta = FileInformationMetadata.builder().build();
         var fileInfo = FileInformation.builder()

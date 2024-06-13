@@ -11,6 +11,7 @@ import ua.renamer.app.core.service.mapper.FileToMetadataMapper;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -44,7 +45,7 @@ class FileToFileInformationMapperTest {
         when(filesOperations.getFileModificationTime(file)).thenReturn(Optional.of(localDateTime));
         when(filesOperations.getFileSize(file)).thenReturn(fileSize);
         when(filesOperations.getMimeType(file)).thenReturn("");
-        when(filesOperations.getExtensionFromMimeType(anyString())).thenReturn("");
+        when(filesOperations.getExtensionsFromMimeType(anyString())).thenReturn(Set.of());
         when(fileToMetadataMapper.map(file)).thenReturn(metadata);
 
         var mapper = new FileToFileInformationMapper(fileToMetadataMapper, filesOperations);

@@ -41,7 +41,7 @@ public class FileToFileInformationMapper implements DataMapper<File, FileInforma
         final var fsModificationDate = filesOperations.getFileModificationTime(file);
         final var fileSize = filesOperations.getFileSize(file);
         final var mime = filesOperations.getMimeType(file);
-        final var extFromMime = filesOperations.getExtensionFromMimeType(mime);
+        final var extFromMime = filesOperations.getExtensionsFromMimeType(mime);
 
         final var metadata = fileToMetadataMapper.map(file);
         final var creationDateTime = fsCreationDate.orElse(null);

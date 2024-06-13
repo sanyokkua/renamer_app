@@ -6,6 +6,7 @@ import javafx.util.BuilderFactory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tika.Tika;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.TextExtractorByKey;
@@ -101,6 +102,7 @@ public class DIAppModule extends AbstractModule {
         bind(JavaFXBuilderFactory.class).in(Singleton.class);
         bind(BuilderFactory.class).to(RadioSelectorFactory.class).in(Singleton.class);
         bind(ViewLoaderApi.class).to(ViewLoaderService.class).in(Singleton.class);
+        bind(Tika.class).in(Singleton.class);
 
         // Bind DateTimeOperations with Singleton scope
         bind(DateTimeOperations.class).in(Singleton.class);

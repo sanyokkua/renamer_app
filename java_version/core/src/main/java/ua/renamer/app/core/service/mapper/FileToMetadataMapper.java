@@ -72,30 +72,33 @@ public abstract class FileToMetadataMapper implements ChainedDataMapper<File, Fi
     public boolean canHandle(File input) {
         log.debug("Can handle: {}", input);
         var mime = filesOperations.getMimeType(input);
-        var mimeExt = filesOperations.getExtensionFromMimeType(mime);
-        var extension = filesOperations.getFileExtension(input);
+        var mimeExtensions = filesOperations.getExtensionsFromMimeType(mime);
+        var fileExtension = filesOperations.getFileExtension(input);
+        Set<String> extensionsToUse;
 
-        if (!mimeExt.isEmpty() && extension.isEmpty()) {
-            extension = mimeExt;
-        } else if (!mimeExt.isEmpty()) {
-            extension = mimeExt;
+        if (!mimeExtensions.isEmpty() && fileExtension.isEmpty()) {
+            extensionsToUse = mimeExtensions;
+        } else if (!mimeExtensions.isEmpty()) {
+            extensionsToUse = mimeExtensions;
+        } else {
+            extensionsToUse = Set.of(fileExtension);
         }
 
         var supportedExtensions = getSupportedExtensions();
 
-        if (extension.isEmpty() && supportedExtensions.isEmpty()) {
+        if (extensionsToUse.isEmpty() && supportedExtensions.isEmpty()) {
             log.debug("canHandle -> extension is empty and Mapper doesn't require extension");
             return true;
         }
 
-        if (extension.isEmpty()) {
+        if (extensionsToUse.isEmpty()) {
             log.debug("canHandle -> file extension is empty, but expected, can't handle");
             return false;
         }
 
-        var extensionFound = supportedExtensions.stream().filter(extension::contains).findAny();
+        var extensionFound = supportedExtensions.stream().filter(extensionsToUse::contains).findAny();
 
-        log.debug("canHandle -> extension found result: {}", extensionFound);
+        log.debug("canHandle -> For file {}, was found extension: {}", input.getAbsolutePath(), extensionFound);
         return extensionFound.isPresent();
     }
 
