@@ -42,11 +42,11 @@ public class TruncateNamePrepareInformationCommand extends FileInformationComman
         }
 
         if (TruncateOptions.TRUNCATE_EMPTY_SYMBOLS.equals(truncateOptions)) {
-            item.setNewName(item.getNewName().trim());
+            item.setNewName(item.getFileName().trim());
             return item;
         }
 
-        if (numberOfSymbols >= item.getNewName().length()) {
+        if (numberOfSymbols >= item.getFileName().length()) {
             item.setNewName("");
             return item;
         }
@@ -56,9 +56,9 @@ public class TruncateNamePrepareInformationCommand extends FileInformationComman
         }
 
         if (TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN.equals(truncateOptions)) {
-            item.setNewName(item.getNewName().substring(numberOfSymbols));
+            item.setNewName(item.getFileName().substring(numberOfSymbols));
         } else if (TruncateOptions.REMOVE_SYMBOLS_FROM_END.equals(truncateOptions)) {
-            item.setNewName(item.getNewName().substring(0, item.getNewName().length() - this.numberOfSymbols));
+            item.setNewName(item.getFileName().substring(0, item.getFileName().length() - this.numberOfSymbols));
         }
 
         return item;

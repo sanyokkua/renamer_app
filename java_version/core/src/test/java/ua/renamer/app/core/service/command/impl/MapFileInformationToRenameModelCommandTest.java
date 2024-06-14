@@ -3,6 +3,7 @@ package ua.renamer.app.core.service.command.impl;
 import org.junit.jupiter.api.Test;
 import ua.renamer.app.core.enums.RenameResult;
 import ua.renamer.app.core.model.FileInformation;
+import ua.renamer.app.core.service.mapper.impl.FileInformationToRenameModelMapper;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -35,7 +36,7 @@ class MapFileInformationToRenameModelCommandTest {
         var fileInfo3 = createFileInfo("/root/name", "name", "newName2");
         var listOfItems = List.of(fileInfo1, fileInfo2, fileInfo3);
 
-        var cmd = new MapFileInformationToRenameModelCommand();
+        var cmd = new MapFileInformationToRenameModelCommand(new FileInformationToRenameModelMapper());
 
         var result = cmd.execute(listOfItems, null);
 

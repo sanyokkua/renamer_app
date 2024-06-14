@@ -10,9 +10,7 @@ import ua.renamer.app.core.util.StringUtils;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -92,13 +90,28 @@ public class DateTimeOperations {
                                           "yyyy-MM-dd'T'HH:mm:ssXXX");
 
         // Try parsing with zone info formats first
+        Locale[] availableLocales = Locale.getAvailableLocales();
+        Set<Locale> locales = new LinkedHashSet<>();
+        locales.add(Locale.ENGLISH); // Exif usually uses ENGLISH, US, FRENCH, GERMAN locales
+        locales.add(Locale.UK);
+        locales.add(Locale.US);
+        locales.add(Locale.CANADA);
+        locales.add(Locale.FRANCE);
+        locales.add(Locale.FRENCH);
+        locales.add(Locale.GERMAN);
+        locales.add(Locale.GERMANY);
+        locales.add(Locale.getDefault());
+        locales.addAll(Arrays.stream(availableLocales).toList());
+
         for (String format : formatsWithZoneInfo) {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-                ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTimeString, formatter);
-                return Optional.ofNullable(zonedDateTime.toLocalDateTime());
-            } catch (DateTimeParseException e) {
-                // Ignore and return empty optional
+            for (Locale currentLocale : locales) {
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format, currentLocale);
+                    ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTimeString, formatter);
+                    return Optional.ofNullable(zonedDateTime.toLocalDateTime());
+                } catch (DateTimeParseException e) {
+                    // Ignore and return empty optional
+                }
             }
         }
         return Optional.empty();

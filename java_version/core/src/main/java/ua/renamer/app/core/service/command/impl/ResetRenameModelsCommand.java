@@ -8,18 +8,17 @@ import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.command.ListProcessingCommand;
 import ua.renamer.app.core.service.mapper.impl.FileInformationToRenameModelMapper;
 
-/**
- * This class implements the ListProcessingCommand interface to map FileInformation objects to RenameModel objects.
- * It analyzes each FileInformation object to determine if renaming is necessary and constructs a corresponding RenameModel object.
- */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class MapFileInformationToRenameModelCommand extends ListProcessingCommand<FileInformation, RenameModel> {
+public class ResetRenameModelsCommand extends ListProcessingCommand<RenameModel, RenameModel> {
 
     private final FileInformationToRenameModelMapper mapper;
 
     @Override
-    public RenameModel processItem(FileInformation item) {
-        return mapper.map(item);
+    public RenameModel processItem(RenameModel item) {
+        FileInformation fileInformation = item.getFileInformation();
+        fileInformation.setNewName(fileInformation.getFileName());
+        fileInformation.setNewExtension(fileInformation.getFileExtension());
+        return mapper.map(fileInformation);
     }
 }

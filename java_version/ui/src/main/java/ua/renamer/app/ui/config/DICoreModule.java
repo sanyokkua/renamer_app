@@ -8,19 +8,20 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import ua.renamer.app.core.model.FileInformation;
+import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.TextExtractorByKey;
 import ua.renamer.app.core.service.command.ListProcessingCommand;
-import ua.renamer.app.core.service.command.impl.FixEqualNamesCommand;
-import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModelCommand;
-import ua.renamer.app.core.service.command.impl.MapFileToFileInformationCommand;
-import ua.renamer.app.core.service.command.impl.RenameCommand;
+import ua.renamer.app.core.service.command.impl.*;
 import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
+import ua.renamer.app.core.service.file.impl.FilesOperations;
 import ua.renamer.app.core.service.helper.DateTimeOperations;
 import ua.renamer.app.core.service.mapper.DataMapper;
 import ua.renamer.app.core.service.mapper.FileToMetadataMapper;
+import ua.renamer.app.core.service.mapper.impl.FileInformationToRenameModelMapper;
 import ua.renamer.app.core.service.mapper.impl.FileToFileInformationMapper;
 import ua.renamer.app.core.service.mapper.impl.RenameModelToHtmlMapper;
+import ua.renamer.app.core.service.mapper.impl.metadata.LastReserveMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.NullMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.audio.Mp3Mapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.audio.WavMapper;
@@ -33,8 +34,8 @@ import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Dependency Injection module configuration for the application. Includes only core module dependencies.
@@ -59,8 +60,12 @@ public class DICoreModule extends AbstractModule {
     private void bindApplicationMappers() {
         TypeLiteral<DataMapper<RenameModel, String>> renameModelToHtmlMapperLiteral = new TypeLiteral<>() {};
         TypeLiteral<DataMapper<File, FileInformation>> fileToFileInfoMapperLiteral = new TypeLiteral<>() {};
+        TypeLiteral<DataMapper<FileInformation, RenameModel>> fileInfoToRenameModelLiteral = new TypeLiteral<>() {};
+
         bind(renameModelToHtmlMapperLiteral).to(RenameModelToHtmlMapper.class).in(Singleton.class);
         bind(fileToFileInfoMapperLiteral).to(FileToFileInformationMapper.class).in(Singleton.class);
+        bind(fileInfoToRenameModelLiteral).to(FileInformationToRenameModelMapper.class).in(Singleton.class);
+
         bind(AviMapper.class).in(Singleton.class);
         bind(BmpMapper.class).in(Singleton.class);
         bind(EpsMapper.class).in(Singleton.class);
@@ -86,6 +91,7 @@ public class DICoreModule extends AbstractModule {
         bind(MapFileInformationToRenameModelCommand.class).in(Singleton.class);
         bind(FixEqualNamesCommand.class).in(Singleton.class);
         bind(RenameCommand.class).in(Singleton.class);
+        bind(ResetRenameModelsCommand.class).in(Singleton.class);
     }
 
     private void bindApplicationServices() {
@@ -103,7 +109,7 @@ public class DICoreModule extends AbstractModule {
                                                             PngMapper pngMapper, PsdMapper psdMapper,
                                                             QuickTimeMapper quickTimeMapper, TiffMapper tiffMapper,
                                                             WavMapper wavMapper, WebPMapper webPmapper,
-                                                            NullMapper nullMapper) {
+                                                            NullMapper nullMapper, FilesOperations filesOperations) {
         // Set the chain of responsibility for metadata mappers
         nullMapper.setNext(aviMapper);
         aviMapper.setNext(bmpMapper);
@@ -122,25 +128,47 @@ public class DICoreModule extends AbstractModule {
         tiffMapper.setNext(wavMapper);
         wavMapper.setNext(webPmapper);
 
-        var supportedExtensions = Stream.of(nullMapper,
-                                            aviMapper,
-                                            bmpMapper,
-                                            epsMapper,
-                                            gifMapper,
-                                            heifMapper,
-                                            icoMapper,
-                                            jpegMapper,
-                                            mp3Mapper,
-                                            mp4Mapper,
-                                            pcxMapper,
-                                            pngMapper,
-                                            psdMapper,
-                                            quickTimeMapper,
-                                            tiffMapper,
-                                            wavMapper,
-                                            webPmapper)
-                                        .flatMap(v -> v.getSupportedExtensions().stream())
-                                        .collect(Collectors.joining(","));
+        var allMappers = List.of(nullMapper,
+                                 aviMapper,
+                                 bmpMapper,
+                                 epsMapper,
+                                 gifMapper,
+                                 heifMapper,
+                                 icoMapper,
+                                 jpegMapper,
+                                 mp3Mapper,
+                                 mp4Mapper,
+                                 pcxMapper,
+                                 pngMapper,
+                                 psdMapper,
+                                 quickTimeMapper,
+                                 tiffMapper,
+                                 wavMapper,
+                                 webPmapper);
+
+        var reserveMapper = new LastReserveMapper(filesOperations) {
+            // In the case if metadata was parsed incorrectly, this will be slow, but a try to parse by all mappers
+            @Override
+            public FileInformationMetadata process(File input) {
+                for (FileToMetadataMapper mapper : allMappers) {
+                    try {
+                        var result = mapper.process(input);
+                        if (result != null) {
+                            return result;
+                        }
+                    } catch (Exception ignored) {
+                        // ignore exceptions
+                    }
+                }
+                return null;
+            }
+        };
+
+        webPmapper.setNext(reserveMapper);
+
+        var supportedExtensions = allMappers.stream()
+                                            .flatMap(v -> v.getSupportedExtensions().stream())
+                                            .collect(Collectors.joining(","));
         log.info("Supported extensions: {}", supportedExtensions);
         return nullMapper;
     }

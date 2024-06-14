@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.ProgressCallback;
 import ua.renamer.app.core.service.command.FileInformationCommand;
-import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModelCommand;
-import ua.renamer.app.core.service.command.impl.MapFileToFileInformationCommand;
-import ua.renamer.app.core.service.command.impl.RenameCommand;
+import ua.renamer.app.core.service.command.impl.*;
 import ua.renamer.app.core.service.mapper.impl.RenameModelToHtmlMapper;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
@@ -31,6 +29,8 @@ public class CoreFunctionalityHelper {
     private final MapFileToFileInformationCommand mapFileToFileInformationCommand;
     private final MapFileInformationToRenameModelCommand mapFileInformationToRenameModelCommand;
     private final RenameCommand renameCommand;
+    private final FixEqualNamesCommand fixEqualNamesCommand;
+    private final ResetRenameModelsCommand resetRenameModelsCommand;
 
     private static Task<Void> buildTask(Consumer<ProgressCallback> runnable, ProgressBar progressBar) {
         Task<Void> runCommandTask = new Task<>() {
@@ -60,12 +60,26 @@ public class CoreFunctionalityHelper {
         executorService.execute(task);
     }
 
+    public void resetModels(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
+                            ListCallback<RenameModel> resultCallback) {
+        var task = buildTask(progressCallback -> {
+            var resetResult = resetRenameModelsCommand.execute(list, progressCallback);
+            var fileInformationList = resetResult.stream().map(RenameModel::getFileInformation).toList();
+            var newCmdResult = cmd.execute(fileInformationList, progressCallback);
+            var newRenameModelList = mapFileInformationToRenameModelCommand.execute(newCmdResult, progressCallback);
+
+            resultCallback.accept(newRenameModelList);
+        }, bar);
+        executorService.execute(task);
+    }
+
     public void prepareFiles(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
                              ListCallback<RenameModel> resultCallback) {
         var task = buildTask(progressCallback -> {
             var listOfFileInfo = list.stream().map(RenameModel::getFileInformation).toList();
             var fileInfoList = cmd.execute(listOfFileInfo, progressCallback);
-            var renameModelList = mapFileInformationToRenameModelCommand.execute(fileInfoList, progressCallback);
+            var fixedNames = fixEqualNamesCommand.execute(fileInfoList, progressCallback);
+            var renameModelList = mapFileInformationToRenameModelCommand.execute(fixedNames, progressCallback);
 
             resultCallback.accept(renameModelList);
         }, bar);

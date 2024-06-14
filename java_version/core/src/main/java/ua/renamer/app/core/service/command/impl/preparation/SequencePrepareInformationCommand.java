@@ -6,6 +6,7 @@ import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.service.command.FileInformationCommand;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -56,36 +57,37 @@ public class SequencePrepareInformationCommand extends FileInformationCommand {
     @Override
     protected List<FileInformation> preprocessInput(List<FileInformation> input) {
         nextNumber = startNumber;
+        List<FileInformation> newInput = new ArrayList<>(input);
 
         switch (sortSource) {
-            case FILE_NAME -> input.sort(Comparator.nullsFirst(Comparator.comparing(FileInformation::getFileName)));
+            case FILE_NAME -> newInput.sort(Comparator.nullsFirst(Comparator.comparing(FileInformation::getFileName)));
             case FILE_PATH ->
-                    input.sort(Comparator.nullsFirst(Comparator.comparing(FileInformation::getFileAbsolutePath)));
-            case FILE_SIZE -> input.sort(Comparator.nullsFirst(Comparator.comparing(FileInformation::getFileSize)));
+                    newInput.sort(Comparator.nullsFirst(Comparator.comparing(FileInformation::getFileAbsolutePath)));
+            case FILE_SIZE -> newInput.sort(Comparator.nullsFirst(Comparator.comparing(FileInformation::getFileSize)));
             case FILE_CREATION_DATETIME ->
-                    input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getFsCreationDate()
-                                                                                                            .orElse(null))));
+                    newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getFsCreationDate()
+                                                                                                               .orElse(null))));
             case FILE_MODIFICATION_DATETIME ->
-                    input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getFsModificationDate()
-                                                                                                            .orElse(null))));
+                    newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getFsModificationDate()
+                                                                                                               .orElse(null))));
             case FILE_CONTENT_CREATION_DATETIME ->
-                    input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                            .flatMap(
-                                                                                                                    FileInformationMetadata::getCreationDate)
-                                                                                                            .orElse(null))));
+                    newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
+                                                                                                               .flatMap(
+                                                                                                                       FileInformationMetadata::getCreationDate)
+                                                                                                               .orElse(null))));
             case IMAGE_WIDTH ->
-                    input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                            .flatMap(
-                                                                                                                    FileInformationMetadata::getImgVidWidth)
-                                                                                                            .orElse(null))));
+                    newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
+                                                                                                               .flatMap(
+                                                                                                                       FileInformationMetadata::getImgVidWidth)
+                                                                                                               .orElse(null))));
             case IMAGE_HEIGHT ->
-                    input.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                            .flatMap(
-                                                                                                                    FileInformationMetadata::getImgVidHeight)
-                                                                                                            .orElse(null))));
+                    newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
+                                                                                                               .flatMap(
+                                                                                                                       FileInformationMetadata::getImgVidHeight)
+                                                                                                               .orElse(null))));
         }
 
-        return input;
+        return newInput;
     }
 
     /**

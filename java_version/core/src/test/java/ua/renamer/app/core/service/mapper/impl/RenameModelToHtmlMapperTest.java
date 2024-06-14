@@ -63,10 +63,10 @@ class RenameModelToHtmlMapperTest {
                                                          .newName(fileName)
                                                          .newExtension(fileExt)
                                                          .build();
-        MapFileInformationToRenameModelCommand mapperToModel = new MapFileInformationToRenameModelCommand();
+        MapFileInformationToRenameModelCommand mapperToModel = new MapFileInformationToRenameModelCommand(new FileInformationToRenameModelMapper());
         RenameModel model = mapperToModel.execute(List.of(fileInformation), null).get(0);
 
-        var mapper = new RenameModelToHtmlMapper(dateTimeOperations, (value) -> value);
+        var mapper = new RenameModelToHtmlMapper(dateTimeOperations, value -> value);
         var resultHtml = mapper.map(model);
 
         assertNotNull(resultHtml);

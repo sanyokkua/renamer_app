@@ -71,7 +71,7 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      * @return the preprocessed input list.
      */
     protected List<I> preprocessInput(List<I> input) {
-        return input;
+        return new ArrayList<>(input);
     }
 
     /**

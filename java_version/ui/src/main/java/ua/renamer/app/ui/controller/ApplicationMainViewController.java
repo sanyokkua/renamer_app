@@ -188,6 +188,15 @@ public class ApplicationMainViewController implements Initializable {
         appModeContainer.getChildren().add(view);
 
         log.debug("handleModeChanged: {}", mode.name());
+
+        var controllerForAppMode = mainControllerHelper.getControllerForAppMode(mode);
+        var command = controllerForAppMode.getCommand();
+
+        coreHelper.resetModels(loadedAppFilesList, command, appProgressBar, resultList -> {
+            loadedAppFilesList.clear();
+            loadedAppFilesList.addAll(resultList);
+            filesTableView.setItems(loadedAppFilesList);
+        });
     }
 
     private void handleFilesTableViewDragOverEvent(DragEvent event) {

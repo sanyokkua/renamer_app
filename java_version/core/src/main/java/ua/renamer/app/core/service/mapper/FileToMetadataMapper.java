@@ -96,10 +96,16 @@ public abstract class FileToMetadataMapper implements ChainedDataMapper<File, Fi
             return false;
         }
 
-        var extensionFound = supportedExtensions.stream().filter(extensionsToUse::contains).findAny();
+        boolean canHandle = false;
+        for (String extension : extensionsToUse) {
+            canHandle = supportedExtensions.stream().anyMatch(extension::contains);
+            if (canHandle) {
+                break;
+            }
+        }
 
-        log.debug("canHandle -> For file {}, was found extension: {}", input.getAbsolutePath(), extensionFound);
-        return extensionFound.isPresent();
+        log.debug("canHandle -> For file {}, was found extension: {}", input.getAbsolutePath(), canHandle);
+        return canHandle;
     }
 
     /**

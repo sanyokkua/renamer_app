@@ -30,6 +30,7 @@ public abstract class ModeBaseController implements ModeControllerApi, Initializ
     @Override
     public FileInformationCommand getCommand() {
         log.debug("getCommand()");
+        updateCommand();
         return commandModel.getAppFileCommand();
     }
 

@@ -41,8 +41,12 @@ public enum MimeTypes {
             return Set.of();
         }
         try {
-            MimeTypes mimeTypes = MimeTypes.valueOf(mimeString.toLowerCase());
-            return mimeTypes.getExtensions();
+            return Arrays.stream(MimeTypes.values())
+                         .filter(mime -> mime.getMime().equals(mimeString))
+                         .findFirst()
+                         .map(MimeTypes::getExtensions)
+                         .orElse(Set.of());
+
         } catch (IllegalArgumentException ex) {
             return Set.of();
         }
