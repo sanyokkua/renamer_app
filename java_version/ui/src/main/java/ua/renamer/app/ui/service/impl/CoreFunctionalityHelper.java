@@ -1,17 +1,15 @@
 package ua.renamer.app.ui.service.impl;
 
 import com.google.inject.Inject;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TableColumn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.ProgressCallback;
 import ua.renamer.app.core.service.command.FileInformationCommand;
-import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModel;
-import ua.renamer.app.core.service.command.impl.MapFileToFileInformation;
+import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModelCommand;
+import ua.renamer.app.core.service.command.impl.MapFileToFileInformationCommand;
 import ua.renamer.app.core.service.command.impl.RenameCommand;
 import ua.renamer.app.core.service.mapper.impl.RenameModelToHtmlMapper;
 import ua.renamer.app.ui.enums.TextKeys;
@@ -25,25 +23,16 @@ import java.util.function.Consumer;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class AppCoreFunctionalityHelper {
+public class CoreFunctionalityHelper {
 
     private final ExecutorService executorService;
-    private final MapFileToFileInformation mapFileToFileInformation;
-    private final MapFileInformationToRenameModel mapFileInformationToRenameModel;
-    private final RenameModelToHtmlMapper renameModelToHtmlMapper;
-    private final RenameCommand renameCommand;
     private final LanguageTextRetrieverApi languageTextRetriever;
+    private final RenameModelToHtmlMapper renameModelToHtmlMapper;
+    private final MapFileToFileInformationCommand mapFileToFileInformationCommand;
+    private final MapFileInformationToRenameModelCommand mapFileInformationToRenameModelCommand;
+    private final RenameCommand renameCommand;
 
-    public void mapFileToRenameModel(List<File> list, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
-        var task = buildTask(progressCallback -> {
-            var fileInfoList = mapFileToFileInformation.execute(list, progressCallback);
-            var renameModelList = mapFileInformationToRenameModel.execute(fileInfoList, progressCallback);
-            resultCallback.accept(renameModelList);
-        }, bar);
-        executorService.execute(task);
-    }
-
-    private Task<Void> buildTask(Consumer<ProgressCallback> runnable, ProgressBar progressBar) {
+    private static Task<Void> buildTask(Consumer<ProgressCallback> runnable, ProgressBar progressBar) {
         Task<Void> runCommandTask = new Task<>() {
             @Override
             protected Void call() {
@@ -62,12 +51,21 @@ public class AppCoreFunctionalityHelper {
         return runCommandTask;
     }
 
-    public void processCommand(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
-                               ListCallback<RenameModel> resultCallback) {
+    public void mapFileToRenameModel(List<File> list, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
+        var task = buildTask(progressCallback -> {
+            var fileInfoList = mapFileToFileInformationCommand.execute(list, progressCallback);
+            var renameModelList = mapFileInformationToRenameModelCommand.execute(fileInfoList, progressCallback);
+            resultCallback.accept(renameModelList);
+        }, bar);
+        executorService.execute(task);
+    }
+
+    public void prepareFiles(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
+                             ListCallback<RenameModel> resultCallback) {
         var task = buildTask(progressCallback -> {
             var listOfFileInfo = list.stream().map(RenameModel::getFileInformation).toList();
             var fileInfoList = cmd.execute(listOfFileInfo, progressCallback);
-            var renameModelList = mapFileInformationToRenameModel.execute(fileInfoList, progressCallback);
+            var renameModelList = mapFileInformationToRenameModelCommand.execute(fileInfoList, progressCallback);
 
             resultCallback.accept(renameModelList);
         }, bar);
@@ -86,43 +84,25 @@ public class AppCoreFunctionalityHelper {
         return renameModelToHtmlMapper.map(renameModel);
     }
 
-    public SimpleStringProperty extractOriginalNameFromRenameModel(
-            TableColumn.CellDataFeatures<RenameModel, String> cell) {
-        return new SimpleStringProperty(getOriginalFileName(cell.getValue()));
-    }
-
-    private String getOriginalFileName(RenameModel fileInformation) {
-        return fileInformation.getOldName();
-    }
-
-    public SimpleStringProperty extractFileTypeFromRenameModel(TableColumn.CellDataFeatures<RenameModel, String> cell) {
-        return new SimpleStringProperty(getFileType(cell.getValue()));
-    }
-
-    private String getFileType(RenameModel fileInformation) {
+    public String getFileType(RenameModel fileInformation) {
         return fileInformation.getFileInformation().isFile()
                 ? languageTextRetriever.getString(TextKeys.TYPE_FILE)
                 : languageTextRetriever.getString(TextKeys.TYPE_FOLDER);
     }
 
-    public SimpleStringProperty extractNewFileNameFromRenameModel(
-            TableColumn.CellDataFeatures<RenameModel, String> cell) {
-        return new SimpleStringProperty(getNewFileName(cell.getValue()));
-    }
-
-    private String getNewFileName(RenameModel fileInformation) {
-        return fileInformation.getNewName();
-    }
-
-    public SimpleStringProperty extractStatusFromRenameModel(TableColumn.CellDataFeatures<RenameModel, String> cell) {
-        RenameModel model = cell.getValue();
-        String value = "";
-        if (model.isHasRenamingError()) {
-            value = model.getRenamingErrorMessage();
-        } else {
-            value = model.getRenameResult().name();
+    public String getFileStatus(RenameModel fileInformation) {
+        if (fileInformation.isHasRenamingError()) {
+            return fileInformation.getRenamingErrorMessage();
         }
-        return new SimpleStringProperty(value);
+        return languageTextRetriever.getString(fileInformation.getRenameResult().getValue());
+    }
+
+    public String getOldName(RenameModel renameModel) {
+        return renameModel.getOldName();
+    }
+
+    public String getNewName(RenameModel renameModel) {
+        return renameModel.getNewName();
     }
 
 }

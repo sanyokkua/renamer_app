@@ -87,7 +87,31 @@ public enum TextKeys {
     DIALOG_CONFIRM_HEADER("dialog_confirm_header"),
     DIALOG_CONFIRM_CONTENT("dialog_confirm_content"),
     DIALOG_CONFIRM_BTN_OK("dialog_confirm_btn_ok"),
-    DIALOG_CONFIRM_BTN_CANCEL("dialog_confirm_btn_cancel");
+    DIALOG_CONFIRM_BTN_CANCEL("dialog_confirm_btn_cancel"),
+    IS_FOLDER("is_folder"),
+    IS_FILE("is_file"),
+    ABSOLUTE_PATH("absolute_path"),
+    FILE_NAME("file_name"),
+    FILE_EXTENSION("file_extension"),
+    FILE_TYPE("file_type"),
+    FILE_MIME_TYPE("file_mime_type"),
+    FILE_CREATION_TIME("file_creation_time"),
+    FILE_MODIFICATION_TIME("file_modification_time"),
+    FILE_CONTENT_CREATION_TIME("file_content_creation_time"),
+    WIDTH("width"),
+    HEIGHT("height"),
+    SONG_AUTHOR("song_author"),
+    SONG_NAME("song_name"),
+    SONG_ALBUM("song_album"),
+    SONG_YEAR("song_year"),
+    DATE_PICKER_DATE("date_picker_date"),
+    DATE_PICKER_HOUR("date_picker_hour"),
+    DATE_PICKER_MINUTE("date_picker_minute"),
+    DATE_PICKER_SECOND("date_picker_second"),
+    NO_ACTIONS_HAPPEN("no_actions_happen"),
+    RENAMED_WITHOUT_ERRORS("renamed_without_errors"),
+    NOT_RENAMED_BECAUSE_NOT_NEEDED("not_renamed_because_not_needed"),
+    NOT_RENAMED_BECAUSE_OF_ERROR("not_renamed_because_of_error");
 
     private final String keyString;
 

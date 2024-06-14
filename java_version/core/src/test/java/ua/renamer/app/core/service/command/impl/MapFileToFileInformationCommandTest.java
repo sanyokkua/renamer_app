@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MapFileToFileInformationTest {
+class MapFileToFileInformationCommandTest {
 
     @Mock
     DataMapper<File, FileInformation> dataMapper;
@@ -38,7 +38,7 @@ class MapFileToFileInformationTest {
                                              .thenReturn(mockedFileInformation3)
                                              .thenReturn(mockedFileInformation4);
 
-        var mapper = new MapFileToFileInformation(dataMapper);
+        var mapper = new MapFileToFileInformationCommand(dataMapper);
         var result = mapper.execute(listOfFiles, null);
 
         assertNotNull(result);

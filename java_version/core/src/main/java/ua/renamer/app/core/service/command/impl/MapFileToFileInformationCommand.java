@@ -12,7 +12,7 @@ import java.io.File;
  * Command to map a list of File objects to FileInformation objects.
  */
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class MapFileToFileInformation extends ListProcessingCommand<File, FileInformation> {
+public class MapFileToFileInformationCommand extends ListProcessingCommand<File, FileInformation> {
 
     private final DataMapper<File, FileInformation> fileToFileInformationMapper;
 

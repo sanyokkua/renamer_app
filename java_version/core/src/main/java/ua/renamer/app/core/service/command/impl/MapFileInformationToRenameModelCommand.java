@@ -10,7 +10,7 @@ import ua.renamer.app.core.util.FileInformationUtils;
  * This class implements the ListProcessingCommand interface to map FileInformation objects to RenameModel objects.
  * It analyzes each FileInformation object to determine if renaming is necessary and constructs a corresponding RenameModel object.
  */
-public class MapFileInformationToRenameModel extends ListProcessingCommand<FileInformation, RenameModel> {
+public class MapFileInformationToRenameModelCommand extends ListProcessingCommand<FileInformation, RenameModel> {
 
     /**
      * Processes a single FileInformation object and transforms it into a corresponding RenameModel object.

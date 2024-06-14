@@ -7,7 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.model.RenameModel;
-import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModel;
+import ua.renamer.app.core.service.command.impl.MapFileInformationToRenameModelCommand;
 import ua.renamer.app.core.service.helper.DateTimeOperations;
 
 import java.io.File;
@@ -63,7 +63,7 @@ class RenameModelToHtmlMapperTest {
                                                          .newName(fileName)
                                                          .newExtension(fileExt)
                                                          .build();
-        MapFileInformationToRenameModel mapperToModel = new MapFileInformationToRenameModel();
+        MapFileInformationToRenameModelCommand mapperToModel = new MapFileInformationToRenameModelCommand();
         RenameModel model = mapperToModel.execute(List.of(fileInformation), null).get(0);
 
         var mapper = new RenameModelToHtmlMapper(dateTimeOperations, (value) -> value);

@@ -10,7 +10,23 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MapFileInformationToRenameModelTest {
+class MapFileInformationToRenameModelCommandTest {
+
+    private static FileInformation createFileInfo(String root, String name, String newName) {
+        return FileInformation.builder()
+                              .originalFile(new File(name))
+                              .fileAbsolutePath(root)
+                              .isFile(true)
+                              .fileName(name)
+                              .fileExtension(".ext")
+                              .fileSize(1000L)
+                              .fsCreationDate(LocalDateTime.now())
+                              .fsModificationDate(LocalDateTime.now())
+                              .metadata(null)
+                              .newName(newName)
+                              .newExtension(".ext")
+                              .build();
+    }
 
     @Test
     void testMapper() {
@@ -19,7 +35,7 @@ class MapFileInformationToRenameModelTest {
         var fileInfo3 = createFileInfo("/root/name", "name", "newName2");
         var listOfItems = List.of(fileInfo1, fileInfo2, fileInfo3);
 
-        var cmd = new MapFileInformationToRenameModel();
+        var cmd = new MapFileInformationToRenameModelCommand();
 
         var result = cmd.execute(listOfItems, null);
 
@@ -57,21 +73,5 @@ class MapFileInformationToRenameModelTest {
                 "Check if the file name (name.ext) and absolute path (/root/name) is correct. File Name (name.ext) is not found in the path (/root/name)",
                 result.get(2).getRenamingErrorMessage());
         assertEquals(RenameResult.NOT_RENAMED_BECAUSE_OF_ERROR, result.get(2).getRenameResult());
-    }
-
-    private static FileInformation createFileInfo(String root, String name, String newName) {
-        return FileInformation.builder()
-                              .originalFile(new File(name))
-                              .fileAbsolutePath(root)
-                              .isFile(true)
-                              .fileName(name)
-                              .fileExtension(".ext")
-                              .fileSize(1000L)
-                              .fsCreationDate(LocalDateTime.now())
-                              .fsModificationDate(LocalDateTime.now())
-                              .metadata(null)
-                              .newName(newName)
-                              .newExtension(".ext")
-                              .build();
     }
 }

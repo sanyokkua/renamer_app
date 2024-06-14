@@ -14,6 +14,7 @@ module ua.renamer.app.ui {
 
     requires ua.renamer.app.core;
     requires org.apache.tika.core;
+    requires jakarta.inject;
 
     exports ua.renamer.app.ui.config;
     exports ua.renamer.app.ui.controller.mode.impl;
@@ -27,6 +28,7 @@ module ua.renamer.app.ui {
     exports ua.renamer.app.ui.widget.factory;
     exports ua.renamer.app.ui.widget.impl;
     exports ua.renamer.app.ui.widget;
+    exports ua.renamer.app.ui.widget.table;
     exports ua.renamer.app;
 
     opens fxml;
@@ -38,4 +40,5 @@ module ua.renamer.app.ui {
     opens ua.renamer.app.ui.service to javafx.fxml;
     opens ua.renamer.app.ui.widget to javafx.fxml;
     opens ua.renamer.app.ui.widget.impl to javafx.fxml;
+    opens ua.renamer.app.ui.widget.table to javafx.fxml;
 }

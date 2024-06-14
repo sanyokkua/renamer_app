@@ -8,12 +8,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.ui.config.DIAppModule;
+import ua.renamer.app.ui.config.DICoreModule;
+import ua.renamer.app.ui.config.DIUIModule;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.enums.ViewNames;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.service.ViewLoaderApi;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
@@ -27,15 +28,14 @@ public class RenamerApplication extends Application {
     // Main method to launch the application
     public static void main(String[] args) {
         // Launch the JavaFX application
-        // Locale.setDefault(Locale.ENGLISH);
-        injector = Guice.createInjector(new DIAppModule());
+        injector = Guice.createInjector(new DIAppModule(), new DICoreModule(), new DIUIModule());
         log.debug("Application started");
         launch();
     }
 
     // The start method is the entry point for the JavaFX application
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         var languageTextRetriever = injector.getInstance(LanguageTextRetrieverApi.class);
         var viewLoader = injector.getInstance(ViewLoaderApi.class);
 
