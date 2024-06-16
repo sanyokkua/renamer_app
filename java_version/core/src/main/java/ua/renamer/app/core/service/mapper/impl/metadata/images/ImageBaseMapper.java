@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 @Slf4j
 public abstract class ImageBaseMapper extends FileToMetadataMapper {
 
+    private static final LocalDateTime MINIMAL = LocalDateTime.of(1900, 1, 1, 0, 0);
+
     private final DateTimeOperations dateTimeOperations;
 
     protected ImageBaseMapper(FilesOperations filesOperations, DateTimeOperations dateTimeOperations) {
@@ -57,7 +59,7 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
                                             .filter(pair -> pair.first() != null)
                                             .map(pair -> dateTimeOperations.parseDateTimeString(pair.first(),
                                                                                                 pair.second()))
-                                            .filter(Objects::nonNull)
+                                            .filter(Objects::nonNull).filter(d -> d.isAfter(MINIMAL))
                                             .min(LocalDateTime::compareTo);
     }
 

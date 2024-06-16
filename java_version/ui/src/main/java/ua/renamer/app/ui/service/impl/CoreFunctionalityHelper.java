@@ -76,7 +76,8 @@ public class CoreFunctionalityHelper {
     public void prepareFiles(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
                              ListCallback<RenameModel> resultCallback) {
         var task = buildTask(progressCallback -> {
-            var listOfFileInfo = list.stream().map(RenameModel::getFileInformation).toList();
+            var resetResult = resetRenameModelsCommand.execute(list, progressCallback);
+            var listOfFileInfo = resetResult.stream().map(RenameModel::getFileInformation).toList();
             var fileInfoList = cmd.execute(listOfFileInfo, progressCallback);
             var fixedNames = fixEqualNamesCommand.execute(fileInfoList, progressCallback);
             var renameModelList = mapFileInformationToRenameModelCommand.execute(fixedNames, progressCallback);
@@ -90,6 +91,24 @@ public class CoreFunctionalityHelper {
         var task = buildTask(progressCallback -> {
             var renameResult = renameCommand.execute(files, progressCallback);
             resultCallback.accept(renameResult);
+        }, bar);
+        executorService.execute(task);
+    }
+
+    public void reloadFiles(List<RenameModel> files, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
+        var task = buildTask(progressCallback -> {
+            var listOfFilesWithNewNames = files.stream().map(model -> {
+                if (model.isRenamed()) {
+                    return model.getAbsolutePathWithoutName() + model.getNewName();
+                } else {
+                    return model.getAbsolutePathWithoutName() + model.getOldName();
+                }
+            }).map(File::new).toList();
+            var mappedFilesToFileInfo = mapFileToFileInformationCommand.execute(listOfFilesWithNewNames,
+                                                                                progressCallback);
+            var mappedRenameModels = mapFileInformationToRenameModelCommand.execute(mappedFilesToFileInfo,
+                                                                                    progressCallback);
+            resultCallback.accept(mappedRenameModels);
         }, bar);
         executorService.execute(task);
     }

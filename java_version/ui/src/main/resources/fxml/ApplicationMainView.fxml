@@ -35,10 +35,11 @@
 
             <GridPane VBox.vgrow="NEVER">
                 <columnConstraints>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="25"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
+                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
                 </columnConstraints>
                 <rowConstraints>
                     <RowConstraints valignment="CENTER" vgrow="NEVER"/>
@@ -60,6 +61,11 @@
                     </cursor>
                 </Button>
                 <Button fx:id="clearBtn" GridPane.columnIndex="3" text="%btn_clear">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <Button fx:id="reloadBtn" GridPane.columnIndex="4" text="%btn_reload">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>

@@ -47,6 +47,8 @@ public class ApplicationMainViewController implements Initializable {
     @FXML
     private Button clearBtn;
     @FXML
+    private Button reloadBtn;
+    @FXML
     private TableView<RenameModel> filesTableView;
     @FXML
     private TableColumn<RenameModel, String> originalNameColumn;
@@ -60,6 +62,7 @@ public class ApplicationMainViewController implements Initializable {
     private WebView fileInfoWebView;
     @FXML
     private ProgressBar appProgressBar;
+    private boolean areFilesRenamed = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -71,6 +74,7 @@ public class ApplicationMainViewController implements Initializable {
         configurePreviewBtn();
         configureRenameBtn();
         configureClearBtn();
+        configureReloadBtn();
         configureProgressBar();
         configureModeCommandChangedListener();
         configureControlWidgetsState();
@@ -142,6 +146,12 @@ public class ApplicationMainViewController implements Initializable {
         clearBtn.setTooltip(mainControllerHelper.createTooltip(TextKeys.BTN_CLEAR));
     }
 
+    private void configureReloadBtn() {
+        log.info("Configuring reloadBtn");
+        reloadBtn.setOnAction(event -> handleBtnClickedReload());
+        reloadBtn.setTooltip(mainControllerHelper.createTooltip(TextKeys.BTN_RELOAD));
+    }
+
     private void configureProgressBar() {
         log.info("Configuring progressBar");
         appProgressBar.setProgress(0);
@@ -158,6 +168,7 @@ public class ApplicationMainViewController implements Initializable {
 
     private void configureControlWidgetsState() {
         log.info("Configuring controlWidgetsState");
+        reloadBtn.setVisible(areFilesRenamed);
 
         if (loadedAppFilesList.isEmpty()) {
             autoPreviewCheckBox.setDisable(true);
@@ -169,6 +180,7 @@ public class ApplicationMainViewController implements Initializable {
             previewBtn.setDisable(false);
             renameBtn.setDisable(false);
             clearBtn.setDisable(false);
+            renameBtn.setDisable(reloadBtn.isVisible());
         }
 
         if (!loadedAppFilesList.isEmpty()) {
@@ -284,16 +296,29 @@ public class ApplicationMainViewController implements Initializable {
                 loadedAppFilesList.clear();
                 loadedAppFilesList.addAll(result);
                 filesTableView.setItems(loadedAppFilesList);
+                areFilesRenamed = true;
+                configureControlWidgetsState();
             });
         }
-        configureControlWidgetsState();
     }
 
     private void handleBtnClickedClear() {
         log.debug("handleClearBtnClicked");
         loadedAppFilesList.clear();
+        areFilesRenamed = false;
         setTextToTheFileDetailsView("");
         configureControlWidgetsState();
+    }
+
+    private void handleBtnClickedReload() {
+        log.debug("handleBtnClickedReload");
+        coreHelper.reloadFiles(loadedAppFilesList, appProgressBar, result -> {
+            loadedAppFilesList.clear();
+            loadedAppFilesList.addAll(result);
+            filesTableView.setItems(loadedAppFilesList);
+            areFilesRenamed = false;
+            configureControlWidgetsState();
+        });
     }
 
     private void handleModeControllerCommandChanged(AppModes modeThatHasUpdates, FileInformationCommand command) {

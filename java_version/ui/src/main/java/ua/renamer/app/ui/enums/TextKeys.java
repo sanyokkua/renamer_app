@@ -13,6 +13,7 @@ public enum TextKeys {
     BTN_PREVIEW("btn_preview"),
     BTN_RENAME("btn_rename"),
     BTN_CLEAR("btn_clear"),
+    BTN_RELOAD("btn_reload"),
     MODE_ADD_CUSTOM_TEXT("mode_add_custom_text"),
     MODE_CHANGE_CASE("mode_change_case"),
     MODE_DATETIME("mode_datetime"),
