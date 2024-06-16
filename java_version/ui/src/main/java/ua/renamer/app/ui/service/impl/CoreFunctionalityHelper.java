@@ -17,7 +17,7 @@ import ua.renamer.app.ui.service.ListCallback;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
@@ -32,20 +32,27 @@ public class CoreFunctionalityHelper {
     private final FixEqualNamesCommand fixEqualNamesCommand;
     private final ResetRenameModelsCommand resetRenameModelsCommand;
 
-    private static Task<Void> buildTask(Consumer<ProgressCallback> runnable, ProgressBar progressBar) {
-        Task<Void> runCommandTask = new Task<>() {
+    private static <T> Task<List<T>> buildTaskWithCallbackOnUIThread(Function<ProgressCallback, List<T>> runnable,
+                                                                     ProgressBar progressBar,
+                                                                     ListCallback<T> resultCallback) {
+        Task<List<T>> runCommandTask = new Task<>() {
             @Override
-            protected Void call() {
-                log.debug("Background task is started");
-                runnable.accept(this::updateProgress);
+            protected List<T> call() {
+                log.debug("Background task with OnSucceeded callback is started");
                 updateProgress(0, 0);
-                log.debug("Background task is finished");
-                return null;
+                List<T> executionResult = runnable.apply(this::updateProgress);
+                log.debug("Background task with OnSucceeded callback is finished");
+                return executionResult;
             }
         };
         runCommandTask.setOnFailed(event -> {
             Throwable exception = runCommandTask.getException();
-            log.error("Background task failed", exception);
+            log.error("Background task with OnSucceeded callback is failed", exception);
+        });
+        runCommandTask.setOnSucceeded(event -> {
+            log.debug("Background task with OnSucceeded will call callback");
+            resultCallback.accept(runCommandTask.getValue());
+            log.debug("Background task with OnSucceeded has called callback");
         });
 
         progressBar.progressProperty().bind(runCommandTask.progressProperty());
@@ -53,51 +60,45 @@ public class CoreFunctionalityHelper {
     }
 
     public void mapFileToRenameModel(List<File> list, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
-        var task = buildTask(progressCallback -> {
+        var task = buildTaskWithCallbackOnUIThread(progressCallback -> {
             var fileInfoList = mapFileToFileInformationCommand.execute(list, progressCallback);
-            var renameModelList = mapFileInformationToRenameModelCommand.execute(fileInfoList, progressCallback);
-            resultCallback.accept(renameModelList);
-        }, bar);
+            return mapFileInformationToRenameModelCommand.execute(fileInfoList, progressCallback);
+        }, bar, resultCallback);
         executorService.execute(task);
     }
 
     public void resetModels(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
                             ListCallback<RenameModel> resultCallback) {
-        var task = buildTask(progressCallback -> {
+        var task = buildTaskWithCallbackOnUIThread(progressCallback -> {
             var resetResult = resetRenameModelsCommand.execute(list, progressCallback);
             var fileInformationList = resetResult.stream().map(RenameModel::getFileInformation).toList();
             var newCmdResult = cmd.execute(fileInformationList, progressCallback);
-            var newRenameModelList = mapFileInformationToRenameModelCommand.execute(newCmdResult, progressCallback);
-
-            resultCallback.accept(newRenameModelList);
-        }, bar);
+            return mapFileInformationToRenameModelCommand.execute(newCmdResult, progressCallback);
+        }, bar, resultCallback);
         executorService.execute(task);
     }
 
     public void prepareFiles(List<RenameModel> list, FileInformationCommand cmd, ProgressBar bar,
                              ListCallback<RenameModel> resultCallback) {
-        var task = buildTask(progressCallback -> {
+        var task = buildTaskWithCallbackOnUIThread(progressCallback -> {
             var resetResult = resetRenameModelsCommand.execute(list, progressCallback);
             var listOfFileInfo = resetResult.stream().map(RenameModel::getFileInformation).toList();
             var fileInfoList = cmd.execute(listOfFileInfo, progressCallback);
             var fixedNames = fixEqualNamesCommand.execute(fileInfoList, progressCallback);
-            var renameModelList = mapFileInformationToRenameModelCommand.execute(fixedNames, progressCallback);
-
-            resultCallback.accept(renameModelList);
-        }, bar);
+            return mapFileInformationToRenameModelCommand.execute(fixedNames, progressCallback);
+        }, bar, resultCallback);
         executorService.execute(task);
     }
 
     public void renameFiles(List<RenameModel> files, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
-        var task = buildTask(progressCallback -> {
-            var renameResult = renameCommand.execute(files, progressCallback);
-            resultCallback.accept(renameResult);
-        }, bar);
+        var task = buildTaskWithCallbackOnUIThread(progressCallback -> renameCommand.execute(files, progressCallback),
+                                                   bar,
+                                                   resultCallback);
         executorService.execute(task);
     }
 
     public void reloadFiles(List<RenameModel> files, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
-        var task = buildTask(progressCallback -> {
+        var task = buildTaskWithCallbackOnUIThread(progressCallback -> {
             var listOfFilesWithNewNames = files.stream().map(model -> {
                 if (model.isRenamed()) {
                     return model.getAbsolutePathWithoutName() + model.getNewName();
@@ -107,10 +108,8 @@ public class CoreFunctionalityHelper {
             }).map(File::new).toList();
             var mappedFilesToFileInfo = mapFileToFileInformationCommand.execute(listOfFilesWithNewNames,
                                                                                 progressCallback);
-            var mappedRenameModels = mapFileInformationToRenameModelCommand.execute(mappedFilesToFileInfo,
-                                                                                    progressCallback);
-            resultCallback.accept(mappedRenameModels);
-        }, bar);
+            return mapFileInformationToRenameModelCommand.execute(mappedFilesToFileInfo, progressCallback);
+        }, bar, resultCallback);
         executorService.execute(task);
     }
 
