@@ -2,17 +2,18 @@ package ua.renamer.app.ui.service.impl;
 
 import com.google.inject.Inject;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.enums.AppModes;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.ui.controller.mode.ModeControllerApi;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
-import ua.renamer.app.ui.widget.table.TableCustomCell;
 import ua.renamer.app.ui.widget.table.TableCustomCellValueFactory;
 import ua.renamer.app.ui.widget.table.TableCustomContextMenu;
-import ua.renamer.app.ui.widget.table.TableCustomRow;
 
 import java.util.function.Function;
 
@@ -138,16 +139,8 @@ public class MainViewControllerHelper {
         return new Tooltip(languageTextRetriever.getString(textKey));
     }
 
-    public TableCustomCell createTableCell(TableColumn<RenameModel, String> tableColumn) {
-        return new TableCustomCell(tableColumn);
-    }
-
     public TableCustomCellValueFactory createCellValueFactory(Function<RenameModel, String> extractor) {
         return new TableCustomCellValueFactory(extractor);
-    }
-
-    public TableCustomRow createTableRow(TableView<RenameModel> tableView) {
-        return new TableCustomRow(tableView);
     }
 
     public TableCustomContextMenu createTableContextMenu(TableView<RenameModel> filesTableView) {

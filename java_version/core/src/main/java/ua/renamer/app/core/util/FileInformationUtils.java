@@ -39,7 +39,7 @@ public class FileInformationUtils {
      *
      * @return the full file name as a String (e.g., "fileName.ext")
      */
-    private static String getFileNewFullName(String name, String ext) {
+    public static String getFileNewFullName(String name, String ext) {
         log.debug("getFileNewFullName({}, {})", name, ext);
         var fixedExt = "";
         if (ext != null && !ext.isBlank() && ext.startsWith(".")) {
@@ -64,10 +64,7 @@ public class FileInformationUtils {
      * @return the full file name as a String (e.g., "fileName.ext")
      */
     public static String getFileNewFullName(FileInformation fileInfo) {
-        log.debug("getFileNewFullName({})", fileInfo);
-        String formatted = getFileNewFullName(fileInfo.getNewName(), fileInfo.getNewExtension());
-        log.debug("getFileNewFullName({}) formatted name:", formatted);
-        return formatted;
+        return getFileNewFullName(fileInfo.getNewName(), fileInfo.getNewExtension());
     }
 
     /**

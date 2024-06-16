@@ -47,6 +47,7 @@ public class CoreFunctionalityHelper {
             Throwable exception = runCommandTask.getException();
             log.error("Background task failed", exception);
         });
+
         progressBar.progressProperty().bind(runCommandTask.progressProperty());
         return runCommandTask;
     }

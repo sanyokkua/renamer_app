@@ -104,7 +104,8 @@ public class SequencePrepareInformationCommand extends FileInformationCommand {
         if (padding == 0) {
             nextName = String.valueOf(nextNumber);
         } else {
-            nextName = String.format("%0" + padding + "d", nextNumber);
+            String format = "%0" + padding + "d";
+            nextName = String.format(format, nextNumber);
         }
 
         item.setNewName(nextName);

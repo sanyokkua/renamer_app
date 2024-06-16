@@ -99,6 +99,7 @@ public class DICoreModule extends AbstractModule {
         bind(DateTimeOperations.class).in(Singleton.class);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Provides
     @Singleton
     public FileToMetadataMapper provideFileToMetadataMapper(AviMapper aviMapper, BmpMapper bmpMapper,

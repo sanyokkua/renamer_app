@@ -9,6 +9,7 @@ import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+@SuppressWarnings("ClassCanBeRecord")
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class LanguageTextRetrieverService implements LanguageTextRetrieverApi {
@@ -31,12 +32,6 @@ public class LanguageTextRetrieverService implements LanguageTextRetrieverApi {
     }
 
     @Override
-    public String getString(TextKeys key, String defaultValue) {
-        log.debug("Getting string for TextKey {}", key);
-        return getString(key.getKeyString(), defaultValue);
-    }
-
-    @Override
     public String getString(String key, String defaultValue) {
         try {
             log.debug("Getting string for key {}", key);
@@ -48,6 +43,12 @@ public class LanguageTextRetrieverService implements LanguageTextRetrieverApi {
             log.debug("Returning default value {} for key {}", defaultValue, key);
             return defaultValue;
         }
+    }
+
+    @Override
+    public String getString(TextKeys key, String defaultValue) {
+        log.debug("Getting string for TextKey {}", key);
+        return getString(key.getKeyString(), defaultValue);
     }
 
 }

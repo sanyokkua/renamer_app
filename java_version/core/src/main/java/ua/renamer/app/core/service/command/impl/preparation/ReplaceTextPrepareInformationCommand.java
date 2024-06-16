@@ -66,7 +66,7 @@ public class ReplaceTextPrepareInformationCommand extends FileInformationCommand
                     ? reversedResult
                     : new StringBuilder(reversedResult).reverse().toString();
         } else {
-            nextName = nextName.replaceAll(textToReplace, newValueToAdd);
+            nextName = nextName.replace(textToReplace, newValueToAdd);
         }
 
         item.setNewName(nextName);

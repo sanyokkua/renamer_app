@@ -1,12 +1,9 @@
 module ua.renamer.app.core {
     requires static lombok;
-    requires org.slf4j;
-    requires ch.qos.logback.core;
+    requires org.slf4j; // Required by lombok
     requires metadata.extractor;
-    requires java.desktop;
     requires com.google.guice;
     requires jakarta.annotation;
-    requires jdk.xml.dom;
     requires org.apache.tika.core;
 
     exports ua.renamer.app.core.enums;

@@ -202,7 +202,7 @@ public class DateTimeOperations {
         if (dateTimeString.length() == 4) {
             try {
                 var year = Integer.parseInt(dateTimeString);
-                return Optional.ofNullable(LocalDateTime.of(LocalDate.of(year, 1, 1), LocalTime.of(0, 0)));
+                return Optional.of(LocalDateTime.of(LocalDate.of(year, 1, 1), LocalTime.of(0, 0)));
             } catch (NumberFormatException e) {
                 // Ignore and try next format
             }

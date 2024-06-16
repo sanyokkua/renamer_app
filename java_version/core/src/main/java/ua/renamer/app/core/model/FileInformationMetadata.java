@@ -2,11 +2,8 @@ package ua.renamer.app.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,14 +41,6 @@ public class FileInformationMetadata {
      * The year of the audio file.
      */
     private final Integer audioYear;
-
-    /**
-     * Additional tag values found in the file metadata.
-     * TODO: review if really needed
-     */
-    @Getter
-    @Builder.Default
-    private final Map<String, String> otherFoundTagValues = new HashMap<>();
 
     /**
      * Gets the creation date and time of the file as an Optional.

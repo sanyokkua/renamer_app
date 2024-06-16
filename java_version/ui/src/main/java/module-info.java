@@ -4,7 +4,6 @@ module ua.renamer.app.ui {
     requires org.slf4j;
     requires jakarta.annotation;
 
-    requires com.google.common;
     requires com.google.guice;
 
     requires javafx.base;

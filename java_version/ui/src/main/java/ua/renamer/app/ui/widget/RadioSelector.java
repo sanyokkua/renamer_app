@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public abstract class RadioSelector<T extends Enum<T>> extends VBox {
 
     private final Class<T> enumClass;
-    private final StringConverter<T> converter; // Renamed from 'convertor' to 'converter' for consistency.
+    private final StringConverter<T> converter;
     private final Label labelWidget;
     private final List<ValueRadioBtn<T>> buttons;
     private final ToggleGroup toggleGroup;

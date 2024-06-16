@@ -95,7 +95,6 @@ public class ApplicationMainViewController implements Initializable {
         filesTableView.setOnDragDropped(this::handleFilesTableViewFilesDroppedEvent);
         filesTableView.setItems(loadedAppFilesList);
         filesTableView.setContextMenu(mainControllerHelper.createTableContextMenu(filesTableView));
-        filesTableView.setRowFactory(mainControllerHelper::createTableRow);
 
         var tableWidthProperty = filesTableView.widthProperty();
         var tableSelectionModel = filesTableView.getSelectionModel();
@@ -107,17 +106,9 @@ public class ApplicationMainViewController implements Initializable {
 
     private void configureFilesTableViewColumns() {
         log.info("Configuring filesTableViewColumns");
-
-        originalNameColumn.setCellFactory(mainControllerHelper::createTableCell);
         originalNameColumn.setCellValueFactory(mainControllerHelper.createCellValueFactory(coreHelper::getOldName));
-
-        itemTypeColumn.setCellFactory(mainControllerHelper::createTableCell);
         itemTypeColumn.setCellValueFactory(mainControllerHelper.createCellValueFactory(coreHelper::getFileType));
-
-        newNameColumn.setCellFactory(mainControllerHelper::createTableCell);
         newNameColumn.setCellValueFactory(mainControllerHelper.createCellValueFactory(coreHelper::getNewName));
-
-        statusColumn.setCellFactory(mainControllerHelper::createTableCell);
         statusColumn.setCellValueFactory(mainControllerHelper.createCellValueFactory(coreHelper::getFileStatus));
     }
 
