@@ -16,6 +16,7 @@ import ua.renamer.app.core.enums.AppModes;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.command.FileInformationCommand;
 import ua.renamer.app.ui.converter.AppModesConverter;
+import ua.renamer.app.ui.enums.TableStyles;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.impl.CoreFunctionalityHelper;
 import ua.renamer.app.ui.service.impl.MainViewControllerHelper;
@@ -95,6 +96,25 @@ public class ApplicationMainViewController implements Initializable {
         filesTableView.setOnDragDropped(this::handleFilesTableViewFilesDroppedEvent);
         filesTableView.setItems(loadedAppFilesList);
         filesTableView.setContextMenu(mainControllerHelper.createTableContextMenu(filesTableView));
+        filesTableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(RenameModel renameModel, boolean empty) {
+                super.updateItem(renameModel, empty);
+                if (renameModel == null || empty) {
+                    setStyle("");
+                } else {
+                    if (renameModel.isRenamed()) {
+                        setStyle(TableStyles.RENAMED.getStyle());
+                    } else if (renameModel.isNeedRename() && !renameModel.isHasRenamingError()) {
+                        setStyle(TableStyles.READY_FOR_RENAMING.getStyle());
+                    } else if (renameModel.isHasRenamingError()) {
+                        setStyle(TableStyles.HAS_ERROR.getStyle());
+                    } else {
+                        setStyle(TableStyles.BLANK.getStyle());
+                    }
+                }
+            }
+        });
 
         var tableWidthProperty = filesTableView.widthProperty();
         var tableSelectionModel = filesTableView.getSelectionModel();
