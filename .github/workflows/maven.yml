@@ -6,11 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: CI to build, test and publish the App
 
 on:
   push:
-    branches: [ "master" ]
+    tags: [ "*-release-*" ]
 
 jobs:
   build-and-test:

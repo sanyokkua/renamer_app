@@ -53,6 +53,7 @@ Some examples of the working app
 - **Mockito**: Mockito is a popular open-source framework for Java that simplifies unit testing by letting you create mock objects to isolate the code you're testing. [Mockito](https://mvnrepository.com/artifact/org.mockito), [Docs](https://site.mockito.org)
 - **Google Guice**: Google Guice is an open-source framework for Java that simplifies dependency injection using annotations, making your code more modular and easier to test. [Google Guice](https://mvnrepository.com/artifact/com.google.inject/guice), [Docs](https://github.com/google/guice)
 - **Junit5**: JUnit 5 is the latest version of the JUnit testing framework for Java, offering a modern approach to unit testing with features like support for Java 8 and above, various testing styles, and improved annotations. [Junit5](https://mvnrepository.com/artifact/org.junit.jupiter), [Docs](https://junit.org/junit5/)
+- **Jdeploy**: Tool helps to build installers of JavaFX app. [Docs](https://www.jdeploy.com)
 
 ## How to Build and Run the App from Source
 
