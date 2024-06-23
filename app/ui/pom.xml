@@ -108,9 +108,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
-                            <mainClass>
-                                ua.renamer.app.RenamerApplication
-                            </mainClass>
+                            <mainClass>ua.renamer.app.Launcher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

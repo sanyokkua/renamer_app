@@ -32,6 +32,7 @@ module ua.renamer.app.ui {
 
     opens fxml;
     opens langs;
+    opens images;
     opens ua.renamer.app.ui.controller to javafx.fxml;
     opens ua.renamer.app.ui.controller.mode to javafx.fxml;
     opens ua.renamer.app.ui.controller.mode.impl to javafx.fxml;
