@@ -11,6 +11,7 @@ name: CI to build, test and publish the App
 on:
   push:
     tags: [ "*-release-*" ]
+    branches: [ "*-release-*", "*-snapshot-*" ]
 
 jobs:
   build-and-test:
@@ -53,11 +54,13 @@ jobs:
       run: |
         cd app
         mvn install -DskipTests
+
     - run: mkdir Artifacts && cp app/ui/target/*.jar Artifacts
     - uses: actions/upload-artifact@v4
       with:
         name: Package
         path: Artifacts
+
     - name: Publish with jDeploy
       uses: shannah/jdeploy@master
       with:
