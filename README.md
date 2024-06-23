@@ -39,31 +39,48 @@ Some examples of the working app
 ![File Renamer App - ex2](docs/app_screen_example_2.png)
 ![File Renamer App - ex3](docs/app_screen_example_3.png)
 
+## Download Page
+
+You can download an installer for the app by the [following link](https://github.com/sanyokkua/renamer_app/releases)
+
 ## Used Libraries
 
 ### Application Logic
 
-- **Metadata-extractor**: A tool for reading EXIF (and some other) data from certain types of image and video files. [Metadata-extractor](https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor/2.19.0), [Docs](https://github.com/drewnoakes/metadata-extractor)
-- **Tika**: Library for extracting metadata from files. Used to get Mime type. [Tika](https://mvnrepository.com/artifact/org.apache.tika/), [Docs](https://tika.apache.org)
-- **JavaFX**: A Java UI library/framework. [JavaFX](https://mvnrepository.com/artifact/org.openjfx/javafx), [Docs](https://openjfx.io/index.html)
+- **Metadata-extractor**: A tool for reading EXIF (and some other) data from certain types of image and video
+  files. [Metadata-extractor](https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor/2.19.0), [Docs](https://github.com/drewnoakes/metadata-extractor)
+- **Tika**: Library for extracting metadata from files. Used to get Mime
+  type. [Tika](https://mvnrepository.com/artifact/org.apache.tika/), [Docs](https://tika.apache.org)
+- **JavaFX**: A Java UI
+  library/framework. [JavaFX](https://mvnrepository.com/artifact/org.openjfx/javafx), [Docs](https://openjfx.io/index.html)
 
 ### Development
 
-- **Lombok**: Project Lombok is a Java library that reduces boilerplate code by automatically generating getters, setters, and other common methods. [Lombok](https://mvnrepository.com/artifact/org.projectlombok/lombok), [Docs](https://projectlombok.org)
-- **Mockito**: Mockito is a popular open-source framework for Java that simplifies unit testing by letting you create mock objects to isolate the code you're testing. [Mockito](https://mvnrepository.com/artifact/org.mockito), [Docs](https://site.mockito.org)
-- **Google Guice**: Google Guice is an open-source framework for Java that simplifies dependency injection using annotations, making your code more modular and easier to test. [Google Guice](https://mvnrepository.com/artifact/com.google.inject/guice), [Docs](https://github.com/google/guice)
-- **Junit5**: JUnit 5 is the latest version of the JUnit testing framework for Java, offering a modern approach to unit testing with features like support for Java 8 and above, various testing styles, and improved annotations. [Junit5](https://mvnrepository.com/artifact/org.junit.jupiter), [Docs](https://junit.org/junit5/)
+- **Lombok**: Project Lombok is a Java library that reduces boilerplate code by automatically generating getters,
+  setters, and other common
+  methods. [Lombok](https://mvnrepository.com/artifact/org.projectlombok/lombok), [Docs](https://projectlombok.org)
+- **Mockito**: Mockito is a popular open-source framework for Java that simplifies unit testing by letting you create
+  mock objects to isolate the code you're
+  testing. [Mockito](https://mvnrepository.com/artifact/org.mockito), [Docs](https://site.mockito.org)
+- **Google Guice**: Google Guice is an open-source framework for Java that simplifies dependency injection using
+  annotations, making your code more modular and easier to
+  test. [Google Guice](https://mvnrepository.com/artifact/com.google.inject/guice), [Docs](https://github.com/google/guice)
+- **Junit5**: JUnit 5 is the latest version of the JUnit testing framework for Java, offering a modern approach to unit
+  testing with features like support for Java 8 and above, various testing styles, and improved
+  annotations. [Junit5](https://mvnrepository.com/artifact/org.junit.jupiter), [Docs](https://junit.org/junit5/)
 - **Jdeploy**: Tool helps to build installers of JavaFX app. [Docs](https://www.jdeploy.com)
 
 ## How to Build and Run the App from Source
 
 To build and run the app from source, follow these steps:
 
-**(Expected that Java 21+ and Apache Maven 3.9.6 are installed, also these versions of tools were used during development)**
+**(Expected that Java 21+ and Apache Maven 3.9.6 are installed, also these versions of tools were used during
+development)**
 
-- [OpenJDK](https://openjdk.org/projects/jdk/21/), 
+- [OpenJDK](https://openjdk.org/projects/jdk/21/),
 - [Maven](https://maven.apache.org)
-- I would use following [Adoptium Project JDKs](https://adoptium.net), or JDK from Amazon - [Amazon Corretto](https://aws.amazon.com/ru/corretto/)
+- I would use following [Adoptium Project JDKs](https://adoptium.net), or JDK from
+  Amazon - [Amazon Corretto](https://aws.amazon.com/ru/corretto/)
 - [Installation JDK on macOS via Homebrew](https://formulae.brew.sh/cask/temurin#default)
 - If you want to manage several versions of java on MacOS - [Jenv](https://formulae.brew.sh/formula/jenv#default)
 
@@ -95,7 +112,8 @@ the application.
 
 # Languages
 
-Currently supported 2 languages - English and Ukrainian. Language will be choosen based on the system locale, if locale - UA, Ukrainian will be used, for all other locales default is English.
+Currently supported 2 languages - English and Ukrainian. Language will be choosen based on the system locale, if
+locale - UA, Ukrainian will be used, for all other locales default is English.
 
 # Nothing is good... TODO list for this app
 
