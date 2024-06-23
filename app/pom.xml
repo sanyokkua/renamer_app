@@ -32,6 +32,8 @@
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <tika-core.version>2.9.2</tika-core.version>
         <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
+        <maven-dependency-plugin.version>3.7.1</maven-dependency-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     </properties>
 
     <modules>
@@ -148,14 +150,6 @@
                                 <version>${lombok.version}</version>
                             </path>
                         </annotationProcessorPaths>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-maven-plugin</artifactId>
-                    <version>${javafx-maven-plugin.version}</version>
-                    <configuration>
-                        <mainClass>ua.renamer.app.RenamerApplication</mainClass>
                     </configuration>
                 </plugin>
                 <plugin>

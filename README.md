@@ -75,6 +75,10 @@ To build and run the app from source, follow these steps:
    mvn clean install
    ```
 3. Once the build process is complete, you'll find the executable for your OS in the `renamer_app/app/ui/target/ua.renamer.app.ui-{version}.jar` folder.
+   ```shell
+   cd /path/to/renamer_app/app/ui
+   mvn javafx:run
+   ```
 
 ## Code Coverage
 
