@@ -8,10 +8,11 @@
     "yauzl": "^2.10.0"
   },
   "name": "renamer_app",
+  "description": "This is a desktop tool designed to streamline the process of renaming files on your PC.",
   "version": "1.0.0",
   "repository": "https://github.com/sanyokkua/renamer_app",
   "bin": {
-    "renamer_app": "jdeploy-bundle/jdeploy.js"
+    "RenamerApp": "jdeploy-bundle/jdeploy.js"
   },
   "jdeploy": {
     "jar": "app/ui/target/ua.renamer.app.ui-1.0.0.jar",
