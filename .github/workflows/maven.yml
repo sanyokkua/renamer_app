@@ -11,28 +11,57 @@ name: Java CI with Maven
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
-  build:
-
+  build-and-test:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 21
+
+    - name: Set up JDK
       uses: actions/setup-java@v4
       with:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+        cache-dependency-path: |
+          'app/pom.xml'
+          'app/core/pom.xml'
+          'app/ui/pom.xml'
+
     - name: Set up Node
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-    - name: Build with Maven
-      run: mvn -B package --file app/pom.xml
+
+    - name: Clean App before build
+      run: |
+        cd app
+        mvn clean
+    - name: Validate App before Compilation
+      run: |
+        cd app
+        mvn validate -DskipTests
+    - name: Compile App
+      run: |
+        cd app
+        mvn compile -DskipTests
+    - name: Test the App
+      run: |
+        cd app
+        mvn test
+    - name: Build and Package the App
+      run: |
+        cd app
+        mvn install -DskipTests
+    - run: mkdir Artifacts && cp app/ui/target/*.jar Artifacts
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Package
+        path: Artifacts
     - name: Publish with jDeploy
       uses: shannah/jdeploy@master
       with:
