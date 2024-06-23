@@ -18,7 +18,7 @@
     "jar": "app/ui/target/ua.renamer.app.ui-1.0.0.jar",
     "javaVersion": "21",
     "jdk": false,
-    "javafx": false,
+    "javafx": true,
     "title": "Renamer App",
     "bundles": [
       "mac-x64",
