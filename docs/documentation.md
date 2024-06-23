@@ -18,15 +18,17 @@
 <!-- TOC -->
 # File Renamer Application
 
-![Example of the application screen](app_screen_example.png)
+![Example of the application screen](app_screen_example_1.png)
 
 ## Overview
 
 The File Renamer Application offers users a convenient way to batch rename files with various customization options. Whether it's adding a sequential digit sequence, appending or prepending additional text, changing text case, or incorporating metadata like DateTime or image dimensions into the file names, this application provides flexibility and efficiency in file management tasks.
+For functionality related to work with metadata extraction currently supported file types: avi, bmp, epsf, eps, epsi, gif, heif, heic, ico, jpg, jpeg, jpe, m4r, m4p, mp4, m4b, m4a, m4v, pcx, png, psd, mov, qt, tiff, tif, wav, wave, webp.
 
 ## Start renaming
 
 Just chose files/folder in the file manager and **drag and drop** them to the right side of the app (Files Table View)
+When files are added, you can click on the row in the table to get more information that was parsed by application.
 
 ### Renaming Modes
 

@@ -35,72 +35,60 @@ Also, there can be different options of renaming as:
 
 Some examples of the working app
 
-![File Renamer App - ex1](docs/app_screen_example.png)
-![File Renamer App - ex2](docs/4_img_dimensions.png)
-![File Renamer App - ex3](docs/8_seq.png)
+![File Renamer App - ex1](docs/app_screen_example_1.png)
+![File Renamer App - ex2](docs/app_screen_example_2.png)
+![File Renamer App - ex3](docs/app_screen_example_3.png)
 
 ## Used Libraries
 
 ### Application Logic
 
-- **ExifRead**: A tool for reading EXIF data from certain types of
-  images. [ExifRead](https://pypi.org/project/ExifRead/), [Docs](https://github.com/ianare/exif-py)
-- **Pillow**: A library for parsing image
-  data. [Pillow](https://pypi.org/project/pillow/), [Docs](https://pillow.readthedocs.io/en/stable/)
-- **Pillow Heif**: Adds support for HEIF codec and file types like ".heic" to
-  Pillow. [Pillow Heif](https://pypi.org/project/pillow-heif/), [Docs](https://pillow-heif.readthedocs.io/en/latest/)
-- **Mutagen**: Provides support for extracting audio metadata for MP3, FLAC, OGG,
-  etc. [Mutagen](https://pypi.org/project/mutagen/), [Docs](https://mutagen.readthedocs.io/en/latest/)
-- **PySide6**: A Python binding for the Qt framework, used for building the
-  UI. [PySide6](https://pypi.org/project/PySide6/), [Docs](https://doc.qt.io/qtforpython-6/api.html)
+- **Metadata-extractor**: A tool for reading EXIF (and some other) data from certain types of image and video files. [Metadata-extractor](https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor/2.19.0), [Docs](https://github.com/drewnoakes/metadata-extractor)
+- **Tika**: Library for extracting metadata from files. Used to get Mime type. [Tika](https://mvnrepository.com/artifact/org.apache.tika/), [Docs](https://tika.apache.org)
+- **JavaFX**: A Java UI library/framework. [JavaFX](https://mvnrepository.com/artifact/org.openjfx/javafx), [Docs](https://openjfx.io/index.html)
 
 ### Development
 
-- **PyInstaller**: A tool for bundling Python applications into standalone
-  executables. [pyinstaller](https://pypi.org/project/pyinstaller/), [Docs](https://pyinstaller.org/en/stable/)
-- **pytest**: A testing framework for running unit
-  tests. [pytest](https://pypi.org/project/pytest/), [Docs](https://docs.pytest.org/en/latest/)
-- **black**: A code formatter for maintaining consistent code
-  style. [black](https://pypi.org/project/black/), [Docs](https://github.com/psf/black)
+- **Lombok**: Project Lombok is a Java library that reduces boilerplate code by automatically generating getters, setters, and other common methods. [Lombok](https://mvnrepository.com/artifact/org.projectlombok/lombok), [Docs](https://projectlombok.org)
+- **Mockito**: Mockito is a popular open-source framework for Java that simplifies unit testing by letting you create mock objects to isolate the code you're testing. [Mockito](https://mvnrepository.com/artifact/org.mockito), [Docs](https://site.mockito.org)
+- **Google Guice**: Google Guice is an open-source framework for Java that simplifies dependency injection using annotations, making your code more modular and easier to test. [Google Guice](https://mvnrepository.com/artifact/com.google.inject/guice), [Docs](https://github.com/google/guice)
+- **Junit5**: JUnit 5 is the latest version of the JUnit testing framework for Java, offering a modern approach to unit testing with features like support for Java 8 and above, various testing styles, and improved annotations. [Junit5](https://mvnrepository.com/artifact/org.junit.jupiter), [Docs](https://junit.org/junit5/)
 
 ## How to Build and Run the App from Source
 
 To build and run the app from source, follow these steps:
 
-**(Expected that Python 3.10+ and Pipenv are installed)**
+**(Expected that Java 21+ and Apache Maven 3.9.6 are installed, also these versions of tools were used during development)**
 
-- [Python Official](https://www.python.org/downloads/), [Installation on macOS via Homebrew](https://docs.brew.sh/Homebrew-and-Python)
-- [Pipenv](https://pypi.org/project/pipenv/), [Docs](https://pipenv.pypa.io/en/latest/), [Installation on macOS via Homebrew](https://formulae.brew.sh/formula/pipenv)
+- [OpenJDK](https://openjdk.org/projects/jdk/21/), 
+- [Maven](https://maven.apache.org)
+- I would use following [Adoptium Project JDKs](https://adoptium.net), or JDK from Amazon - [Amazon Corretto](https://aws.amazon.com/ru/corretto/)
+- [Installation JDK on macOS via Homebrew](https://formulae.brew.sh/cask/temurin#default)
+- If you want to manage several versions of java on MacOS - [Jenv](https://formulae.brew.sh/formula/jenv#default)
 
 1. Navigate to the folder containing the source code.
    ```shell
    cd /path/to/renamer_app
    ```
-2. Install all dependencies using Pipenv.
+2. Install all dependencies and build the app using mvn.
    ```shell
-   pipenv install
+   mvn clean install
    ```
-3. Run the script to build the UI App.
-   ```shell
-   pipenv run pyinstaller renamer_app_ui.spec
-   ```
-4. Once the build process is complete, you'll find the executable for your OS in the `renamer_app/dist` folder. On
-   macOS, it will be named "File Renamer.app".
-
-## Code Style
-
-The codebase is formatted using the black formatter with a line length limit of 120 characters (**black . --line-length
-120**).
+3. Once the build process is complete, you'll find the executable for your OS in the `renamer_app/app/ui/target/ua.renamer.app.ui-{version}.jar` folder.
 
 ## Code Coverage
 
 The core module is extensively covered by unit tests, ensuring robust functionality across all non-UI related aspects of
-the application. We strive to maintain high code coverage to ensure stability and reliability.
+the application.
+
+# Languages
+
+Currently supported 2 languages - English and Ukrainian. Language will be choosen based on the system locale, if locale - UA, Ukrainian will be used, for all other locales default is English.
 
 # Nothing is good... TODO list for this app
 
 - Investigate [ExifTool by Phil Harvey](https://exiftool.org) in order to use it as metadata parser for files
-- Investigate other libs that can extract metadata for video files
+- Investigate other libs that can extract metadata for other file types
 - Implement extracting metadata for video files
 - Implement using metadata for audio files (artist name, song name, creation date, etc)
 - Improve UI/UX
