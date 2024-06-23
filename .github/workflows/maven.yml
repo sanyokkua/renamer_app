@@ -27,10 +27,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-        cache-dependency-path: |
-          'app/pom.xml'
-          'app/core/pom.xml'
-          'app/ui/pom.xml'
 
     - name: Set up Node
       uses: actions/setup-node@v4
