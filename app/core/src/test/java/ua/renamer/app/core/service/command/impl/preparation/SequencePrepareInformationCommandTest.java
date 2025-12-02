@@ -25,7 +25,19 @@ import static ua.renamer.app.core.TestUtilities.TEST_IS_FILE;
 class SequencePrepareInformationCommandTest extends BaseRenamePreparationCommandTest {
 
     static Stream<Arguments> provideCommandArguments() {
-        return Stream.of(arguments(SortSource.FILE_NAME, 0, 1, 0), arguments(SortSource.FILE_PATH, 0, 1, 0), arguments(SortSource.FILE_SIZE, 0, 1, 0), arguments(SortSource.FILE_CREATION_DATETIME, 0, 1, 0), arguments(SortSource.FILE_MODIFICATION_DATETIME, 0, 1, 0), arguments(SortSource.FILE_CONTENT_CREATION_DATETIME, 0, 1, 0), arguments(SortSource.IMAGE_WIDTH, 0, 1, 0), arguments(SortSource.IMAGE_HEIGHT, 0, 1, 0), arguments(SortSource.FILE_NAME, 1, 1, 0), arguments(SortSource.FILE_NAME, 1, 1, 1), arguments(SortSource.FILE_NAME, 1, 10, 1), arguments(SortSource.FILE_NAME, -1, 10, 1), arguments(SortSource.FILE_NAME, 1, 10, 10));
+        return Stream.of(arguments(SortSource.FILE_NAME, 0, 1, 0),
+                         arguments(SortSource.FILE_PATH, 0, 1, 0),
+                         arguments(SortSource.FILE_SIZE, 0, 1, 0),
+                         arguments(SortSource.FILE_CREATION_DATETIME, 0, 1, 0),
+                         arguments(SortSource.FILE_MODIFICATION_DATETIME, 0, 1, 0),
+                         arguments(SortSource.FILE_CONTENT_CREATION_DATETIME, 0, 1, 0),
+                         arguments(SortSource.IMAGE_WIDTH, 0, 1, 0),
+                         arguments(SortSource.IMAGE_HEIGHT, 0, 1, 0),
+                         arguments(SortSource.FILE_NAME, 1, 1, 0),
+                         arguments(SortSource.FILE_NAME, 1, 1, 1),
+                         arguments(SortSource.FILE_NAME, 1, 10, 1),
+                         arguments(SortSource.FILE_NAME, -1, 10, 1),
+                         arguments(SortSource.FILE_NAME, 1, 10, 10));
     }
 
     @Test
@@ -57,7 +69,7 @@ class SequencePrepareInformationCommandTest extends BaseRenamePreparationCommand
 
     @ParameterizedTest
     @MethodSource("provideCommandArguments")
-    void commandExecution_ShoulSortFilesAndRenameThemWithCorrectOrder(SortSource sortSource, int startNumber, int stepValue, int padding) {
+    void commandExecution_ShouldSortFilesAndRenameThemWithCorrectOrder(SortSource sortSource, int startNumber, int stepValue, int padding) {
         // @formatter:off
         var files = createFilesFrom1to4();
         var file1 = files[0];
@@ -120,10 +132,38 @@ class SequencePrepareInformationCommandTest extends BaseRenamePreparationCommand
     }
 
     static FileInformation[] createFilesFrom1to4() {
-        var file1 = createFileInfo("fileName1", "/file/path/1/fileName1", 1000L, LocalDateTime.of(2000, 1, 1, 1, 0), LocalDateTime.of(2000, 1, 1, 1, 0), LocalDateTime.of(2000, 1, 1, 1, 0), 1000, 2000);
-        var file2 = createFileInfo("fileName2", "/file/path/2/fileName2", 1001L, LocalDateTime.of(2001, 1, 1, 1, 0), LocalDateTime.of(2001, 1, 1, 1, 0), LocalDateTime.of(2001, 1, 1, 1, 0), 1001, 2001);
-        var file3 = createFileInfo("fileName3", "/file/path/3/fileName3", 1002L, LocalDateTime.of(2002, 1, 1, 1, 0), LocalDateTime.of(2002, 1, 1, 1, 0), LocalDateTime.of(2002, 1, 1, 1, 0), 1002, 2002);
-        var file4 = createFileInfo("fileName4", "/file/path/4/fileName4", 1003L, LocalDateTime.of(2003, 1, 1, 1, 0), LocalDateTime.of(2003, 1, 1, 1, 0), LocalDateTime.of(2003, 1, 1, 1, 0), 1003, 2003);
+        var file1 = createFileInfo("fileName1",
+                                   "/file/path/1/fileName1",
+                                   1000L,
+                                   LocalDateTime.of(2000, 1, 1, 1, 0),
+                                   LocalDateTime.of(2000, 1, 1, 1, 0),
+                                   LocalDateTime.of(2000, 1, 1, 1, 0),
+                                   1000,
+                                   2000);
+        var file2 = createFileInfo("fileName2",
+                                   "/file/path/2/fileName2",
+                                   1001L,
+                                   LocalDateTime.of(2001, 1, 1, 1, 0),
+                                   LocalDateTime.of(2001, 1, 1, 1, 0),
+                                   LocalDateTime.of(2001, 1, 1, 1, 0),
+                                   1001,
+                                   2001);
+        var file3 = createFileInfo("fileName3",
+                                   "/file/path/3/fileName3",
+                                   1002L,
+                                   LocalDateTime.of(2002, 1, 1, 1, 0),
+                                   LocalDateTime.of(2002, 1, 1, 1, 0),
+                                   LocalDateTime.of(2002, 1, 1, 1, 0),
+                                   1002,
+                                   2002);
+        var file4 = createFileInfo("fileName4",
+                                   "/file/path/4/fileName4",
+                                   1003L,
+                                   LocalDateTime.of(2003, 1, 1, 1, 0),
+                                   LocalDateTime.of(2003, 1, 1, 1, 0),
+                                   LocalDateTime.of(2003, 1, 1, 1, 0),
+                                   1003,
+                                   2003);
         return new FileInformation[]{file1, file2, file3, file4};
     }
 

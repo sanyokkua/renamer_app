@@ -4,11 +4,14 @@ import lombok.*;
 import ua.renamer.app.core.enums.SortSource;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
+import ua.renamer.app.core.service.ProgressCallback;
 import ua.renamer.app.core.service.command.FileInformationCommand;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Command for sequencing file names within {@link FileInformation} objects.
@@ -51,7 +54,6 @@ public class SequencePrepareInformationCommand extends FileInformationCommand {
      * Sorts the input list of file information based on the specified sort source.
      *
      * @param input the input list of file information to be preprocessed.
-     *
      * @return the preprocessed input list sorted based on the specified sort source.
      */
     @Override
@@ -94,7 +96,6 @@ public class SequencePrepareInformationCommand extends FileInformationCommand {
      * Processes a {@link FileInformation} item by sequencing the file name based on the next number in the sequence.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new file name.
      */
     @Override
@@ -112,6 +113,32 @@ public class SequencePrepareInformationCommand extends FileInformationCommand {
 
         nextNumber = nextNumber + stepValue;
         return item;
+    }
+
+    @Override
+    public List<FileInformation> execute(List<FileInformation> input, ProgressCallback callback) {
+        if (Objects.isNull(input) || input.isEmpty()) {
+            return List.of();
+        }
+
+        final int total = input.size();
+        final AtomicInteger completed = new AtomicInteger(0);
+        updateProgress(0, total, callback);
+
+        List<FileInformation> preparedInput = preprocessInput(input);
+
+        Object progressLock = new Object(); // local lock object
+        List<FileInformation> result = preparedInput.stream().map(item -> {
+            var resultItem = processItem(item);
+            synchronized (progressLock) {
+                int current = completed.incrementAndGet();
+                updateProgress(current, total, callback);
+            }
+            return resultItem;
+        }).toList();
+
+        updateProgress(0, 0, callback);
+        return result;
     }
 
 }

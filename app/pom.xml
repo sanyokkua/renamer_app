@@ -5,35 +5,35 @@
     <groupId>ua.renamer.app</groupId>
     <artifactId>renamer-app-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>renamer-app</name>
 
     <description>App for renaming files</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.release>21</maven.compiler.release>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
 
-        <javafx.version>22.0.1</javafx.version>
+        <javafx.version>25.0.1</javafx.version>
         <javafx-maven-plugin.version>0.0.8</javafx-maven-plugin.version>
 
-        <lombok.version>1.18.32</lombok.version>
-        <slf4j-api.version>2.0.13</slf4j-api.version>
-        <logback.version>1.5.6</logback.version>
+        <lombok.version>1.18.42</lombok.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
+        <logback.version>1.5.21</logback.version>
         <metadata-extractor.version>2.19.0</metadata-extractor.version>
-        <junit-bom.version>5.10.2</junit-bom.version>
-        <mockito-core.version>5.12.0</mockito-core.version>
-        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <junit-bom.version>6.0.1</junit-bom.version>
+        <mockito-core.version>5.20.0</mockito-core.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <powermock-core.version>2.0.9</powermock-core.version>
         <guice.version>7.0.0</guice.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
-        <tika-core.version>2.9.2</tika-core.version>
+        <tika-core.version>3.2.3</tika-core.version>
         <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
-        <maven-dependency-plugin.version>3.7.1</maven-dependency-plugin.version>
-        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
     </properties>
 
     <modules>
