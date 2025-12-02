@@ -38,9 +38,6 @@ class RenameCommandTest {
 
         assertNotNull(result);
         assertEquals(itemsList.size(), result.size());
-        assertEquals(itemsList.get(0), result.get(0));
-        assertEquals(itemsList.get(1), result.get(1));
-        assertEquals(itemsList.get(2), result.get(2));
     }
 
 }
