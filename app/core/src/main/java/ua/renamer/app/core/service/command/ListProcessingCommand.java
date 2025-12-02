@@ -6,6 +6,7 @@ import ua.renamer.app.core.service.ProgressCallback;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * An abstract class representing a command for processing lists of items.
@@ -21,7 +22,6 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      *
      * @param input    the list of input items for the command.
      * @param callback the progress callback to track the execution progress.
-     *
      * @return the list of output items produced by the command.
      */
     @Override
@@ -32,18 +32,20 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
         }
 
         final int total = input.size();
-        int index = 0;
-        updateProgress(index, total, callback);
+        final AtomicInteger completed = new AtomicInteger(0);
+        updateProgress(0, total, callback);
 
         List<I> preparedInput = preprocessInput(input);
-        List<O> result = new ArrayList<>();
 
-        for (I item : preparedInput) {
-            result.add(processItem(item));
-            index++;
-            log.debug("Processed item: {}, index: {}", item, index);
-            updateProgress(index, total, callback);
-        }
+        Object progressLock = new Object(); // local lock object
+        List<O> result = preparedInput.parallelStream().map(item -> {
+            var resultItem = processItem(item);
+            synchronized (progressLock) {
+                int current = completed.incrementAndGet();
+                updateProgress(current, total, callback);
+            }
+            return resultItem;
+        }).toList();
 
         updateProgress(0, 0, callback);
         return result;
@@ -67,7 +69,6 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      * Preprocesses the input list before processing each item.
      *
      * @param input the input list to be preprocessed.
-     *
      * @return the preprocessed input list.
      */
     protected List<I> preprocessInput(List<I> input) {
@@ -78,7 +79,6 @@ public abstract class ListProcessingCommand<I, O> implements Command<List<I>, Li
      * Processes an individual item from the input list.
      *
      * @param item the item to be processed.
-     *
      * @return the result of processing the item.
      */
     public abstract O processItem(I item);
