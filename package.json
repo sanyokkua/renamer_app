@@ -9,14 +9,14 @@
   },
   "name": "renamer_app",
   "description": "This is a desktop tool designed to streamline the process of renaming files on your PC.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "repository": "https://github.com/sanyokkua/renamer_app",
   "bin": {
     "RenamerApp": "jdeploy-bundle/jdeploy.js"
   },
   "jdeploy": {
-    "jar": "app/ui/target/ua.renamer.app.ui-1.0.0.jar",
-    "javaVersion": "21",
+    "jar": "app/ui/target/ua.renamer.app.ui-1.1.0.jar",
+    "javaVersion": "25",
     "jdk": false,
     "javafx": true,
     "title": "Renamer App",
