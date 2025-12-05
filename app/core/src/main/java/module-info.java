@@ -4,6 +4,7 @@ module ua.renamer.app.core {
     requires metadata.extractor;
     requires com.google.guice;
     requires jakarta.annotation;
+    requires jakarta.inject; // Required by Guice
     requires org.apache.tika.core;
 
     exports ua.renamer.app.core.enums;
