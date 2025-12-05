@@ -10,14 +10,12 @@
     </parent>
 
     <artifactId>ua.renamer.app.ui</artifactId>
-    <version>1.1.0</version>
 
     <dependencies>
         <dependency>
             <groupId>ua.renamer.app</groupId>
             <artifactId>ua.renamer.app.core</artifactId>
-            <version>1.1.0</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -59,14 +57,9 @@
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parsers-standard-package</artifactId>
         </dependency>
     </dependencies>
 

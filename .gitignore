@@ -1116,3 +1116,10 @@ cython_debug/
 */target/*
 .DS_Store
 .vscode/*
+.project
+.classpath
+.factorypath
+.eclipse
+node_modules
+.settings
+.theia
