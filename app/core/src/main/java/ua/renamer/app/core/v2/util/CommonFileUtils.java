@@ -5,6 +5,7 @@ import org.apache.tika.Tika;
 import ua.renamer.app.core.v2.exception.FileAttributesReadException;
 import ua.renamer.app.core.v2.exception.FileNotFoundException;
 import ua.renamer.app.core.v2.exception.MimeTypeNotFoundException;
+import ua.renamer.app.core.v2.interfaces.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,10 +15,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 
-public class FileUtils {
+public class CommonFileUtils implements FileUtils {
     private static final ThreadLocal<Tika> TIKA_INSTANCE = ThreadLocal.withInitial(Tika::new);
 
-    public static void validateFile(File file) {
+    @Override
+    public void validateFile(File file) {
         if (file == null) {
             throw new NullPointerException("File is null");
         }
@@ -27,7 +29,8 @@ public class FileUtils {
         }
     }
 
-    public static BasicFileAttributes getBasicFileAttributes(Path path) {
+    @Override
+    public BasicFileAttributes getBasicFileAttributes(Path path) {
         try {
             return Files.readAttributes(path, BasicFileAttributes.class);
         } catch (IOException e) {
@@ -35,19 +38,23 @@ public class FileUtils {
         }
     }
 
-    public static String getFileBaseName(Path path) {
+    @Override
+    public String getFileBaseName(Path path) {
         return FilenameUtils.getBaseName(path.getFileName().toString());
     }
 
-    public static String getFileAbsolutePath(Path path) {
+    @Override
+    public String getFileAbsolutePath(Path path) {
         return path.toAbsolutePath().toString();
     }
 
-    public static String getFileExtension(Path path) {
+    @Override
+    public String getFileExtension(Path path) {
         return FilenameUtils.getExtension(path.getFileName().toString());
     }
 
-    public static String getFileMimeType(Path path) {
+    @Override
+    public String getFileMimeType(Path path) {
         try {
             return TIKA_INSTANCE.get().detect(path);
         } catch (IOException e) {
@@ -55,7 +62,8 @@ public class FileUtils {
         }
     }
 
-    public static LocalDateTime getFileCreationDate(BasicFileAttributes attributes) {
+    @Override
+    public LocalDateTime getFileCreationDate(BasicFileAttributes attributes) {
         FileTime creationTime = null;
         try {
             creationTime = attributes.creationTime();
@@ -63,10 +71,11 @@ public class FileUtils {
             // Creation time not supported on this platform (common on Linux)
         }
 
-        return TimeUtils.toLocalDateTime(creationTime);
+        return DateTimeConverter.toLocalDateTimeStatic(creationTime);
     }
 
-    public static LocalDateTime getFileModificationDate(BasicFileAttributes attributes) {
+    @Override
+    public LocalDateTime getFileModificationDate(BasicFileAttributes attributes) {
         FileTime modificationTime = null;
         try {
             modificationTime = attributes.lastModifiedTime();
@@ -74,6 +83,6 @@ public class FileUtils {
             // Modification time not supported on this platform (common on Linux)
         }
 
-        return TimeUtils.toLocalDateTime(modificationTime);
+        return DateTimeConverter.toLocalDateTimeStatic(modificationTime);
     }
 }
