@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ThreadAwareFileMapper implements FileMapper {
     private static final ConcurrentHashMap<String, Set<String>> MIME_EXTENSIONS_CACHE = new ConcurrentHashMap<>();
+
     private final FileUtils fileUtils;
     private final FileMetadataMapper fileMetadataMapper;
 

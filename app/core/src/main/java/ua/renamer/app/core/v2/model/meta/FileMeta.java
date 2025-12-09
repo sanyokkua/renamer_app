@@ -32,6 +32,10 @@ public class FileMeta {
         return FileMeta.builder().withErrors(List.of(ex.getMessage())).build();
     }
 
+    public static FileMeta withError(String errMsg) {
+        return FileMeta.builder().withErrors(List.of(errMsg)).build();
+    }
+
     public Optional<ImageMeta> getImageMeta() {
         return Optional.ofNullable(image);
     }
