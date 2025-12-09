@@ -1,7 +1,6 @@
 package ua.renamer.app.core.v2.model.meta.category;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 
 import java.time.LocalDateTime;

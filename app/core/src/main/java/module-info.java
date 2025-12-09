@@ -6,9 +6,12 @@ module ua.renamer.app.core {
     requires jakarta.annotation;
     requires jakarta.inject; // Required by Guice
     requires org.apache.tika.core;
-    requires ua.renamer.app.core;
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
+    requires org.apache.tika.parser.image;
+    requires org.jspecify;
+    requires jaudiotagger; // Audio metadata extraction
+
 
     exports ua.renamer.app.core.enums;
     exports ua.renamer.app.core.model;

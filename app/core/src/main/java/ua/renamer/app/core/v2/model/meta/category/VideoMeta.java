@@ -1,7 +1,6 @@
 package ua.renamer.app.core.v2.model.meta.category;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,7 @@ public class VideoMeta {
     LocalDateTime contentCreationDate;
     Integer width;
     Integer height;
-    Integer length;
+    Integer duration;
 
     public Optional<LocalDateTime> getContentCreationDate() {
         return Optional.ofNullable(contentCreationDate);
@@ -27,8 +26,8 @@ public class VideoMeta {
         return Optional.ofNullable(height);
     }
 
-    public Optional<Integer> getLength() {
-        return Optional.ofNullable(length);
+    public Optional<Integer> getDuration() {
+        return Optional.ofNullable(duration);
     }
 
 }

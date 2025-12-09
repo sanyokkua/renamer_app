@@ -1,0 +1,27 @@
+package ua.renamer.app.core.v2.mapper.strategy.format.image;
+
+import com.drew.metadata.Directory;
+import com.drew.metadata.photoshop.PsdHeaderDirectory;
+import ua.renamer.app.core.v2.interfaces.DateTimeUtils;
+
+public class PsdFileMetadataExtractor extends BaseImageMetadataExtractor {
+
+    public PsdFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
+        super(dateTimeUtils);
+    }
+
+    @Override
+    protected Class<? extends Directory> getBaseDirectoryClass() {
+        return PsdHeaderDirectory.class;
+    }
+
+    @Override
+    protected Integer getBaseWidthTag() {
+        return PsdHeaderDirectory.TAG_IMAGE_WIDTH;
+    }
+
+    @Override
+    protected Integer getBaseHeightTag() {
+        return PsdHeaderDirectory.TAG_IMAGE_HEIGHT;
+    }
+}
