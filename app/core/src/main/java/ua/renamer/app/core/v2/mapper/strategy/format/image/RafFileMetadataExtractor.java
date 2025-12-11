@@ -1,0 +1,32 @@
+package ua.renamer.app.core.v2.mapper.strategy.format.image;
+
+import com.drew.metadata.Directory;
+import com.drew.metadata.file.FileTypeDirectory;
+import ua.renamer.app.core.v2.interfaces.DateTimeUtils;
+
+/**
+ * Metadata extractor for Fujifilm RAF (Raw image File) camera files.
+ * RAF files contain EXIF metadata with datetime information.
+ */
+public class RafFileMetadataExtractor extends BaseImageMetadataExtractor {
+
+    public RafFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
+        super(dateTimeUtils);
+    }
+
+    @Override
+    protected Class<? extends Directory> getBaseDirectoryClass() {
+        return FileTypeDirectory.class;
+    }
+
+    @Override
+    protected Integer getBaseWidthTag() {
+        return null;
+    }
+
+    @Override
+    protected Integer getBaseHeightTag() {
+        return null;
+    }
+
+}

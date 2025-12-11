@@ -16,6 +16,26 @@ import java.util.stream.Stream;
 public class DateTimeConverter implements DateTimeUtils {
     private static final LocalDateTime MINIMAL = LocalDateTime.of(1900, 1, 1, 0, 0);
 
+    /**
+     * Common locales for date parsing.
+     * Includes English, US, EU (German, French, Croatian, Czech, Polish), Ukrainian, and Russian.
+     * This optimized list reduces parsing attempts from ~7,000 to ~150 per call.
+     */
+    private static final List<Locale> COMMON_LOCALES = List.of(
+            Locale.ENGLISH,
+            Locale.US,
+            Locale.UK,
+            Locale.GERMAN,
+            Locale.GERMANY,
+            Locale.FRENCH,
+            Locale.FRANCE,
+            new Locale("hr", "HR"),  // Croatian
+            new Locale("cs", "CZ"),  // Czech
+            new Locale("pl", "PL"),  // Polish
+            new Locale("uk", "UA"),  // Ukrainian
+            new Locale("ru", "RU")   // Russian
+    );
+
     @Override
     public ZoneId getSystemZoneId() {
         return ZoneId.systemDefault();
@@ -28,14 +48,6 @@ public class DateTimeConverter implements DateTimeUtils {
         }
 
         return LocalDateTime.ofInstant(fileTime.toInstant(), getSystemZoneId());
-    }
-
-    public static LocalDateTime toLocalDateTimeStatic(FileTime fileTime) {
-        if (fileTime == null) {
-            return null;
-        }
-
-        return LocalDateTime.ofInstant(fileTime.toInstant(), ZoneId.systemDefault());
     }
 
     @Override
@@ -82,7 +94,6 @@ public class DateTimeConverter implements DateTimeUtils {
     @Override
     public Optional<LocalDateTime> parseDateTimeStringWithZoneInfo(String dateTimeString) {
         var formatsWithZoneInfo = List.of("EEE, dd MMM yyyy HH:mm:ss Z",
-                                          "EEE, dd MMM yyyy HH:mm:ss Z",
                                           "EEE, dd MMM yyyy HH:mm:ss z",
                                           "EEE, dd MMM yyyy HH:mm:ss ZZZZ",
                                           "EEE, dd MMM yyyy HH:mm:ss zzzz",
@@ -92,28 +103,16 @@ public class DateTimeConverter implements DateTimeUtils {
                                           "yyyy-MM-dd'T'HH:mm:ssZ",
                                           "yyyy-MM-dd'T'HH:mm:ssXXX");
 
-        // Try parsing with zone info formats first
-        Locale[] availableLocales = Locale.getAvailableLocales();
-        Set<Locale> locales = new LinkedHashSet<>();
-        locales.add(Locale.ENGLISH); // Exif usually uses ENGLISH, US, FRENCH, GERMAN locales
-        locales.add(Locale.UK);
-        locales.add(Locale.US);
-        locales.add(Locale.CANADA);
-        locales.add(Locale.FRANCE);
-        locales.add(Locale.FRENCH);
-        locales.add(Locale.GERMAN);
-        locales.add(Locale.GERMANY);
-        locales.add(Locale.getDefault());
-        locales.addAll(Arrays.stream(availableLocales).toList());
+        // Try parsing with zone info formats using optimized locale list
 
         for (String format : formatsWithZoneInfo) {
-            for (Locale currentLocale : locales) {
+            for (Locale currentLocale : COMMON_LOCALES) {
                 try {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format, currentLocale);
                     ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTimeString, formatter);
                     return Optional.ofNullable(zonedDateTime.toLocalDateTime());
                 } catch (DateTimeParseException e) {
-                    // Ignore and return empty optional
+                    // Ignore and continue trying other formats/locales
                 }
             }
         }

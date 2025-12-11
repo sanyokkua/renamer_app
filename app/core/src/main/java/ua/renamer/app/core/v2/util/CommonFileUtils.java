@@ -1,10 +1,12 @@
 package ua.renamer.app.core.v2.util;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import ua.renamer.app.core.v2.exception.FileAttributesReadException;
 import ua.renamer.app.core.v2.exception.FileNotFoundException;
 import ua.renamer.app.core.v2.exception.MimeTypeNotFoundException;
+import ua.renamer.app.core.v2.interfaces.DateTimeUtils;
 import ua.renamer.app.core.v2.interfaces.FileUtils;
 
 import java.io.File;
@@ -15,8 +17,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
 public class CommonFileUtils implements FileUtils {
     private static final ThreadLocal<Tika> TIKA_INSTANCE = ThreadLocal.withInitial(Tika::new);
+    private final DateTimeUtils dateTimeUtils;
 
     @Override
     public void validateFile(File file) {
@@ -71,7 +75,7 @@ public class CommonFileUtils implements FileUtils {
             // Creation time not supported on this platform (common on Linux)
         }
 
-        return DateTimeConverter.toLocalDateTimeStatic(creationTime);
+        return dateTimeUtils.toLocalDateTime(creationTime);
     }
 
     @Override
@@ -83,6 +87,6 @@ public class CommonFileUtils implements FileUtils {
             // Modification time not supported on this platform (common on Linux)
         }
 
-        return DateTimeConverter.toLocalDateTimeStatic(modificationTime);
+        return dateTimeUtils.toLocalDateTime(modificationTime);
     }
 }

@@ -22,7 +22,23 @@ public class AudioFileMetadataExtractor implements FileMetadataExtractor {
         // Routes all audio MIME types to the same extractor
         if (AppMimeTypes.AUDIO_MP4.getMime().equals(mimeType) ||
             AppMimeTypes.AUDIO_MPEG.getMime().equals(mimeType) ||
-            AppMimeTypes.AUDIO_WAV.getMime().equals(mimeType)) {
+            AppMimeTypes.AUDIO_MP2.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_WAV.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_FLAC.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_OGG.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_X_MS_WMA.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_AIFF.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_X_AIFF.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_APE.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_MUSEPACK.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_WAVPACK.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_SPEEX.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_OPUS.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_BASIC.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_DSF.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_X_REALAUDIO.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_X_OPTIMFROG.getMime().equals(mimeType) ||
+            AppMimeTypes.AUDIO_X_TTA.getMime().equals(mimeType)) {
             return unifiedAudioFileMetadataExtractor.extract(file, mimeType);
         }
 
