@@ -44,7 +44,20 @@ public class CommonFileUtils implements FileUtils {
 
     @Override
     public String getFileBaseName(Path path) {
-        return FilenameUtils.getBaseName(path.getFileName().toString());
+        String fileName = path.getFileName().toString();
+
+        // Handle hidden files (files starting with .)
+        if (fileName.startsWith(".")) {
+            int lastDotIndex = fileName.lastIndexOf('.');
+            // If it's just a dot or only one dot at the start, the whole name is the base name
+            if (lastDotIndex == 0) {
+                return fileName;
+            }
+            // If there are multiple dots, return everything up to the last dot
+            return fileName.substring(0, lastDotIndex);
+        }
+
+        return FilenameUtils.getBaseName(fileName);
     }
 
     @Override
@@ -54,7 +67,20 @@ public class CommonFileUtils implements FileUtils {
 
     @Override
     public String getFileExtension(Path path) {
-        return FilenameUtils.getExtension(path.getFileName().toString());
+        String fileName = path.getFileName().toString();
+
+        // Handle hidden files (files starting with .)
+        if (fileName.startsWith(".")) {
+            int lastDotIndex = fileName.lastIndexOf('.');
+            // If there's only one dot at the start, there's no extension
+            if (lastDotIndex == 0) {
+                return "";
+            }
+            // Return the part after the last dot
+            return fileName.substring(lastDotIndex + 1);
+        }
+
+        return FilenameUtils.getExtension(fileName);
     }
 
     @Override

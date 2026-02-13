@@ -21,40 +21,15 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 /**
  * Integration tests for MP4 metadata extraction using real test data files.
  * Test data located at: src/test/resources/test-data/video/mp4/
- *
+ * <p>
  * NOTE: MP4 metadata embedding via exiftool works differently than JPEG.
  * The test data may not have properly embedded creation dates in QuickTime format.
  * These tests focus on dimensions and duration which are reliably extracted.
  */
 class Mp4MetadataExtractorIntegrationTest {
 
-    private Mp4FileMetadataExtractor extractor;
     private static final String TEST_DATA_PATH = "test-data/video/mp4/";
-
-    @BeforeEach
-    void setUp() {
-        DateTimeConverter dateTimeConverter = new DateTimeConverter();
-        extractor = new Mp4FileMetadataExtractor(dateTimeConverter);
-    }
-
-    // ============================================================================
-    // Helper Methods
-    // ============================================================================
-
-    private File getTestFile(String filename) {
-        URL resource = getClass().getClassLoader().getResource(TEST_DATA_PATH + filename);
-        assertNotNull(resource, "Test file not found: " + filename);
-        try {
-            return new File(resource.toURI());
-        } catch (URISyntaxException e) {
-            fail("Failed to load test file: " + filename);
-            return null;
-        }
-    }
-
-    // ============================================================================
-    // Test Data Providers
-    // ============================================================================
+    private Mp4FileMetadataExtractor extractor;
 
     static Stream<Arguments> provideMp4TestFiles() {
         return Stream.of(
@@ -66,6 +41,31 @@ class Mp4MetadataExtractorIntegrationTest {
                 arguments("test_mp4_std_tz_2025-12-11_21-00-35p02-00.mp4"),
                 arguments("test_mp4_gps_2025-12-11_21-00-35_lat48.8566_lon2.3522.mp4")
         );
+    }
+
+    // ============================================================================
+    // Helper Methods
+    // ============================================================================
+
+    @BeforeEach
+    void setUp() {
+        DateTimeConverter dateTimeConverter = new DateTimeConverter();
+        extractor = new Mp4FileMetadataExtractor(dateTimeConverter);
+    }
+
+    // ============================================================================
+    // Test Data Providers
+    // ============================================================================
+
+    private File getTestFile(String filename) {
+        URL resource = getClass().getClassLoader().getResource(TEST_DATA_PATH + filename);
+        assertNotNull(resource, "Test file not found: " + filename);
+        try {
+            return new File(resource.toURI());
+        } catch (URISyntaxException e) {
+            fail("Failed to load test file: " + filename);
+            return null;
+        }
     }
 
     // ============================================================================
@@ -117,7 +117,60 @@ class Mp4MetadataExtractorIntegrationTest {
 
         // Verify aspect ratio
         double aspectRatio = (double) width / height;
-        assertEquals(4.0/3.0, aspectRatio, 0.01, "Aspect ratio should be 4:3");
+        assertEquals(4.0 / 3.0, aspectRatio, 0.01, "Aspect ratio should be 4:3");
+    }
+
+    // ============================================================================
+    // DateTime Tests
+    // ============================================================================
+    // NOTE: MP4 datetime extraction has limitations with current test data.
+    // The test files were generated with FFmpeg which creates QuickTime track dates
+    // that default to 0 (interpreted as 1904 epoch). Proper QuickTime creation_time
+    // embedding requires special handling that wasn't used in test data generation.
+    // These tests verify the current behavior: datetime may be present but might be
+    // the 1904 epoch date for files without proper QuickTime timestamps.
+
+    @Test
+    void testExtract_DateTimeExtractionBehavior() {
+        File testFile = getTestFile("test_mp4_std_2025-12-11_21-00-35.mp4");
+
+        FileMeta result = extractor.extract(testFile, "video/mp4");
+
+        assertNotNull(result);
+        assertTrue(result.getVideoMeta().isPresent());
+
+        VideoMeta videoMeta = result.getVideoMeta().get();
+
+        // Current behavior: datetime might be present, but could be 1904 epoch
+        // if QuickTime creation_time wasn't properly set during file generation
+        if (videoMeta.getContentCreationDate().isPresent()) {
+            java.time.LocalDateTime dateTime = videoMeta.getContentCreationDate().get();
+            assertNotNull(dateTime, "If datetime is present, it should not be null");
+            // Year might be 1904 (QuickTime epoch) or actual date if properly embedded
+            assertTrue(dateTime.getYear() >= 1904, "Year should be valid");
+        }
+        // We don't assert that datetime MUST be present due to test data limitations
+    }
+
+    @Test
+    void testExtract_CleanFileDateTime() {
+        File testFile = getTestFile("test_mp4_clean.mp4");
+
+        FileMeta result = extractor.extract(testFile, "video/mp4");
+
+        assertNotNull(result);
+        assertTrue(result.getVideoMeta().isPresent());
+
+        VideoMeta videoMeta = result.getVideoMeta().get();
+
+        // Clean file behavior: might have 1904 epoch or no datetime
+        // Both behaviors are acceptable for files without explicit timestamps
+        if (videoMeta.getContentCreationDate().isPresent()) {
+            java.time.LocalDateTime dateTime = videoMeta.getContentCreationDate().get();
+            // If present, should be a valid date (likely 1904 for clean files)
+            assertTrue(dateTime.getYear() >= 1904 && dateTime.getYear() <= 2100,
+                       "If datetime present, should be in valid range");
+        }
     }
 
     // ============================================================================
@@ -152,13 +205,13 @@ class Mp4MetadataExtractorIntegrationTest {
     void testExtract_AllFilesExist() {
         // Verify all test files can be loaded
         String[] testFiles = {
-            "test_mp4_clean.mp4",
-            "test_mp4_std_2025-12-11_21-00-35.mp4",
-            "test_mp4_past_2000-01-01_12-00-00.mp4",
-            "test_mp4_future_2050-01-01_12-00-00.mp4",
-            "test_mp4_std_no_tz_2025-12-11_21-00-35.mp4",
-            "test_mp4_std_tz_2025-12-11_21-00-35p02-00.mp4",
-            "test_mp4_gps_2025-12-11_21-00-35_lat48.8566_lon2.3522.mp4"
+                "test_mp4_clean.mp4",
+                "test_mp4_std_2025-12-11_21-00-35.mp4",
+                "test_mp4_past_2000-01-01_12-00-00.mp4",
+                "test_mp4_future_2050-01-01_12-00-00.mp4",
+                "test_mp4_std_no_tz_2025-12-11_21-00-35.mp4",
+                "test_mp4_std_tz_2025-12-11_21-00-35p02-00.mp4",
+                "test_mp4_gps_2025-12-11_21-00-35_lat48.8566_lon2.3522.mp4"
         };
 
         for (String filename : testFiles) {

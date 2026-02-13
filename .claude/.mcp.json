@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+        "py-search-helper": {
+            "command": "uv",
+            "args": [
+                "run",
+                "py-search-helper-mcp"
+            ],
+            "description": "Web search and content extraction - use for API documentation, library references, and unknown information"
+        }
+    }
+}

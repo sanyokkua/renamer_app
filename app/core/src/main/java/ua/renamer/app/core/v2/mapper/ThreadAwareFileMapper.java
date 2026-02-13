@@ -2,7 +2,7 @@ package ua.renamer.app.core.v2.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import ua.renamer.app.core.enums.MimeTypes;
+import ua.renamer.app.core.v2.enums.MimeTypes;
 import ua.renamer.app.core.v2.interfaces.FileMapper;
 import ua.renamer.app.core.v2.interfaces.FileMetadataMapper;
 import ua.renamer.app.core.v2.interfaces.FileUtils;

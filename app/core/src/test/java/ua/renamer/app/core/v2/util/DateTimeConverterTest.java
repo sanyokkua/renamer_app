@@ -5,12 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.core.enums.DateFormat;
-import ua.renamer.app.core.enums.DateTimeFormat;
-import ua.renamer.app.core.enums.TimeFormat;
+import ua.renamer.app.core.v2.enums.DateFormat;
+import ua.renamer.app.core.v2.enums.DateTimeFormat;
+import ua.renamer.app.core.v2.enums.TimeFormat;
 
 import java.nio.file.attribute.FileTime;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Optional;
@@ -22,99 +25,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 class DateTimeConverterTest {
 
     private DateTimeConverter converter;
-
-    @BeforeEach
-    void setUp() {
-        converter = new DateTimeConverter();
-    }
-
-    // ============================================================================
-    // A. System Zone ID Tests
-    // ============================================================================
-
-    @Test
-    void testGetSystemZoneId() {
-        ZoneId zoneId = converter.getSystemZoneId();
-        assertNotNull(zoneId);
-        assertEquals(ZoneId.systemDefault(), zoneId);
-    }
-
-    // ============================================================================
-    // B. FileTime Conversion Tests
-    // ============================================================================
-
-    @Test
-    void testToLocalDateTime_WithValidFileTime() {
-        Instant instant = Instant.parse("2024-06-08T15:30:45Z");
-        FileTime fileTime = FileTime.from(instant);
-
-        LocalDateTime result = converter.toLocalDateTime(fileTime);
-
-        assertNotNull(result);
-        assertEquals(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()), result);
-    }
-
-    @Test
-    void testToLocalDateTime_WithNullFileTime() {
-        LocalDateTime result = converter.toLocalDateTime(null);
-        assertNull(result);
-    }
-
-    @Test
-    void testToLocalDateTime_WithEpochZero() {
-        FileTime fileTime = FileTime.from(Instant.EPOCH);
-
-        LocalDateTime result = converter.toLocalDateTime(fileTime);
-
-        assertNotNull(result);
-        assertEquals(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault()), result);
-    }
-
-    // ============================================================================
-    // C. Minimal DateTime Tests
-    // ============================================================================
-
-    @Test
-    void testGetMinimalDateTime() {
-        LocalDateTime minimal = converter.getMinimalDateTime();
-
-        assertNotNull(minimal);
-        assertEquals(LocalDateTime.of(1900, 1, 1, 0, 0), minimal);
-    }
-
-    // ============================================================================
-    // D. DateTime String Parsing (Main Method) Tests
-    // ============================================================================
-
-    @Test
-    void testParseDateTimeString_WithNull() {
-        LocalDateTime result = converter.parseDateTimeString(null);
-        assertNull(result);
-    }
-
-    @Test
-    void testParseDateTimeString_WithEmptyString() {
-        LocalDateTime result = converter.parseDateTimeString("");
-        assertNull(result);
-    }
-
-    @Test
-    void testParseDateTimeString_WithBlankString() {
-        LocalDateTime result = converter.parseDateTimeString("   ");
-        assertNull(result);
-    }
-
-    @Test
-    void testParseDateTimeString_WithWhitespace() {
-        LocalDateTime result = converter.parseDateTimeString("  2024-06-08  ");
-
-        assertNotNull(result);
-        assertEquals(LocalDateTime.of(2024, 6, 8, 0, 0), result);
-    }
-
-    // ============================================================================
-    // E. DateTime Parsing with Zone Info Tests
-    // ============================================================================
 
     static Stream<Arguments> provideZoneInfoFormats() {
         LocalDateTime expected = LocalDateTime.of(2024, 6, 8, 15, 30, 45);
@@ -130,37 +40,8 @@ class DateTimeConverterTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideZoneInfoFormats")
-    void testParseDateTimeStringWithZoneInfo(String input, LocalDateTime expected) {
-        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneInfo(input);
-
-        assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
-    }
-
-    @Test
-    void testParseDateTimeStringWithZoneInfo_InvalidZone() {
-        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneInfo("invalid date string");
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testParseDateTimeStringWithZoneInfo_DifferentLocales() {
-        // Test with German locale
-        Locale.setDefault(Locale.GERMAN);
-        String input = "2024-06-08T15:30:45+02:00";
-        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneInfo(input);
-
-        assertTrue(result.isPresent());
-        assertEquals(LocalDateTime.of(2024, 6, 8, 15, 30, 45), result.get());
-
-        // Reset to US
-        Locale.setDefault(Locale.US);
-    }
-
     // ============================================================================
-    // F. DateTime Parsing with Zone Offset Tests
+    // A. System Zone ID Tests
     // ============================================================================
 
     static Stream<Arguments> provideOffsetFormats() {
@@ -178,31 +59,8 @@ class DateTimeConverterTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideOffsetFormats")
-    void testParseDateTimeStringWithZoneOffset(String input, String offset, LocalDateTime expected) {
-        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneOffset(input, offset);
-
-        assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
-    }
-
-    @Test
-    void testParseDateTimeStringWithZoneOffset_InvalidOffset() {
-        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneOffset("2024-06-08 15:30:45", "invalid");
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testParseDateTimeStringWithZoneOffset_NullDefaultsToUTC() {
-        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneOffset("2024-06-08 15:30:45", null);
-
-        assertTrue(result.isPresent());
-        assertEquals(LocalDateTime.of(2024, 6, 8, 15, 30, 45), result.get());
-    }
-
     // ============================================================================
-    // G. Date-Only Parsing Tests
+    // B. FileTime Conversion Tests
     // ============================================================================
 
     static Stream<Arguments> provideDateOnlyFormats() {
@@ -212,70 +70,12 @@ class DateTimeConverterTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideDateOnlyFormats")
-    void testParseDateOnly(String input, LocalDateTime expected) {
-        Optional<LocalDateTime> result = converter.parseDateOnly(input);
-
-        assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
-    }
-
-    @Test
-    void testParseDateOnly_InvalidFormat() {
-        Optional<LocalDateTime> result = converter.parseDateOnly("2024/06/08");
-        assertTrue(result.isEmpty());
-    }
-
-    // ============================================================================
-    // H. Year and Month Parsing Tests
-    // ============================================================================
-
     static Stream<Arguments> provideYearMonthFormats() {
         return Stream.of(
                 arguments("2024-06", LocalDateTime.of(2024, 6, 1, 0, 0)),
                 arguments("2024", LocalDateTime.of(2024, 1, 1, 0, 0))
         );
     }
-
-    @ParameterizedTest
-    @MethodSource("provideYearMonthFormats")
-    void testParseYearAndMonth(String input, LocalDateTime expected) {
-        Optional<LocalDateTime> result = converter.parseYearAndMonth(input);
-
-        assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
-    }
-
-    @Test
-    void testParseYearAndMonth_InvalidYear() {
-        Optional<LocalDateTime> result = converter.parseYearAndMonth("abcd");
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testParseYearAndMonth_TooShort() {
-        Optional<LocalDateTime> result = converter.parseYearAndMonth("123");
-        assertTrue(result.isEmpty());
-    }
-
-    // ============================================================================
-    // I. DateTime Formatting Tests
-    // ============================================================================
-
-    @Test
-    void testFormatLocalDateTime() {
-        LocalDateTime dateTime = LocalDateTime.of(2024, 6, 8, 15, 30, 45);
-
-        String result = converter.formatLocalDateTime(dateTime);
-
-        assertNotNull(result);
-        assertEquals("2024-06-08 15:30:45", result);
-    }
-
-    // ============================================================================
-    // J. Date Formatting Tests
-    // ============================================================================
 
     static Stream<Arguments> provideDateFormats() {
         LocalDateTime dt = LocalDateTime.of(2024, 6, 8, 15, 30, 45);
@@ -330,17 +130,8 @@ class DateTimeConverterTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("provideDateFormats")
-    void testFormatDate(LocalDateTime dateTime, DateFormat format, String expected) {
-        String result = converter.formatDate(dateTime, format);
-
-        assertNotNull(result);
-        assertEquals(expected, result);
-    }
-
     // ============================================================================
-    // K. Time Formatting Tests
+    // C. Minimal DateTime Tests
     // ============================================================================
 
     static Stream<Arguments> provideTimeFormats() {
@@ -391,6 +182,269 @@ class DateTimeConverterTest {
         );
     }
 
+    // ============================================================================
+    // D. DateTime String Parsing (Main Method) Tests
+    // ============================================================================
+
+    static Stream<Arguments> provideDateTimeFormats() {
+        LocalDateTime dt = LocalDateTime.of(2024, 6, 8, 15, 30, 45);
+
+        return Stream.of(
+                arguments(null, DateFormat.DO_NOT_USE_DATE, TimeFormat.DO_NOT_USE_TIME,
+                          DateTimeFormat.DATE_TIME_TOGETHER, ""),
+                arguments(dt, DateFormat.DO_NOT_USE_DATE, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.DATE_TIME_TOGETHER, "153045"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.DO_NOT_USE_TIME,
+                          DateTimeFormat.DATE_TIME_TOGETHER, "20240608"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.DATE_TIME_TOGETHER, "20240608153045"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.DATE_TIME_WHITE_SPACED, "20240608 153045"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.DATE_TIME_UNDERSCORED, "20240608_153045"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.DATE_TIME_DOTTED, "20240608.153045"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.DATE_TIME_DASHED, "20240608-153045"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.REVERSE_DATE_TIME_TOGETHER, "15304520240608"),
+                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
+                          DateTimeFormat.NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970,
+                          String.valueOf(dt.toInstant(ZoneOffset.UTC).toEpochMilli()))
+        );
+    }
+
+    static Stream<Arguments> provideFindMinArgs() {
+        LocalDateTime dt1 = LocalDateTime.of(2024, 5, 29, 17, 5, 10);
+        LocalDateTime dt2 = LocalDateTime.of(2024, 5, 29, 17, 5, 11);
+        LocalDateTime dt3 = LocalDateTime.of(2024, 5, 29, 17, 5, 9);
+        LocalDateTime dt4 = LocalDateTime.of(2020, 5, 29, 17, 5, 10);
+
+        return Stream.of(
+                arguments(null, null),
+                arguments(null, new LocalDateTime[0]),
+                arguments(dt1, new LocalDateTime[]{dt1}),
+                arguments(dt1, new LocalDateTime[]{dt1, dt2}),
+                arguments(dt3, new LocalDateTime[]{dt1, dt3, dt2}),
+                arguments(dt1, new LocalDateTime[]{dt1, null, dt2, null}),
+                arguments(dt1, new LocalDateTime[]{dt1, null, null, null, null}),
+                arguments(null, new LocalDateTime[]{null, null, null}),
+                arguments(dt4, new LocalDateTime[]{dt1, dt2, dt4})
+        );
+    }
+
+    @BeforeEach
+    void setUp() {
+        converter = new DateTimeConverter();
+    }
+
+    @Test
+    void testGetSystemZoneId() {
+        ZoneId zoneId = converter.getSystemZoneId();
+        assertNotNull(zoneId);
+        assertEquals(ZoneId.systemDefault(), zoneId);
+    }
+
+    // ============================================================================
+    // E. DateTime Parsing with Zone Info Tests
+    // ============================================================================
+
+    @Test
+    void testToLocalDateTime_WithValidFileTime() {
+        Instant instant = Instant.parse("2024-06-08T15:30:45Z");
+        FileTime fileTime = FileTime.from(instant);
+
+        LocalDateTime result = converter.toLocalDateTime(fileTime);
+
+        assertNotNull(result);
+        assertEquals(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()), result);
+    }
+
+    @Test
+    void testToLocalDateTime_WithNullFileTime() {
+        LocalDateTime result = converter.toLocalDateTime(null);
+        assertNull(result);
+    }
+
+    @Test
+    void testToLocalDateTime_WithEpochZero() {
+        FileTime fileTime = FileTime.from(Instant.EPOCH);
+
+        LocalDateTime result = converter.toLocalDateTime(fileTime);
+
+        assertNotNull(result);
+        assertEquals(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault()), result);
+    }
+
+    @Test
+    void testGetMinimalDateTime() {
+        LocalDateTime minimal = converter.getMinimalDateTime();
+
+        assertNotNull(minimal);
+        assertEquals(LocalDateTime.of(1900, 1, 1, 0, 0), minimal);
+    }
+
+    // ============================================================================
+    // F. DateTime Parsing with Zone Offset Tests
+    // ============================================================================
+
+    @Test
+    void testParseDateTimeString_WithNull() {
+        LocalDateTime result = converter.parseDateTimeString(null);
+        assertNull(result);
+    }
+
+    @Test
+    void testParseDateTimeString_WithEmptyString() {
+        LocalDateTime result = converter.parseDateTimeString("");
+        assertNull(result);
+    }
+
+    @Test
+    void testParseDateTimeString_WithBlankString() {
+        LocalDateTime result = converter.parseDateTimeString("   ");
+        assertNull(result);
+    }
+
+    @Test
+    void testParseDateTimeString_WithWhitespace() {
+        LocalDateTime result = converter.parseDateTimeString("  2024-06-08  ");
+
+        assertNotNull(result);
+        assertEquals(LocalDateTime.of(2024, 6, 8, 0, 0), result);
+    }
+
+    // ============================================================================
+    // G. Date-Only Parsing Tests
+    // ============================================================================
+
+    @ParameterizedTest
+    @MethodSource("provideZoneInfoFormats")
+    void testParseDateTimeStringWithZoneInfo(String input, LocalDateTime expected) {
+        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneInfo(input);
+
+        assertTrue(result.isPresent());
+        assertEquals(expected, result.get());
+    }
+
+    @Test
+    void testParseDateTimeStringWithZoneInfo_InvalidZone() {
+        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneInfo("invalid date string");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testParseDateTimeStringWithZoneInfo_DifferentLocales() {
+        // Test with German locale
+        Locale.setDefault(Locale.GERMAN);
+        String input = "2024-06-08T15:30:45+02:00";
+        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneInfo(input);
+
+        assertTrue(result.isPresent());
+        assertEquals(LocalDateTime.of(2024, 6, 8, 15, 30, 45), result.get());
+
+        // Reset to US
+        Locale.setDefault(Locale.US);
+    }
+
+    // ============================================================================
+    // H. Year and Month Parsing Tests
+    // ============================================================================
+
+    @ParameterizedTest
+    @MethodSource("provideOffsetFormats")
+    void testParseDateTimeStringWithZoneOffset(String input, String offset, LocalDateTime expected) {
+        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneOffset(input, offset);
+
+        assertTrue(result.isPresent());
+        assertEquals(expected, result.get());
+    }
+
+    @Test
+    void testParseDateTimeStringWithZoneOffset_InvalidOffset() {
+        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneOffset("2024-06-08 15:30:45", "invalid");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testParseDateTimeStringWithZoneOffset_NullDefaultsToUTC() {
+        Optional<LocalDateTime> result = converter.parseDateTimeStringWithZoneOffset("2024-06-08 15:30:45", null);
+
+        assertTrue(result.isPresent());
+        assertEquals(LocalDateTime.of(2024, 6, 8, 15, 30, 45), result.get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideDateOnlyFormats")
+    void testParseDateOnly(String input, LocalDateTime expected) {
+        Optional<LocalDateTime> result = converter.parseDateOnly(input);
+
+        assertTrue(result.isPresent());
+        assertEquals(expected, result.get());
+    }
+
+    // ============================================================================
+    // I. DateTime Formatting Tests
+    // ============================================================================
+
+    @Test
+    void testParseDateOnly_InvalidFormat() {
+        Optional<LocalDateTime> result = converter.parseDateOnly("2024/06/08");
+        assertTrue(result.isEmpty());
+    }
+
+    // ============================================================================
+    // J. Date Formatting Tests
+    // ============================================================================
+
+    @ParameterizedTest
+    @MethodSource("provideYearMonthFormats")
+    void testParseYearAndMonth(String input, LocalDateTime expected) {
+        Optional<LocalDateTime> result = converter.parseYearAndMonth(input);
+
+        assertTrue(result.isPresent());
+        assertEquals(expected, result.get());
+    }
+
+    @Test
+    void testParseYearAndMonth_InvalidYear() {
+        Optional<LocalDateTime> result = converter.parseYearAndMonth("abcd");
+        assertTrue(result.isEmpty());
+    }
+
+    // ============================================================================
+    // K. Time Formatting Tests
+    // ============================================================================
+
+    @Test
+    void testParseYearAndMonth_TooShort() {
+        Optional<LocalDateTime> result = converter.parseYearAndMonth("123");
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testFormatLocalDateTime() {
+        LocalDateTime dateTime = LocalDateTime.of(2024, 6, 8, 15, 30, 45);
+
+        String result = converter.formatLocalDateTime(dateTime);
+
+        assertNotNull(result);
+        assertEquals("2024-06-08 15:30:45", result);
+    }
+
+    // ============================================================================
+    // L. DateTime Combined Formatting Tests
+    // ============================================================================
+
+    @ParameterizedTest
+    @MethodSource("provideDateFormats")
+    void testFormatDate(LocalDateTime dateTime, DateFormat format, String expected) {
+        String result = converter.formatDate(dateTime, format);
+
+        assertNotNull(result);
+        assertEquals(expected, result);
+    }
+
     @ParameterizedTest
     @MethodSource("provideTimeFormats")
     void testFormatTime(LocalDateTime dateTime, TimeFormat format, String expected) {
@@ -403,68 +457,17 @@ class DateTimeConverterTest {
     }
 
     // ============================================================================
-    // L. DateTime Combined Formatting Tests
+    // M. Find Minimum DateTime Tests
     // ============================================================================
-
-    static Stream<Arguments> provideDateTimeFormats() {
-        LocalDateTime dt = LocalDateTime.of(2024, 6, 8, 15, 30, 45);
-
-        return Stream.of(
-                arguments(null, DateFormat.DO_NOT_USE_DATE, TimeFormat.DO_NOT_USE_TIME,
-                         DateTimeFormat.DATE_TIME_TOGETHER, ""),
-                arguments(dt, DateFormat.DO_NOT_USE_DATE, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.DATE_TIME_TOGETHER, "153045"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.DO_NOT_USE_TIME,
-                         DateTimeFormat.DATE_TIME_TOGETHER, "20240608"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.DATE_TIME_TOGETHER, "20240608153045"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.DATE_TIME_WHITE_SPACED, "20240608 153045"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.DATE_TIME_UNDERSCORED, "20240608_153045"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.DATE_TIME_DOTTED, "20240608.153045"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.DATE_TIME_DASHED, "20240608-153045"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.REVERSE_DATE_TIME_TOGETHER, "15304520240608"),
-                arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                         DateTimeFormat.NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970,
-                         String.valueOf(dt.toInstant(ZoneOffset.UTC).toEpochMilli()))
-        );
-    }
 
     @ParameterizedTest
     @MethodSource("provideDateTimeFormats")
     void testFormatDateTime(LocalDateTime dt, DateFormat dateFormat, TimeFormat timeFormat,
-                           DateTimeFormat dateTimeFormat, String expected) {
+                            DateTimeFormat dateTimeFormat, String expected) {
         String result = converter.formatDateTime(dt, dateFormat, timeFormat, dateTimeFormat);
 
         assertNotNull(result);
         assertEquals(expected, result);
-    }
-
-    // ============================================================================
-    // M. Find Minimum DateTime Tests
-    // ============================================================================
-
-    static Stream<Arguments> provideFindMinArgs() {
-        LocalDateTime dt1 = LocalDateTime.of(2024, 5, 29, 17, 5, 10);
-        LocalDateTime dt2 = LocalDateTime.of(2024, 5, 29, 17, 5, 11);
-        LocalDateTime dt3 = LocalDateTime.of(2024, 5, 29, 17, 5, 9);
-        LocalDateTime dt4 = LocalDateTime.of(2020, 5, 29, 17, 5, 10);
-
-        return Stream.of(
-                arguments(null, (Object) null),
-                arguments(null, new LocalDateTime[0]),
-                arguments(dt1, new LocalDateTime[]{dt1}),
-                arguments(dt1, new LocalDateTime[]{dt1, dt2}),
-                arguments(dt3, new LocalDateTime[]{dt1, dt3, dt2}),
-                arguments(dt1, new LocalDateTime[]{dt1, null, dt2, null}),
-                arguments(dt1, new LocalDateTime[]{dt1, null, null, null, null}),
-                arguments(null, new LocalDateTime[]{null, null, null}),
-                arguments(dt4, new LocalDateTime[]{dt1, dt2, dt4})
-        );
     }
 
     @ParameterizedTest

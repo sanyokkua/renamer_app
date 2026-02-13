@@ -1,9 +1,9 @@
 package ua.renamer.app.core.v2.interfaces;
 
 import org.jspecify.annotations.Nullable;
-import ua.renamer.app.core.enums.DateFormat;
-import ua.renamer.app.core.enums.DateTimeFormat;
-import ua.renamer.app.core.enums.TimeFormat;
+import ua.renamer.app.core.v2.enums.DateFormat;
+import ua.renamer.app.core.v2.enums.DateTimeFormat;
+import ua.renamer.app.core.v2.enums.TimeFormat;
 
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;

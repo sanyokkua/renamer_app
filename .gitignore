@@ -1123,3 +1123,7 @@ cython_debug/
 node_modules
 .settings
 .theia
+# Claude Code - ignore local settings but keep CLAUDE.md
+.claude/*
+!.claude/CLAUDE.md
+!.claude/.mcp.json

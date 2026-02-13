@@ -34,4 +34,13 @@ public class FileModel {
     public Optional<LocalDateTime> getModificationDate() {
         return Optional.ofNullable(modificationDate);
     }
+
+    public Optional<FileMeta> getMetadata() {
+        return Optional.ofNullable(metadata);
+    }
+
+    // Explicit getter for boolean field to ensure Lombok compatibility
+    public boolean isFile() {
+        return isFile;
+    }
 }

@@ -23,8 +23,20 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 class AviMetadataExtractorIntegrationTest {
 
-    private AviFileMetadataExtractor extractor;
     private static final String TEST_DATA_PATH = "test-data/video/avi/";
+    private AviFileMetadataExtractor extractor;
+
+    static Stream<Arguments> provideAviTestFiles() {
+        return Stream.of(
+                arguments("test_avi_clean.avi"),
+                arguments("test_avi_std_2025-12-11_21-00-35.avi"),
+                arguments("test_avi_past_2000-01-01_12-00-00.avi"),
+                arguments("test_avi_future_2050-01-01_12-00-00.avi"),
+                arguments("test_avi_std_no_tz_2025-12-11_21-00-35.avi"),
+                arguments("test_avi_std_tz_2025-12-11_21-00-35p02-00.avi"),
+                arguments("test_avi_gps_2025-12-11_21-00-35_lat48.8566_lon2.3522.avi")
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -41,18 +53,6 @@ class AviMetadataExtractorIntegrationTest {
             fail("Failed to load test file: " + filename);
             return null;
         }
-    }
-
-    static Stream<Arguments> provideAviTestFiles() {
-        return Stream.of(
-                arguments("test_avi_clean.avi"),
-                arguments("test_avi_std_2025-12-11_21-00-35.avi"),
-                arguments("test_avi_past_2000-01-01_12-00-00.avi"),
-                arguments("test_avi_future_2050-01-01_12-00-00.avi"),
-                arguments("test_avi_std_no_tz_2025-12-11_21-00-35.avi"),
-                arguments("test_avi_std_tz_2025-12-11_21-00-35p02-00.avi"),
-                arguments("test_avi_gps_2025-12-11_21-00-35_lat48.8566_lon2.3522.avi")
-        );
     }
 
     @ParameterizedTest
@@ -83,5 +83,44 @@ class AviMetadataExtractorIntegrationTest {
 
         assertEquals(320, videoMeta.getWidth().get());
         assertEquals(240, videoMeta.getHeight().get());
+    }
+
+    // ============================================================================
+    // DateTime Tests
+    // ============================================================================
+    // NOTE: AVI format has very limited metadata support.
+    // AVI does NOT have standard datetime metadata fields like MP4/MOV.
+    // These tests verify that AVI files do not extract datetime information.
+
+    @Test
+    void testExtract_NoDateTimeMetadata() {
+        File testFile = getTestFile("test_avi_std_2025-12-11_21-00-35.avi");
+
+        FileMeta result = extractor.extract(testFile, "video/x-msvideo");
+
+        assertNotNull(result);
+        assertTrue(result.getVideoMeta().isPresent());
+
+        VideoMeta videoMeta = result.getVideoMeta().get();
+
+        // AVI format does not support datetime metadata
+        assertFalse(videoMeta.getContentCreationDate().isPresent(),
+                    "AVI format does not support datetime metadata");
+    }
+
+    @Test
+    void testExtract_CleanFileNoDateTime() {
+        File testFile = getTestFile("test_avi_clean.avi");
+
+        FileMeta result = extractor.extract(testFile, "video/x-msvideo");
+
+        assertNotNull(result);
+        assertTrue(result.getVideoMeta().isPresent());
+
+        VideoMeta videoMeta = result.getVideoMeta().get();
+
+        // Clean AVI file should not have datetime
+        assertFalse(videoMeta.getContentCreationDate().isPresent(),
+                    "AVI format does not support datetime metadata");
     }
 }

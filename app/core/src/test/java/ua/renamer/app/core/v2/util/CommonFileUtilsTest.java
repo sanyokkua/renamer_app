@@ -12,24 +12,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CommonFileUtilsTest {
 
-    private CommonFileUtils fileUtils;
-    private DateTimeConverter dateTimeConverter;
-
     @TempDir
     Path tempDir;
+    private CommonFileUtils fileUtils;
+    private DateTimeConverter dateTimeConverter;
 
     @BeforeEach
     void setUp() {
@@ -80,7 +72,7 @@ class CommonFileUtilsTest {
         Path invalidPath = tempDir.resolve("non_existent.txt");
 
         assertThrows(FileAttributesReadException.class,
-                    () -> fileUtils.getBasicFileAttributes(invalidPath));
+                     () -> fileUtils.getBasicFileAttributes(invalidPath));
     }
 
     @Test
@@ -131,7 +123,8 @@ class CommonFileUtilsTest {
 
         String baseName = fileUtils.getFileBaseName(testFile);
 
-        assertEquals("", baseName);
+        // Hidden files without additional dots should return the full name including the dot
+        assertEquals(".gitignore", baseName);
     }
 
     // ============================================================================
@@ -199,17 +192,10 @@ class CommonFileUtilsTest {
 
         String extension = fileUtils.getFileExtension(testFile);
 
-        assertEquals("gitignore", extension);
+        // Hidden files without additional dots should have no extension
+        assertEquals("", extension);
     }
 
-    // ============================================================================
-    // F. MIME Type Detection Tests
-    // ============================================================================
-    // Note: Skipping MIME type tests due to Tika dependency issues with Apache Commons IO
-    // java.lang.NoSuchMethodError: 'org.apache.commons.io.input.UnsynchronizedByteArrayInputStream$Builder...'
-    // This is a known compatibility issue between Tika 3.2.3 and Commons IO versions
-
-    /*
     @Test
     void testGetFileMimeType_TextFile() throws IOException {
         Path testFile = Files.createFile(tempDir.resolve("test.txt"));
@@ -230,14 +216,14 @@ class CommonFileUtilsTest {
         assertNotNull(mimeType);
         // Empty files typically detected as text/plain or application/octet-stream
     }
-*/
+
 
     @Test
     void testGetFileMimeType_InvalidFile() {
         Path nonExistent = tempDir.resolve("non_existent.txt");
 
         assertThrows(MimeTypeNotFoundException.class,
-                    () -> fileUtils.getFileMimeType(nonExistent));
+                     () -> fileUtils.getFileMimeType(nonExistent));
     }
 
     // ============================================================================

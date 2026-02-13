@@ -7,6 +7,7 @@ import com.google.inject.TypeLiteral;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
+import ua.renamer.app.core.config.DIV2ServiceModule;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.model.RenameModel;
@@ -50,6 +51,9 @@ public class DICoreModule extends AbstractModule {
         bindApplicationMappers();
         bindApplicationCommands();
         bindApplicationServices();
+
+        // Install v2 services module
+        install(new DIV2ServiceModule());
     }
 
     private void bindExternalDependencies() {
@@ -58,9 +62,12 @@ public class DICoreModule extends AbstractModule {
     }
 
     private void bindApplicationMappers() {
-        TypeLiteral<DataMapper<RenameModel, String>> renameModelToHtmlMapperLiteral = new TypeLiteral<>() {};
-        TypeLiteral<DataMapper<File, FileInformation>> fileToFileInfoMapperLiteral = new TypeLiteral<>() {};
-        TypeLiteral<DataMapper<FileInformation, RenameModel>> fileInfoToRenameModelLiteral = new TypeLiteral<>() {};
+        TypeLiteral<DataMapper<RenameModel, String>> renameModelToHtmlMapperLiteral = new TypeLiteral<>() {
+        };
+        TypeLiteral<DataMapper<File, FileInformation>> fileToFileInfoMapperLiteral = new TypeLiteral<>() {
+        };
+        TypeLiteral<DataMapper<FileInformation, RenameModel>> fileInfoToRenameModelLiteral = new TypeLiteral<>() {
+        };
 
         bind(renameModelToHtmlMapperLiteral).to(RenameModelToHtmlMapper.class).in(Singleton.class);
         bind(fileToFileInfoMapperLiteral).to(FileToFileInformationMapper.class).in(Singleton.class);
@@ -86,7 +93,8 @@ public class DICoreModule extends AbstractModule {
     }
 
     private void bindApplicationCommands() {
-        TypeLiteral<ListProcessingCommand<File, FileInformation>> fileToFileInfoCmdLiteral = new TypeLiteral<>() {};
+        TypeLiteral<ListProcessingCommand<File, FileInformation>> fileToFileInfoCmdLiteral = new TypeLiteral<>() {
+        };
         bind(fileToFileInfoCmdLiteral).to(MapFileToFileInformationCommand.class).in(Singleton.class);
         bind(MapFileInformationToRenameModelCommand.class).in(Singleton.class);
         bind(FixEqualNamesCommand.class).in(Singleton.class);

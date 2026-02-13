@@ -1,16 +1,19 @@
 package ua.renamer.app.core.v2.util;
 
 import org.jspecify.annotations.Nullable;
-import ua.renamer.app.core.enums.DateFormat;
-import ua.renamer.app.core.enums.DateTimeFormat;
-import ua.renamer.app.core.enums.TimeFormat;
+import ua.renamer.app.core.v2.enums.DateFormat;
+import ua.renamer.app.core.v2.enums.DateTimeFormat;
+import ua.renamer.app.core.v2.enums.TimeFormat;
 import ua.renamer.app.core.v2.interfaces.DateTimeUtils;
 
 import java.nio.file.attribute.FileTime;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class DateTimeConverter implements DateTimeUtils {
@@ -21,19 +24,18 @@ public class DateTimeConverter implements DateTimeUtils {
      * Includes English, US, EU (German, French, Croatian, Czech, Polish), Ukrainian, and Russian.
      * This optimized list reduces parsing attempts from ~7,000 to ~150 per call.
      */
-    private static final List<Locale> COMMON_LOCALES = List.of(
-            Locale.ENGLISH,
-            Locale.US,
-            Locale.UK,
-            Locale.GERMAN,
-            Locale.GERMANY,
-            Locale.FRENCH,
-            Locale.FRANCE,
-            new Locale("hr", "HR"),  // Croatian
-            new Locale("cs", "CZ"),  // Czech
-            new Locale("pl", "PL"),  // Polish
-            new Locale("uk", "UA"),  // Ukrainian
-            new Locale("ru", "RU")   // Russian
+    private static final List<Locale> COMMON_LOCALES = List.of(Locale.ENGLISH,
+                                                               Locale.US,
+                                                               Locale.UK,
+                                                               Locale.GERMAN,
+                                                               Locale.GERMANY,
+                                                               Locale.FRENCH,
+                                                               Locale.FRANCE,
+                                                               Locale.of("hr", "HR"),  // Croatian
+                                                               Locale.of("cs", "CZ"),  // Czech
+                                                               Locale.of("pl", "PL"),  // Polish
+                                                               Locale.of("uk", "UA"),  // Ukrainian
+                                                               Locale.of("ru", "RU")   // Russian
     );
 
     @Override
@@ -84,11 +86,8 @@ public class DateTimeConverter implements DateTimeUtils {
         }
 
         var parsedYearAndMonth = parseYearAndMonth(preparedDate);
-        if (parsedYearAndMonth.isPresent()) {
-            return parsedYearAndMonth.get();
-        }
+        return parsedYearAndMonth.orElse(null);
 
-        return null;
     }
 
     @Override
@@ -199,8 +198,7 @@ public class DateTimeConverter implements DateTimeUtils {
     }
 
     @Override
-    public String formatDateTime(LocalDateTime localDateTime, DateFormat dateFormat, TimeFormat timeFormat,
-                                 DateTimeFormat dateTimeFormat) {
+    public String formatDateTime(LocalDateTime localDateTime, DateFormat dateFormat, TimeFormat timeFormat, DateTimeFormat dateTimeFormat) {
         if (Objects.isNull(localDateTime)) {
             return "";
         }
@@ -217,11 +215,11 @@ public class DateTimeConverter implements DateTimeUtils {
             return "";
         }
 
-        if (dateFormatted.isEmpty() && !timeFormatted.isEmpty()) {
+        if (dateFormatted.isEmpty()) {
             return timeFormatted;
         }
 
-        if (timeFormatted.isEmpty() && !dateFormatted.isEmpty()) {
+        if (timeFormatted.isEmpty()) {
             return dateFormatted;
         }
 
