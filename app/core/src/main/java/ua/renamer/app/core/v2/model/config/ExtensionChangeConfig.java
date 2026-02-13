@@ -8,7 +8,7 @@ import lombok.Value;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class ExtensionChangeConfig {
+public class ExtensionChangeConfig implements TransformationConfig {
     /**
      * New extension to use (with or without leading dot).
      */

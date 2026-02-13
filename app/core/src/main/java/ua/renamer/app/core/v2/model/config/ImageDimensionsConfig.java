@@ -10,7 +10,7 @@ import ua.renamer.app.core.v2.enums.ItemPositionWithReplacement;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class ImageDimensionsConfig {
+public class ImageDimensionsConfig implements TransformationConfig {
     /**
      * What to show on the left side (DO_NOT_USE, WIDTH, or HEIGHT).
      */

@@ -9,7 +9,7 @@ import ua.renamer.app.core.v2.enums.TextCaseOptions;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class CaseChangeConfig {
+public class CaseChangeConfig implements TransformationConfig {
     /**
      * Case transformation option (CAMEL_CASE, SNAKE_CASE, etc.).
      */

@@ -9,7 +9,7 @@ import ua.renamer.app.core.v2.enums.ItemPositionExtended;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class ReplaceTextConfig {
+public class ReplaceTextConfig implements TransformationConfig {
     /**
      * Text to find and replace.
      */

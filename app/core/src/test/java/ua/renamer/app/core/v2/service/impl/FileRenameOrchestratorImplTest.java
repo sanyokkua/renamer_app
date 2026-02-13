@@ -11,14 +11,13 @@ import ua.renamer.app.core.v2.model.*;
 import ua.renamer.app.core.v2.model.config.AddTextConfig;
 import ua.renamer.app.core.v2.model.config.SequenceConfig;
 import ua.renamer.app.core.v2.service.DuplicateNameResolver;
-import ua.renamer.app.core.v2.service.FileTransformationService;
 import ua.renamer.app.core.v2.service.ProgressCallback;
 import ua.renamer.app.core.v2.service.RenameExecutionService;
+import ua.renamer.app.core.v2.service.transformation.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -40,11 +39,18 @@ class FileRenameOrchestratorImplTest {
     private ThreadAwareFileMapper fileMapper;
     private DuplicateNameResolver duplicateResolver;
     private RenameExecutionService renameExecutor;
-    private Map<TransformationMode, FileTransformationService<?>> transformerRegistry;
 
     // Mock transformers
-    private FileTransformationService<AddTextConfig> addTextTransformer;
-    private FileTransformationService<SequenceConfig> sequenceTransformer;
+    private AddTextTransformer addTextTransformer;
+    private RemoveTextTransformer removeTextTransformer;
+    private ReplaceTextTransformer replaceTextTransformer;
+    private CaseChangeTransformer caseChangeTransformer;
+    private DateTimeTransformer dateTimeTransformer;
+    private ImageDimensionsTransformer imageDimensionsTransformer;
+    private SequenceTransformer sequenceTransformer;
+    private ParentFolderTransformer parentFolderTransformer;
+    private TruncateTransformer truncateTransformer;
+    private ExtensionChangeTransformer extensionChangeTransformer;
 
     @BeforeAll
     void setUp() {
@@ -53,25 +59,41 @@ class FileRenameOrchestratorImplTest {
         renameExecutor = mock(RenameExecutionService.class);
 
         // Create mock transformers
-        addTextTransformer = mock(FileTransformationService.class);
-        sequenceTransformer = mock(FileTransformationService.class);
-
-        // Build transformer registry
-        transformerRegistry = new HashMap<>();
-        transformerRegistry.put(TransformationMode.ADD_TEXT, addTextTransformer);
-        transformerRegistry.put(TransformationMode.ADD_SEQUENCE, sequenceTransformer);
+        addTextTransformer = mock(AddTextTransformer.class);
+        removeTextTransformer = mock(RemoveTextTransformer.class);
+        replaceTextTransformer = mock(ReplaceTextTransformer.class);
+        caseChangeTransformer = mock(CaseChangeTransformer.class);
+        dateTimeTransformer = mock(DateTimeTransformer.class);
+        imageDimensionsTransformer = mock(ImageDimensionsTransformer.class);
+        sequenceTransformer = mock(SequenceTransformer.class);
+        parentFolderTransformer = mock(ParentFolderTransformer.class);
+        truncateTransformer = mock(TruncateTransformer.class);
+        extensionChangeTransformer = mock(ExtensionChangeTransformer.class);
 
         orchestrator = new FileRenameOrchestratorImpl(
                 fileMapper,
                 duplicateResolver,
                 renameExecutor,
-                transformerRegistry
+                addTextTransformer,
+                removeTextTransformer,
+                replaceTextTransformer,
+                caseChangeTransformer,
+                dateTimeTransformer,
+                imageDimensionsTransformer,
+                sequenceTransformer,
+                parentFolderTransformer,
+                truncateTransformer,
+                extensionChangeTransformer
         );
     }
 
     @BeforeEach
     void resetMocks() {
-        reset(fileMapper, duplicateResolver, renameExecutor, addTextTransformer, sequenceTransformer);
+        reset(fileMapper, duplicateResolver, renameExecutor,
+                addTextTransformer, removeTextTransformer, replaceTextTransformer,
+                caseChangeTransformer, dateTimeTransformer, imageDimensionsTransformer,
+                sequenceTransformer, parentFolderTransformer, truncateTransformer,
+                extensionChangeTransformer);
     }
 
     // ============================================================================
@@ -84,44 +106,44 @@ class FileRenameOrchestratorImplTest {
 
     private FileModel createFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(createMockFile(name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(createMockFile(name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     private PreparedFileModel createPreparedFile(FileModel fileModel, String newName,
                                                  boolean hasError, String errorMsg) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(fileModel)
-                                .withNewName(newName)
-                                .withNewExtension(fileModel.getExtension())
-                                .withHasError(hasError)
-                                .withErrorMessage(hasError ? errorMsg : null)
-                                .withTransformationMeta(TransformationMetadata.builder()
-                                                                              .withMode(TransformationMode.ADD_TEXT)
-                                                                              .withAppliedAt(LocalDateTime.now())
-                                                                              .withConfig(Map.of("test", "data"))
-                                                                              .build())
-                                .build();
+                .withOriginalFile(fileModel)
+                .withNewName(newName)
+                .withNewExtension(fileModel.getExtension())
+                .withHasError(hasError)
+                .withErrorMessage(hasError ? errorMsg : null)
+                .withTransformationMeta(TransformationMetadata.builder()
+                        .withMode(TransformationMode.ADD_TEXT)
+                        .withAppliedAt(LocalDateTime.now())
+                        .withConfig(Map.of("test", "data"))
+                        .build())
+                .build();
     }
 
     private RenameResult createRenameResult(PreparedFileModel preparedFile, RenameStatus status) {
         return RenameResult.builder()
-                           .withPreparedFile(preparedFile)
-                           .withStatus(status)
-                           .withErrorMessage(null)
-                           .withExecutedAt(LocalDateTime.now())
-                           .build();
+                .withPreparedFile(preparedFile)
+                .withStatus(status)
+                .withErrorMessage(null)
+                .withExecutedAt(LocalDateTime.now())
+                .build();
     }
 
     // ============================================================================
@@ -145,9 +167,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result2 = createRenameResult(prepared2, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Mock Phase 1: Metadata extraction
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
@@ -167,7 +189,7 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> results = orchestrator.execute(files, TransformationMode.ADD_TEXT,
-                                                          config, null);
+                config, null);
 
         // Then
         assertNotNull(results);
@@ -193,11 +215,11 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(null)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(null)
+                .build();
 
         // Mock Phase 1
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
@@ -214,7 +236,7 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> results = orchestrator.execute(files, TransformationMode.ADD_SEQUENCE,
-                                                          config, null);
+                config, null);
 
         // Then
         assertEquals(1, results.size());
@@ -238,9 +260,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Mock all phases
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
@@ -265,9 +287,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Mock all phases
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
@@ -304,9 +326,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result2 = createRenameResult(deduplicated2, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Mock phases
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
@@ -337,9 +359,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Mock phases
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
@@ -368,9 +390,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Track call order
         AtomicInteger callOrder = new AtomicInteger(0);
@@ -422,9 +444,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
         when(addTextTransformer.transform(model1, config)).thenReturn(prepared1);
@@ -449,11 +471,11 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(null)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(null)
+                .build();
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
         when(sequenceTransformer.requiresSequentialExecution()).thenReturn(true);
@@ -484,9 +506,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result2 = createRenameResult(prepared2, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Mock Phase 1 - file1 fails, file2 succeeds
         when(fileMapper.mapFrom(file1)).thenThrow(new RuntimeException("Extraction error"));
@@ -499,7 +521,7 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> results = orchestrator.execute(List.of(file1, file2),
-                                                          TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then - file2 should still succeed
         assertEquals(2, results.size());
@@ -514,13 +536,13 @@ class FileRenameOrchestratorImplTest {
 
         // Phase 2 returns error in PreparedFile
         PreparedFileModel preparedWithError = createPreparedFile(model1, "file1", true,
-                                                                 "Transformation error");
+                "Transformation error");
         RenameResult result1 = createRenameResult(preparedWithError, RenameStatus.SKIPPED);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
         when(addTextTransformer.transform(model1, config)).thenReturn(preparedWithError);
@@ -530,7 +552,7 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> results = orchestrator.execute(List.of(file1),
-                                                          TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then - Error should be in result
         assertEquals(1, results.size());
@@ -547,16 +569,16 @@ class FileRenameOrchestratorImplTest {
 
         // Phase 3 returns error result
         RenameResult errorResult = RenameResult.builder()
-                                               .withPreparedFile(prepared1)
-                                               .withStatus(RenameStatus.ERROR_EXECUTION)
-                                               .withErrorMessage("File already exists")
-                                               .withExecutedAt(LocalDateTime.now())
-                                               .build();
+                .withPreparedFile(prepared1)
+                .withStatus(RenameStatus.ERROR_EXECUTION)
+                .withErrorMessage("File already exists")
+                .withExecutedAt(LocalDateTime.now())
+                .build();
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
         when(addTextTransformer.transform(model1, config)).thenReturn(prepared1);
@@ -566,7 +588,7 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> results = orchestrator.execute(List.of(file1),
-                                                          TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then
         assertEquals(1, results.size());
@@ -594,9 +616,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result3 = createRenameResult(prepared3, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
         when(fileMapper.mapFrom(file2)).thenReturn(model2);
@@ -615,7 +637,7 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> results = orchestrator.execute(List.of(file1, file2, file3),
-                                                          TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then
         assertEquals(3, results.size());
@@ -637,9 +659,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         ProgressCallback progressCallback = mock(ProgressCallback.class);
 
@@ -672,9 +694,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result2 = createRenameResult(prepared2, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         ProgressCallback progressCallback = mock(ProgressCallback.class);
 
@@ -689,14 +711,14 @@ class FileRenameOrchestratorImplTest {
 
         // When
         orchestrator.execute(List.of(file1, file2), TransformationMode.ADD_TEXT, config,
-                             progressCallback);
+                progressCallback);
 
         // Then - Should have progress updates for each phase
         ArgumentCaptor<Integer> currentCaptor = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<Integer> maxCaptor = ArgumentCaptor.forClass(Integer.class);
 
         verify(progressCallback, atLeast(6)).updateProgress(currentCaptor.capture(),
-                                                            maxCaptor.capture());
+                maxCaptor.capture());
 
         // Verify progress values are reasonable
         List<Integer> currents = currentCaptor.getAllValues();
@@ -717,9 +739,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
         when(addTextTransformer.transform(model1, config)).thenReturn(prepared1);
@@ -729,7 +751,7 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> results = orchestrator.execute(List.of(file1),
-                                                          TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then - Should complete successfully
         assertEquals(1, results.size());
@@ -749,9 +771,9 @@ class FileRenameOrchestratorImplTest {
         RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
         when(addTextTransformer.transform(model1, config)).thenReturn(prepared1);
@@ -787,7 +809,7 @@ class FileRenameOrchestratorImplTest {
 
         // When - The orchestrator catches exceptions and returns error results
         List<RenameResult> results = orchestrator.execute(List.of(file1),
-                                                          TransformationMode.REMOVE_TEXT, null, null);
+                TransformationMode.REMOVE_TEXT, null, null);
 
         // Then - Should return error results
         assertEquals(1, results.size());
@@ -802,13 +824,13 @@ class FileRenameOrchestratorImplTest {
         List<File> emptyList = Collections.emptyList();
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         List<RenameResult> results = orchestrator.execute(emptyList,
-                                                          TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then
         assertNotNull(results);
@@ -816,26 +838,28 @@ class FileRenameOrchestratorImplTest {
     }
 
     @Test
-    void testExecute_NullConfig() {
+    void testExecute_NullConfig_ReturnsErrorResult() {
         // Given
         File file1 = createMockFile("file1.txt");
         FileModel model1 = createFileModel("file1", "txt");
-        PreparedFileModel prepared1 = createPreparedFile(model1, "new1", false, null);
-        RenameResult result1 = createRenameResult(prepared1, RenameStatus.SUCCESS);
 
         when(fileMapper.mapFrom(file1)).thenReturn(model1);
-        when(addTextTransformer.transform(model1, null)).thenReturn(prepared1);
-        when(addTextTransformer.requiresSequentialExecution()).thenReturn(false);
-        when(duplicateResolver.resolve(any())).thenAnswer(inv -> inv.getArgument(0));
-        when(renameExecutor.execute(prepared1)).thenReturn(result1);
 
-        // When - Null config passed through
-        List<RenameResult> results = orchestrator.execute(List.of(file1),
-                                                          TransformationMode.ADD_TEXT, null, null);
+        // When - Null config should be rejected by pattern matching
+        List<RenameResult> results = orchestrator.execute(
+                List.of(file1), TransformationMode.ADD_TEXT, null, null);
 
-        // Then
+        // Then - Should return error result
+        assertNotNull(results);
         assertEquals(1, results.size());
-        verify(addTextTransformer).transform(model1, null);
+        RenameResult result = results.get(0);
+        assertEquals(RenameStatus.ERROR_EXTRACTION, result.getStatus());
+        assertTrue(result.getErrorMessage().isPresent(),
+                "Error message should be present");
+        assertTrue(result.getErrorMessage().get().contains("ADD_TEXT requires AddTextConfig"),
+                "Error message should indicate config type mismatch");
+        assertTrue(result.getErrorMessage().get().contains("null"),
+                "Error message should mention null config");
     }
 
     @Test
@@ -847,13 +871,13 @@ class FileRenameOrchestratorImplTest {
         when(fileMapper.mapFrom(file1)).thenThrow(new OutOfMemoryError("Test OOM"));
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When - Should catch exception and return error results
         List<RenameResult> results = orchestrator.execute(List.of(file1),
-                                                          TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then - Should return error result for the file
         assertEquals(1, results.size());
@@ -874,21 +898,21 @@ class FileRenameOrchestratorImplTest {
         );
 
         List<FileModel> models = files.stream()
-                                      .map(f -> createFileModel(f.getName().replace(".txt", ""), "txt"))
-                                      .toList();
+                .map(f -> createFileModel(f.getName().replace(".txt", ""), "txt"))
+                .toList();
 
         List<PreparedFileModel> prepared = models.stream()
-                                                 .map(m -> createPreparedFile(m, "new_" + m.getName(), false, null))
-                                                 .toList();
+                .map(m -> createPreparedFile(m, "new_" + m.getName(), false, null))
+                .toList();
 
         List<RenameResult> results = prepared.stream()
-                                             .map(p -> createRenameResult(p, RenameStatus.SUCCESS))
-                                             .toList();
+                .map(p -> createRenameResult(p, RenameStatus.SUCCESS))
+                .toList();
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Mock all
         for (int i = 0; i < files.size(); i++) {
@@ -902,10 +926,47 @@ class FileRenameOrchestratorImplTest {
 
         // When
         List<RenameResult> actualResults = orchestrator.execute(files,
-                                                                TransformationMode.ADD_TEXT, config, null);
+                TransformationMode.ADD_TEXT, config, null);
 
         // Then
         assertEquals(5, actualResults.size());
         actualResults.forEach(r -> assertEquals(RenameStatus.SUCCESS, r.getStatus()));
+    }
+
+    // ============================================================================
+    // I. Config Type Validation Tests (NEW - Added for v2 pattern matching)
+    // ============================================================================
+
+    @Test
+    void testExecute_WrongConfigType_ReturnsErrorResult() {
+        // Given
+        File file1 = createMockFile("file1.txt");
+        FileModel model1 = createFileModel("file1", "txt");
+
+        // Wrong config type - passing SequenceConfig for ADD_TEXT mode
+        SequenceConfig wrongConfig = SequenceConfig.builder()
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(null)
+                .build();
+
+        when(fileMapper.mapFrom(file1)).thenReturn(model1);
+
+        // When - Wrong config type should be rejected by pattern matching
+        List<RenameResult> results = orchestrator.execute(
+                List.of(file1), TransformationMode.ADD_TEXT, wrongConfig, null);
+
+        // Then - Should return error result
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        RenameResult result = results.get(0);
+        assertEquals(RenameStatus.ERROR_EXTRACTION, result.getStatus());
+        assertTrue(result.getErrorMessage().isPresent(),
+                "Error message should be present");
+        assertTrue(result.getErrorMessage().get().contains("ADD_TEXT requires AddTextConfig"),
+                "Error message should indicate expected config type");
+        assertTrue(result.getErrorMessage().get().contains("SequenceConfig"),
+                "Error message should mention wrong config type");
     }
 }

@@ -9,7 +9,7 @@ import ua.renamer.app.core.v2.enums.ItemPosition;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class ParentFolderConfig {
+public class ParentFolderConfig implements TransformationConfig {
     /**
      * Number of parent folders to include (e.g., 1 = immediate parent, 2 = parent + grandparent).
      */

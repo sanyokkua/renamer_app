@@ -9,7 +9,7 @@ import ua.renamer.app.core.v2.enums.ItemPosition;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class AddTextConfig {
+public class AddTextConfig implements TransformationConfig {
     /**
      * Text to add to the filename.
      */

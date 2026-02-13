@@ -9,7 +9,7 @@ import ua.renamer.app.core.v2.enums.ItemPosition;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class RemoveTextConfig {
+public class RemoveTextConfig implements TransformationConfig {
     /**
      * Text to remove from the filename.
      */

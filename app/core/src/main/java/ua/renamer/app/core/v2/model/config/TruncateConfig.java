@@ -9,7 +9,7 @@ import ua.renamer.app.core.v2.enums.TruncateOptions;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class TruncateConfig {
+public class TruncateConfig implements TransformationConfig {
     /**
      * Number of characters to remove.
      */

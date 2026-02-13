@@ -9,7 +9,7 @@ import ua.renamer.app.core.v2.enums.SortSource;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class SequenceConfig {
+public class SequenceConfig implements TransformationConfig {
     /**
      * Starting number for the sequence.
      */

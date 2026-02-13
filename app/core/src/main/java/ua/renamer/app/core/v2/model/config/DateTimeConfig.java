@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 @Value
 @Builder(setterPrefix = "with")
-public class DateTimeConfig {
+public class DateTimeConfig implements TransformationConfig {
     /**
      * Source of the datetime (FILE_CREATION, CONTENT_CREATION, etc.).
      */

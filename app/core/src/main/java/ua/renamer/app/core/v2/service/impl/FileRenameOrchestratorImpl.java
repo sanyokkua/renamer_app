@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
 import ua.renamer.app.core.v2.model.*;
+import ua.renamer.app.core.v2.model.config.*;
 import ua.renamer.app.core.v2.service.*;
+import ua.renamer.app.core.v2.service.transformation.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -28,15 +29,21 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
     private final ThreadAwareFileMapper fileMapper;
     private final DuplicateNameResolver duplicateResolver;
     private final RenameExecutionService renameExecutor;
-    private final Map<TransformationMode, FileTransformationService<?>> transformerRegistry;
+
+    // Individual transformers - no registry needed with pattern matching
+    private final AddTextTransformer addTextTransformer;
+    private final RemoveTextTransformer removeTextTransformer;
+    private final ReplaceTextTransformer replaceTextTransformer;
+    private final CaseChangeTransformer caseChangeTransformer;
+    private final DateTimeTransformer dateTimeTransformer;
+    private final ImageDimensionsTransformer imageDimensionsTransformer;
+    private final SequenceTransformer sequenceTransformer;
+    private final ParentFolderTransformer parentFolderTransformer;
+    private final TruncateTransformer truncateTransformer;
+    private final ExtensionChangeTransformer extensionChangeTransformer;
 
     @Override
-    public List<RenameResult> execute(
-            List<File> files,
-            TransformationMode mode,
-            Object config,
-            ProgressCallback progressCallback
-    ) {
+    public List<RenameResult> execute(List<File> files, TransformationMode mode, Object config, ProgressCallback progressCallback) {
         log.info("Starting rename pipeline for {} files with mode {}", files.size(), mode);
 
         try (ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor()) {
@@ -46,8 +53,7 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
             log.debug("Phase 1 complete: {} file models extracted", fileModels.size());
 
             // PHASE 2: Apply transformation (Conditional)
-            List<PreparedFileModel> prepared = applyTransformation(
-                    fileModels, mode, config, virtualExecutor, progressCallback);
+            List<PreparedFileModel> prepared = applyTransformation(fileModels, mode, config, virtualExecutor, progressCallback);
             log.debug("Phase 2 complete: {} files prepared", prepared.size());
 
             // PHASE 2.5: Resolve duplicates (Always Sequential)
@@ -55,8 +61,7 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
             log.debug("Phase 2.5 complete: {} files after deduplication", prepared.size());
 
             // PHASE 3: Execute renames (Always Parallel)
-            List<RenameResult> results = executeRenamesParallel(
-                    prepared, virtualExecutor, progressCallback);
+            List<RenameResult> results = executeRenamesParallel(prepared, virtualExecutor, progressCallback);
             log.info("Pipeline complete: {} results", results.size());
 
             // Log summary
@@ -67,133 +72,147 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
         } catch (Exception e) {
             log.error("Pipeline failed with exception", e);
             // Return all as errors
-            return files.stream()
-                        .map(file -> buildErrorResult(file, "Pipeline error: " + e.getMessage()))
-                        .toList();
+            return files.stream().map(file -> buildErrorResult(file, "Pipeline error: " + e.getMessage())).toList();
         }
     }
 
     @Override
-    public CompletableFuture<List<RenameResult>> executeAsync(
-            List<File> files,
-            TransformationMode mode,
-            Object config,
-            ProgressCallback progressCallback
-    ) {
-        return CompletableFuture.supplyAsync(() ->
-                                                     execute(files, mode, config, progressCallback)
-        );
+    public CompletableFuture<List<RenameResult>> executeAsync(List<File> files, TransformationMode mode, Object config, ProgressCallback progressCallback) {
+        return CompletableFuture.supplyAsync(() -> execute(files, mode, config, progressCallback));
     }
 
     // ==================== PHASE 1: METADATA EXTRACTION ====================
 
-    private List<FileModel> extractMetadataParallel(
-            List<File> files,
-            ExecutorService executor,
-            ProgressCallback progressCallback
-    ) {
+    private List<FileModel> extractMetadataParallel(List<File> files, ExecutorService executor, ProgressCallback progressCallback) {
         int total = files.size();
         AtomicInteger completed = new AtomicInteger(0);
 
         updateProgress(0, total, progressCallback);
 
-        return files.parallelStream()
-                    .map(file -> CompletableFuture.supplyAsync(() -> {
-                        try {
-                            FileModel model = fileMapper.mapFrom(file);
-                            int current = completed.incrementAndGet();
-                            updateProgress(current, total, progressCallback);
-                            return model;
-                        } catch (Exception e) {
-                            log.error("Failed to extract metadata for: {}", file.getAbsolutePath(), e);
-                            int current = completed.incrementAndGet();
-                            updateProgress(current, total, progressCallback);
+        return files.parallelStream().map(file -> CompletableFuture.supplyAsync(() -> {
+            try {
+                FileModel model = fileMapper.mapFrom(file);
+                int current = completed.incrementAndGet();
+                updateProgress(current, total, progressCallback);
+                return model;
+            } catch (Exception e) {
+                log.error("Failed to extract metadata for: {}", file.getAbsolutePath(), e);
+                int current = completed.incrementAndGet();
+                updateProgress(current, total, progressCallback);
 
-                            // Return error FileModel that will propagate as error through pipeline
-                            return FileModel.builder()
-                                            .withFile(file)
-                                            .withName(file.getName())
-                                            .withExtension("")
-                                            .withAbsolutePath(file.getAbsolutePath())
-                                            .withIsFile(false)  // Mark as problematic
-                                            .withFileSize(0L)
-                                            .build();
-                        }
-                    }, executor))
-                    .map(CompletableFuture::join)
-                    .toList();
+                // Return error FileModel that will propagate as error through pipeline
+                return FileModel.builder()
+                                .withFile(file)
+                                .withName(file.getName())
+                                .withExtension("")
+                                .withAbsolutePath(file.getAbsolutePath())
+                                .withIsFile(false)  // Mark as problematic
+                                .withFileSize(0L)
+                                .build();
+            }
+        }, executor)).map(CompletableFuture::join).toList();
     }
 
     // ==================== PHASE 2: TRANSFORMATION ====================
 
-    private List<PreparedFileModel> applyTransformation(
-            List<FileModel> fileModels,
-            TransformationMode mode,
-            Object config,
-            ExecutorService executor,
-            ProgressCallback progressCallback
-    ) {
-        FileTransformationService transformer = transformerRegistry.get(mode);
-
-        if (transformer == null) {
-            throw new IllegalArgumentException("No transformer registered for mode: " + mode);
-        }
-
-        // Check if sequential execution required (sequence mode)
-        if (transformer.requiresSequentialExecution()) {
-            log.debug("Using sequential transformation for mode: {}", mode);
-            return transformer.transformBatch(fileModels, config);
-        } else {
-            log.debug("Using parallel transformation for mode: {}", mode);
-            return applyTransformationParallel(fileModels, transformer, config, executor, progressCallback);
-        }
+    private List<PreparedFileModel> applyTransformation(List<FileModel> fileModels, TransformationMode mode, Object config, ExecutorService executor, ProgressCallback progressCallback) {
+        // Pattern matching provides compile-time exhaustiveness checking
+        // and runtime config type validation
+        final String configClassName = config == null ? "null" : config.getClass().getName();
+        return switch (mode) {
+            case ADD_TEXT -> {
+                if (!(config instanceof AddTextConfig typedConfig)) {
+                    throw new IllegalArgumentException("ADD_TEXT requires AddTextConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, addTextTransformer, typedConfig, executor, progressCallback);
+            }
+            case REMOVE_TEXT -> {
+                if (!(config instanceof RemoveTextConfig typedConfig)) {
+                    throw new IllegalArgumentException("REMOVE_TEXT requires RemoveTextConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, removeTextTransformer, typedConfig, executor, progressCallback);
+            }
+            case REPLACE_TEXT -> {
+                if (!(config instanceof ReplaceTextConfig typedConfig)) {
+                    throw new IllegalArgumentException("REPLACE_TEXT requires ReplaceTextConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, replaceTextTransformer, typedConfig, executor, progressCallback);
+            }
+            case CHANGE_CASE -> {
+                if (!(config instanceof CaseChangeConfig typedConfig)) {
+                    throw new IllegalArgumentException("CHANGE_CASE requires CaseChangeConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, caseChangeTransformer, typedConfig, executor, progressCallback);
+            }
+            case USE_DATETIME -> {
+                if (!(config instanceof DateTimeConfig typedConfig)) {
+                    throw new IllegalArgumentException("USE_DATETIME requires DateTimeConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, dateTimeTransformer, typedConfig, executor, progressCallback);
+            }
+            case USE_IMAGE_DIMENSIONS -> {
+                if (!(config instanceof ImageDimensionsConfig typedConfig)) {
+                    throw new IllegalArgumentException("USE_IMAGE_DIMENSIONS requires ImageDimensionsConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, imageDimensionsTransformer, typedConfig, executor, progressCallback);
+            }
+            case ADD_SEQUENCE -> {
+                if (!(config instanceof SequenceConfig typedConfig)) {
+                    throw new IllegalArgumentException("ADD_SEQUENCE requires SequenceConfig, got: " + configClassName);
+                }
+                // Sequence mode always uses sequential processing
+                log.debug("Using sequential transformation for SEQUENCE mode");
+                yield sequenceTransformer.transformBatch(fileModels, typedConfig);
+            }
+            case USE_PARENT_FOLDER_NAME -> {
+                if (!(config instanceof ParentFolderConfig typedConfig)) {
+                    throw new IllegalArgumentException("USE_PARENT_FOLDER_NAME requires ParentFolderConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, parentFolderTransformer, typedConfig, executor, progressCallback);
+            }
+            case TRUNCATE_FILE_NAME -> {
+                if (!(config instanceof TruncateConfig typedConfig)) {
+                    throw new IllegalArgumentException("TRUNCATE_FILE_NAME requires TruncateConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, truncateTransformer, typedConfig, executor, progressCallback);
+            }
+            case CHANGE_EXTENSION -> {
+                if (!(config instanceof ExtensionChangeConfig typedConfig)) {
+                    throw new IllegalArgumentException("CHANGE_EXTENSION requires ExtensionChangeConfig, got: " + configClassName);
+                }
+                yield applyTransformationParallel(fileModels, extensionChangeTransformer, typedConfig, executor, progressCallback);
+            }
+        };
     }
 
-    @SuppressWarnings("unchecked")
-    private List<PreparedFileModel> applyTransformationParallel(
-            List<FileModel> fileModels,
-            FileTransformationService transformer,
-            Object config,
-            ExecutorService executor,
-            ProgressCallback progressCallback
-    ) {
+    private <C> List<PreparedFileModel> applyTransformationParallel(List<FileModel> fileModels, FileTransformationService<C> transformer, C config, ExecutorService executor, ProgressCallback progressCallback) {
         int total = fileModels.size();
         AtomicInteger completed = new AtomicInteger(0);
 
         updateProgress(0, total, progressCallback);
 
-        return fileModels.parallelStream()
-                         .map(model -> CompletableFuture.supplyAsync(() -> {
-                             PreparedFileModel result = transformer.transform(model, config);
-                             int current = completed.incrementAndGet();
-                             updateProgress(current, total, progressCallback);
-                             return result;
-                         }, executor))
-                         .map(CompletableFuture::join)
-                         .toList();
+        return fileModels.parallelStream().map(model -> CompletableFuture.supplyAsync(() -> {
+            PreparedFileModel result = transformer.transform(model, config);
+            int current = completed.incrementAndGet();
+            updateProgress(current, total, progressCallback);
+            return result;
+        }, executor)).map(CompletableFuture::join).toList();
     }
 
     // ==================== PHASE 3: PHYSICAL RENAME ====================
 
-    private List<RenameResult> executeRenamesParallel(
-            List<PreparedFileModel> prepared,
-            ExecutorService executor,
-            ProgressCallback progressCallback
-    ) {
+    private List<RenameResult> executeRenamesParallel(List<PreparedFileModel> prepared, ExecutorService executor, ProgressCallback progressCallback) {
         int total = prepared.size();
         AtomicInteger completed = new AtomicInteger(0);
 
         updateProgress(0, total, progressCallback);
 
-        return prepared.parallelStream()
-                       .map(preparedFile -> CompletableFuture.supplyAsync(() -> {
-                           RenameResult result = renameExecutor.execute(preparedFile);
-                           int current = completed.incrementAndGet();
-                           updateProgress(current, total, progressCallback);
-                           return result;
-                       }, executor))
-                       .map(CompletableFuture::join)
-                       .toList();
+        return prepared.parallelStream().map(preparedFile -> CompletableFuture.supplyAsync(() -> {
+            RenameResult result = renameExecutor.execute(preparedFile);
+            int current = completed.incrementAndGet();
+            updateProgress(current, total, progressCallback);
+            return result;
+        }, executor)).map(CompletableFuture::join).toList();
     }
 
     // ==================== UTILITIES ====================

@@ -6,9 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 import ua.renamer.app.core.v2.interfaces.FileMetadataMapper;
 import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
-import ua.renamer.app.core.v2.model.TransformationMode;
 import ua.renamer.app.core.v2.model.meta.FileMeta;
-import ua.renamer.app.core.v2.service.*;
+import ua.renamer.app.core.v2.service.DuplicateNameResolver;
+import ua.renamer.app.core.v2.service.FileRenameOrchestrator;
+import ua.renamer.app.core.v2.service.ProgressCallback;
+import ua.renamer.app.core.v2.service.RenameExecutionService;
 import ua.renamer.app.core.v2.service.impl.DuplicateNameResolverImpl;
 import ua.renamer.app.core.v2.service.impl.FileRenameOrchestratorImpl;
 import ua.renamer.app.core.v2.service.impl.RenameExecutionServiceImpl;
@@ -22,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,20 +61,32 @@ public abstract class BaseTransformationIntegrationTest {
         RenameExecutionService renameExecutor = new RenameExecutionServiceImpl();
 
         // Create all transformers
-        Map<TransformationMode, FileTransformationService<?>> transformerRegistry = Map.of(
-                TransformationMode.ADD_TEXT, new AddTextTransformer(),
-                TransformationMode.REMOVE_TEXT, new RemoveTextTransformer(),
-                TransformationMode.REPLACE_TEXT, new ReplaceTextTransformer(),
-                TransformationMode.CHANGE_CASE, new CaseChangeTransformer(),
-                TransformationMode.USE_DATETIME, new DateTimeTransformer(dateTimeConverter),
-                TransformationMode.USE_IMAGE_DIMENSIONS, new ImageDimensionsTransformer(),
-                TransformationMode.ADD_SEQUENCE, new SequenceTransformer(),
-                TransformationMode.USE_PARENT_FOLDER_NAME, new ParentFolderTransformer(),
-                TransformationMode.TRUNCATE_FILE_NAME, new TruncateTransformer(),
-                TransformationMode.CHANGE_EXTENSION, new ExtensionChangeTransformer()
-        );
+        AddTextTransformer addTextTransformer = new AddTextTransformer();
+        RemoveTextTransformer removeTextTransformer = new RemoveTextTransformer();
+        ReplaceTextTransformer replaceTextTransformer = new ReplaceTextTransformer();
+        CaseChangeTransformer caseChangeTransformer = new CaseChangeTransformer();
+        DateTimeTransformer dateTimeTransformer = new DateTimeTransformer(dateTimeConverter);
+        ImageDimensionsTransformer imageDimensionsTransformer = new ImageDimensionsTransformer();
+        SequenceTransformer sequenceTransformer = new SequenceTransformer();
+        ParentFolderTransformer parentFolderTransformer = new ParentFolderTransformer();
+        TruncateTransformer truncateTransformer = new TruncateTransformer();
+        ExtensionChangeTransformer extensionChangeTransformer = new ExtensionChangeTransformer();
 
-        orchestrator = new FileRenameOrchestratorImpl(fileMapper, duplicateResolver, renameExecutor, transformerRegistry);
+        orchestrator = new FileRenameOrchestratorImpl(
+                fileMapper,
+                duplicateResolver,
+                renameExecutor,
+                addTextTransformer,
+                removeTextTransformer,
+                replaceTextTransformer,
+                caseChangeTransformer,
+                dateTimeTransformer,
+                imageDimensionsTransformer,
+                sequenceTransformer,
+                parentFolderTransformer,
+                truncateTransformer,
+                extensionChangeTransformer
+        );
 
         // Reset progress counters
         progressCurrent.set(0);
@@ -167,9 +180,9 @@ public abstract class BaseTransformationIntegrationTest {
      */
     protected List<File> getAllFilesInTempDir() throws IOException {
         return Files.list(tempDir)
-                    .filter(Files::isRegularFile)
-                    .map(Path::toFile)
-                    .toList();
+                .filter(Files::isRegularFile)
+                .map(Path::toFile)
+                .toList();
     }
 
     /**
@@ -177,8 +190,8 @@ public abstract class BaseTransformationIntegrationTest {
      */
     protected long countFilesInTempDir() throws IOException {
         return Files.list(tempDir)
-                    .filter(Files::isRegularFile)
-                    .count();
+                .filter(Files::isRegularFile)
+                .count();
     }
 
     // ==================== PROGRESS CALLBACK HELPERS ====================
