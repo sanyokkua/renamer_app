@@ -1124,6 +1124,7 @@ node_modules
 .settings
 .theia
 # Claude Code - ignore local settings but keep CLAUDE.md
-.claude/*
+.claude/settings.local.json
 !.claude/CLAUDE.md
+!.claude/skills/*
 !.claude/.mcp.json
