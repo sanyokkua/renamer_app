@@ -49,9 +49,14 @@ app/
 ├── pom.xml          # Parent POM (Java 25, Guice 7, JavaFX 25)
 ├── core/            # Business logic (no UI dependencies)
 │   └── pom.xml
+├── utils/           # Shared utilities (no dependencies on core/ui)
+│   └── pom.xml
 └── ui/              # JavaFX frontend (depends on core)
     └── pom.xml
 ```
+
+All modules use the Java Platform Module System (`module-info.java`) with explicit exports and opens. When adding new
+packages, update the relevant `module-info.java` to export them.
 
 ## Architecture Overview
 
@@ -610,7 +615,8 @@ models (e.g.,
 `updateCommand()` which creates
 new command instance.
 
-**Lombok Configuration**: `lombok.config` in app/ directory configures annotation processing. Use
+**Lombok Configuration**: `lombok.config` in app/ directory configures annotation processing with Jakarta null
+annotations (`lombok.addNullAnnotations=jakarta`) and `@Generated` annotation for coverage exclusion. Use
 `@RequiredArgsConstructor(onConstructor_ = {@Inject})` for constructor injection.
 
 **V2 Pipeline Threading**: FileRenameOrchestratorImpl uses virtual threads for scalable I/O operations. Phase 1 (
@@ -694,6 +700,11 @@ package with real test files.
 Supports English and Ukrainian via ResourceBundles in `app/ui/src/main/resources/langs/`. Language is selected based on
 system locale (UA → Ukrainian,
 others → English). Text retrieval uses `LanguageTextRetrieverApi`.
+
+## Deployment
+
+The application uses **jdeploy** (configured in `package.json`) to build native installers for mac-x64, mac-arm64,
+Windows, and Linux. The main JAR is built from the `ui` module.
 
 ## MCP (Model Context Protocol) Server
 
