@@ -27,6 +27,8 @@
         <junit-bom.version>6.0.1</junit-bom.version>
         <mockito-core.version>5.20.0</mockito-core.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <guice.version>7.0.0</guice.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <tika-core.version>3.2.3</tika-core.version>
@@ -186,6 +188,17 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <!-- Version management only; child modules activate with their own executions -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
