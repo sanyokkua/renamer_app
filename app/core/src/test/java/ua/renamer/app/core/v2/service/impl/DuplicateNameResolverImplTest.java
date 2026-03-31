@@ -3,7 +3,8 @@ package ua.renamer.app.core.v2.service.impl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.core.v2.model.*;
+import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.enums.Category;
 
 import java.io.File;
 import java.time.LocalDateTime;

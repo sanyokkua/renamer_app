@@ -3,9 +3,10 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.core.v2.enums.ItemPosition;
-import ua.renamer.app.core.v2.model.*;
-import ua.renamer.app.core.v2.model.config.AddTextConfig;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.config.AddTextConfig;
 
 import java.io.File;
 import java.time.LocalDateTime;

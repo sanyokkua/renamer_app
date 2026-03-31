@@ -6,8 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ua.renamer.app.metadata.extractor.strategy.format.video.AviFileMetadataExtractor;
-import ua.renamer.app.metadata.model.meta.FileMeta;
-import ua.renamer.app.metadata.model.meta.category.VideoMeta;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.VideoMeta;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;

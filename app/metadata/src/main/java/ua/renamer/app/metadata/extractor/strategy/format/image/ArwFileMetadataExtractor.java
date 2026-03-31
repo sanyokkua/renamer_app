@@ -2,7 +2,7 @@ package ua.renamer.app.metadata.extractor.strategy.format.image;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.file.FileTypeDirectory;
-import ua.renamer.app.metadata.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 /**
  * Metadata extractor for Sony ARW (Sony Raw) camera files.

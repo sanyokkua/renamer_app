@@ -3,13 +3,15 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.core.v2.enums.*;
-import ua.renamer.app.core.v2.model.*;
-import ua.renamer.app.core.v2.model.config.DateTimeConfig;
-import ua.renamer.app.core.v2.model.meta.FileMeta;
-import ua.renamer.app.core.v2.model.meta.category.ImageMeta;
-import ua.renamer.app.core.v2.model.meta.category.VideoMeta;
-import ua.renamer.app.core.v2.util.DateTimeConverter;
+import ua.renamer.app.api.enums.*;
+import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.config.DateTimeConfig;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.api.model.meta.category.VideoMeta;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.core.v2.util.TestDateTimeUtils;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -27,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class DateTimeTransformerTest {
 
     private DateTimeTransformer transformer;
-    private DateTimeConverter dateTimeConverter;
+    private DateTimeUtils dateTimeUtils;
 
     @BeforeAll
     void setUp() {
-        dateTimeConverter = new DateTimeConverter();
-        transformer = new DateTimeTransformer(dateTimeConverter);
+        dateTimeUtils = new TestDateTimeUtils();
+        transformer = new DateTimeTransformer(dateTimeUtils);
     }
 
     // ============================================================================

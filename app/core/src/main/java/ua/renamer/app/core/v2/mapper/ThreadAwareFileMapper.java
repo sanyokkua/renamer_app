@@ -2,12 +2,12 @@ package ua.renamer.app.core.v2.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import ua.renamer.app.core.v2.enums.MimeTypes;
-import ua.renamer.app.core.v2.interfaces.FileMapper;
-import ua.renamer.app.core.v2.interfaces.FileMetadataMapper;
-import ua.renamer.app.core.v2.interfaces.FileUtils;
-import ua.renamer.app.core.v2.model.Category;
-import ua.renamer.app.core.v2.model.FileModel;
+import ua.renamer.app.api.enums.MimeTypes;
+import ua.renamer.app.api.interfaces.FileMapper;
+import ua.renamer.app.api.interfaces.FileMetadataMapper;
+import ua.renamer.app.api.interfaces.FileUtils;
+import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.FileModel;
 
 import java.io.File;
 import java.util.Collections;

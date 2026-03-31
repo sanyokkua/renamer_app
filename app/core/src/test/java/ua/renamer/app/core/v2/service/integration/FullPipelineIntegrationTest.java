@@ -3,14 +3,14 @@ package ua.renamer.app.core.v2.service.integration;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.core.v2.enums.ItemPosition;
-import ua.renamer.app.core.v2.enums.ItemPositionExtended;
-import ua.renamer.app.core.v2.enums.SortSource;
-import ua.renamer.app.core.v2.enums.TextCaseOptions;
-import ua.renamer.app.core.v2.model.RenameResult;
-import ua.renamer.app.core.v2.model.RenameStatus;
-import ua.renamer.app.core.v2.model.TransformationMode;
-import ua.renamer.app.core.v2.model.config.*;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.enums.ItemPositionExtended;
+import ua.renamer.app.api.enums.SortSource;
+import ua.renamer.app.api.enums.TextCaseOptions;
+import ua.renamer.app.api.model.RenameResult;
+import ua.renamer.app.api.model.RenameStatus;
+import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.model.config.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -394,7 +394,7 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
 
         TruncateConfig config = TruncateConfig.builder()
                                               .withNumberOfSymbols(10)
-                                              .withTruncateOption(ua.renamer.app.core.v2.enums.TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                                              .withTruncateOption(ua.renamer.app.api.enums.TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
                                               .build();
 
         List<RenameResult> results = orchestrator.execute(

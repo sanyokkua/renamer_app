@@ -6,13 +6,15 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.core.v2.interfaces.FileMetadataMapper;
+import ua.renamer.app.api.interfaces.FileMetadataMapper;
 import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
-import ua.renamer.app.core.v2.model.Category;
-import ua.renamer.app.core.v2.model.FileModel;
-import ua.renamer.app.core.v2.model.meta.FileMeta;
-import ua.renamer.app.core.v2.util.CommonFileUtils;
-import ua.renamer.app.core.v2.util.DateTimeConverter;
+import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.interfaces.FileUtils;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.core.v2.util.TestDateTimeUtils;
+import ua.renamer.app.core.v2.util.TestFileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,8 +41,8 @@ class ThreadAwareFileMapperIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        DateTimeConverter dateTimeConverter = new DateTimeConverter();
-        CommonFileUtils fileUtils = new CommonFileUtils(dateTimeConverter);
+        DateTimeUtils dateTimeUtils = new TestDateTimeUtils();
+        FileUtils fileUtils = new TestFileUtils(dateTimeUtils);
 
         // Simple mock metadata mapper that returns empty metadata
         FileMetadataMapper mockMetadataMapper = (file, category, mimeType) -> FileMeta.empty();

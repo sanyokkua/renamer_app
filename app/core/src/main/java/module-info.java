@@ -1,17 +1,15 @@
 module ua.renamer.app.core {
+    requires ua.renamer.app.api;
     requires static lombok;
     requires org.slf4j; // Required by lombok
-    requires metadata.extractor;
+    requires metadata.extractor; // Used by V1 image/video mappers
     requires com.google.guice;
     requires jakarta.annotation;
     requires jakarta.inject; // Required by Guice
-    requires org.apache.tika.core;
+    requires org.apache.tika.core; // Used by V1 FilesOperations
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
-    requires org.apache.tika.parser.image;
     requires org.jspecify;
-    requires jaudiotagger;
-    requires com.google.common; // Audio metadata extraction
 
 
     exports ua.renamer.app.core.config;
@@ -35,18 +33,11 @@ module ua.renamer.app.core {
     exports ua.renamer.app.core.service.validator.impl;
 
     // v2 packages
-    exports ua.renamer.app.core.v2.model;
-    exports ua.renamer.app.core.v2.model.config;
-    exports ua.renamer.app.core.v2.model.meta;
-    exports ua.renamer.app.core.v2.model.meta.category;
     exports ua.renamer.app.core.v2.service;
     exports ua.renamer.app.core.v2.service.impl;
     exports ua.renamer.app.core.v2.service.transformation;
     exports ua.renamer.app.core.v2.mapper;
-    exports ua.renamer.app.core.v2.mapper.strategy;
-    exports ua.renamer.app.core.v2.mapper.strategy.format;
     exports ua.renamer.app.core.v2.util;
-    exports ua.renamer.app.core.v2.enums;
 
     opens ua.renamer.app.core.config;
     opens ua.renamer.app.core.model;
@@ -69,16 +60,9 @@ module ua.renamer.app.core {
     opens ua.renamer.app.core.enums;
 
     // v2 packages
-    opens ua.renamer.app.core.v2.model;
-    opens ua.renamer.app.core.v2.model.config;
-    opens ua.renamer.app.core.v2.model.meta;
-    opens ua.renamer.app.core.v2.model.meta.category;
     opens ua.renamer.app.core.v2.service;
     opens ua.renamer.app.core.v2.service.impl;
     opens ua.renamer.app.core.v2.service.transformation;
     opens ua.renamer.app.core.v2.mapper;
-    opens ua.renamer.app.core.v2.mapper.strategy;
-    opens ua.renamer.app.core.v2.mapper.strategy.format;
     opens ua.renamer.app.core.v2.util;
-    opens ua.renamer.app.core.v2.enums;
 }

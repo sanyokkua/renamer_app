@@ -3,8 +3,8 @@ package ua.renamer.app.metadata.extractor.integration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ua.renamer.app.metadata.extractor.strategy.format.image.TiffFileMetadataExtractor;
-import ua.renamer.app.metadata.model.meta.FileMeta;
-import ua.renamer.app.metadata.model.meta.category.ImageMeta;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;

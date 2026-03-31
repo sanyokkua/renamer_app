@@ -43,6 +43,7 @@
 
     <modules>
         <module>utils</module>
+        <module>api</module>
         <module>core</module>
         <module>metadata</module>
         <module>ui</module>

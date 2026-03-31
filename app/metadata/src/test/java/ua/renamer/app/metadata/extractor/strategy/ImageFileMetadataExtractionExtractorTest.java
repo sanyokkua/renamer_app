@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import ua.renamer.app.metadata.extractor.strategy.format.image.*;
-import ua.renamer.app.metadata.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 

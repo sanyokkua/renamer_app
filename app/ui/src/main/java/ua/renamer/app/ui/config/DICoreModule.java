@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import ua.renamer.app.core.config.DIV2ServiceModule;
+import ua.renamer.app.metadata.config.DIMetadataModule;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.model.RenameModel;
@@ -52,7 +53,8 @@ public class DICoreModule extends AbstractModule {
         bindApplicationCommands();
         bindApplicationServices();
 
-        // Install v2 services module
+        // Install v2 services and infrastructure modules
+        install(new DIMetadataModule());
         install(new DIV2ServiceModule());
     }
 

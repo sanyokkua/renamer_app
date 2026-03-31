@@ -3,11 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.core.v2.enums.SortSource;
-import ua.renamer.app.core.v2.model.*;
-import ua.renamer.app.core.v2.model.config.SequenceConfig;
-import ua.renamer.app.core.v2.model.meta.FileMeta;
-import ua.renamer.app.core.v2.model.meta.category.ImageMeta;
+import ua.renamer.app.api.enums.SortSource;
+import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.config.SequenceConfig;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.ImageMeta;
 
 import java.io.File;
 import java.time.LocalDateTime;

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.enums.DateFormat;
-import ua.renamer.app.metadata.enums.DateTimeFormat;
-import ua.renamer.app.metadata.enums.TimeFormat;
+import ua.renamer.app.api.enums.DateFormat;
+import ua.renamer.app.api.enums.DateTimeFormat;
+import ua.renamer.app.api.enums.TimeFormat;
 
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;

@@ -2,10 +2,10 @@ package ua.renamer.app.core.v2.service.integration;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.core.v2.enums.SortSource;
-import ua.renamer.app.core.v2.model.RenameResult;
-import ua.renamer.app.core.v2.model.TransformationMode;
-import ua.renamer.app.core.v2.model.config.SequenceConfig;
+import ua.renamer.app.api.enums.SortSource;
+import ua.renamer.app.api.model.RenameResult;
+import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.model.config.SequenceConfig;
 
 import java.io.File;
 import java.io.IOException;

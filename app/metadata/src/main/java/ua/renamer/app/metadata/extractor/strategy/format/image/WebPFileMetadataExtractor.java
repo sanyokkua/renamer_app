@@ -2,7 +2,7 @@ package ua.renamer.app.metadata.extractor.strategy.format.image;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.webp.WebpDirectory;
-import ua.renamer.app.metadata.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 public class WebPFileMetadataExtractor extends BaseImageMetadataExtractor {
 

@@ -1,7 +1,7 @@
 package ua.renamer.app.core.v2.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.v2.model.PreparedFileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.core.v2.service.DuplicateNameResolver;
 
 import java.util.*;

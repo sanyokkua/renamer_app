@@ -3,9 +3,9 @@ package ua.renamer.app.metadata.util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import ua.renamer.app.metadata.exception.FileAttributesReadException;
-import ua.renamer.app.metadata.exception.FileNotFoundException;
-import ua.renamer.app.metadata.exception.MimeTypeNotFoundException;
+import ua.renamer.app.api.exception.FileAttributesReadException;
+import ua.renamer.app.api.exception.FileNotFoundException;
+import ua.renamer.app.api.exception.MimeTypeNotFoundException;
 
 import java.io.File;
 import java.io.IOException;

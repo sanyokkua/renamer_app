@@ -1,7 +1,7 @@
 package ua.renamer.app.core.v2.service;
 
-import ua.renamer.app.core.v2.model.FileModel;
-import ua.renamer.app.core.v2.model.PreparedFileModel;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
 
 import java.util.List;
 

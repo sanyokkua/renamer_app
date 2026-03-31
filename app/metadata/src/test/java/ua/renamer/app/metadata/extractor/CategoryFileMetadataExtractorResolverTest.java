@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.renamer.app.metadata.enums.Category;
+import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.metadata.extractor.strategy.AudioFileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.GenericFileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.ImageFileMetadataExtractionExtractor;
 import ua.renamer.app.metadata.extractor.strategy.VideoFileMetadataExtractor;
-import ua.renamer.app.metadata.interfaces.FileMetadataExtractor;
+import ua.renamer.app.api.interfaces.FileMetadataExtractor;
 
 import static org.junit.jupiter.api.Assertions.*;
 

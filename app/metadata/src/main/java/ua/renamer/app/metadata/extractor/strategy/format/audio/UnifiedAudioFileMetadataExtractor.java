@@ -8,9 +8,9 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jspecify.annotations.Nullable;
 import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
-import ua.renamer.app.metadata.interfaces.FileMetadataExtractor;
-import ua.renamer.app.metadata.model.meta.FileMeta;
-import ua.renamer.app.metadata.model.meta.category.AudioMeta;
+import ua.renamer.app.api.interfaces.FileMetadataExtractor;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.AudioMeta;
 
 import java.io.File;
 import java.util.ArrayList;

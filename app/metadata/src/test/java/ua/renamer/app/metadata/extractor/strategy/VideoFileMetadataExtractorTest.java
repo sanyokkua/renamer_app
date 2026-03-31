@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.renamer.app.metadata.extractor.strategy.format.video.AviFileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.format.video.Mp4FileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.format.video.QuickTimeFileMetadataExtractor;
-import ua.renamer.app.metadata.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 

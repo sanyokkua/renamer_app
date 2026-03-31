@@ -3,8 +3,10 @@ package ua.renamer.app.core.v2.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
-import ua.renamer.app.core.v2.model.*;
-import ua.renamer.app.core.v2.model.config.*;
+import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.model.config.*;
+import ua.renamer.app.api.service.FileRenameOrchestrator;
+import ua.renamer.app.api.service.ProgressCallback;
 import ua.renamer.app.core.v2.service.*;
 import ua.renamer.app.core.v2.service.transformation.*;
 

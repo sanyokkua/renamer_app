@@ -1,11 +1,11 @@
 package ua.renamer.app.core.v2.service.transformation;
 
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.v2.model.FileModel;
-import ua.renamer.app.core.v2.model.PreparedFileModel;
-import ua.renamer.app.core.v2.model.TransformationMetadata;
-import ua.renamer.app.core.v2.model.TransformationMode;
-import ua.renamer.app.core.v2.model.config.TruncateConfig;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.model.config.TruncateConfig;
 import ua.renamer.app.core.v2.service.FileTransformationService;
 
 import java.time.LocalDateTime;

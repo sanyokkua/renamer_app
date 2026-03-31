@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import ua.renamer.app.core.v2.enums.ItemPosition;
-import ua.renamer.app.core.v2.model.RenameResult;
-import ua.renamer.app.core.v2.model.RenameStatus;
-import ua.renamer.app.core.v2.model.TransformationMode;
-import ua.renamer.app.core.v2.model.config.AddTextConfig;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.model.RenameResult;
+import ua.renamer.app.api.model.RenameStatus;
+import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.model.config.AddTextConfig;
 
 import java.io.File;
 import java.io.IOException;

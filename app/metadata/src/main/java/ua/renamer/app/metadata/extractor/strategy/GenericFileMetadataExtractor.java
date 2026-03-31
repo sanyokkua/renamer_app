@@ -1,7 +1,7 @@
 package ua.renamer.app.metadata.extractor.strategy;
 
-import ua.renamer.app.metadata.interfaces.FileMetadataExtractor;
-import ua.renamer.app.metadata.model.meta.FileMeta;
+import ua.renamer.app.api.interfaces.FileMetadataExtractor;
+import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 

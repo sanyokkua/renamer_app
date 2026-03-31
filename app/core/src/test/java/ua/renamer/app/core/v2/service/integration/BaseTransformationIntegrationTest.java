@@ -4,19 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
-import ua.renamer.app.core.v2.interfaces.FileMetadataMapper;
+import ua.renamer.app.api.interfaces.FileMetadataMapper;
 import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
-import ua.renamer.app.core.v2.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.core.v2.service.DuplicateNameResolver;
-import ua.renamer.app.core.v2.service.FileRenameOrchestrator;
-import ua.renamer.app.core.v2.service.ProgressCallback;
+import ua.renamer.app.api.service.FileRenameOrchestrator;
+import ua.renamer.app.api.service.ProgressCallback;
 import ua.renamer.app.core.v2.service.RenameExecutionService;
 import ua.renamer.app.core.v2.service.impl.DuplicateNameResolverImpl;
 import ua.renamer.app.core.v2.service.impl.FileRenameOrchestratorImpl;
 import ua.renamer.app.core.v2.service.impl.RenameExecutionServiceImpl;
 import ua.renamer.app.core.v2.service.transformation.*;
-import ua.renamer.app.core.v2.util.CommonFileUtils;
-import ua.renamer.app.core.v2.util.DateTimeConverter;
+import ua.renamer.app.api.interfaces.FileUtils;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.core.v2.util.TestDateTimeUtils;
+import ua.renamer.app.core.v2.util.TestFileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,8 +52,8 @@ public abstract class BaseTransformationIntegrationTest {
         log.info("Setting up integration test with temp directory: {}", tempDir);
 
         // Manually assemble components (simpler than complex Guice setup)
-        DateTimeConverter dateTimeConverter = new DateTimeConverter();
-        CommonFileUtils fileUtils = new CommonFileUtils(dateTimeConverter);
+        DateTimeUtils dateTimeUtils = new TestDateTimeUtils();
+        FileUtils fileUtils = new TestFileUtils(dateTimeUtils);
 
         // Simple mock metadata mapper for testing (doesn't need full metadata extraction)
         FileMetadataMapper mockMetadataMapper = (file, category, mimeType) -> FileMeta.empty();
@@ -65,7 +67,7 @@ public abstract class BaseTransformationIntegrationTest {
         RemoveTextTransformer removeTextTransformer = new RemoveTextTransformer();
         ReplaceTextTransformer replaceTextTransformer = new ReplaceTextTransformer();
         CaseChangeTransformer caseChangeTransformer = new CaseChangeTransformer();
-        DateTimeTransformer dateTimeTransformer = new DateTimeTransformer(dateTimeConverter);
+        DateTimeTransformer dateTimeTransformer = new DateTimeTransformer(dateTimeUtils);
         ImageDimensionsTransformer imageDimensionsTransformer = new ImageDimensionsTransformer();
         SequenceTransformer sequenceTransformer = new SequenceTransformer();
         ParentFolderTransformer parentFolderTransformer = new ParentFolderTransformer();

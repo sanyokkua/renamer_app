@@ -11,6 +11,7 @@ module ua.renamer.app.ui {
     requires javafx.web;
 
     requires ua.renamer.app.core;
+    requires ua.renamer.app.metadata;
     requires jakarta.inject;
     requires org.apache.tika.core;
 

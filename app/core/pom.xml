@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>ua.renamer.app</groupId>
+            <artifactId>ua.renamer.app.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

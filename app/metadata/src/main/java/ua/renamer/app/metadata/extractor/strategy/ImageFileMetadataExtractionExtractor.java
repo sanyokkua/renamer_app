@@ -2,10 +2,10 @@ package ua.renamer.app.metadata.extractor.strategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.metadata.enums.AppMimeTypes;
+import ua.renamer.app.api.enums.AppMimeTypes;
 import ua.renamer.app.metadata.extractor.strategy.format.image.*;
-import ua.renamer.app.metadata.interfaces.FileMetadataExtractor;
-import ua.renamer.app.metadata.model.meta.FileMeta;
+import ua.renamer.app.api.interfaces.FileMetadataExtractor;
+import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 

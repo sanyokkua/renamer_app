@@ -13,10 +13,10 @@ import ua.renamer.app.metadata.extractor.strategy.format.image.*;
 import ua.renamer.app.metadata.extractor.strategy.format.video.AviFileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.format.video.Mp4FileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.format.video.QuickTimeFileMetadataExtractor;
-import ua.renamer.app.metadata.interfaces.DateTimeUtils;
-import ua.renamer.app.metadata.interfaces.FileMetadataExtractorResolver;
-import ua.renamer.app.metadata.interfaces.FileMetadataMapper;
-import ua.renamer.app.metadata.interfaces.FileUtils;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.FileMetadataExtractorResolver;
+import ua.renamer.app.api.interfaces.FileMetadataMapper;
+import ua.renamer.app.api.interfaces.FileUtils;
 import ua.renamer.app.metadata.util.CommonFileUtils;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 

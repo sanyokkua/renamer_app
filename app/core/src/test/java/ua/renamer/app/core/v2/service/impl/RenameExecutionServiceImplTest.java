@@ -2,7 +2,8 @@ package ua.renamer.app.core.v2.service.impl;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
-import ua.renamer.app.core.v2.model.*;
+import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.enums.Category;
 
 import java.io.File;
 import java.io.IOException;

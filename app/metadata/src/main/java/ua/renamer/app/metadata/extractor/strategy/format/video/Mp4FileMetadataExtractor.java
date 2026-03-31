@@ -6,7 +6,7 @@ import com.drew.metadata.mov.media.QuickTimeMediaDirectory;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
 import com.drew.metadata.mp4.media.Mp4MediaDirectory;
 import com.drew.metadata.mp4.media.Mp4VideoDirectory;
-import ua.renamer.app.metadata.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.util.List;
 

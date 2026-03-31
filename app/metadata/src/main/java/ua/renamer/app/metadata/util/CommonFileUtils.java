@@ -1,13 +1,12 @@
 package ua.renamer.app.metadata.util;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
-import ua.renamer.app.metadata.exception.FileAttributesReadException;
-import ua.renamer.app.metadata.exception.FileNotFoundException;
-import ua.renamer.app.metadata.exception.MimeTypeNotFoundException;
-import ua.renamer.app.metadata.interfaces.DateTimeUtils;
-import ua.renamer.app.metadata.interfaces.FileUtils;
+import ua.renamer.app.api.exception.FileAttributesReadException;
+import ua.renamer.app.api.exception.FileNotFoundException;
+import ua.renamer.app.api.exception.MimeTypeNotFoundException;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,43 +43,17 @@ public class CommonFileUtils implements FileUtils {
 
     @Override
     public String getFileBaseName(Path path) {
-        String fileName = path.getFileName().toString();
-
-        // Handle hidden files (files starting with .)
-        if (fileName.startsWith(".")) {
-            int lastDotIndex = fileName.lastIndexOf('.');
-            // If it's just a dot or only one dot at the start, the whole name is the base name
-            if (lastDotIndex == 0) {
-                return fileName;
-            }
-            // If there are multiple dots, return everything up to the last dot
-            return fileName.substring(0, lastDotIndex);
-        }
-
-        return FilenameUtils.getBaseName(fileName);
+        return ua.renamer.app.utils.file.FileUtils.getFileBaseName(path);
     }
 
     @Override
     public String getFileAbsolutePath(Path path) {
-        return path.toAbsolutePath().toString();
+        return ua.renamer.app.utils.file.FileUtils.getFileAbsolutePath(path);
     }
 
     @Override
     public String getFileExtension(Path path) {
-        String fileName = path.getFileName().toString();
-
-        // Handle hidden files (files starting with .)
-        if (fileName.startsWith(".")) {
-            int lastDotIndex = fileName.lastIndexOf('.');
-            // If there's only one dot at the start, there's no extension
-            if (lastDotIndex == 0) {
-                return "";
-            }
-            // Return the part after the last dot
-            return fileName.substring(lastDotIndex + 1);
-        }
-
-        return FilenameUtils.getExtension(fileName);
+        return ua.renamer.app.utils.file.FileUtils.getFileExtension(path);
     }
 
     @Override

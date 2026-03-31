@@ -3,7 +3,7 @@ package ua.renamer.app.core.v2.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.v2.enums.TextCaseOptions;
+import ua.renamer.app.api.enums.TextCaseOptions;
 
 import java.util.List;
 import java.util.Objects;

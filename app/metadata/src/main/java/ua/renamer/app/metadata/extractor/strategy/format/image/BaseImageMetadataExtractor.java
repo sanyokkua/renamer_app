@@ -13,10 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
 import ua.renamer.app.metadata.extractor.strategy.format.MetadataCommons;
-import ua.renamer.app.metadata.interfaces.DateTimeUtils;
-import ua.renamer.app.metadata.interfaces.FileMetadataExtractor;
-import ua.renamer.app.metadata.model.meta.FileMeta;
-import ua.renamer.app.metadata.model.meta.category.ImageMeta;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.FileMetadataExtractor;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.ImageMeta;
 
 import java.io.File;
 import java.io.IOException;
