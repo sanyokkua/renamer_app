@@ -44,6 +44,7 @@
     <modules>
         <module>utils</module>
         <module>core</module>
+        <module>metadata</module>
         <module>ui</module>
     </modules>
 
