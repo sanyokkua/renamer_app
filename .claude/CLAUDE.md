@@ -8,14 +8,18 @@ JavaFX 25 desktop app for batch file renaming with metadata extraction. Multi-mo
 
 ## Build Commands
 
+Run from `app/` directory. `.mvn/maven.config` applies `-B --no-transfer-progress` globally.
+
 ```bash
-mvn clean install                                          # Build all modules
+mvn compile -q -ff                                         # Compile only (fast feedback)
+mvn test -q -ff -Dai=true                                  # All tests, quiet output
+mvn test -q -ff -Dai=true -Dtest=ClassName                # Single test class
+mvn test -q -ff -Dai=true -Dtest=ClassName#methodName     # Single test method
+mvn clean test jacoco:report -Dai=true                     # Coverage report
+mvn verify -Pcode-quality -q                               # Checkstyle + PMD + SpotBugs
+../scripts/ai-build.sh                                     # Sequential: compile → lint → test
+mvn clean install -q                                       # Build all modules
 cd app/ui && mvn javafx:run                                # Run the app
-mvn test                                                   # All tests
-cd app/core && mvn test                                    # Core tests only
-mvn test -Dtest=ClassName                                  # Single test class
-mvn test -Dtest=ClassName#methodName                       # Single test method
-mvn clean test jacoco:report                               # Coverage report
 ```
 
 ## Architecture: Two Coexisting Generations

@@ -39,6 +39,14 @@
         <guava.version>33.5.0-jre</guava.version>
         <jspecify.version>1.0.0</jspecify.version>
         <jaudiotagger.version>2.0.10</jaudiotagger.version>
+
+        <!-- Code quality tool versions -->
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <checkstyle.version>10.21.4</checkstyle.version>
+        <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.3.0</spotbugs-maven-plugin.version>
+        <findsecbugs-plugin.version>1.13.0</findsecbugs-plugin.version>
+        <spotbugs-annotations.version>4.9.3</spotbugs-annotations.version>
     </properties>
 
     <modules>
@@ -166,6 +174,12 @@
                 <version>${mockito-core.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-annotations</artifactId>
+                <version>${spotbugs-annotations.version}</version>
+                <scope>provided</scope>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -202,7 +216,160 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <!--
+            quiet profile: suppress test stdout/stderr to files.
+            Activates automatically with -Dai=true.
+            Use for all test runs when working with Claude Code.
+        -->
+        <profile>
+            <id>quiet</id>
+            <activation>
+                <property>
+                    <name>ai</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <trimStackTrace>true</trimStackTrace>
+                            <printSummary>true</printSummary>
+                            <useFile>true</useFile>
+                            <reportFormat>brief</reportFormat>
+                            <enableOutErrElements>false</enableOutErrElements>
+                            <enablePropertiesElement>false</enablePropertiesElement>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            code-quality profile: run Checkstyle, PMD, and SpotBugs.
+            All tools use failOnViolation=false — violations are informational for local dev.
+            Activate with: mvn verify -Pcode-quality
+            Execution order follows linting standards: compile → checkstyle → PMD → spotbugs → test
+        -->
+        <profile>
+            <id>code-quality</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <configuration>
+                            <configLocation>${maven.multiModuleProjectDirectory}/checkstyle.xml</configLocation>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>false</failsOnError>
+                            <failOnViolation>false</failOnViolation>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <linkXRef>false</linkXRef>
+                            <!-- module-info.java uses JPMS syntax Checkstyle cannot parse -->
+                            <excludes>**/module-info.java</excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>checkstyle-validate</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <configuration>
+                            <rulesets>
+                                <ruleset>${maven.multiModuleProjectDirectory}/pmd-rules.xml</ruleset>
+                            </rulesets>
+                            <!-- Java 25 not yet supported by PMD — use highest supported LTS -->
+                            <targetJdk>21</targetJdk>
+                            <printFailingErrors>true</printFailingErrors>
+                            <failOnViolation>false</failOnViolation>
+                            <linkXRef>false</linkXRef>
+                            <excludeRoots>
+                                <excludeRoot>target/generated-sources</excludeRoot>
+                                <excludeRoot>target/generated-test-sources</excludeRoot>
+                            </excludeRoots>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>pmd-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <configuration>
+                            <!--
+                                JAVA 25 LIMITATION: SpotBugs uses ASM internally to read class files.
+                                Java 25 produces class file major version 69, which requires ASM 9.9+.
+                                Current spotbugs-maven-plugin ${spotbugs-maven-plugin.version} bundles
+                                an older ASM version. Set skip=false when SpotBugs gains Java 25 support.
+                            -->
+                            <skip>true</skip>
+                            <effort>Max</effort>
+                            <threshold>Medium</threshold>
+                            <failOnError>false</failOnError>
+                            <xmlOutput>true</xmlOutput>
+                            <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml</excludeFilterFile>
+                            <plugins>
+                                <plugin>
+                                    <groupId>com.h3xstream.findsecbugs</groupId>
+                                    <artifactId>findsecbugs-plugin</artifactId>
+                                    <version>${findsecbugs-plugin.version}</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>spotbugs-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+    xmlns="https://github.com/spotbugs/filter/3.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+    <!-- Generated sources — not authored by developers -->
+    <Match>
+        <Source name="~.*[\\/]target[\\/]generated-sources[\\/].*"/>
+    </Match>
+
+    <!-- Lombok-generated code: @Builder, @Getter, @Setter, @EqualsAndHashCode -->
+    <!-- Lombok creates patterns that SpotBugs flags as mutable exposure -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Class name="~.*\.(model|api)\..*(Model|Info|Result|Config)"/>
+    </Match>
+
+    <!-- Test classes: performance findings are not actionable in tests -->
+    <Match>
+        <Class name="~.*Test$"/>
+        <Bug category="PERFORMANCE"/>
+    </Match>
+
+    <!-- Test classes: scariness-related findings in test scaffolding -->
+    <Match>
+        <Class name="~.*Test$"/>
+        <Bug category="STYLE"/>
+    </Match>
+
+</FindBugsFilter>
