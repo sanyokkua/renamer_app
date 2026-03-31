@@ -54,6 +54,54 @@ PreparedFileModel.builder().withOriginalFile(file).withNewName(name).withHasErro
 
 **JPMS**: `ua.renamer.app.core.v2.interfaces` and `ua.renamer.app.core.v2.exception` are intentionally NOT exported.
 
+## Agents (invoke with `@"agent-name (agent)"`)
+
+Six specialized agents cover the full development lifecycle. Each is tuned to
+this project's Java/Maven/JavaFX stack. Invoke them in pipeline order for
+planned work, or individually for reactive tasks.
+
+| Agent | Model | Role | When to invoke |
+|-------|-------|------|----------------|
+| `investigator` | haiku | Read-only codebase cartographer | Before any new task — maps the code, traces data flow, identifies modification scope |
+| `architect` | sonnet | Technical designer | After investigation — designs solution, evaluates trade-offs, writes `PLAN.md` |
+| `coder` | sonnet | Step-by-step implementer | After human approves `PLAN.md` — implements exactly one plan step at a time |
+| `tester` | sonnet | JUnit 5 QA engineer | After each coder step — writes tests, finds edge cases, verifies the no-throw contract |
+| `debugger` | sonnet | Root cause analyst | When any Maven build, test, or runtime failure occurs |
+| `docs-writer` | haiku | Technical writer | After implementation — writes/updates README, ADRs, ARCHITECTURE.md, Javadoc, CHANGELOG |
+
+**Standard pipeline for planned work:**
+```
+investigator → architect → 🧑 review PLAN.md → coder (step N) → tester → repeat
+```
+
+**Reactive invocation (no pipeline needed):**
+```
+Build/test failure       → debugger → tester (add regression test)
+New architecture choice  → architect (write ADR) → docs-writer
+Documentation drift      → docs-writer
+```
+
+**Invocation examples:**
+```bash
+# Map the codebase before starting a new feature
+@"investigator (agent)" trace the data flow from file selection to physical rename
+
+# Design a solution based on investigation findings
+@"architect (agent)" design a new REPLACE_TEXT transformation mode
+
+# Implement one step from the approved plan
+@"coder (agent)" implement Step 1 of PLAN.md
+
+# Test what was just implemented
+@"tester (agent)" test the changes from Step 1 of PLAN.md
+
+# Debug a failing build
+@"debugger (agent)" [paste full Maven error output here]
+
+# Document a completed feature
+@"docs-writer (agent)" document the new REPLACE_TEXT mode added in PLAN.md
+```
+
 ## Skills (invoke with `/skill-name`)
 
 | Skill | When to use |
