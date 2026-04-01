@@ -48,6 +48,15 @@ public class DateTimeConfig implements TransformationConfig {
     boolean useFallbackDateTime = false;
 
     /**
+     * When {@code true}, the AM/PM designator in 12-hour time formats is uppercased (e.g. {@code AM}, {@code PM}).
+     * When {@code false}, it is lowercased (e.g. {@code am}, {@code pm}).
+     * Only applied when the configured {@link ua.renamer.app.api.enums.TimeFormat} is a 12-hour AM/PM format.
+     * Defaults to {@code true} (uppercase is the conventional filename style).
+     */
+    @Builder.Default
+    boolean useUppercaseForAmPm = true;
+
+    /**
      * Returns the custom datetime value wrapped in an {@link Optional}.
      *
      * @return the custom datetime if set, or empty if not set
@@ -77,7 +86,9 @@ public class DateTimeConfig implements TransformationConfig {
                         "customDateTime must be set when source is CUSTOM_DATE");
             }
             return new DateTimeConfig(source, dateFormat, timeFormat, dateTimeFormat, position, customDateTime,
-                                      separator, useFallbackDateTime$set && useFallbackDateTime$value);
+                                      separator,
+                                      useFallbackDateTime$set && useFallbackDateTime$value,
+                    !useUppercaseForAmPm$set || useUppercaseForAmPm$value);
         }
     }
 }

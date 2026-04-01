@@ -319,6 +319,7 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 ### TASK-1.6 — FEATURE-3: DateTimeTransformer — restore `useUppercaseForAmPm`
 
 **Priority:** Round 2 (parallel with TASK-1.5, both touch same files)
+**Status:** COMPLETED
 
 **Goal:** After datetime formatting, when an AM/PM time format is used, apply `toUpperCase()` or `toLowerCase()` based on the `useUppercaseForAmPm` flag.
 

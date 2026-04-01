@@ -6,6 +6,7 @@ import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.TransformationMetadata;
 import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.enums.TimeFormat;
 import ua.renamer.app.api.model.config.DateTimeConfig;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
@@ -14,6 +15,7 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -25,6 +27,19 @@ import java.util.stream.Stream;
 @Slf4j
 @RequiredArgsConstructor
 public class DateTimeTransformer implements FileTransformationService<DateTimeConfig> {
+
+    private static final List<TimeFormat> AM_PM_FORMATS = List.of(
+            TimeFormat.HH_MM_SS_AM_PM_TOGETHER,
+            TimeFormat.HH_MM_SS_AM_PM_WHITE_SPACED,
+            TimeFormat.HH_MM_SS_AM_PM_UNDERSCORED,
+            TimeFormat.HH_MM_SS_AM_PM_DOTTED,
+            TimeFormat.HH_MM_SS_AM_PM_DASHED,
+            TimeFormat.HH_MM_AM_PM_TOGETHER,
+            TimeFormat.HH_MM_AM_PM_WHITE_SPACED,
+            TimeFormat.HH_MM_AM_PM_UNDERSCORED,
+            TimeFormat.HH_MM_AM_PM_DOTTED,
+            TimeFormat.HH_MM_AM_PM_DASHED
+    );
 
     private final DateTimeUtils dateTimeConverter;
 
@@ -55,6 +70,12 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
 
             if (formattedDateTime == null || formattedDateTime.isEmpty()) {
                 return buildErrorResult(input, "Failed to format datetime");
+            }
+
+            if (isAmPmFormat(config.getTimeFormat())) {
+                formattedDateTime = config.isUseUppercaseForAmPm()
+                        ? formattedDateTime.toUpperCase()
+                        : formattedDateTime.toLowerCase();
             }
 
             // Apply to filename based on position
@@ -108,6 +129,10 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
                                         .or(() -> meta.getVideoMeta()
                                                       .flatMap(VideoMeta::getContentCreationDate)))
                     .orElse(null);
+    }
+
+    private boolean isAmPmFormat(TimeFormat timeFormat) {
+        return AM_PM_FORMATS.contains(timeFormat);
     }
 
     private TransformationMetadata buildMetadata(DateTimeConfig config) {
