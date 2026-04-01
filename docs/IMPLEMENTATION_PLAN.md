@@ -836,7 +836,7 @@ One test class covering all 10 params records:
 
 ---
 
-### TASK-2.4 — Define `TaskHandle<T>`, `ModeApi<P>`, and `SessionApi` interfaces
+### TASK-2.4 — Define `TaskHandle<T>`, `ModeApi<P>`, and `SessionApi` interfaces ✅ DONE
 
 **Goal:** Define the three interface contracts that form the public API surface of the backend.
 
