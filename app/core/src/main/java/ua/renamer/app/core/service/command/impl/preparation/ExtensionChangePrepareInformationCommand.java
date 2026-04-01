@@ -26,7 +26,6 @@ public class ExtensionChangePrepareInformationCommand extends FileInformationCom
      * Processes a {@link FileInformation} item by changing its file extension to the specified new extension.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new extension.
      */
     @Override

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.extractor.strategy.format.image.JpegFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.JpegFileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -33,15 +33,15 @@ class JpegMetadataExtractorIntegrationTest {
                 // filename, expectedDate, hasDate, hasDimensions
                 arguments("test_jpg_clean.jpg", null, false, true),
                 arguments("test_jpg_std_2025-12-11_21-00-35.jpg",
-                          LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
                 arguments("test_jpg_past_2000-01-01_12-00-00.jpg",
-                          LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
+                        LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
                 arguments("test_jpg_future_2050-01-01_12-00-00.jpg",
-                          LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
+                        LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
                 arguments("test_jpg_std_no_tz_2025-12-11_21-00-35.jpg",
-                          LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
                 arguments("test_jpg_std_tz_2025-12-11_21-00-35p02-00.jpg",
-                          LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
         );
     }
 
@@ -87,7 +87,7 @@ class JpegMetadataExtractorIntegrationTest {
 
         // Clean file should have no creation date
         assertTrue(imageMeta.getContentCreationDate().isEmpty(),
-                   "Clean file should not have creation date");
+                "Clean file should not have creation date");
 
         // But should have dimensions (from the actual image data)
         assertTrue(imageMeta.getWidth().isPresent(), "Width should be present");
@@ -114,12 +114,12 @@ class JpegMetadataExtractorIntegrationTest {
         // Check creation date
         if (hasDate) {
             assertTrue(imageMeta.getContentCreationDate().isPresent(),
-                       "Creation date should be present for: " + filename);
+                    "Creation date should be present for: " + filename);
             assertEquals(expectedDate, imageMeta.getContentCreationDate().get(),
-                         "Creation date mismatch for: " + filename);
+                    "Creation date mismatch for: " + filename);
         } else {
             assertTrue(imageMeta.getContentCreationDate().isEmpty(),
-                       "Creation date should not be present for: " + filename);
+                    "Creation date should not be present for: " + filename);
         }
 
         // Check dimensions
@@ -149,7 +149,7 @@ class JpegMetadataExtractorIntegrationTest {
         // Should have creation date
         assertTrue(imageMeta.getContentCreationDate().isPresent());
         assertEquals(LocalDateTime.of(2025, 12, 11, 21, 0, 35),
-                     imageMeta.getContentCreationDate().get());
+                imageMeta.getContentCreationDate().get());
 
         // Should have dimensions
         assertTrue(imageMeta.getWidth().isPresent());
@@ -162,31 +162,31 @@ class JpegMetadataExtractorIntegrationTest {
         // GPS coordinates should be present in the metadata map
         // The metadata-extractor library stores GPS data in the GPS directory
         assertTrue(result.getMetaInfo().keySet().stream().anyMatch(key -> key.contains("GPS")),
-                   "Should have GPS-related metadata keys");
+                "Should have GPS-related metadata keys");
 
         // Verify GPS Latitude is present and contains expected values
         String gpsLatKey = result.getMetaInfo().keySet().stream()
-                                 .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("latitude"))
-                                 .filter(key -> !key.toLowerCase().contains("ref")) // Exclude LatitudeRef
-                                 .findFirst()
-                                 .orElse(null);
+                .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("latitude"))
+                .filter(key -> !key.toLowerCase().contains("ref")) // Exclude LatitudeRef
+                .findFirst()
+                .orElse(null);
         assertNotNull(gpsLatKey, "GPS Latitude key should be present");
         String gpsLatValue = result.getMetaInfo().get(gpsLatKey);
         assertNotNull(gpsLatValue, "GPS Latitude value should not be null");
         assertTrue(gpsLatValue.contains("48") && gpsLatValue.contains("51"),
-                   "GPS Latitude should contain degrees (48) and minutes (51): " + gpsLatValue);
+                "GPS Latitude should contain degrees (48) and minutes (51): " + gpsLatValue);
 
         // Verify GPS Longitude is present and contains expected values
         String gpsLonKey = result.getMetaInfo().keySet().stream()
-                                 .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("longitude"))
-                                 .filter(key -> !key.toLowerCase().contains("ref")) // Exclude LongitudeRef
-                                 .findFirst()
-                                 .orElse(null);
+                .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("longitude"))
+                .filter(key -> !key.toLowerCase().contains("ref")) // Exclude LongitudeRef
+                .findFirst()
+                .orElse(null);
         assertNotNull(gpsLonKey, "GPS Longitude key should be present");
         String gpsLonValue = result.getMetaInfo().get(gpsLonKey);
         assertNotNull(gpsLonValue, "GPS Longitude value should not be null");
         assertTrue(gpsLonValue.contains("2") && gpsLonValue.contains("21"),
-                   "GPS Longitude should contain degrees (2) and minutes (21): " + gpsLonValue);
+                "GPS Longitude should contain degrees (2) and minutes (21): " + gpsLonValue);
     }
 
     @Test
@@ -210,13 +210,13 @@ class JpegMetadataExtractorIntegrationTest {
         if (result.getMetaInfo() != null && !result.getMetaInfo().isEmpty()) {
             // If metaInfo exists, it should not contain GPS latitude/longitude
             boolean hasGpsLat = result.getMetaInfo().keySet().stream()
-                                      .anyMatch(key -> key.toLowerCase().contains("gps") &&
-                                              key.toLowerCase().contains("latitude") &&
-                                              !key.toLowerCase().contains("ref"));
+                    .anyMatch(key -> key.toLowerCase().contains("gps") &&
+                            key.toLowerCase().contains("latitude") &&
+                            !key.toLowerCase().contains("ref"));
             boolean hasGpsLon = result.getMetaInfo().keySet().stream()
-                                      .anyMatch(key -> key.toLowerCase().contains("gps") &&
-                                              key.toLowerCase().contains("longitude") &&
-                                              !key.toLowerCase().contains("ref"));
+                    .anyMatch(key -> key.toLowerCase().contains("gps") &&
+                            key.toLowerCase().contains("longitude") &&
+                            !key.toLowerCase().contains("ref"));
             assertFalse(hasGpsLat, "Should not have GPS Latitude for non-GPS file");
             assertFalse(hasGpsLon, "Should not have GPS Longitude for non-GPS file");
         }
@@ -337,11 +337,11 @@ class JpegMetadataExtractorIntegrationTest {
         // Should extract the earliest date (DateTimeOriginal: 2020-01-01)
         // This verifies the priority logic in BaseImageMetadataExtractor.findMinOrNull()
         assertTrue(imageMeta.getContentCreationDate().isPresent(),
-                   "Should extract datetime when multiple dates present");
+                "Should extract datetime when multiple dates present");
 
         java.time.LocalDateTime dateTime = imageMeta.getContentCreationDate().get();
         assertEquals(2020, dateTime.getYear(),
-                     "Should select earliest date (DateTimeOriginal: 2020)");
+                "Should select earliest date (DateTimeOriginal: 2020)");
         assertEquals(1, dateTime.getMonthValue());
         assertEquals(1, dateTime.getDayOfMonth());
         assertEquals(10, dateTime.getHour());
@@ -363,7 +363,7 @@ class JpegMetadataExtractorIntegrationTest {
 
         // Should handle pre-1970 dates correctly
         assertTrue(imageMeta.getContentCreationDate().isPresent(),
-                   "Should extract pre-1970 dates");
+                "Should extract pre-1970 dates");
 
         java.time.LocalDateTime dateTime = imageMeta.getContentCreationDate().get();
         assertEquals(1950, dateTime.getYear(), "Should correctly extract year 1950");
@@ -388,7 +388,7 @@ class JpegMetadataExtractorIntegrationTest {
 
         // Should handle edge of epoch correctly
         assertTrue(imageMeta.getContentCreationDate().isPresent(),
-                   "Should extract date at edge of Unix epoch");
+                "Should extract date at edge of Unix epoch");
 
         java.time.LocalDateTime dateTime = imageMeta.getContentCreationDate().get();
         assertEquals(1969, dateTime.getYear(), "Should correctly extract year 1969");
@@ -419,13 +419,13 @@ class JpegMetadataExtractorIntegrationTest {
 
         // Should NOT have datetime
         assertFalse(imageMeta.getContentCreationDate().isPresent(),
-                    "Clean file should not have datetime");
+                "Clean file should not have datetime");
 
         // Should NOT have GPS
         if (result.getMetaInfo() != null && !result.getMetaInfo().isEmpty()) {
             assertFalse(result.getMetaInfo().keySet().stream()
-                              .anyMatch(key -> key.toLowerCase().contains("gps")),
-                        "Clean file should not have GPS metadata");
+                            .anyMatch(key -> key.toLowerCase().contains("gps")),
+                    "Clean file should not have GPS metadata");
         }
     }
 
@@ -466,6 +466,6 @@ class JpegMetadataExtractorIntegrationTest {
 
         assertNotNull(result);
         assertTrue(result.getErrors().isEmpty(),
-                   "Should not have extraction errors");
+                "Should not have extraction errors");
     }
 }

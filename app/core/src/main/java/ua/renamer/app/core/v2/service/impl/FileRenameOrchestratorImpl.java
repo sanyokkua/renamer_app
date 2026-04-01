@@ -2,12 +2,14 @@ package ua.renamer.app.core.v2.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
 import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.model.config.*;
 import ua.renamer.app.api.service.FileRenameOrchestrator;
 import ua.renamer.app.api.service.ProgressCallback;
-import ua.renamer.app.core.v2.service.*;
+import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
+import ua.renamer.app.core.v2.service.DuplicateNameResolver;
+import ua.renamer.app.core.v2.service.FileTransformationService;
+import ua.renamer.app.core.v2.service.RenameExecutionService;
 import ua.renamer.app.core.v2.service.transformation.*;
 
 import java.io.File;
@@ -104,13 +106,13 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
 
                 // Return error FileModel that will propagate as error through pipeline
                 return FileModel.builder()
-                                .withFile(file)
-                                .withName(file.getName())
-                                .withExtension("")
-                                .withAbsolutePath(file.getAbsolutePath())
-                                .withIsFile(false)  // Mark as problematic
-                                .withFileSize(0L)
-                                .build();
+                        .withFile(file)
+                        .withName(file.getName())
+                        .withExtension("")
+                        .withAbsolutePath(file.getAbsolutePath())
+                        .withIsFile(false)  // Mark as problematic
+                        .withFileSize(0L)
+                        .build();
             }
         }, executor)).map(CompletableFuture::join).toList();
     }
@@ -235,32 +237,32 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
 
     private RenameResult buildErrorResult(File file, String errorMessage) {
         FileModel errorModel = FileModel.builder()
-                                        .withFile(file)
-                                        .withName(file.getName())
-                                        .withExtension("")
-                                        .withAbsolutePath(file.getAbsolutePath())
-                                        .withIsFile(true)
-                                        .withFileSize(0L)
-                                        .withCreationDate(null)
-                                        .withModificationDate(null)
-                                        .withDetectedMimeType("")
-                                        .withMetadata(null)
-                                        .build();
+                .withFile(file)
+                .withName(file.getName())
+                .withExtension("")
+                .withAbsolutePath(file.getAbsolutePath())
+                .withIsFile(true)
+                .withFileSize(0L)
+                .withCreationDate(null)
+                .withModificationDate(null)
+                .withDetectedMimeType("")
+                .withMetadata(null)
+                .build();
 
         PreparedFileModel preparedError = PreparedFileModel.builder()
-                                                           .withOriginalFile(errorModel)
-                                                           .withNewName(file.getName())
-                                                           .withNewExtension("")
-                                                           .withHasError(true)
-                                                           .withErrorMessage(errorMessage)
-                                                           .withTransformationMeta(null)
-                                                           .build();
+                .withOriginalFile(errorModel)
+                .withNewName(file.getName())
+                .withNewExtension("")
+                .withHasError(true)
+                .withErrorMessage(errorMessage)
+                .withTransformationMeta(null)
+                .build();
 
         return RenameResult.builder()
-                           .withPreparedFile(preparedError)
-                           .withStatus(RenameStatus.ERROR_EXTRACTION)
-                           .withErrorMessage(errorMessage)
-                           .withExecutedAt(LocalDateTime.now())
-                           .build();
+                .withPreparedFile(preparedError)
+                .withStatus(RenameStatus.ERROR_EXTRACTION)
+                .withErrorMessage(errorMessage)
+                .withExecutedAt(LocalDateTime.now())
+                .build();
     }
 }

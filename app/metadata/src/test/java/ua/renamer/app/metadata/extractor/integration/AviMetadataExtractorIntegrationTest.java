@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.extractor.strategy.format.video.AviFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.video.AviFileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -105,7 +105,7 @@ class AviMetadataExtractorIntegrationTest {
 
         // AVI format does not support datetime metadata
         assertFalse(videoMeta.getContentCreationDate().isPresent(),
-                    "AVI format does not support datetime metadata");
+                "AVI format does not support datetime metadata");
     }
 
     @Test
@@ -121,6 +121,6 @@ class AviMetadataExtractorIntegrationTest {
 
         // Clean AVI file should not have datetime
         assertFalse(videoMeta.getContentCreationDate().isPresent(),
-                    "AVI format does not support datetime metadata");
+                "AVI format does not support datetime metadata");
     }
 }

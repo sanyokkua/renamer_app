@@ -37,9 +37,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         assertFalse(nonExistent.exists());
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(nonExistent),
@@ -66,9 +66,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         assertFalse(nonExistent.exists());
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(existing1, nonExistent, existing2),
@@ -83,8 +83,8 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         // Count successes and errors
         long successCount = results.stream().filter(RenameResult::isSuccess).count();
         long errorCount = results.stream()
-                                 .filter(r -> r.getStatus() == RenameStatus.ERROR_EXTRACTION)
-                                 .count();
+                .filter(r -> r.getStatus() == RenameStatus.ERROR_EXTRACTION)
+                .count();
 
         assertEquals(2, successCount, "2 files should succeed");
         assertEquals(1, errorCount, "1 file should fail");
@@ -112,9 +112,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         Files.setPosixFilePermissions(file.toPath(), perms);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("new_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("new_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
@@ -154,9 +154,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         Files.setPosixFilePermissions(tempDir, perms);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file1, file2),
@@ -169,7 +169,7 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         assertEquals(2, results.size());
         assertTrue(results.stream().noneMatch(RenameResult::isSuccess));
         assertTrue(results.stream()
-                          .allMatch(r -> r.getStatus() == RenameStatus.ERROR_EXECUTION));
+                .allMatch(r -> r.getStatus() == RenameStatus.ERROR_EXECUTION));
 
         // Restore permissions for cleanup
         perms.add(PosixFilePermission.OWNER_WRITE);
@@ -218,9 +218,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         files.add(createTestFile("good3.txt"));
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("processed_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("processed_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -234,8 +234,8 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         // Count results
         long successCount = results.stream().filter(RenameResult::isSuccess).count();
         long errorCount = results.stream()
-                                 .filter(r -> !r.isSuccess())
-                                 .count();
+                .filter(r -> !r.isSuccess())
+                .count();
 
         assertEquals(3, successCount, "3 files should succeed");
         assertEquals(1, errorCount, "1 file should fail");
@@ -263,9 +263,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         }
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("archive_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("archive_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -290,9 +290,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         File nonExistent = tempDir.resolve("missing.txt").toFile();
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(nonExistent),
@@ -321,9 +321,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         }
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -340,9 +340,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         // All should have error messages
         results.forEach(result -> {
             assertTrue(result.getErrorMessage().isPresent(),
-                       "Error result should have message");
+                    "Error result should have message");
             assertFalse(result.getErrorMessage().get().isEmpty(),
-                        "Error message should not be empty");
+                    "Error message should not be empty");
         });
     }
 
@@ -354,9 +354,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         File nonExistent = tempDir.resolve("missing.txt").toFile();
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results1 = orchestrator.execute(
                 List.of(nonExistent),
@@ -396,9 +396,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         files.add(tempDir.resolve("missing.txt").toFile());
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("new_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("new_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -411,14 +411,14 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
 
         // Find success and error results
         RenameResult successResult = results.stream()
-                                            .filter(RenameResult::isSuccess)
-                                            .findFirst()
-                                            .orElseThrow();
+                .filter(RenameResult::isSuccess)
+                .findFirst()
+                .orElseThrow();
 
         RenameResult errorResult = results.stream()
-                                          .filter(r -> !r.isSuccess())
-                                          .findFirst()
-                                          .orElseThrow();
+                .filter(r -> !r.isSuccess())
+                .findFirst()
+                .orElseThrow();
 
         // Verify status codes
         assertEquals(RenameStatus.SUCCESS, successResult.getStatus());
@@ -433,9 +433,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
     @Test
     void testError_EmptyFileList() {
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(),  // Empty list
@@ -454,9 +454,9 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         File file = createTestFile("test.txt");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("new_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("new_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Execute with null callback (should not throw)
         List<RenameResult> results = orchestrator.execute(

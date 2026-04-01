@@ -44,7 +44,7 @@ public class ModeAddSequenceController extends ModeBaseController {
         startSeqNumberSpinner.setValueFactory(startSeqFactory);
         startSeqNumberSpinner.setEditable(true);
         startSeqNumberSpinner.valueProperty()
-                             .addListener((observable, oldValue, newValue) -> handleStartSequenceNumberChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> handleStartSequenceNumberChanged(newValue));
     }
 
     private void configStepValueSpinner() {
@@ -53,7 +53,7 @@ public class ModeAddSequenceController extends ModeBaseController {
         stepValueSpinner.setValueFactory(stepValueFactory);
         stepValueSpinner.setEditable(true);
         stepValueSpinner.valueProperty()
-                        .addListener((observable, oldValue, newValue) -> handleStepValueChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> handleStepValueChanged(newValue));
     }
 
     private void configMinDigitAmountSpinner() {
@@ -62,7 +62,7 @@ public class ModeAddSequenceController extends ModeBaseController {
         minDigitAmountSpinner.setValueFactory(minDigitAmountFactory);
         minDigitAmountSpinner.setEditable(true);
         minDigitAmountSpinner.valueProperty()
-                             .addListener((observable, oldValue, newValue) -> handleMinimalDigitAmountChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> handleMinimalDigitAmountChanged(newValue));
     }
 
     private void configSortingSourceChoiceBox() {
@@ -95,11 +95,11 @@ public class ModeAddSequenceController extends ModeBaseController {
         var source = sortingSourceChoiceBox.getValue();
 
         var curCmd = SequencePrepareInformationCommand.builder()
-                                                      .startNumber(start)
-                                                      .stepValue(step)
-                                                      .padding(padding)
-                                                      .sortSource(source)
-                                                      .build();
+                .startNumber(start)
+                .stepValue(step)
+                .padding(padding)
+                .sortSource(source)
+                .build();
 
         log.debug("updateCommand {}", curCmd);
         this.setCommand(curCmd);

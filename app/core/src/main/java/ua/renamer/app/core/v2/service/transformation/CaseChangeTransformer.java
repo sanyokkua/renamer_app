@@ -38,13 +38,13 @@ public class CaseChangeTransformer implements FileTransformationService<CaseChan
             }
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to change case of file: {}", input.getName(), e);
@@ -54,23 +54,23 @@ public class CaseChangeTransformer implements FileTransformationService<CaseChan
 
     private TransformationMetadata buildMetadata(CaseChangeConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.CHANGE_CASE)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "caseOption", config.getCaseOption().name(),
-                                             "capitalizeFirstLetter", config.isCapitalizeFirstLetter()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.CHANGE_CASE)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "caseOption", config.getCaseOption().name(),
+                        "capitalizeFirstLetter", config.isCapitalizeFirstLetter()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

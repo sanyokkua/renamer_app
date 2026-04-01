@@ -13,12 +13,18 @@ import java.util.Map;
 @Value
 @Builder(setterPrefix = "with")
 public class TransformationMetadata {
-    /** The transformation mode that was applied. */
+    /**
+     * The transformation mode that was applied.
+     */
     TransformationMode mode;
 
-    /** When the transformation was applied. */
+    /**
+     * When the transformation was applied.
+     */
     LocalDateTime appliedAt;
 
-    /** Configuration used for the transformation as a key-value map. */
+    /**
+     * Configuration used for the transformation as a key-value map.
+     */
     Map<String, Object> config;
 }

@@ -8,13 +8,21 @@ package ua.renamer.app.api.session;
  * inferring availability from status alone.
  */
 public enum AvailableAction {
-    /** Add one or more files to the session's file list. */
+    /**
+     * Add one or more files to the session's file list.
+     */
     ADD_FILES,
-    /** Remove one or more files from the session's file list by their file IDs. */
+    /**
+     * Remove one or more files from the session's file list by their file IDs.
+     */
     REMOVE_FILES,
-    /** Remove all files from the session, resetting it to {@link SessionStatus#EMPTY}. */
+    /**
+     * Remove all files from the session, resetting it to {@link SessionStatus#EMPTY}.
+     */
     CLEAR,
-    /** Select a transformation mode and configure its parameters. */
+    /**
+     * Select a transformation mode and configure its parameters.
+     */
     SELECT_MODE,
     /**
      * Execute the rename operation; only available when {@link SessionApi#canExecute()}

@@ -58,7 +58,7 @@ public class ModeUseImageDimensionsController extends ModeBaseController {
     private void configDimensionsSeparatorTextField() {
         log.info("configDimensionsSeparatorTextField");
         dimensionsSeparatorTextField.textProperty()
-                                    .addListener((observable, oldValue, newValue) -> this.handleDimensionsSeparatorChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleDimensionsSeparatorChanged(newValue));
     }
 
     private void configRightDimensionChoiceBox() {
@@ -72,7 +72,7 @@ public class ModeUseImageDimensionsController extends ModeBaseController {
     private void configDimensionsAndFileNameSeparatorTextField() {
         log.info("configDimensionsAndFileNameSeparatorTextField");
         dimensionsAndFileSeparatorTextField.textProperty()
-                                           .addListener((observable, oldValue, newValue) -> this.handleDimensionsAndFileNameSeparatorChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleDimensionsAndFileNameSeparatorChanged(newValue));
     }
 
     private void handlePositionChanged(ItemPositionWithReplacement itemPositionWithReplacement) {
@@ -109,12 +109,12 @@ public class ModeUseImageDimensionsController extends ModeBaseController {
         var nameSep = dimensionsAndFileSeparatorTextField.getText();
 
         var cmd = ImageDimensionsPrepareInformationCommand.builder()
-                                                          .position(position)
-                                                          .leftSide(leftSide)
-                                                          .rightSide(rightSide)
-                                                          .dimensionSeparator(dimSep)
-                                                          .nameSeparator(nameSep)
-                                                          .build();
+                .position(position)
+                .leftSide(leftSide)
+                .rightSide(rightSide)
+                .dimensionSeparator(dimSep)
+                .nameSeparator(nameSep)
+                .build();
 
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);

@@ -41,28 +41,28 @@ class RenameModelToHtmlMapperTest {
         final var file = new File(absolutePath);
 
         FileInformationMetadata metadata = FileInformationMetadata.builder()
-                                                                  .creationDate(testTime)
-                                                                  .imgVidWidth(imgVidWidth)
-                                                                  .imgVidHeight(imgVidHeight)
-                                                                  .audioArtistName(artName)
-                                                                  .audioAlbumName(albName)
-                                                                  .audioSongName(songName)
-                                                                  .audioYear(audioYear)
-                                                                  .build();
+                .creationDate(testTime)
+                .imgVidWidth(imgVidWidth)
+                .imgVidHeight(imgVidHeight)
+                .audioArtistName(artName)
+                .audioAlbumName(albName)
+                .audioSongName(songName)
+                .audioYear(audioYear)
+                .build();
 
         FileInformation fileInformation = FileInformation.builder()
-                                                         .originalFile(file)
-                                                         .fileAbsolutePath(absolutePath)
-                                                         .isFile(isFile)
-                                                         .fileName(fileName)
-                                                         .fileExtension(fileExt)
-                                                         .fileSize(fileSize)
-                                                         .fsCreationDate(testTime)
-                                                         .fsModificationDate(testTime)
-                                                         .metadata(metadata)
-                                                         .newName(fileName)
-                                                         .newExtension(fileExt)
-                                                         .build();
+                .originalFile(file)
+                .fileAbsolutePath(absolutePath)
+                .isFile(isFile)
+                .fileName(fileName)
+                .fileExtension(fileExt)
+                .fileSize(fileSize)
+                .fsCreationDate(testTime)
+                .fsModificationDate(testTime)
+                .metadata(metadata)
+                .newName(fileName)
+                .newExtension(fileExt)
+                .build();
         MapFileInformationToRenameModelCommand mapperToModel = new MapFileInformationToRenameModelCommand(new FileInformationToRenameModelMapper());
         RenameModel model = mapperToModel.execute(List.of(fileInformation), null).get(0);
 

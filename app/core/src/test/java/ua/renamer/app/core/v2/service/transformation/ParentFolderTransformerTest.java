@@ -3,9 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.ParentFolderConfig;
 
 import java.io.File;
@@ -49,19 +52,19 @@ class ParentFolderTransformerTest {
         }
 
         return FileModel.builder()
-                        .withFile(file)
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath(path)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(file)
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath(path)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     // ============================================================================
@@ -73,10 +76,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -95,10 +98,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.END)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.END)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -119,10 +122,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/grandparent/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(2)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(2)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -139,10 +142,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/grandparent/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(2)
-                                                      .withPosition(ItemPosition.END)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(2)
+                .withPosition(ItemPosition.END)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -162,10 +165,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/great/grandparent/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(3)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(3)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -181,10 +184,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/great/grandparent/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(3)
-                                                      .withPosition(ItemPosition.END)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(3)
+                .withPosition(ItemPosition.END)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -204,10 +207,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("-")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("-")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -222,10 +225,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator(" ")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -240,10 +243,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator(".")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator(".")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -258,10 +261,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/grandparent/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(2)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("-")
-                                                      .build();
+                .withNumberOfParentFolders(2)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("-")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -280,10 +283,10 @@ class ParentFolderTransformerTest {
         // Given - verify order is furthest parent first
         FileModel input = createTestFileModelWithPath("/root/folder1/folder2/folder3/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(3)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(3)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -298,10 +301,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/folder1/folder2/folder3/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(3)
-                                                      .withPosition(ItemPosition.END)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(3)
+                .withPosition(ItemPosition.END)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -320,10 +323,10 @@ class ParentFolderTransformerTest {
         // Given - folder with spaces
         FileModel input = createTestFileModelWithPath("/root/My Documents/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -338,10 +341,10 @@ class ParentFolderTransformerTest {
         // Given - folder with special chars
         FileModel input = createTestFileModelWithPath("/root/Project@2024/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -356,10 +359,10 @@ class ParentFolderTransformerTest {
         // Given - folder with unicode
         FileModel input = createTestFileModelWithPath("/root/文档/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -378,10 +381,10 @@ class ParentFolderTransformerTest {
         // Given - file at root with no parent
         FileModel input = createTestFileModelWithPath("/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -402,10 +405,10 @@ class ParentFolderTransformerTest {
         // Given - only 2 parents available, requesting 5
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(5)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(5)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -422,10 +425,10 @@ class ParentFolderTransformerTest {
         // Given - only 1 parent available, requesting 3
         FileModel input = createTestFileModelWithPath("/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(3)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(3)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -445,10 +448,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -466,10 +469,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(2)
-                                                      .withPosition(ItemPosition.END)
-                                                      .withSeparator("-")
-                                                      .build();
+                .withNumberOfParentFolders(2)
+                .withPosition(ItemPosition.END)
+                .withSeparator("-")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -490,10 +493,10 @@ class ParentFolderTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -539,16 +542,16 @@ class ParentFolderTransformerTest {
         FileModel file3 = createTestFileModelWithPath("/root/folder3/doc3.jpg");
 
         ParentFolderConfig config1 = ParentFolderConfig.builder()
-                                                       .withNumberOfParentFolders(1)
-                                                       .withPosition(ItemPosition.BEGIN)
-                                                       .withSeparator("_")
-                                                       .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         ParentFolderConfig config2 = ParentFolderConfig.builder()
-                                                       .withNumberOfParentFolders(2)
-                                                       .withPosition(ItemPosition.BEGIN)
-                                                       .withSeparator("_")
-                                                       .build();
+                .withNumberOfParentFolders(2)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         PreparedFileModel result1 = transformer.transform(file1, config1);
         PreparedFileModel result2 = transformer.transform(file2, config2);
@@ -564,10 +567,10 @@ class ParentFolderTransformerTest {
         // Verify that extension is always preserved correctly
         FileModel input = createTestFileModelWithPath("/root/parent/file.custom_ext");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -580,10 +583,10 @@ class ParentFolderTransformerTest {
         // Verify that original file reference is preserved
         FileModel input = createTestFileModelWithPath("/root/parent/original.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -596,10 +599,10 @@ class ParentFolderTransformerTest {
         // Given
         FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -614,10 +617,10 @@ class ParentFolderTransformerTest {
         // Given - deeply nested path
         FileModel input = createTestFileModelWithPath("/home/user/Documents/Work/Projects/2024/Q1/file.txt");
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(4)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(4)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -633,11 +636,11 @@ class ParentFolderTransformerTest {
     void testZeroParentFolders_Error() {
         // Config validation now rejects numberOfParentFolders < 1 at construction time
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-            ParentFolderConfig.builder()
-                              .withNumberOfParentFolders(0)
-                              .withPosition(ItemPosition.BEGIN)
-                              .withSeparator("_")
-                              .build()
+                ParentFolderConfig.builder()
+                        .withNumberOfParentFolders(0)
+                        .withPosition(ItemPosition.BEGIN)
+                        .withSeparator("_")
+                        .build()
         );
         assertTrue(ex.getMessage().contains("numberOfParentFolders must be >= 1"));
     }

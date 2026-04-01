@@ -12,10 +12,14 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class RemoveTextConfig implements TransformationConfig {
-    /** Text to remove from the filename. */
+    /**
+     * Text to remove from the filename.
+     */
     String textToRemove;
 
-    /** Position where to remove the text (BEGIN or END). */
+    /**
+     * Position where to remove the text (BEGIN or END).
+     */
     ItemPosition position;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation

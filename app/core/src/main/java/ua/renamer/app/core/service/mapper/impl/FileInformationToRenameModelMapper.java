@@ -16,26 +16,26 @@ public class FileInformationToRenameModelMapper implements DataMapper<FileInform
 
         try {
             var absolutePathWithoutName = FileInformationUtils.getFileAbsolutePathWithoutName(input,
-                                                                                              FileInformationUtils::getFileFullName);
+                    FileInformationUtils::getFileFullName);
             return RenameModel.builder()
-                              .fileInformation(input)
-                              .isNeedRename(isNeedRename)
-                              .oldName(oldName)
-                              .newName(newName)
-                              .absolutePathWithoutName(absolutePathWithoutName)
-                              .build();
+                    .fileInformation(input)
+                    .isNeedRename(isNeedRename)
+                    .oldName(oldName)
+                    .newName(newName)
+                    .absolutePathWithoutName(absolutePathWithoutName)
+                    .build();
         } catch (IllegalArgumentException e) {
             return RenameModel.builder()
-                              .fileInformation(input)
-                              .isNeedRename(isNeedRename)
-                              .oldName(oldName)
-                              .newName(newName)
-                              .absolutePathWithoutName("")
-                              .hasRenamingError(true)
-                              .renamingErrorMessage(e.getMessage())
-                              .isRenamed(false)
-                              .renameResult(RenameResult.NOT_RENAMED_BECAUSE_OF_ERROR)
-                              .build();
+                    .fileInformation(input)
+                    .isNeedRename(isNeedRename)
+                    .oldName(oldName)
+                    .newName(newName)
+                    .absolutePathWithoutName("")
+                    .hasRenamingError(true)
+                    .renamingErrorMessage(e.getMessage())
+                    .isRenamed(false)
+                    .renameResult(RenameResult.NOT_RENAMED_BECAUSE_OF_ERROR)
+                    .build();
         }
     }
 }

@@ -11,6 +11,17 @@ import static ua.renamer.app.core.TestUtilities.TEST_ABSOLUTE_PATH;
 
 class FixEqualNamesCommandTest {
 
+    static FileInformation createFileInfo(String name, String newName, String ext, String newExt) {
+        return FileInformation.builder()
+                .originalFile(new File(TEST_ABSOLUTE_PATH))
+                .fileAbsolutePath(TEST_ABSOLUTE_PATH)
+                .fileName(name)
+                .newName(newName)
+                .fileExtension(ext)
+                .newExtension(newExt)
+                .build();
+    }
+
     @Test
     void testCommandAddsUniquesSymbolsToTheSameNames() {
         var file1ChangedAddedUniqueSymbols = createFileInfo("Name", "NewName", ".jpg", ".jpg");
@@ -68,17 +79,6 @@ class FixEqualNamesCommandTest {
         assertEquals("Name3 (10)", file17ChangedAddedUniqueSymbols.getNewName());
         assertEquals("Name3 (11)", file18ChangedAddedUniqueSymbols.getNewName());
         assertEquals("Name3 (12)", file19ChangedAddedUniqueSymbols.getNewName());
-    }
-
-    static FileInformation createFileInfo(String name, String newName, String ext, String newExt) {
-        return FileInformation.builder()
-                              .originalFile(new File(TEST_ABSOLUTE_PATH))
-                              .fileAbsolutePath(TEST_ABSOLUTE_PATH)
-                              .fileName(name)
-                              .newName(newName)
-                              .fileExtension(ext)
-                              .newExtension(newExt)
-                              .build();
     }
 
 }

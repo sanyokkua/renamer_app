@@ -40,7 +40,6 @@ public class ReplaceTextPrepareInformationCommand extends FileInformationCommand
      * based on the specified options and positions.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new file name.
      */
     @Override
@@ -60,8 +59,8 @@ public class ReplaceTextPrepareInformationCommand extends FileInformationCommand
 
             StringBuilder reversedNewValue = new StringBuilder(newValueToAdd).reverse();
             String reversedResult = reversedName.toString()
-                                                .replaceFirst(reversedValueToReplace.toString(),
-                                                              reversedNewValue.toString());
+                    .replaceFirst(reversedValueToReplace.toString(),
+                            reversedNewValue.toString());
             nextName = reversedResult.isEmpty()
                     ? reversedResult
                     : new StringBuilder(reversedResult).reverse().toString();

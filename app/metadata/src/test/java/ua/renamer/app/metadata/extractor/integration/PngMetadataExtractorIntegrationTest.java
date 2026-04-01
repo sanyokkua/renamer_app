@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.extractor.strategy.format.image.PngFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.PngFileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -25,8 +25,24 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 class PngMetadataExtractorIntegrationTest {
 
-    private PngFileMetadataExtractor extractor;
     private static final String TEST_DATA_PATH = "test-data/image/png/";
+    private PngFileMetadataExtractor extractor;
+
+    static Stream<Arguments> providePngTestFiles() {
+        return Stream.of(
+                arguments("test_png_clean.png", null, false, true),
+                arguments("test_png_std_2025-12-11_21-00-35.png",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                arguments("test_png_past_2000-01-01_12-00-00.png",
+                        LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
+                arguments("test_png_future_2050-01-01_12-00-00.png",
+                        LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
+                arguments("test_png_std_no_tz_2025-12-11_21-00-35.png",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                arguments("test_png_std_tz_2025-12-11_21-00-35p02-00.png",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -45,22 +61,6 @@ class PngMetadataExtractorIntegrationTest {
         }
     }
 
-    static Stream<Arguments> providePngTestFiles() {
-        return Stream.of(
-                arguments("test_png_clean.png", null, false, true),
-                arguments("test_png_std_2025-12-11_21-00-35.png",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
-                arguments("test_png_past_2000-01-01_12-00-00.png",
-                         LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
-                arguments("test_png_future_2050-01-01_12-00-00.png",
-                         LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
-                arguments("test_png_std_no_tz_2025-12-11_21-00-35.png",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
-                arguments("test_png_std_tz_2025-12-11_21-00-35p02-00.png",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
-        );
-    }
-
     @Test
     void testExtract_CleanPng() {
         File testFile = getTestFile("test_png_clean.png");
@@ -73,7 +73,7 @@ class PngMetadataExtractorIntegrationTest {
         ImageMeta imageMeta = result.getImageMeta().get();
 
         assertTrue(imageMeta.getContentCreationDate().isEmpty(),
-                  "Clean file should not have creation date");
+                "Clean file should not have creation date");
 
         assertTrue(imageMeta.getWidth().isPresent(), "Width should be present");
         assertTrue(imageMeta.getHeight().isPresent(), "Height should be present");
@@ -97,12 +97,12 @@ class PngMetadataExtractorIntegrationTest {
 
         if (hasDate) {
             assertTrue(imageMeta.getContentCreationDate().isPresent(),
-                      "Creation date should be present for: " + filename);
+                    "Creation date should be present for: " + filename);
             assertEquals(expectedDate, imageMeta.getContentCreationDate().get(),
-                        "Creation date mismatch for: " + filename);
+                    "Creation date mismatch for: " + filename);
         } else {
             assertTrue(imageMeta.getContentCreationDate().isEmpty(),
-                      "Creation date should not be present for: " + filename);
+                    "Creation date should not be present for: " + filename);
         }
 
         if (hasDimensions) {
@@ -126,7 +126,7 @@ class PngMetadataExtractorIntegrationTest {
 
         assertTrue(imageMeta.getContentCreationDate().isPresent());
         assertEquals(LocalDateTime.of(2025, 12, 11, 21, 0, 35),
-                    imageMeta.getContentCreationDate().get());
+                imageMeta.getContentCreationDate().get());
 
         assertTrue(imageMeta.getWidth().isPresent());
         assertTrue(imageMeta.getHeight().isPresent());
@@ -150,19 +150,19 @@ class PngMetadataExtractorIntegrationTest {
         assertEquals(240, height, "Height should be 240");
 
         double aspectRatio = (double) width / height;
-        assertEquals(4.0/3.0, aspectRatio, 0.01, "Aspect ratio should be 4:3");
+        assertEquals(4.0 / 3.0, aspectRatio, 0.01, "Aspect ratio should be 4:3");
     }
 
     @Test
     void testExtract_AllFilesExist() {
         String[] testFiles = {
-            "test_png_clean.png",
-            "test_png_std_2025-12-11_21-00-35.png",
-            "test_png_past_2000-01-01_12-00-00.png",
-            "test_png_future_2050-01-01_12-00-00.png",
-            "test_png_std_no_tz_2025-12-11_21-00-35.png",
-            "test_png_std_tz_2025-12-11_21-00-35p02-00.png",
-            "test_png_gps_2025-12-11_21-00-35_lat48.8566_lon2.3522.png"
+                "test_png_clean.png",
+                "test_png_std_2025-12-11_21-00-35.png",
+                "test_png_past_2000-01-01_12-00-00.png",
+                "test_png_future_2050-01-01_12-00-00.png",
+                "test_png_std_no_tz_2025-12-11_21-00-35.png",
+                "test_png_std_tz_2025-12-11_21-00-35p02-00.png",
+                "test_png_gps_2025-12-11_21-00-35_lat48.8566_lon2.3522.png"
         };
 
         for (String filename : testFiles) {
@@ -181,6 +181,6 @@ class PngMetadataExtractorIntegrationTest {
 
         assertNotNull(result);
         assertTrue(result.getErrors().isEmpty(),
-                  "Should not have extraction errors");
+                "Should not have extraction errors");
     }
 }

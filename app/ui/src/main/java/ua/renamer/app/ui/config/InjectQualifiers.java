@@ -13,155 +13,186 @@ public interface InjectQualifiers {
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface AddCustomTextFxmlLoader {}
+    @interface AddCustomTextFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ChangeCaseFxmlLoader {}
+    @interface ChangeCaseFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseDatetimeFxmlLoader {}
+    @interface UseDatetimeFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseImageDimensionsFxmlLoader {}
+    @interface UseImageDimensionsFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseParentFolderNameFxmlLoader {}
+    @interface UseParentFolderNameFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface RemoveCustomTextFxmlLoader {}
+    @interface RemoveCustomTextFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ReplaceCustomTextFxmlLoader {}
+    @interface ReplaceCustomTextFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface AddSequenceFxmlLoader {}
+    @interface AddSequenceFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface TruncateFileNameFxmlLoader {}
+    @interface TruncateFileNameFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ChangeExtensionFxmlLoader {}
+    @interface ChangeExtensionFxmlLoader {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface AddCustomTextParent {}
+    @interface AddCustomTextParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ChangeCaseParent {}
+    @interface ChangeCaseParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseDatetimeParent {}
+    @interface UseDatetimeParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseImageDimensionsParent {}
+    @interface UseImageDimensionsParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseParentFolderNameParent {}
+    @interface UseParentFolderNameParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface RemoveCustomTextParent {}
+    @interface RemoveCustomTextParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ReplaceCustomTextParent {}
+    @interface ReplaceCustomTextParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface AddSequenceParent {}
+    @interface AddSequenceParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface TruncateFileNameParent {}
+    @interface TruncateFileNameParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ChangeExtensionParent {}
+    @interface ChangeExtensionParent {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface AddCustomTextController {}
+    @interface AddCustomTextController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ChangeCaseController {}
+    @interface ChangeCaseController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseDatetimeController {}
+    @interface UseDatetimeController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseImageDimensionsController {}
+    @interface UseImageDimensionsController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface UseParentFolderNameController {}
+    @interface UseParentFolderNameController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface RemoveCustomTextController {}
+    @interface RemoveCustomTextController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ReplaceCustomTextController {}
+    @interface ReplaceCustomTextController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface AddSequenceController {}
+    @interface AddSequenceController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface TruncateFileNameController {}
+    @interface TruncateFileNameController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface ChangeExtensionController {}
+    @interface ChangeExtensionController {
+    }
 
     @Qualifier
     @Target({FIELD, PARAMETER, METHOD})
     @Retention(RUNTIME)
-    @interface AppGlobalRenameModelList {}
+    @interface AppGlobalRenameModelList {
+    }
 }

@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RenamePreviewTest {
 
-    private static final String FILE_ID       = "file-99";
+    private static final String FILE_ID = "file-99";
     private static final String ORIGINAL_NAME = "old_photo.jpg";
-    private static final String NEW_NAME      = "new_photo.jpg";
+    private static final String NEW_NAME = "new_photo.jpg";
 
     // --- happy path: successful transformation preview ---
 
@@ -100,7 +100,7 @@ class RenamePreviewTest {
     @Test
     void equality_whenDifferentHasError_thenRecordsAreNotEqual() {
         RenamePreview a = new RenamePreview(FILE_ID, ORIGINAL_NAME, NEW_NAME, false, null);
-        RenamePreview b = new RenamePreview(FILE_ID, ORIGINAL_NAME, null,     true,  "err");
+        RenamePreview b = new RenamePreview(FILE_ID, ORIGINAL_NAME, null, true, "err");
 
         assertNotEquals(a, b);
     }
@@ -108,7 +108,7 @@ class RenamePreviewTest {
     @Test
     void equality_whenDifferentNewName_thenRecordsAreNotEqual() {
         RenamePreview a = new RenamePreview(FILE_ID, ORIGINAL_NAME, "alpha.jpg", false, null);
-        RenamePreview b = new RenamePreview(FILE_ID, ORIGINAL_NAME, "beta.jpg",  false, null);
+        RenamePreview b = new RenamePreview(FILE_ID, ORIGINAL_NAME, "beta.jpg", false, null);
 
         assertNotEquals(a, b);
     }

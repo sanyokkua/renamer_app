@@ -3,9 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.RemoveTextConfig;
 
 import java.io.File;
@@ -43,19 +46,19 @@ class RemoveTextTransformerTest {
      */
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     // ============================================================================
@@ -67,9 +70,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("prefix_document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -89,9 +92,9 @@ class RemoveTextTransformerTest {
         // Given - file doesn't have the prefix
         FileModel input = createTestFileModel("document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -109,9 +112,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -129,9 +132,9 @@ class RemoveTextTransformerTest {
         // Given - remove entire name (edge case)
         FileModel input = createTestFileModel("document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("document")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("document")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -149,9 +152,9 @@ class RemoveTextTransformerTest {
         // Given - text appears in middle but not at beginning
         FileModel input = createTestFileModel("document_prefix_test", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -160,7 +163,7 @@ class RemoveTextTransformerTest {
         assertNotNull(result);
         assertFalse(result.isHasError());
         assertEquals("document_prefix_test", result.getNewName(),
-                     "Text not at beginning should not be removed");
+                "Text not at beginning should not be removed");
         assertFalse(result.needsRename());
     }
 
@@ -169,9 +172,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("test@#$%file", "pdf");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("test@#$%")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("test@#$%")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -193,9 +196,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("document_suffix", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("_suffix")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("_suffix")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -215,9 +218,9 @@ class RemoveTextTransformerTest {
         // Given - file doesn't have the suffix
         FileModel input = createTestFileModel("document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("_suffix")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("_suffix")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -235,9 +238,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -255,9 +258,9 @@ class RemoveTextTransformerTest {
         // Given - remove entire name (edge case)
         FileModel input = createTestFileModel("document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("document")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("document")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -275,9 +278,9 @@ class RemoveTextTransformerTest {
         // Given - text appears in middle but not at end
         FileModel input = createTestFileModel("test_suffix_document", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("_suffix")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("_suffix")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -286,7 +289,7 @@ class RemoveTextTransformerTest {
         assertNotNull(result);
         assertFalse(result.isHasError());
         assertEquals("test_suffix_document", result.getNewName(),
-                     "Text not at end should not be removed");
+                "Text not at end should not be removed");
         assertFalse(result.needsRename());
     }
 
@@ -295,9 +298,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file测试", "jpg");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("测试")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("测试")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -319,9 +322,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("prefix_file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -336,9 +339,9 @@ class RemoveTextTransformerTest {
         // Given - text not present, no change
         FileModel input = createTestFileModel("file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("notpresent_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("notpresent_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -353,9 +356,9 @@ class RemoveTextTransformerTest {
         // Given - text appears multiple times, should only remove from specified position
         FileModel input = createTestFileModel("test_test", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("test")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("test")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -372,9 +375,9 @@ class RemoveTextTransformerTest {
         // Given - remove whitespace from beginning
         FileModel input = createTestFileModel("   file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("   ")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("   ")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -390,9 +393,9 @@ class RemoveTextTransformerTest {
         // Given - remove numeric prefix
         FileModel input = createTestFileModel("12345_file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("12345_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("12345_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -412,9 +415,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("prefix_file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -433,9 +436,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file_test", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("_test")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("_test")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -452,9 +455,9 @@ class RemoveTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("start_file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("start_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("start_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -470,16 +473,16 @@ class RemoveTextTransformerTest {
         // Given - text not present, but metadata still created
         FileModel input = createTestFileModel("file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("notpresent")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("notpresent")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
 
         // Then
         assertNotNull(result.getTransformationMeta(),
-                      "Metadata should be populated even when no change occurs");
+                "Metadata should be populated even when no change occurs");
         assertEquals(TransformationMode.REMOVE_TEXT, result.getTransformationMeta().getMode());
     }
 
@@ -491,9 +494,9 @@ class RemoveTextTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -522,10 +525,10 @@ class RemoveTextTransformerTest {
     void testErrorHandling_ExceptionInTransform() {
         // Config validation now rejects null position at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            RemoveTextConfig.builder()
-                            .withTextToRemove("prefix_")
-                            .withPosition(null)
-                            .build()
+                RemoveTextConfig.builder()
+                        .withTextToRemove("prefix_")
+                        .withPosition(null)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("position must not be null"));
     }
@@ -534,10 +537,10 @@ class RemoveTextTransformerTest {
     void testErrorHandling_NullTextToRemove() {
         // Config validation now rejects null textToRemove at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            RemoveTextConfig.builder()
-                            .withTextToRemove(null)
-                            .withPosition(ItemPosition.BEGIN)
-                            .build()
+                RemoveTextConfig.builder()
+                        .withTextToRemove(null)
+                        .withPosition(ItemPosition.BEGIN)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("textToRemove must not be null"));
     }
@@ -563,19 +566,19 @@ class RemoveTextTransformerTest {
         FileModel file3 = createTestFileModel("start_doc3", "jpg");
 
         RemoveTextConfig configBegin = RemoveTextConfig.builder()
-                                                       .withTextToRemove("prefix_")
-                                                       .withPosition(ItemPosition.BEGIN)
-                                                       .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         RemoveTextConfig configEnd = RemoveTextConfig.builder()
-                                                     .withTextToRemove("_suffix")
-                                                     .withPosition(ItemPosition.END)
-                                                     .build();
+                .withTextToRemove("_suffix")
+                .withPosition(ItemPosition.END)
+                .build();
 
         RemoveTextConfig configBegin2 = RemoveTextConfig.builder()
-                                                        .withTextToRemove("start_")
-                                                        .withPosition(ItemPosition.BEGIN)
-                                                        .build();
+                .withTextToRemove("start_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         PreparedFileModel result1 = transformer.transform(file1, configBegin);
         PreparedFileModel result2 = transformer.transform(file2, configEnd);
@@ -591,9 +594,9 @@ class RemoveTextTransformerTest {
         // Verify that extension is always preserved correctly
         FileModel input = createTestFileModel("prefix_file", "custom_ext");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -606,9 +609,9 @@ class RemoveTextTransformerTest {
         // Verify that original file reference is preserved
         FileModel input = createTestFileModel("original_prefix", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("original_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("original_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -621,9 +624,9 @@ class RemoveTextTransformerTest {
         // Given - text with different case
         FileModel input = createTestFileModel("PREFIX_file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("prefix_") // lowercase
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("prefix_") // lowercase
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -640,9 +643,9 @@ class RemoveTextTransformerTest {
         String longPrefix = "A".repeat(100);
         FileModel input = createTestFileModel(longPrefix + "file", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove(longPrefix)
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove(longPrefix)
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -658,9 +661,9 @@ class RemoveTextTransformerTest {
         // Given - mixed characters suffix
         FileModel input = createTestFileModel("fileTest123!@#_", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("Test123!@#_")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("Test123!@#_")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -676,9 +679,9 @@ class RemoveTextTransformerTest {
         // Given - entire name will be removed
         FileModel input = createTestFileModel("temp", "txt");
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("temp")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("temp")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);

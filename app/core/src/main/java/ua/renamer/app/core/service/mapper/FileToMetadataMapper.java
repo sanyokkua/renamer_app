@@ -25,7 +25,6 @@ public abstract class FileToMetadataMapper implements ChainedDataMapper<File, Fi
      * If this mapper can handle the input, it processes it; otherwise, it delegates to the next mapper in the chain.
      *
      * @param input the input File to be mapped
-     *
      * @return the mapped FileInformationMetadata object
      */
     @Override
@@ -65,7 +64,6 @@ public abstract class FileToMetadataMapper implements ChainedDataMapper<File, Fi
      * Checks if this mapper can handle the given input File.
      *
      * @param input the input File to be checked
-     *
      * @return true if this mapper can handle the input, false otherwise
      */
     @Override

@@ -34,7 +34,6 @@ public class FilesOperations {
      * Gets the absolute path of a file.
      *
      * @param file The file whose absolute path is to be retrieved.
-     *
      * @return The absolute path of the file.
      */
     public String getFileAbsolutePath(File file) {
@@ -46,7 +45,6 @@ public class FilesOperations {
      * Validates that the file instance is not null and exists.
      *
      * @param file The file to be validated.
-     *
      * @throws IllegalArgumentException If the file does not exist.
      */
     public void validateFileInstance(File file) {
@@ -60,7 +58,6 @@ public class FilesOperations {
      * Gets the file name without its extension.
      *
      * @param file The file whose name is to be retrieved.
-     *
      * @return The name of the file without its extension.
      */
     public String getFileNameWithoutExtension(File file) {
@@ -76,7 +73,6 @@ public class FilesOperations {
      * Removes the extension from a file name.
      *
      * @param fileName The name of the file.
-     *
      * @return The name of the file without its extension.
      */
     private String removeFileExtension(String fileName) {
@@ -91,7 +87,6 @@ public class FilesOperations {
      * Gets the file extension.
      *
      * @param file The file whose extension is to be retrieved.
-     *
      * @return The extension of the file.
      */
     public String getFileExtension(File file) {
@@ -111,7 +106,6 @@ public class FilesOperations {
      * Checks if the given file is a regular file.
      *
      * @param file The file to be checked.
-     *
      * @return true if the file is a regular file, false if it is a directory.
      */
     public boolean isFile(File file) {
@@ -123,7 +117,6 @@ public class FilesOperations {
      * Gets the creation time of the file.
      *
      * @param file The file whose creation time is to be retrieved.
-     *
      * @return An Optional containing the creation time if available, otherwise empty.
      */
     public Optional<LocalDateTime> getFileCreationTime(File file) {
@@ -140,7 +133,6 @@ public class FilesOperations {
      * Gets the file attributes.
      *
      * @param file The file whose attributes are to be retrieved.
-     *
      * @return An Optional containing the file attributes if available, otherwise empty.
      */
     private Optional<BasicFileAttributes> getFileAttributes(File file) {
@@ -158,7 +150,6 @@ public class FilesOperations {
      * Gets the modification time of the file.
      *
      * @param file The file whose modification time is to be retrieved.
-     *
      * @return An Optional containing the modification time if available, otherwise empty.
      */
     public Optional<LocalDateTime> getFileModificationTime(File file) {
@@ -175,7 +166,6 @@ public class FilesOperations {
      * Gets the size of the file.
      *
      * @param file The file whose size is to be retrieved.
-     *
      * @return The size of the file in bytes.
      */
     public long getFileSize(File file) {
@@ -187,7 +177,6 @@ public class FilesOperations {
      * Retrieves the parent folders of a file or directory given its path.
      *
      * @param filePath The path of the file or directory.
-     *
      * @return A list containing the names of the parent folders.
      */
     public List<String> getParentFolders(String filePath) {
@@ -211,7 +200,6 @@ public class FilesOperations {
      * Renames a file based on the provided RenameModel.
      *
      * @param renameModel The RenameModel containing information about the renaming operation.
-     *
      * @return The updated RenameModel with the result of the renaming operation.
      */
     public RenameModel renameFile(RenameModel renameModel) {
@@ -245,7 +233,6 @@ public class FilesOperations {
      * Gets the MIME type of the file.
      *
      * @param file The file whose MIME type is to be retrieved.
-     *
      * @return The MIME type of the file.
      */
     @Nonnull
@@ -262,7 +249,6 @@ public class FilesOperations {
      * Gets the extensions associated with a MIME type.
      *
      * @param mimeType The MIME type for which extensions are to be retrieved.
-     *
      * @return A set of file extensions associated with the MIME type.
      */
     @Nonnull

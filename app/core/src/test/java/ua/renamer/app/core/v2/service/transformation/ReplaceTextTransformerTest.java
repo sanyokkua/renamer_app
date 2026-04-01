@@ -3,9 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.ItemPositionExtended;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.ItemPositionExtended;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.ReplaceTextConfig;
 
 import java.io.File;
@@ -43,19 +46,19 @@ class ReplaceTextTransformerTest {
      */
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     /**
@@ -63,10 +66,10 @@ class ReplaceTextTransformerTest {
      */
     private ReplaceTextConfig createConfig(String textToReplace, String replacementText, ItemPositionExtended position) {
         return ReplaceTextConfig.builder()
-                                .withTextToReplace(textToReplace)
-                                .withReplacementText(replacementText)
-                                .withPosition(position)
-                                .build();
+                .withTextToReplace(textToReplace)
+                .withReplacementText(replacementText)
+                .withPosition(position)
+                .build();
     }
 
     // ============================================================================
@@ -524,11 +527,11 @@ class ReplaceTextTransformerTest {
     void testErrorHandling_NullPosition() {
         // Config validation now rejects null position at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            ReplaceTextConfig.builder()
-                             .withTextToReplace("old")
-                             .withReplacementText("new")
-                             .withPosition(null)
-                             .build()
+                ReplaceTextConfig.builder()
+                        .withTextToReplace("old")
+                        .withReplacementText("new")
+                        .withPosition(null)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("position must not be null"));
     }
@@ -537,11 +540,11 @@ class ReplaceTextTransformerTest {
     void testErrorHandling_NullTextToReplace() {
         // Config validation now rejects null textToReplace at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            ReplaceTextConfig.builder()
-                             .withTextToReplace(null)
-                             .withReplacementText("new")
-                             .withPosition(ItemPositionExtended.BEGIN)
-                             .build()
+                ReplaceTextConfig.builder()
+                        .withTextToReplace(null)
+                        .withReplacementText("new")
+                        .withPosition(ItemPositionExtended.BEGIN)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("textToReplace must not be null"));
     }
@@ -550,11 +553,11 @@ class ReplaceTextTransformerTest {
     void testErrorHandling_NullReplacementText() {
         // Config validation now rejects null replacementText at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            ReplaceTextConfig.builder()
-                             .withTextToReplace("old")
-                             .withReplacementText(null)
-                             .withPosition(ItemPositionExtended.BEGIN)
-                             .build()
+                ReplaceTextConfig.builder()
+                        .withTextToReplace("old")
+                        .withReplacementText(null)
+                        .withPosition(ItemPositionExtended.BEGIN)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("replacementText must not be null"));
     }

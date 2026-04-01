@@ -22,27 +22,27 @@ public abstract class BaseRenamePreparationCommandTest {
         Command<List<FileInformation>, List<FileInformation>> command = getCommand();
 
         var fileInfoMeta = FileInformationMetadata.builder()
-                                                  .creationDate(TEST_DEFAULT_TIME)
-                                                  .imgVidWidth(TEST_IMG_VID_WIDTH)
-                                                  .imgVidHeight(TEST_IMG_VID_HEIGHT)
-                                                  .audioArtistName(TEST_ARTIST_NAME)
-                                                  .audioAlbumName(TEST_ALBUM_NAME)
-                                                  .audioSongName(TEST_SONG_NAME)
-                                                  .audioYear(TEST_AUDIO_YEAR)
-                                                  .build();
+                .creationDate(TEST_DEFAULT_TIME)
+                .imgVidWidth(TEST_IMG_VID_WIDTH)
+                .imgVidHeight(TEST_IMG_VID_HEIGHT)
+                .audioArtistName(TEST_ARTIST_NAME)
+                .audioAlbumName(TEST_ALBUM_NAME)
+                .audioSongName(TEST_SONG_NAME)
+                .audioYear(TEST_AUDIO_YEAR)
+                .build();
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File(TEST_DEFAULT_FILE_PATH))
-                                      .fileAbsolutePath(TEST_ABSOLUTE_PATH)
-                                      .isFile(TEST_IS_FILE)
-                                      .fileName(TEST_FILE_NAME)
-                                      .newName(TEST_FILE_NAME)
-                                      .fileExtension(TEST_FILE_EXTENSION)
-                                      .newExtension(TEST_FILE_EXTENSION)
-                                      .fileSize(TEST_FILE_SIZE)
-                                      .fsCreationDate(TEST_DEFAULT_TIME)
-                                      .fsModificationDate(TEST_DEFAULT_TIME)
-                                      .metadata(fileInfoMeta)
-                                      .build();
+                .originalFile(new File(TEST_DEFAULT_FILE_PATH))
+                .fileAbsolutePath(TEST_ABSOLUTE_PATH)
+                .isFile(TEST_IS_FILE)
+                .fileName(TEST_FILE_NAME)
+                .newName(TEST_FILE_NAME)
+                .fileExtension(TEST_FILE_EXTENSION)
+                .newExtension(TEST_FILE_EXTENSION)
+                .fileSize(TEST_FILE_SIZE)
+                .fsCreationDate(TEST_DEFAULT_TIME)
+                .fsModificationDate(TEST_DEFAULT_TIME)
+                .metadata(fileInfoMeta)
+                .build();
 
         var input = new ArrayList<FileInformation>();
         input.add(fileInfo);

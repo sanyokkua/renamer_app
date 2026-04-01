@@ -36,7 +36,7 @@ public class ModeRemoveCustomTextController extends ModeBaseController {
     private void configTextField() {
         log.info("configTextField");
         removeTextField.textProperty()
-                       .addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
     }
 
     private void handlePositionChanged(ItemPosition itemPosition) {

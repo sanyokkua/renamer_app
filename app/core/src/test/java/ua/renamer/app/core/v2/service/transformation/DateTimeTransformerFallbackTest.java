@@ -3,16 +3,11 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.Category;
-import ua.renamer.app.api.enums.DateFormat;
-import ua.renamer.app.api.enums.DateTimeFormat;
-import ua.renamer.app.api.enums.DateTimeSource;
-import ua.renamer.app.api.enums.ItemPositionWithReplacement;
-import ua.renamer.app.api.enums.TimeFormat;
+import ua.renamer.app.api.enums.*;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.config.DateTimeConfig;
-import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.core.v2.util.TestDateTimeUtils;
 
 import java.io.File;
@@ -55,15 +50,15 @@ class DateTimeTransformerFallbackTest {
      */
     private DateTimeConfig configFor(DateTimeSource source, boolean useFallback) {
         return DateTimeConfig.builder()
-                             .withSource(source)
-                             .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                             .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                             .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                             .withPosition(ItemPositionWithReplacement.REPLACE)
-                             .withSeparator("_")
-                             .withCustomDateTime(null)
-                             .withUseFallbackDateTime(useFallback)
-                             .build();
+                .withSource(source)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .withUseFallbackDateTime(useFallback)
+                .build();
     }
 
     /**
@@ -72,16 +67,16 @@ class DateTimeTransformerFallbackTest {
      */
     private DateTimeConfig configForWithCustomFallback(DateTimeSource source, LocalDateTime customDt) {
         return DateTimeConfig.builder()
-                             .withSource(source)
-                             .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                             .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                             .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                             .withPosition(ItemPositionWithReplacement.REPLACE)
-                             .withSeparator("_")
-                             .withCustomDateTime(customDt)
-                             .withUseFallbackDateTime(true)
-                             .withUseCustomDateTimeAsFallback(true)
-                             .build();
+                .withSource(source)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("_")
+                .withCustomDateTime(customDt)
+                .withUseFallbackDateTime(true)
+                .withUseCustomDateTimeAsFallback(true)
+                .build();
     }
 
     // -----------------------------------------------------------------------
@@ -99,19 +94,19 @@ class DateTimeTransformerFallbackTest {
     void givenContentCreationDateMissingAndFallbackEnabled_whenExtract_thenEarliestAvailableDateUsed() {
         // Arrange — no metadata attached so CONTENT_CREATION_DATE resolves to null
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         DateTimeConfig config = configFor(DateTimeSource.CONTENT_CREATION_DATE, true);
 
@@ -143,19 +138,19 @@ class DateTimeTransformerFallbackTest {
     void givenAllDatesNullAndFallbackEnabled_whenExtract_thenErrorTransformationReturned() {
         // Arrange — explicitly set both file dates to null, no metadata
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(null)
-                                   .withModificationDate(null)
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(null)
+                .withModificationDate(null)
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         DateTimeConfig config = configFor(DateTimeSource.CONTENT_CREATION_DATE, true);
 
@@ -180,19 +175,19 @@ class DateTimeTransformerFallbackTest {
         // Arrange — CONTENT_CREATION_DATE source with no metadata (resolves null),
         //            but creationDate IS populated — it must be ignored when fallback=false
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         // useFallback=false preserves the original V2 behavior
         DateTimeConfig config = configFor(DateTimeSource.CONTENT_CREATION_DATE, false);
@@ -202,7 +197,7 @@ class DateTimeTransformerFallbackTest {
 
         // Assert — primary returned null, fallback disabled → error
         assertTrue(result.isHasError(),
-                   "Expected hasError=true when primary source is null and fallback is disabled");
+                "Expected hasError=true when primary source is null and fallback is disabled");
     }
 
     // -----------------------------------------------------------------------
@@ -221,19 +216,19 @@ class DateTimeTransformerFallbackTest {
     void givenFallbackEnabled_whenPrimarySourcePresent_thenPrimaryUsedNotFallback() {
         // Arrange
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         // FILE_CREATION_DATE → resolves directly to creationDate (2024-01-15)
         DateTimeConfig config = configFor(DateTimeSource.FILE_CREATION_DATE, true);
@@ -250,7 +245,7 @@ class DateTimeTransformerFallbackTest {
         assertFalse(
                 result.getNewName().contains("2024-02-20"),
                 "Name must NOT contain modificationDate '2024-02-20' when primary already resolved, but was: "
-                + result.getNewName()
+                        + result.getNewName()
         );
     }
 
@@ -266,19 +261,19 @@ class DateTimeTransformerFallbackTest {
     void givenAllNaturalDatesNullAndCustomFallbackEnabled_whenExtract_thenCustomDateUsed() {
         // Arrange — no creation, no modification, no metadata
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/scan.pdf"))
-                                   .withIsFile(true)
-                                   .withFileSize(2048L)
-                                   .withName("scan")
-                                   .withExtension("pdf")
-                                   .withAbsolutePath("/test/scan.pdf")
-                                   .withCreationDate(null)
-                                   .withModificationDate(null)
-                                   .withDetectedMimeType("application/pdf")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.GENERIC)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/scan.pdf"))
+                .withIsFile(true)
+                .withFileSize(2048L)
+                .withName("scan")
+                .withExtension("pdf")
+                .withAbsolutePath("/test/scan.pdf")
+                .withCreationDate(null)
+                .withModificationDate(null)
+                .withDetectedMimeType("application/pdf")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
 
         DateTimeConfig config = configForWithCustomFallback(
                 DateTimeSource.CONTENT_CREATION_DATE,
@@ -308,19 +303,19 @@ class DateTimeTransformerFallbackTest {
     void givenCustomFallbackEnabledButCustomDateNull_whenExtract_thenFallsBackToMinNaturalDates() {
         // Arrange — natural dates present; customDateTime is null
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         // customDt=null — custom fallback path must be skipped
         DateTimeConfig config = configForWithCustomFallback(DateTimeSource.CONTENT_CREATION_DATE, null);
@@ -352,19 +347,19 @@ class DateTimeTransformerFallbackTest {
     void givenCustomFallbackEnabledAndPrimarySourcePresent_thenPrimaryUsedNotCustom() {
         // Arrange — FILE_CREATION_DATE resolves directly to creationDate
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         DateTimeConfig config = configForWithCustomFallback(
                 DateTimeSource.FILE_CREATION_DATE,
@@ -399,31 +394,31 @@ class DateTimeTransformerFallbackTest {
     void givenCustomFallbackDisabledAndFallbackEnabled_thenMinNaturalDateUsed() {
         // Arrange — natural dates present
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         // useCustomDateTimeAsFallback NOT set (defaults to false); customDateTime supplied but must be ignored
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CONTENT_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.REPLACE)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(LocalDateTime.of(2023, 6, 1, 0, 0, 0))
-                                              .withUseFallbackDateTime(true)
-                                              .build();
+                .withSource(DateTimeSource.CONTENT_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("_")
+                .withCustomDateTime(LocalDateTime.of(2023, 6, 1, 0, 0, 0))
+                .withUseFallbackDateTime(true)
+                .build();
 
         // Act
         PreparedFileModel result = transformer.transform(input, config);
@@ -458,42 +453,42 @@ class DateTimeTransformerFallbackTest {
         //            customDateTime is set and useCustomDateTimeAsFallback=true, but the
         //            outer gate useFallbackDateTime=false must prevent any fallback path.
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CONTENT_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.REPLACE)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(LocalDateTime.of(2023, 6, 1, 0, 0, 0))
-                                              .withUseFallbackDateTime(false)          // outer gate OFF
-                                              .withUseCustomDateTimeAsFallback(true)   // inner flag ON — must be ignored
-                                              .build();
+                .withSource(DateTimeSource.CONTENT_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("_")
+                .withCustomDateTime(LocalDateTime.of(2023, 6, 1, 0, 0, 0))
+                .withUseFallbackDateTime(false)          // outer gate OFF
+                .withUseCustomDateTimeAsFallback(true)   // inner flag ON — must be ignored
+                .build();
 
         // Act
         PreparedFileModel result = transformer.transform(input, config);
 
         // Assert — outer gate is off → no fallback of any kind → error
         assertTrue(result.isHasError(),
-                   "Expected hasError=true: useFallbackDateTime=false must block custom fallback path");
+                "Expected hasError=true: useFallbackDateTime=false must block custom fallback path");
         assertFalse(
                 result.getNewName().contains("2023"),
                 "Name must NOT contain custom date '2023' when useFallbackDateTime=false, but was: "
-                + result.getNewName()
+                        + result.getNewName()
         );
     }
 
@@ -514,32 +509,32 @@ class DateTimeTransformerFallbackTest {
         //            creationDate and modificationDate differ from customDateTime
         //            so we can confirm the correct value was used.
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/photo.jpg")
-                                   .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                                   .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
 
         // Both fallback flags true — they must have zero effect because primary resolves
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CUSTOM_DATE)
-                                              .withCustomDateTime(LocalDateTime.of(2022, 3, 10, 0, 0, 0))
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.REPLACE)
-                                              .withSeparator("_")
-                                              .withUseFallbackDateTime(true)
-                                              .withUseCustomDateTimeAsFallback(true)
-                                              .build();
+                .withSource(DateTimeSource.CUSTOM_DATE)
+                .withCustomDateTime(LocalDateTime.of(2022, 3, 10, 0, 0, 0))
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("_")
+                .withUseFallbackDateTime(true)
+                .withUseCustomDateTimeAsFallback(true)
+                .build();
 
         // Act
         PreparedFileModel result = transformer.transform(input, config);
@@ -553,7 +548,7 @@ class DateTimeTransformerFallbackTest {
         assertFalse(
                 result.getNewName().contains("2024"),
                 "Name must NOT contain file dates '2024-...' when CUSTOM_DATE primary resolves, but was: "
-                + result.getNewName()
+                        + result.getNewName()
         );
     }
 }

@@ -68,25 +68,25 @@ public class SequencePrepareInformationCommand extends FileInformationCommand {
             case FILE_SIZE -> newInput.sort(Comparator.nullsFirst(Comparator.comparing(FileInformation::getFileSize)));
             case FILE_CREATION_DATETIME ->
                     newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getFsCreationDate()
-                                                                                                               .orElse(null))));
+                            .orElse(null))));
             case FILE_MODIFICATION_DATETIME ->
                     newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getFsModificationDate()
-                                                                                                               .orElse(null))));
+                            .orElse(null))));
             case FILE_CONTENT_CREATION_DATETIME ->
                     newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                               .flatMap(
-                                                                                                                       FileInformationMetadata::getCreationDate)
-                                                                                                               .orElse(null))));
+                            .flatMap(
+                                    FileInformationMetadata::getCreationDate)
+                            .orElse(null))));
             case IMAGE_WIDTH ->
                     newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                               .flatMap(
-                                                                                                                       FileInformationMetadata::getImgVidWidth)
-                                                                                                               .orElse(null))));
+                            .flatMap(
+                                    FileInformationMetadata::getImgVidWidth)
+                            .orElse(null))));
             case IMAGE_HEIGHT ->
                     newInput.sort(Comparator.nullsFirst(Comparator.comparing(fileInformation -> fileInformation.getMetadata()
-                                                                                                               .flatMap(
-                                                                                                                       FileInformationMetadata::getImgVidHeight)
-                                                                                                               .orElse(null))));
+                            .flatMap(
+                                    FileInformationMetadata::getImgVidHeight)
+                            .orElse(null))));
         }
 
         return newInput;

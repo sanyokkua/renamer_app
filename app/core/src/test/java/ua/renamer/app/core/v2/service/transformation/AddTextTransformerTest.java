@@ -3,9 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.AddTextConfig;
 
 import java.io.File;
@@ -43,19 +46,19 @@ class AddTextTransformerTest {
      */
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     // ============================================================================
@@ -67,9 +70,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -89,9 +92,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -109,9 +112,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "pdf");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test@#$%")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test@#$%")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -130,9 +133,9 @@ class AddTextTransformerTest {
         FileModel input = createTestFileModel("short", "txt");
         String longText = "A".repeat(500);
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd(longText)
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd(longText)
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -154,9 +157,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("_suffix")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("_suffix")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -176,9 +179,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -196,9 +199,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "jpg");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("测试")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("测试")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -220,9 +223,9 @@ class AddTextTransformerTest {
         // Given - file already has the prefix
         FileModel input = createTestFileModel("prefix_document", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -239,9 +242,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("new_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("new_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -256,9 +259,9 @@ class AddTextTransformerTest {
         // Given - empty text results in same name
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -277,9 +280,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -298,9 +301,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -317,9 +320,9 @@ class AddTextTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("start_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("start_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -338,9 +341,9 @@ class AddTextTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -369,10 +372,10 @@ class AddTextTransformerTest {
     void testErrorHandling_ExceptionInTransform() {
         // Config validation now rejects null position at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            AddTextConfig.builder()
-                         .withTextToAdd("prefix_")
-                         .withPosition(null)
-                         .build()
+                AddTextConfig.builder()
+                        .withTextToAdd("prefix_")
+                        .withPosition(null)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("position must not be null"));
     }
@@ -398,14 +401,14 @@ class AddTextTransformerTest {
         FileModel file3 = createTestFileModel("doc3", "jpg");
 
         AddTextConfig configBegin = AddTextConfig.builder()
-                                                 .withTextToAdd("prefix_")
-                                                 .withPosition(ItemPosition.BEGIN)
-                                                 .build();
+                .withTextToAdd("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         AddTextConfig configEnd = AddTextConfig.builder()
-                                               .withTextToAdd("_suffix")
-                                               .withPosition(ItemPosition.END)
-                                               .build();
+                .withTextToAdd("_suffix")
+                .withPosition(ItemPosition.END)
+                .build();
 
         PreparedFileModel result1 = transformer.transform(file1, configBegin);
         PreparedFileModel result2 = transformer.transform(file2, configEnd);
@@ -421,9 +424,9 @@ class AddTextTransformerTest {
         // Verify that extension is always preserved correctly
         FileModel input = createTestFileModel("file", "custom_ext");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("new_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("new_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -436,9 +439,9 @@ class AddTextTransformerTest {
         // Verify that original file reference is preserved
         FileModel input = createTestFileModel("original", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("modified_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("modified_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -451,9 +454,9 @@ class AddTextTransformerTest {
         // Test adding whitespace
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("   ")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("   ")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -467,9 +470,9 @@ class AddTextTransformerTest {
         // Test adding numeric text
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("12345_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("12345_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -483,9 +486,9 @@ class AddTextTransformerTest {
         // Test adding mixed characters (letters, numbers, symbols)
         FileModel input = createTestFileModel("file", "txt");
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("Test123!@#_")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("Test123!@#_")
+                .withPosition(ItemPosition.END)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 

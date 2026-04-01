@@ -40,7 +40,7 @@ public class ReplaceTextTransformer implements FileTransformationService<Replace
                 case END -> {
                     if (input.getName().endsWith(config.getTextToReplace())) {
                         yield input.getName().substring(0,
-                                                        input.getName().length() - config.getTextToReplace().length()) +
+                                input.getName().length() - config.getTextToReplace().length()) +
                                 config.getReplacementText();
                     }
                     yield input.getName();
@@ -52,13 +52,13 @@ public class ReplaceTextTransformer implements FileTransformationService<Replace
             };
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to replace text in file: {}", input.getName(), e);
@@ -68,24 +68,24 @@ public class ReplaceTextTransformer implements FileTransformationService<Replace
 
     private TransformationMetadata buildMetadata(ReplaceTextConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.REPLACE_TEXT)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "textToReplace", config.getTextToReplace(),
-                                             "replacementText", config.getReplacementText(),
-                                             "position", config.getPosition().name()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.REPLACE_TEXT)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "textToReplace", config.getTextToReplace(),
+                        "replacementText", config.getReplacementText(),
+                        "position", config.getPosition().name()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

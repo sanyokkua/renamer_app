@@ -42,7 +42,7 @@ public class TruncateTransformer implements FileTransformationService<TruncateCo
                         yield "";  // Entire name removed
                     }
                     yield input.getName().substring(0,
-                                                    input.getName().length() - config.getNumberOfSymbols());
+                            input.getName().length() - config.getNumberOfSymbols());
                 }
                 case TRUNCATE_EMPTY_SYMBOLS -> input.getName().trim();
             };
@@ -52,13 +52,13 @@ public class TruncateTransformer implements FileTransformationService<TruncateCo
             }
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to truncate file: {}", input.getName(), e);
@@ -68,23 +68,23 @@ public class TruncateTransformer implements FileTransformationService<TruncateCo
 
     private TransformationMetadata buildMetadata(TruncateConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.TRUNCATE_FILE_NAME)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "numberOfSymbols", config.getNumberOfSymbols(),
-                                             "truncateOption", config.getTruncateOption().name()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.TRUNCATE_FILE_NAME)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "numberOfSymbols", config.getNumberOfSymbols(),
+                        "truncateOption", config.getTruncateOption().name()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

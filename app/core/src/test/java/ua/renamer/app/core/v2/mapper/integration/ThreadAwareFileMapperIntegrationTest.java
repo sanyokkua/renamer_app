@@ -6,13 +6,13 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.api.interfaces.FileMetadataMapper;
-import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.FileMetadataMapper;
+import ua.renamer.app.api.interfaces.FileUtils;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.meta.FileMeta;
-import ua.renamer.app.api.interfaces.FileUtils;
-import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
 import ua.renamer.app.core.v2.util.TestDateTimeUtils;
 import ua.renamer.app.core.v2.util.TestFileUtils;
 
@@ -34,10 +34,22 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 class ThreadAwareFileMapperIntegrationTest {
 
-    private ThreadAwareFileMapper fileMapper;
-
     @TempDir
     Path tempDir;
+    private ThreadAwareFileMapper fileMapper;
+
+    static Stream<Arguments> provideFileTypesForCategoryTest() {
+        return Stream.of(
+                arguments("test-data/image/jpg/test_jpg_clean.jpg", Category.IMAGE, "image/jpeg"),
+                arguments("test-data/image/png/test_png_clean.png", Category.IMAGE, "image/png"),
+                arguments("test-data/video/mp4/test_mp4_clean.mp4", Category.VIDEO, "video/mp4"),
+                arguments("test-data/audio/mp3/test_mp3_clean.mp3", Category.AUDIO, "audio/mpeg")
+        );
+    }
+
+    // ============================================================================
+    // Helper Methods
+    // ============================================================================
 
     @BeforeEach
     void setUp() {
@@ -51,7 +63,7 @@ class ThreadAwareFileMapperIntegrationTest {
     }
 
     // ============================================================================
-    // Helper Methods
+    // Basic File Attributes Tests
     // ============================================================================
 
     private File getTestFile(String path) {
@@ -64,10 +76,6 @@ class ThreadAwareFileMapperIntegrationTest {
             return null;
         }
     }
-
-    // ============================================================================
-    // Basic File Attributes Tests
-    // ============================================================================
 
     @Test
     void testMapFrom_BasicFileAttributes() throws IOException {
@@ -125,6 +133,10 @@ class ThreadAwareFileMapperIntegrationTest {
         assertEquals("gz", result.getExtension());
     }
 
+    // ============================================================================
+    // File Size Tests
+    // ============================================================================
+
     @Test
     void testMapFrom_HiddenFile() throws IOException {
         Path testFile = tempDir.resolve(".gitignore");
@@ -135,10 +147,6 @@ class ThreadAwareFileMapperIntegrationTest {
         assertEquals(".gitignore", result.getName());
         assertEquals("", result.getExtension());
     }
-
-    // ============================================================================
-    // File Size Tests
-    // ============================================================================
 
     @Test
     void testMapFrom_FileSize() throws IOException {
@@ -162,6 +170,10 @@ class ThreadAwareFileMapperIntegrationTest {
         assertEquals(0, result.getFileSize());
     }
 
+    // ============================================================================
+    // DateTime Tests
+    // ============================================================================
+
     @Test
     void testMapFrom_LargeFile() throws IOException {
         Path testFile = tempDir.resolve("large.txt");
@@ -174,7 +186,7 @@ class ThreadAwareFileMapperIntegrationTest {
     }
 
     // ============================================================================
-    // DateTime Tests
+    // Directory Tests
     // ============================================================================
 
     @Test
@@ -186,7 +198,7 @@ class ThreadAwareFileMapperIntegrationTest {
 
         // Verify at least one date is present (OS-dependent)
         assertTrue(result1.getCreationDate().isPresent() || result1.getModificationDate().isPresent(),
-                  "At least one date should be present");
+                "At least one date should be present");
 
         if (result1.getModificationDate().isPresent()) {
             LocalDateTime firstModTime = result1.getModificationDate().get();
@@ -200,13 +212,9 @@ class ThreadAwareFileMapperIntegrationTest {
             LocalDateTime secondModTime = result2.getModificationDate().get();
 
             assertFalse(secondModTime.isBefore(firstModTime),
-                       "Second modification time should not be before first");
+                    "Second modification time should not be before first");
         }
     }
-
-    // ============================================================================
-    // Directory Tests
-    // ============================================================================
 
     @Test
     void testMapFrom_Directory() throws IOException {
@@ -221,6 +229,10 @@ class ThreadAwareFileMapperIntegrationTest {
         assertEquals(Category.GENERIC, result.getCategory());
     }
 
+    // ============================================================================
+    // MIME Type and Category Tests
+    // ============================================================================
+
     @Test
     void testMapFrom_DirectoryVsFile() throws IOException {
         Path dir = tempDir.resolve("folder");
@@ -234,19 +246,6 @@ class ThreadAwareFileMapperIntegrationTest {
 
     }
 
-    // ============================================================================
-    // MIME Type and Category Tests
-    // ============================================================================
-
-    static Stream<Arguments> provideFileTypesForCategoryTest() {
-        return Stream.of(
-                arguments("test-data/image/jpg/test_jpg_clean.jpg", Category.IMAGE, "image/jpeg"),
-                arguments("test-data/image/png/test_png_clean.png", Category.IMAGE, "image/png"),
-                arguments("test-data/video/mp4/test_mp4_clean.mp4", Category.VIDEO, "video/mp4"),
-                arguments("test-data/audio/mp3/test_mp3_clean.mp3", Category.AUDIO, "audio/mpeg")
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("provideFileTypesForCategoryTest")
     void testMapFrom_CategoryDetection(String filePath, Category expectedCategory, String expectedMimeType) {
@@ -256,9 +255,9 @@ class ThreadAwareFileMapperIntegrationTest {
 
         assertNotNull(result);
         assertEquals(expectedCategory, result.getCategory(),
-                    "Category mismatch for: " + filePath);
+                "Category mismatch for: " + filePath);
         assertEquals(expectedMimeType, result.getDetectedMimeType(),
-                    "MIME type mismatch for: " + filePath);
+                "MIME type mismatch for: " + filePath);
     }
 
     // ============================================================================

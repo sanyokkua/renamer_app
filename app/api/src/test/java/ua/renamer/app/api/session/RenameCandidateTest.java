@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RenameCandidateTest {
 
-    private static final String FILE_ID   = "abc-123";
-    private static final String NAME      = "photo";
-    private static final String EXT       = "jpg";
-    private static final Path   PATH      = Path.of("/images/photo.jpg");
+    private static final String FILE_ID = "abc-123";
+    private static final String NAME = "photo";
+    private static final String EXT = "jpg";
+    private static final Path PATH = Path.of("/images/photo.jpg");
 
     // --- accessor correctness ---
 
@@ -90,7 +90,7 @@ class RenameCandidateTest {
 
     @Test
     void equality_whenDifferentName_thenRecordsAreNotEqual() {
-        RenameCandidate a = new RenameCandidate(FILE_ID, "photo",   EXT, PATH);
+        RenameCandidate a = new RenameCandidate(FILE_ID, "photo", EXT, PATH);
         RenameCandidate b = new RenameCandidate(FILE_ID, "picture", EXT, PATH);
 
         assertNotEquals(a, b);

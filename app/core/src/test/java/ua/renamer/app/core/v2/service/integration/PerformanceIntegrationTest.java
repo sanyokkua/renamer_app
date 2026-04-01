@@ -36,9 +36,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("file", "txt", 10);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         Instant start = Instant.now();
 
@@ -66,9 +66,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("item", "dat", 50);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("processed_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("processed_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         Instant start = Instant.now();
 
@@ -99,9 +99,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("data", "bin", 100);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("archive_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("archive_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         log.info("Starting rename operation...");
         Instant start = Instant.now();
@@ -126,8 +126,8 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
 
         // Verify performance threshold
         assertTrue(durationMs < MAX_TIME_100_FILES_MS,
-                   String.format("100 files should complete in under %d ms, took %d ms",
-                                 MAX_TIME_100_FILES_MS, durationMs));
+                String.format("100 files should complete in under %d ms, took %d ms",
+                        MAX_TIME_100_FILES_MS, durationMs));
     }
 
     @Test
@@ -136,11 +136,11 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("photo", "jpg", 100);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         log.info("Starting sequence operation on 100 files...");
         Instant start = Instant.now();
@@ -163,7 +163,7 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
 
         // Sequential mode will be slower, but should still complete in reasonable time
         assertTrue(durationMs < MAX_TIME_100_FILES_MS,
-                   "Sequence mode with 100 files should complete reasonably quickly");
+                "Sequence mode with 100 files should complete reasonably quickly");
     }
 
     // ==================== LARGE BATCH PERFORMANCE ====================
@@ -174,9 +174,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("stress", "dat", 1000);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("STRESS_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("STRESS_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         log.info("Starting stress test with 1000 files...");
         Instant start = Instant.now();
@@ -201,8 +201,8 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
 
         // Should complete within threshold (benefits from virtual threads)
         assertTrue(durationMs < MAX_TIME_1000_FILES_MS,
-                   String.format("1000 files should complete in under %d ms, took %d ms",
-                                 MAX_TIME_1000_FILES_MS, durationMs));
+                String.format("1000 files should complete in under %d ms, took %d ms",
+                        MAX_TIME_1000_FILES_MS, durationMs));
 
         // Verify all files exist
         for (int i = 1; i <= 1000; i++) {
@@ -220,9 +220,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("async", "txt", 100);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("ASYNC_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("ASYNC_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         log.info("Starting async execution...");
         Instant start = Instant.now();
@@ -252,9 +252,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("nonblock", "dat", 50);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("NB_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("NB_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Start async execution
         var future = orchestrator.executeAsync(
@@ -282,9 +282,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("progress", "txt", 100);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("CB_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("CB_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Test with callback
         Instant start1 = Instant.now();
@@ -318,7 +318,7 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         long withoutCallbackNs = Duration.between(start2, end2).toNanos();
 
         log.info("With callback: {} ns, Without callback: {} ns",
-                 withCallbackNs, withoutCallbackNs);
+                withCallbackNs, withoutCallbackNs);
 
         // Callback should not add significant overhead (< 50% relative to baseline)
         double overhead;
@@ -344,9 +344,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         // Test 1: AddText (parallel)
         List<File> files1 = createTestFiles("parallel", "txt", fileCount);
         AddTextConfig addConfig = AddTextConfig.builder()
-                                               .withTextToAdd("PAR_")
-                                               .withPosition(ItemPosition.BEGIN)
-                                               .build();
+                .withTextToAdd("PAR_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         Instant start1 = Instant.now();
         List<RenameResult> results1 = orchestrator.execute(
@@ -364,11 +364,11 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         // Test 2: Sequence (sequential)
         List<File> files2 = createTestFiles("sequential", "txt", fileCount);
         SequenceConfig seqConfig = SequenceConfig.builder()
-                                                 .withStartNumber(1)
-                                                 .withStepValue(1)
-                                                 .withPadding(3)
-                                                 .withSortSource(SortSource.FILE_NAME)
-                                                 .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         Instant start2 = Instant.now();
         List<RenameResult> results2 = orchestrator.execute(
@@ -408,9 +408,9 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
             List<File> files = createTestFiles("mem_" + i + "_", "dat", filesPerIteration);
 
             AddTextConfig config = AddTextConfig.builder()
-                                                .withTextToAdd("TEST_")
-                                                .withPosition(ItemPosition.BEGIN)
-                                                .build();
+                    .withTextToAdd("TEST_")
+                    .withPosition(ItemPosition.BEGIN)
+                    .build();
 
             List<RenameResult> results = orchestrator.execute(
                     files,

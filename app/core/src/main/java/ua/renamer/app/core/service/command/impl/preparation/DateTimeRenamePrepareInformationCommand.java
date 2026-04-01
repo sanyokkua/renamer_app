@@ -93,7 +93,6 @@ public class DateTimeRenamePrepareInformationCommand extends FileInformationComm
      * based on the specified options and sources.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new file name.
      */
     @Override
@@ -106,8 +105,8 @@ public class DateTimeRenamePrepareInformationCommand extends FileInformationComm
         var fileCreationDateTime = item.getFsCreationDate().orElse(null);
         var fileModificationDateTime = item.getFsModificationDate().orElse(null);
         var fileContentCreationDateTime = item.getMetadata()
-                                              .flatMap(FileInformationMetadata::getCreationDate)
-                                              .orElse(null);
+                .flatMap(FileInformationMetadata::getCreationDate)
+                .orElse(null);
 
         LocalDateTime localDateTime = null;
         switch (dateTimeSource) {
@@ -123,8 +122,8 @@ public class DateTimeRenamePrepareInformationCommand extends FileInformationComm
                 localDateTime = customDateTime;
             } else {
                 localDateTime = dateTimeOperations.findMinOrNull(fileCreationDateTime,
-                                                                 fileModificationDateTime,
-                                                                 fileContentCreationDateTime);
+                        fileModificationDateTime,
+                        fileContentCreationDateTime);
             }
         }
 
@@ -134,15 +133,15 @@ public class DateTimeRenamePrepareInformationCommand extends FileInformationComm
 
         var resultDateTime = dateTimeOperations.formatDateTime(localDateTime, dateFormat, timeFormat, dateTimeFormat);
         var caseFormats = List.of(TimeFormat.HH_MM_SS_AM_PM_TOGETHER,
-                                  TimeFormat.HH_MM_SS_AM_PM_WHITE_SPACED,
-                                  TimeFormat.HH_MM_SS_AM_PM_UNDERSCORED,
-                                  TimeFormat.HH_MM_SS_AM_PM_DOTTED,
-                                  TimeFormat.HH_MM_SS_AM_PM_DASHED,
-                                  TimeFormat.HH_MM_AM_PM_TOGETHER,
-                                  TimeFormat.HH_MM_AM_PM_WHITE_SPACED,
-                                  TimeFormat.HH_MM_AM_PM_UNDERSCORED,
-                                  TimeFormat.HH_MM_AM_PM_DOTTED,
-                                  TimeFormat.HH_MM_AM_PM_DASHED);
+                TimeFormat.HH_MM_SS_AM_PM_WHITE_SPACED,
+                TimeFormat.HH_MM_SS_AM_PM_UNDERSCORED,
+                TimeFormat.HH_MM_SS_AM_PM_DOTTED,
+                TimeFormat.HH_MM_SS_AM_PM_DASHED,
+                TimeFormat.HH_MM_AM_PM_TOGETHER,
+                TimeFormat.HH_MM_AM_PM_WHITE_SPACED,
+                TimeFormat.HH_MM_AM_PM_UNDERSCORED,
+                TimeFormat.HH_MM_AM_PM_DOTTED,
+                TimeFormat.HH_MM_AM_PM_DASHED);
 
         if (caseFormats.contains(timeFormat)) {
             if (useUppercaseForAmPm) {

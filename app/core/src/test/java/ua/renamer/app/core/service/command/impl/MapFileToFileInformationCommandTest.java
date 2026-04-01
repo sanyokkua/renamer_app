@@ -34,9 +34,9 @@ class MapFileToFileInformationCommandTest {
         var listOfFiles = List.of(mockedFile1, mockedFile2, mockedFile3, mockedFile4);
 
         when(dataMapper.map(any(File.class))).thenReturn(mockedFileInformation1)
-                                             .thenReturn(mockedFileInformation2)
-                                             .thenReturn(mockedFileInformation3)
-                                             .thenReturn(mockedFileInformation4);
+                .thenReturn(mockedFileInformation2)
+                .thenReturn(mockedFileInformation3)
+                .thenReturn(mockedFileInformation4);
 
         var mapper = new MapFileToFileInformationCommand(dataMapper);
         var result = mapper.execute(listOfFiles, null);

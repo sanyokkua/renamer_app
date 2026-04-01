@@ -102,18 +102,18 @@ class DateTimeRenamePrepareInformationCommandTest extends BaseRenamePreparationC
     private static FileInformation createTestFileInformation(LocalDateTime fc, LocalDateTime fm, LocalDateTime cc) {
         var metadata = FileInformationMetadata.builder().creationDate(cc).build();
         return FileInformation.builder()
-                              .originalFile(new File(TEST_DEFAULT_FILE_PATH))
-                              .fileAbsolutePath(TEST_ABSOLUTE_PATH)
-                              .isFile(TEST_IS_FILE)
-                              .fileName(TEST_FILE_NAME)
-                              .newName(TEST_FILE_NAME)
-                              .fileExtension(TEST_FILE_EXTENSION)
-                              .newExtension(TEST_FILE_EXTENSION)
-                              .fileSize(TEST_FILE_SIZE)
-                              .fsCreationDate(fc)
-                              .fsModificationDate(fm)
-                              .metadata(metadata)
-                              .build();
+                .originalFile(new File(TEST_DEFAULT_FILE_PATH))
+                .fileAbsolutePath(TEST_ABSOLUTE_PATH)
+                .isFile(TEST_IS_FILE)
+                .fileName(TEST_FILE_NAME)
+                .newName(TEST_FILE_NAME)
+                .fileExtension(TEST_FILE_EXTENSION)
+                .newExtension(TEST_FILE_EXTENSION)
+                .fileSize(TEST_FILE_SIZE)
+                .fsCreationDate(fc)
+                .fsModificationDate(fm)
+                .metadata(metadata)
+                .build();
     }
 
     @ParameterizedTest
@@ -122,18 +122,18 @@ class DateTimeRenamePrepareInformationCommandTest extends BaseRenamePreparationC
         // Prepare Test Data
         var fileInfoMeta = FileInformationMetadata.builder().creationDate(TEST_CC_TIME_2005_09_12_12_00_00).build();
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File(TEST_DEFAULT_FILE_PATH))
-                                      .fileAbsolutePath(TEST_ABSOLUTE_PATH)
-                                      .isFile(isFile)
-                                      .fileName(originalName)
-                                      .newName(originalName)
-                                      .fileExtension(TEST_FILE_EXTENSION)
-                                      .newExtension(TEST_FILE_EXTENSION)
-                                      .fileSize(TEST_FILE_SIZE)
-                                      .fsCreationDate(TEST_FC_TIME_2005_10_12_12_00_05)
-                                      .fsModificationDate(TEST_FM_TIME_2010_09_12_09_00_00)
-                                      .metadata(fileInfoMeta)
-                                      .build();
+                .originalFile(new File(TEST_DEFAULT_FILE_PATH))
+                .fileAbsolutePath(TEST_ABSOLUTE_PATH)
+                .isFile(isFile)
+                .fileName(originalName)
+                .newName(originalName)
+                .fileExtension(TEST_FILE_EXTENSION)
+                .newExtension(TEST_FILE_EXTENSION)
+                .fileSize(TEST_FILE_SIZE)
+                .fsCreationDate(TEST_FC_TIME_2005_10_12_12_00_05)
+                .fsModificationDate(TEST_FM_TIME_2010_09_12_09_00_00)
+                .metadata(fileInfoMeta)
+                .build();
 
         List<FileInformation> inputList = List.of(fileInfo);
 
@@ -264,13 +264,13 @@ class DateTimeRenamePrepareInformationCommandTest extends BaseRenamePreparationC
     @Override
     Command<List<FileInformation>, List<FileInformation>> getCommand() {
         return DateTimeRenamePrepareInformationCommand.builder()
-                                                      .dateTimeOperations(dateTimeOperations)
-                                                      .dateTimeFormat(DateTimeFormat.DATE_TIME_DASHED)
-                                                      .dateFormat(DateFormat.YYYY_MM_DD_TOGETHER)
-                                                      .timeFormat(TimeFormat.HH_MM_SS_24_TOGETHER)
-                                                      .dateTimeSource(DateTimeSource.CURRENT_DATE)
-                                                      .dateTimeFormat(DateTimeFormat.NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970)
-                                                      .build();
+                .dateTimeOperations(dateTimeOperations)
+                .dateTimeFormat(DateTimeFormat.DATE_TIME_DASHED)
+                .dateFormat(DateFormat.YYYY_MM_DD_TOGETHER)
+                .timeFormat(TimeFormat.HH_MM_SS_24_TOGETHER)
+                .dateTimeSource(DateTimeSource.CURRENT_DATE)
+                .dateTimeFormat(DateTimeFormat.NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970)
+                .build();
     }
 
     @Override

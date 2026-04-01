@@ -20,7 +20,6 @@ public class FileInformationUtils {
      * If no extension is present, an empty string is used.
      *
      * @param fileInfo the FileInformation object containing file name and extension information
-     *
      * @return the full file name as a String (e.g., "fileName.ext")
      */
     public static String getFileFullName(FileInformation fileInfo) {
@@ -36,7 +35,6 @@ public class FileInformationUtils {
      *
      * @param name the new name of the file
      * @param ext  the new extension of the file (including the leading ".")
-     *
      * @return the full file name as a String (e.g., "fileName.ext")
      */
     public static String getFileNewFullName(String name, String ext) {
@@ -60,7 +58,6 @@ public class FileInformationUtils {
      * If no extension is present, an empty string is used.
      *
      * @param fileInfo the FileInformation object containing new name and extension information
-     *
      * @return the full file name as a String (e.g., "fileName.ext")
      */
     public static String getFileNewFullName(FileInformation fileInfo) {
@@ -71,13 +68,12 @@ public class FileInformationUtils {
      * Checks if the file name or extension has changed between the original and new information in the FileInformation object.
      *
      * @param fileInfo the FileInformation object containing file name and extension information
-     *
      * @return true if the file name or extension has changed, false otherwise
      */
     public static boolean isFileHasChangedName(FileInformation fileInfo) {
         log.debug("isFileRenamed({})", fileInfo);
         boolean renamed = !(fileInfo.getFileName().equals(fileInfo.getNewName()) && fileInfo.getFileExtension()
-                                                                                            .equals(fileInfo.getNewExtension()));
+                .equals(fileInfo.getNewExtension()));
         log.debug("isFileRenamed() is renamed={}", renamed);
         return renamed;
     }
@@ -87,9 +83,7 @@ public class FileInformationUtils {
      *
      * @param fileInfo      the FileInformation object containing file path information
      * @param nameExtractor a function that extracts the file name from the FileInformation object
-     *
      * @return the absolute path of the file without the file name (e.g., "/path/to/folder/")
-     *
      * @throws IllegalArgumentException if the file name is not found in the absolute path
      */
     public static String getFileAbsolutePathWithoutName(FileInformation fileInfo,
@@ -100,7 +94,7 @@ public class FileInformationUtils {
 
         if (!fileAbsolutePath.endsWith(fileName)) {
             var absoluteErr = "Check if the file name (%s) and absolute path (%s) is correct".formatted(fileName,
-                                                                                                        fileAbsolutePath);
+                    fileAbsolutePath);
             var nameErr = "File Name (%s) is not found in the path (%s)".formatted(fileName, fileAbsolutePath);
             var err = "%s. %s".formatted(absoluteErr, nameErr);
             throw new IllegalArgumentException(err);

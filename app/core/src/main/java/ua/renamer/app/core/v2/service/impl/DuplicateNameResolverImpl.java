@@ -18,7 +18,7 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
     public List<PreparedFileModel> resolve(List<PreparedFileModel> models) {
         // Group by target name (full name with extension)
         Map<String, List<PreparedFileModel>> nameGroups = models.stream()
-                                                                .collect(Collectors.groupingBy(PreparedFileModel::getNewFullName));
+                .collect(Collectors.groupingBy(PreparedFileModel::getNewFullName));
 
         // Track used names to prevent re-collision
         Set<String> usedNames = new HashSet<>(nameGroups.keySet());
@@ -75,13 +75,13 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
 
                 // Create updated model using toBuilder
                 PreparedFileModel updated = model.toBuilder()
-                                                 .withNewName(uniqueName)
-                                                 .build();
+                        .withNewName(uniqueName)
+                        .build();
 
                 result.add(updated);
 
                 log.debug("Resolved duplicate: {} -> {}",
-                          model.getNewFullName(), updated.getNewFullName());
+                        model.getNewFullName(), updated.getNewFullName());
             }
         }
 

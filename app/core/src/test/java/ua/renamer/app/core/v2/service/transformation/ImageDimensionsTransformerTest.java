@@ -3,10 +3,13 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.enums.ImageDimensionOptions;
 import ua.renamer.app.api.enums.ItemPositionWithReplacement;
-import ua.renamer.app.api.model.*;
-import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.ImageDimensionsConfig;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
@@ -40,73 +43,73 @@ class ImageDimensionsTransformerTest {
 
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     private FileModel createTestFileModelWithImageMetadata(String name, String extension, int width, int height) {
         ImageMeta imageMeta = ImageMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.now())
-                                       .withWidth(width)
-                                       .withHeight(height)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.now())
+                .withWidth(width)
+                .withHeight(height)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withImage(imageMeta)
-                                    .build();
+                .withImage(imageMeta)
+                .build();
 
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("image/jpeg")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.IMAGE)
-                        .withMetadata(fileMeta)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(fileMeta)
+                .build();
     }
 
     private FileModel createTestFileModelWithVideoMetadata(String name, String extension, int width, int height) {
         VideoMeta videoMeta = VideoMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.now())
-                                       .withWidth(width)
-                                       .withHeight(height)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.now())
+                .withWidth(width)
+                .withHeight(height)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withVideo(videoMeta)
-                                    .build();
+                .withVideo(videoMeta)
+                .build();
 
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(2048L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("video/mp4")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.VIDEO)
-                        .withMetadata(fileMeta)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(2048L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("video/mp4")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.VIDEO)
+                .withMetadata(fileMeta)
+                .build();
     }
 
     // ============================================================================
@@ -118,12 +121,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -142,12 +145,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.END)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.END)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -163,12 +166,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.REPLACE)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withNameSeparator("")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -188,12 +191,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.HEIGHT)
-                                                            .withRightSide(ImageDimensionOptions.WIDTH)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.HEIGHT)
+                .withRightSide(ImageDimensionOptions.WIDTH)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -209,12 +212,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.HEIGHT)
-                                                            .withRightSide(ImageDimensionOptions.WIDTH)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.END)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.HEIGHT)
+                .withRightSide(ImageDimensionOptions.WIDTH)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.END)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -234,12 +237,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.DO_NOT_USE)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.DO_NOT_USE)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -255,12 +258,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.DO_NOT_USE)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.END)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.DO_NOT_USE)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.END)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -280,12 +283,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.HEIGHT)
-                                                            .withRightSide(ImageDimensionOptions.DO_NOT_USE)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.HEIGHT)
+                .withRightSide(ImageDimensionOptions.DO_NOT_USE)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -301,12 +304,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.HEIGHT)
-                                                            .withRightSide(ImageDimensionOptions.DO_NOT_USE)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.END)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.HEIGHT)
+                .withRightSide(ImageDimensionOptions.DO_NOT_USE)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.END)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -326,12 +329,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("_")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("_")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -346,12 +349,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("-")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("-")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -366,12 +369,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator(" by ")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator(" by ")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -390,12 +393,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithVideoMetadata("video", "mp4", 3840, 2160);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -411,12 +414,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithVideoMetadata("video", "mp4", 1280, 720);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.END)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.END)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -436,12 +439,12 @@ class ImageDimensionsTransformerTest {
         // Test 4K UHD
         FileModel input1 = createTestFileModelWithImageMetadata("photo", "jpg", 3840, 2160);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         PreparedFileModel result1 = transformer.transform(input1, config);
         assertEquals("3840x2160 photo", result1.getNewName());
@@ -452,12 +455,12 @@ class ImageDimensionsTransformerTest {
         // Test Full HD
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
         assertEquals("1920x1080 photo", result.getNewName());
@@ -468,12 +471,12 @@ class ImageDimensionsTransformerTest {
         // Test small resolution
         FileModel input = createTestFileModelWithImageMetadata("thumbnail", "jpg", 150, 150);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
         assertEquals("150x150 thumbnail", result.getNewName());
@@ -484,12 +487,12 @@ class ImageDimensionsTransformerTest {
         // Test portrait (height > width)
         FileModel input = createTestFileModelWithImageMetadata("portrait", "jpg", 1080, 1920);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
         assertEquals("1080x1920 portrait", result.getNewName());
@@ -504,12 +507,12 @@ class ImageDimensionsTransformerTest {
         // Given - file without any metadata
         FileModel input = createTestFileModel("photo", "jpg");
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator("")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -525,37 +528,37 @@ class ImageDimensionsTransformerTest {
     void testMissingWidth_UsesOnlyHeight() {
         // Given - metadata with height but no width
         ImageMeta imageMeta = ImageMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.now())
-                                       .withWidth(null)
-                                       .withHeight(1080)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.now())
+                .withWidth(null)
+                .withHeight(1080)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withImage(imageMeta)
-                                    .build();
+                .withImage(imageMeta)
+                .build();
 
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/path/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/path/photo.jpg")
-                                   .withCreationDate(LocalDateTime.now())
-                                   .withModificationDate(LocalDateTime.now())
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(fileMeta)
-                                   .build();
+                .withFile(new File("/test/path/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/path/photo.jpg")
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(fileMeta)
+                .build();
 
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -569,37 +572,37 @@ class ImageDimensionsTransformerTest {
     void testMissingHeight_UsesOnlyWidth() {
         // Given - metadata with width but no height
         ImageMeta imageMeta = ImageMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.now())
-                                       .withWidth(1920)
-                                       .withHeight(null)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.now())
+                .withWidth(1920)
+                .withHeight(null)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withImage(imageMeta)
-                                    .build();
+                .withImage(imageMeta)
+                .build();
 
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/path/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/path/photo.jpg")
-                                   .withCreationDate(LocalDateTime.now())
-                                   .withModificationDate(LocalDateTime.now())
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(fileMeta)
-                                   .build();
+                .withFile(new File("/test/path/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/path/photo.jpg")
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(fileMeta)
+                .build();
 
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator(" ")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -613,37 +616,37 @@ class ImageDimensionsTransformerTest {
     void testBothDimensionsMissing_Error() {
         // Given - metadata with no dimensions
         ImageMeta imageMeta = ImageMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.now())
-                                       .withWidth(null)
-                                       .withHeight(null)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.now())
+                .withWidth(null)
+                .withHeight(null)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withImage(imageMeta)
-                                    .build();
+                .withImage(imageMeta)
+                .build();
 
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/path/photo.jpg"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("photo")
-                                   .withExtension("jpg")
-                                   .withAbsolutePath("/test/path/photo.jpg")
-                                   .withCreationDate(LocalDateTime.now())
-                                   .withModificationDate(LocalDateTime.now())
-                                   .withDetectedMimeType("image/jpeg")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.IMAGE)
-                                   .withMetadata(fileMeta)
-                                   .build();
+                .withFile(new File("/test/path/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/path/photo.jpg")
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(fileMeta)
+                .build();
 
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator("")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -663,12 +666,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator("")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -686,12 +689,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.HEIGHT)
-                                                            .withRightSide(ImageDimensionOptions.WIDTH)
-                                                            .withSeparator("_")
-                                                            .withPosition(ItemPositionWithReplacement.END)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.HEIGHT)
+                .withRightSide(ImageDimensionOptions.WIDTH)
+                .withSeparator("_")
+                .withPosition(ItemPositionWithReplacement.END)
+                .withNameSeparator("")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -713,12 +716,12 @@ class ImageDimensionsTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator("")
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -763,20 +766,20 @@ class ImageDimensionsTransformerTest {
         FileModel file2 = createTestFileModelWithVideoMetadata("video1", "mp4", 3840, 2160);
 
         ImageDimensionsConfig config1 = ImageDimensionsConfig.builder()
-                                                             .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                             .withSeparator("x")
-                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                             .withNameSeparator(" ")
-                                                             .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator(" ")
+                .build();
 
         ImageDimensionsConfig config2 = ImageDimensionsConfig.builder()
-                                                             .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                             .withSeparator("x")
-                                                             .withPosition(ItemPositionWithReplacement.END)
-                                                             .withNameSeparator(" ")
-                                                             .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.END)
+                .withNameSeparator(" ")
+                .build();
 
         PreparedFileModel result1 = transformer.transform(file1, config1);
         PreparedFileModel result2 = transformer.transform(file2, config2);
@@ -790,12 +793,12 @@ class ImageDimensionsTransformerTest {
         // Verify that extension is always preserved correctly
         FileModel input = createTestFileModelWithImageMetadata("photo", "custom_ext", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator("")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -808,12 +811,12 @@ class ImageDimensionsTransformerTest {
         // Verify that original file reference is preserved
         FileModel input = createTestFileModelWithImageMetadata("original", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator("")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -826,12 +829,12 @@ class ImageDimensionsTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg", 1920, 1080);
         ImageDimensionsConfig config = ImageDimensionsConfig.builder()
-                                                            .withLeftSide(ImageDimensionOptions.WIDTH)
-                                                            .withRightSide(ImageDimensionOptions.HEIGHT)
-                                                            .withSeparator("x")
-                                                            .withPosition(ItemPositionWithReplacement.BEGIN)
-                                                            .withNameSeparator("")
-                                                            .build();
+                .withLeftSide(ImageDimensionOptions.WIDTH)
+                .withRightSide(ImageDimensionOptions.HEIGHT)
+                .withSeparator("x")
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withNameSeparator("")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);

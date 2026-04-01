@@ -9,10 +9,10 @@ import ua.renamer.app.api.model.TransformationMode;
  * This mode requires sequential (non-parallel) execution across all files;
  * see {@link #requiresSequentialExecution()}.
  *
- * @param startNumber  the first number in the sequence; may be any integer
- * @param stepValue    the increment between successive sequence numbers; must be greater than zero
+ * @param startNumber   the first number in the sequence; may be any integer
+ * @param stepValue     the increment between successive sequence numbers; must be greater than zero
  * @param paddingDigits the minimum number of digits in the formatted sequence number; must be zero or greater
- * @param sortSource   the criterion used to order files before assigning sequence numbers; must not be null
+ * @param sortSource    the criterion used to order files before assigning sequence numbers; must not be null
  */
 public record SequenceParams(int startNumber, int stepValue, int paddingDigits, SortSource sortSource)
         implements ModeParameters {

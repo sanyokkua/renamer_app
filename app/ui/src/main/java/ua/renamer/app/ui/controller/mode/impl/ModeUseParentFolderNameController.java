@@ -44,7 +44,7 @@ public class ModeUseParentFolderNameController extends ModeBaseController {
     private void configTextField() {
         log.info("configTextField");
         fileNameSeparatorTextField.textProperty()
-                                  .addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
     }
 
     private void configParentNumberSpinner() {
@@ -53,7 +53,7 @@ public class ModeUseParentFolderNameController extends ModeBaseController {
         parentsNumberSpinner.setValueFactory(startSeqFactory);
         parentsNumberSpinner.setEditable(true);
         parentsNumberSpinner.valueProperty()
-                            .addListener((observable, oldValue, newValue) -> handleParentsNumberChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> handleParentsNumberChanged(newValue));
     }
 
     private void handlePositionChanged(ItemPosition itemPosition) {
@@ -78,11 +78,11 @@ public class ModeUseParentFolderNameController extends ModeBaseController {
         var fileSeparator = fileNameSeparatorTextField.getText();
 
         var cmd = ParentFoldersPrepareInformationCommand.builder()
-                                                        .filesOperations(filesOperations)
-                                                        .position(position)
-                                                        .numberOfParents(parents)
-                                                        .separator(fileSeparator)
-                                                        .build();
+                .filesOperations(filesOperations)
+                .position(position)
+                .numberOfParents(parents)
+                .separator(fileSeparator)
+                .build();
 
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);

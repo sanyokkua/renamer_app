@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RenameSessionResultTest {
 
-    private static final String       FILE_ID       = "sess-42";
-    private static final String       ORIGINAL_NAME = "report.docx";
-    private static final String       FINAL_NAME    = "report_2024.docx";
+    private static final String FILE_ID = "sess-42";
+    private static final String ORIGINAL_NAME = "report.docx";
+    private static final String FINAL_NAME = "report_2024.docx";
 
     // --- happy path: SUCCESS ---
 
@@ -113,11 +113,11 @@ class RenameSessionResultTest {
     @Test
     void renameStatus_allExpectedNamesArePresent() {
         assertAll(
-            () -> assertEquals(RenameStatus.SUCCESS,              RenameStatus.valueOf("SUCCESS")),
-            () -> assertEquals(RenameStatus.SKIPPED,              RenameStatus.valueOf("SKIPPED")),
-            () -> assertEquals(RenameStatus.ERROR_EXTRACTION,     RenameStatus.valueOf("ERROR_EXTRACTION")),
-            () -> assertEquals(RenameStatus.ERROR_TRANSFORMATION, RenameStatus.valueOf("ERROR_TRANSFORMATION")),
-            () -> assertEquals(RenameStatus.ERROR_EXECUTION,      RenameStatus.valueOf("ERROR_EXECUTION"))
+                () -> assertEquals(RenameStatus.SUCCESS, RenameStatus.valueOf("SUCCESS")),
+                () -> assertEquals(RenameStatus.SKIPPED, RenameStatus.valueOf("SKIPPED")),
+                () -> assertEquals(RenameStatus.ERROR_EXTRACTION, RenameStatus.valueOf("ERROR_EXTRACTION")),
+                () -> assertEquals(RenameStatus.ERROR_TRANSFORMATION, RenameStatus.valueOf("ERROR_TRANSFORMATION")),
+                () -> assertEquals(RenameStatus.ERROR_EXECUTION, RenameStatus.valueOf("ERROR_EXECUTION"))
         );
     }
 
@@ -136,9 +136,9 @@ class RenameSessionResultTest {
     @Test
     void equality_whenDifferentStatus_thenRecordsAreNotEqual() {
         RenameSessionResult a =
-                new RenameSessionResult(FILE_ID, ORIGINAL_NAME, ORIGINAL_NAME, RenameStatus.SUCCESS,  null);
+                new RenameSessionResult(FILE_ID, ORIGINAL_NAME, ORIGINAL_NAME, RenameStatus.SUCCESS, null);
         RenameSessionResult b =
-                new RenameSessionResult(FILE_ID, ORIGINAL_NAME, ORIGINAL_NAME, RenameStatus.SKIPPED,  null);
+                new RenameSessionResult(FILE_ID, ORIGINAL_NAME, ORIGINAL_NAME, RenameStatus.SKIPPED, null);
 
         assertNotEquals(a, b);
     }
@@ -148,7 +148,7 @@ class RenameSessionResultTest {
         RenameSessionResult a =
                 new RenameSessionResult(FILE_ID, ORIGINAL_NAME, "alpha.docx", RenameStatus.SUCCESS, null);
         RenameSessionResult b =
-                new RenameSessionResult(FILE_ID, ORIGINAL_NAME, "beta.docx",  RenameStatus.SUCCESS, null);
+                new RenameSessionResult(FILE_ID, ORIGINAL_NAME, "beta.docx", RenameStatus.SUCCESS, null);
 
         assertNotEquals(a, b);
     }

@@ -3,8 +3,11 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.ExtensionChangeConfig;
 
 import java.io.File;
@@ -42,19 +45,19 @@ class ExtensionChangeTransformerTest {
      */
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     // ============================================================================
@@ -66,8 +69,8 @@ class ExtensionChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("md")
-                                                            .build();
+                .withNewExtension("md")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -87,8 +90,8 @@ class ExtensionChangeTransformerTest {
         // Given - extension with leading dot
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension(".md")
-                                                            .build();
+                .withNewExtension(".md")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -105,8 +108,8 @@ class ExtensionChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("MD")
-                                                            .build();
+                .withNewExtension("MD")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -122,8 +125,8 @@ class ExtensionChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("MkDn")
-                                                            .build();
+                .withNewExtension("MkDn")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -139,8 +142,8 @@ class ExtensionChangeTransformerTest {
         // Given - changing to same extension
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("txt")
-                                                            .build();
+                .withNewExtension("txt")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -156,8 +159,8 @@ class ExtensionChangeTransformerTest {
         // Given - compound extension like tar.gz
         FileModel input = createTestFileModel("archive", "tar");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("tar.gz")
-                                                            .build();
+                .withNewExtension("tar.gz")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -174,8 +177,8 @@ class ExtensionChangeTransformerTest {
         // Given - compound extension with leading dot
         FileModel input = createTestFileModel("archive", "zip");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension(".tar.gz")
-                                                            .build();
+                .withNewExtension(".tar.gz")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -192,8 +195,8 @@ class ExtensionChangeTransformerTest {
         // Given - extension with surrounding whitespace
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("  md  ")
-                                                            .build();
+                .withNewExtension("  md  ")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -212,9 +215,9 @@ class ExtensionChangeTransformerTest {
     void testErrorHandling_EmptyExtension() {
         // Config validation now rejects blank extension at construction time
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-            ExtensionChangeConfig.builder()
-                                 .withNewExtension("")
-                                 .build()
+                ExtensionChangeConfig.builder()
+                        .withNewExtension("")
+                        .build()
         );
         assertTrue(ex.getMessage().contains("newExtension must not be blank"));
     }
@@ -223,9 +226,9 @@ class ExtensionChangeTransformerTest {
     void testErrorHandling_WhitespaceOnlyExtension() {
         // Config validation now rejects whitespace-only extension at construction time
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-            ExtensionChangeConfig.builder()
-                                 .withNewExtension("   ")
-                                 .build()
+                ExtensionChangeConfig.builder()
+                        .withNewExtension("   ")
+                        .build()
         );
         assertTrue(ex.getMessage().contains("newExtension must not be blank"));
     }
@@ -235,8 +238,8 @@ class ExtensionChangeTransformerTest {
         // Given - extension is only a dot
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension(".")
-                                                            .build();
+                .withNewExtension(".")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -254,8 +257,8 @@ class ExtensionChangeTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("md")
-                                                            .build();
+                .withNewExtension("md")
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -284,9 +287,9 @@ class ExtensionChangeTransformerTest {
     void testErrorHandling_NullNewExtension() {
         // Config validation now rejects null extension at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            ExtensionChangeConfig.builder()
-                                 .withNewExtension(null)
-                                 .build()
+                ExtensionChangeConfig.builder()
+                        .withNewExtension(null)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("newExtension must not be null"));
     }
@@ -309,8 +312,8 @@ class ExtensionChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("md")
-                                                            .build();
+                .withNewExtension("md")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -329,8 +332,8 @@ class ExtensionChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("pdf")
-                                                            .build();
+                .withNewExtension("pdf")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -346,8 +349,8 @@ class ExtensionChangeTransformerTest {
         // Given - verify metadata stores original input (before dot removal)
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension(".md")
-                                                            .build();
+                .withNewExtension(".md")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -370,16 +373,16 @@ class ExtensionChangeTransformerTest {
         FileModel file3 = createTestFileModel("doc3", "jpg");
 
         ExtensionChangeConfig config1 = ExtensionChangeConfig.builder()
-                                                             .withNewExtension("md")
-                                                             .build();
+                .withNewExtension("md")
+                .build();
 
         ExtensionChangeConfig config2 = ExtensionChangeConfig.builder()
-                                                             .withNewExtension("docx")
-                                                             .build();
+                .withNewExtension("docx")
+                .build();
 
         ExtensionChangeConfig config3 = ExtensionChangeConfig.builder()
-                                                             .withNewExtension("png")
-                                                             .build();
+                .withNewExtension("png")
+                .build();
 
         PreparedFileModel result1 = transformer.transform(file1, config1);
         PreparedFileModel result2 = transformer.transform(file2, config2);
@@ -395,8 +398,8 @@ class ExtensionChangeTransformerTest {
         // Verify that filename is never modified
         FileModel input = createTestFileModel("my_complex_file_name", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("md")
-                                                            .build();
+                .withNewExtension("md")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -409,8 +412,8 @@ class ExtensionChangeTransformerTest {
         // Verify that original file reference is preserved
         FileModel input = createTestFileModel("original", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("md")
-                                                            .build();
+                .withNewExtension("md")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -428,8 +431,8 @@ class ExtensionChangeTransformerTest {
 
         for (String ext : extensions) {
             ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                                .withNewExtension(ext)
-                                                                .build();
+                    .withNewExtension(ext)
+                    .build();
 
             PreparedFileModel result = transformer.transform(input, config);
 
@@ -443,8 +446,8 @@ class ExtensionChangeTransformerTest {
         // Test extension with special characters (though uncommon)
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("bak_2024")
-                                                            .build();
+                .withNewExtension("bak_2024")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -458,8 +461,8 @@ class ExtensionChangeTransformerTest {
         // Test numeric extension
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("001")
-                                                            .build();
+                .withNewExtension("001")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -474,8 +477,8 @@ class ExtensionChangeTransformerTest {
         String longExt = "a".repeat(100);
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension(longExt)
-                                                            .build();
+                .withNewExtension(longExt)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -490,8 +493,8 @@ class ExtensionChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("md")
-                                                            .build();
+                .withNewExtension("md")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -508,8 +511,8 @@ class ExtensionChangeTransformerTest {
         // Given - same extension
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("txt")
-                                                            .build();
+                .withNewExtension("txt")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -524,8 +527,8 @@ class ExtensionChangeTransformerTest {
         // Given - same extension but different case
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("TXT")
-                                                            .build();
+                .withNewExtension("TXT")
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -541,8 +544,8 @@ class ExtensionChangeTransformerTest {
         // Test with Unicode characters in extension (unusual but possible)
         FileModel input = createTestFileModel("file", "txt");
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("测试")
-                                                            .build();
+                .withNewExtension("测试")
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 

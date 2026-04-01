@@ -3,9 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.TruncateOptions;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.TruncateOptions;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.TruncateConfig;
 
 import java.io.File;
@@ -43,19 +46,19 @@ class TruncateTransformerTest {
      */
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     // ============================================================================
@@ -67,9 +70,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("prefix_document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(7)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -88,9 +91,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("xdocument", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(1)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(1)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -106,9 +109,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -124,9 +127,9 @@ class TruncateTransformerTest {
         // Given - remove exactly the file length
         FileModel input = createTestFileModel("document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(8) // "document" has 8 characters
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(8) // "document" has 8 characters
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -144,9 +147,9 @@ class TruncateTransformerTest {
         // Given - remove more characters than file length
         FileModel input = createTestFileModel("doc", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(10) // "doc" has only 3 characters
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(10) // "doc" has only 3 characters
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -165,9 +168,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7) // Leave "t"
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(7) // Leave "t"
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -187,9 +190,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("document_suffix", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(7)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -208,9 +211,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("documentx", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(1)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(1)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -226,9 +229,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -244,9 +247,9 @@ class TruncateTransformerTest {
         // Given - remove exactly the file length
         FileModel input = createTestFileModel("document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(8) // "document" has 8 characters
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(8) // "document" has 8 characters
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -264,9 +267,9 @@ class TruncateTransformerTest {
         // Given - remove more characters than file length
         FileModel input = createTestFileModel("doc", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(10) // "doc" has only 3 characters
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(10) // "doc" has only 3 characters
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -285,9 +288,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7) // Leave "d"
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(7) // Leave "d"
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -307,9 +310,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("   document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0) // Not used for TRUNCATE_EMPTY_SYMBOLS
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0) // Not used for TRUNCATE_EMPTY_SYMBOLS
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -325,9 +328,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("document   ", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -343,9 +346,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("   document   ", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -361,9 +364,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -379,9 +382,9 @@ class TruncateTransformerTest {
         // Given - filename is only spaces
         FileModel input = createTestFileModel("     ", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -399,9 +402,9 @@ class TruncateTransformerTest {
         // Given - spaces in the middle should be preserved
         FileModel input = createTestFileModel("  my document  ", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -421,9 +424,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("prefix_file", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(7)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -442,9 +445,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("file_test", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(5)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(5)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -461,9 +464,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("  file  ", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -482,9 +485,9 @@ class TruncateTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(5)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(5)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -513,10 +516,10 @@ class TruncateTransformerTest {
     void testErrorHandling_NullTruncateOption() {
         // Config validation now rejects null truncateOption at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            TruncateConfig.builder()
-                          .withNumberOfSymbols(5)
-                          .withTruncateOption(null)
-                          .build()
+                TruncateConfig.builder()
+                        .withNumberOfSymbols(5)
+                        .withTruncateOption(null)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("truncateOption must not be null"));
     }
@@ -542,19 +545,19 @@ class TruncateTransformerTest {
         FileModel file3 = createTestFileModel("  doc3  ", "jpg");
 
         TruncateConfig configBegin = TruncateConfig.builder()
-                                                   .withNumberOfSymbols(7)
-                                                   .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                                   .build();
+                .withNumberOfSymbols(7)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         TruncateConfig configEnd = TruncateConfig.builder()
-                                                 .withNumberOfSymbols(7)
-                                                 .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                                 .build();
+                .withNumberOfSymbols(7)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         TruncateConfig configTrim = TruncateConfig.builder()
-                                                  .withNumberOfSymbols(0)
-                                                  .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                                  .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         PreparedFileModel result1 = transformer.transform(file1, configBegin);
         PreparedFileModel result2 = transformer.transform(file2, configEnd);
@@ -570,9 +573,9 @@ class TruncateTransformerTest {
         // Verify that extension is always preserved correctly
         FileModel input = createTestFileModel("prefix_file", "custom_ext");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(7)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -585,9 +588,9 @@ class TruncateTransformerTest {
         // Verify that original file reference is preserved
         FileModel input = createTestFileModel("original_prefix", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(9)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(9)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -600,9 +603,9 @@ class TruncateTransformerTest {
         // Test with Unicode characters
         FileModel input = createTestFileModel("prefix_测试文档", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7) // Remove "prefix_"
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(7) // Remove "prefix_"
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -616,9 +619,9 @@ class TruncateTransformerTest {
         // Test with special characters
         FileModel input = createTestFileModel("@@###file", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(5) // Remove "@@###"
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(5) // Remove "@@###"
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -633,9 +636,9 @@ class TruncateTransformerTest {
         String longName = "A".repeat(500) + "suffix";
         FileModel input = createTestFileModel(longName, "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(6) // Remove "suffix"
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
-                                              .build();
+                .withNumberOfSymbols(6) // Remove "suffix"
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_FROM_END)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -650,9 +653,9 @@ class TruncateTransformerTest {
         // Given
         FileModel input = createTestFileModel("prefix_file", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(7)
-                                              .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(7)
+                .withTruncateOption(TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -667,9 +670,9 @@ class TruncateTransformerTest {
         // Given - no whitespace to trim
         FileModel input = createTestFileModel("file", "txt");
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(0)
-                                              .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
-                                              .build();
+                .withNumberOfSymbols(0)
+                .withTruncateOption(TruncateOptions.TRUNCATE_EMPTY_SYMBOLS)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);

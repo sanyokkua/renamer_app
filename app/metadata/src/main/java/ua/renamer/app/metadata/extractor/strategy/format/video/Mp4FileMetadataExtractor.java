@@ -19,17 +19,17 @@ public class Mp4FileMetadataExtractor extends BaseVideoMetadataExtractor {
     @Override
     protected List<Class<? extends Directory>> getAvailableDirectories() {
         return List.of(Mp4VideoDirectory.class,
-                       Mp4MediaDirectory.class,
-                       QuickTimeDirectory.class,
-                       QuickTimeMediaDirectory.class,
-                       QuickTimeVideoDirectory.class);
+                Mp4MediaDirectory.class,
+                QuickTimeDirectory.class,
+                QuickTimeMediaDirectory.class,
+                QuickTimeVideoDirectory.class);
     }
 
     @Override
     protected List<Integer> getContentCreationTags() {
         return List.of(Mp4MediaDirectory.TAG_CREATION_TIME,
-                       QuickTimeDirectory.TAG_CREATION_TIME,
-                       QuickTimeDirectory.TAG_MODIFICATION_TIME);
+                QuickTimeDirectory.TAG_CREATION_TIME,
+                QuickTimeDirectory.TAG_MODIFICATION_TIME);
     }
 
     @Override

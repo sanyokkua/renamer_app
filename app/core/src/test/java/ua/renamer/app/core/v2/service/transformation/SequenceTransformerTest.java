@@ -3,9 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.SortSource;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.SortSource;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.SequenceConfig;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
@@ -42,63 +45,63 @@ class SequenceTransformerTest {
 
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     private FileModel createTestFileModelWithSize(String name, String extension, long size) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(size)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(size)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     private FileModel createTestFileModelWithImageMetadata(String name, String extension, int width, int height) {
         ImageMeta imageMeta = ImageMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.of(2023, 6, 10, 8, 15, 0))
-                                       .withWidth(width)
-                                       .withHeight(height)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.of(2023, 6, 10, 8, 15, 0))
+                .withWidth(width)
+                .withHeight(height)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withImage(imageMeta)
-                                    .build();
+                .withImage(imageMeta)
+                .build();
 
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("image/jpeg")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.IMAGE)
-                        .withMetadata(fileMeta)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(fileMeta)
+                .build();
     }
 
     // ============================================================================
@@ -123,11 +126,11 @@ class SequenceTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When/Then
         assertThrows(UnsupportedOperationException.class, () -> {
@@ -149,11 +152,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -179,11 +182,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(0)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(0)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -203,11 +206,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(10)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(10)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -231,11 +234,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(2)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(2)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -256,11 +259,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(10)
-                                              .withStepValue(5)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(10)
+                .withStepValue(5)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -280,11 +283,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(0)
-                                              .withStepValue(10)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(0)
+                .withStepValue(10)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -308,11 +311,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -332,11 +335,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(5)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(5)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -355,11 +358,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(5)
-                                              .withStepValue(1)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(5)
+                .withStepValue(1)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -438,11 +441,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -466,18 +469,18 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_PATH)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_PATH)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
 
         // Then - sorted by absolute path
         assertTrue(results.get(0).getOriginalFile().getAbsolutePath()
-                          .compareTo(results.get(1).getOriginalFile().getAbsolutePath()) < 0);
+                .compareTo(results.get(1).getOriginalFile().getAbsolutePath()) < 0);
     }
 
     @Test
@@ -490,11 +493,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_SIZE)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_SIZE)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -510,56 +513,56 @@ class SequenceTransformerTest {
         // Given - files with different creation dates
         List<FileModel> files = new ArrayList<>();
         files.add(FileModel.builder()
-                           .withFile(new File("/test/path/file3.txt"))
-                           .withIsFile(true)
-                           .withFileSize(1024L)
-                           .withName("file3")
-                           .withExtension("txt")
-                           .withAbsolutePath("/test/path/file3.txt")
-                           .withCreationDate(LocalDateTime.of(2024, 3, 1, 10, 0))
-                           .withModificationDate(LocalDateTime.now())
-                           .withDetectedMimeType("text/plain")
-                           .withDetectedExtensions(Collections.emptySet())
-                           .withCategory(Category.GENERIC)
-                           .withMetadata(null)
-                           .build());
+                .withFile(new File("/test/path/file3.txt"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("file3")
+                .withExtension("txt")
+                .withAbsolutePath("/test/path/file3.txt")
+                .withCreationDate(LocalDateTime.of(2024, 3, 1, 10, 0))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build());
 
         files.add(FileModel.builder()
-                           .withFile(new File("/test/path/file1.txt"))
-                           .withIsFile(true)
-                           .withFileSize(1024L)
-                           .withName("file1")
-                           .withExtension("txt")
-                           .withAbsolutePath("/test/path/file1.txt")
-                           .withCreationDate(LocalDateTime.of(2024, 1, 1, 10, 0))
-                           .withModificationDate(LocalDateTime.now())
-                           .withDetectedMimeType("text/plain")
-                           .withDetectedExtensions(Collections.emptySet())
-                           .withCategory(Category.GENERIC)
-                           .withMetadata(null)
-                           .build());
+                .withFile(new File("/test/path/file1.txt"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("file1")
+                .withExtension("txt")
+                .withAbsolutePath("/test/path/file1.txt")
+                .withCreationDate(LocalDateTime.of(2024, 1, 1, 10, 0))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build());
 
         files.add(FileModel.builder()
-                           .withFile(new File("/test/path/file2.txt"))
-                           .withIsFile(true)
-                           .withFileSize(1024L)
-                           .withName("file2")
-                           .withExtension("txt")
-                           .withAbsolutePath("/test/path/file2.txt")
-                           .withCreationDate(LocalDateTime.of(2024, 2, 1, 10, 0))
-                           .withModificationDate(LocalDateTime.now())
-                           .withDetectedMimeType("text/plain")
-                           .withDetectedExtensions(Collections.emptySet())
-                           .withCategory(Category.GENERIC)
-                           .withMetadata(null)
-                           .build());
+                .withFile(new File("/test/path/file2.txt"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("file2")
+                .withExtension("txt")
+                .withAbsolutePath("/test/path/file2.txt")
+                .withCreationDate(LocalDateTime.of(2024, 2, 1, 10, 0))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build());
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_CREATION_DATETIME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_CREATION_DATETIME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -575,56 +578,56 @@ class SequenceTransformerTest {
         // Given - files with different modification dates
         List<FileModel> files = new ArrayList<>();
         files.add(FileModel.builder()
-                           .withFile(new File("/test/path/file3.txt"))
-                           .withIsFile(true)
-                           .withFileSize(1024L)
-                           .withName("file3")
-                           .withExtension("txt")
-                           .withAbsolutePath("/test/path/file3.txt")
-                           .withCreationDate(LocalDateTime.now())
-                           .withModificationDate(LocalDateTime.of(2024, 3, 1, 10, 0))
-                           .withDetectedMimeType("text/plain")
-                           .withDetectedExtensions(Collections.emptySet())
-                           .withCategory(Category.GENERIC)
-                           .withMetadata(null)
-                           .build());
+                .withFile(new File("/test/path/file3.txt"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("file3")
+                .withExtension("txt")
+                .withAbsolutePath("/test/path/file3.txt")
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.of(2024, 3, 1, 10, 0))
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build());
 
         files.add(FileModel.builder()
-                           .withFile(new File("/test/path/file1.txt"))
-                           .withIsFile(true)
-                           .withFileSize(1024L)
-                           .withName("file1")
-                           .withExtension("txt")
-                           .withAbsolutePath("/test/path/file1.txt")
-                           .withCreationDate(LocalDateTime.now())
-                           .withModificationDate(LocalDateTime.of(2024, 1, 1, 10, 0))
-                           .withDetectedMimeType("text/plain")
-                           .withDetectedExtensions(Collections.emptySet())
-                           .withCategory(Category.GENERIC)
-                           .withMetadata(null)
-                           .build());
+                .withFile(new File("/test/path/file1.txt"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("file1")
+                .withExtension("txt")
+                .withAbsolutePath("/test/path/file1.txt")
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.of(2024, 1, 1, 10, 0))
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build());
 
         files.add(FileModel.builder()
-                           .withFile(new File("/test/path/file2.txt"))
-                           .withIsFile(true)
-                           .withFileSize(1024L)
-                           .withName("file2")
-                           .withExtension("txt")
-                           .withAbsolutePath("/test/path/file2.txt")
-                           .withCreationDate(LocalDateTime.now())
-                           .withModificationDate(LocalDateTime.of(2024, 2, 1, 10, 0))
-                           .withDetectedMimeType("text/plain")
-                           .withDetectedExtensions(Collections.emptySet())
-                           .withCategory(Category.GENERIC)
-                           .withMetadata(null)
-                           .build());
+                .withFile(new File("/test/path/file2.txt"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("file2")
+                .withExtension("txt")
+                .withAbsolutePath("/test/path/file2.txt")
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.of(2024, 2, 1, 10, 0))
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build());
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_MODIFICATION_DATETIME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_MODIFICATION_DATETIME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -645,11 +648,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.IMAGE_WIDTH)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.IMAGE_WIDTH)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -670,11 +673,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.IMAGE_HEIGHT)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.IMAGE_HEIGHT)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -693,15 +696,15 @@ class SequenceTransformerTest {
     void testTransformBatch_100Files_SequentialCounter() {
         // Given - 100 files to ensure counter is truly sequential
         List<FileModel> files = IntStream.range(1, 101)
-                                         .mapToObj(i -> createTestFileModel("file" + i, "txt"))
-                                         .toList();
+                .mapToObj(i -> createTestFileModel("file" + i, "txt"))
+                .toList();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -711,7 +714,7 @@ class SequenceTransformerTest {
         for (int i = 0; i < 100; i++) {
             String expected = String.format("%03d", i + 1);
             assertEquals(expected, results.get(i).getNewName(),
-                         "File at index " + i + " should have sequence number " + expected);
+                    "File at index " + i + " should have sequence number " + expected);
         }
     }
 
@@ -719,15 +722,15 @@ class SequenceTransformerTest {
     void testTransformBatch_LargeStep_SequentialCounter() {
         // Given - verify counter increments correctly with large steps
         List<FileModel> files = IntStream.range(1, 21)
-                                         .mapToObj(i -> createTestFileModel("file" + i, "txt"))
-                                         .toList();
+                .mapToObj(i -> createTestFileModel("file" + i, "txt"))
+                .toList();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(100)
-                                              .withStepValue(50)
-                                              .withPadding(4)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(100)
+                .withStepValue(50)
+                .withPadding(4)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -752,11 +755,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -778,11 +781,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(10)
-                                              .withStepValue(5)
-                                              .withPadding(4)
-                                              .withSortSource(SortSource.FILE_SIZE)
-                                              .build();
+                .withStartNumber(10)
+                .withStepValue(5)
+                .withPadding(4)
+                .withSortSource(SortSource.FILE_SIZE)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -835,11 +838,11 @@ class SequenceTransformerTest {
         List<FileModel> files = Collections.emptyList();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -863,11 +866,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -885,11 +888,11 @@ class SequenceTransformerTest {
         List<FileModel> files = List.of(original);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
@@ -907,11 +910,11 @@ class SequenceTransformerTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         // When
         List<PreparedFileModel> results = transformer.transformBatch(files, config);

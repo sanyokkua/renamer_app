@@ -88,7 +88,7 @@ public class ModeUseDatetimeController extends ModeBaseController {
     private void configDateTimeAndNameSeparatorTextField() {
         log.info("configDateTimeAndNameSeparatorTextField()");
         dateTimeAndNameSeparatorTextField.textProperty()
-                                         .addListener((observable, oldValue, newValue) -> this.handleDateTimeAndNameSeparatorChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleDateTimeAndNameSeparatorChanged(newValue));
     }
 
     private void configDateFormatChoiceBox() {
@@ -232,18 +232,18 @@ public class ModeUseDatetimeController extends ModeBaseController {
         var useCustomDateTimeAsFallback = useCustomDateTimeAsFallbackCheckBox.isSelected();
 
         var cmd = DateTimeRenamePrepareInformationCommand.builder()
-                                                         .dateTimeOperations(dateTimeOperations)
-                                                         .dateTimePositionInTheName(dateTimePositionInTheName)
-                                                         .dateFormat(dateFormat)
-                                                         .timeFormat(timeFormat)
-                                                         .dateTimeFormat(dateTimeFormat)
-                                                         .dateTimeSource(dateTimeSource)
-                                                         .useUppercaseForAmPm(useUppercaseForAmPm)
-                                                         .customDateTime(customDateTime)
-                                                         .dateTimeAndNameSeparator(dateTimeAndNameSeparator)
-                                                         .useFallbackDateTime(useFallbackDateTime)
-                                                         .useCustomDateTimeAsFallback(useCustomDateTimeAsFallback)
-                                                         .build();
+                .dateTimeOperations(dateTimeOperations)
+                .dateTimePositionInTheName(dateTimePositionInTheName)
+                .dateFormat(dateFormat)
+                .timeFormat(timeFormat)
+                .dateTimeFormat(dateTimeFormat)
+                .dateTimeSource(dateTimeSource)
+                .useUppercaseForAmPm(useUppercaseForAmPm)
+                .customDateTime(customDateTime)
+                .dateTimeAndNameSeparator(dateTimeAndNameSeparator)
+                .useFallbackDateTime(useFallbackDateTime)
+                .useCustomDateTimeAsFallback(useCustomDateTimeAsFallback)
+                .build();
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);
     }

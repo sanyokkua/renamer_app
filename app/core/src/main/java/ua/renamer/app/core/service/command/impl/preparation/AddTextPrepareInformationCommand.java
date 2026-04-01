@@ -34,7 +34,6 @@ public class AddTextPrepareInformationCommand extends FileInformationCommand {
      * to its file name based on the specified position.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new file name.
      */
     @Override

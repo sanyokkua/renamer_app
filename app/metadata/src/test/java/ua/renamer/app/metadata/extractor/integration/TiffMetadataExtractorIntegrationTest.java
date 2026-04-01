@@ -2,9 +2,9 @@ package ua.renamer.app.metadata.extractor.integration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ua.renamer.app.metadata.extractor.strategy.format.image.TiffFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.TiffFileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -73,7 +73,7 @@ class TiffMetadataExtractorIntegrationTest {
 
         // Clean file should not have creation date
         assertFalse(imageMeta.getContentCreationDate().isPresent(),
-                    "Clean file should not have creation date");
+                "Clean file should not have creation date");
     }
 
     @Test
@@ -93,7 +93,7 @@ class TiffMetadataExtractorIntegrationTest {
 
         // Should have creation date
         assertTrue(imageMeta.getContentCreationDate().isPresent(),
-                   "TIFF with EXIF should have creation date");
+                "TIFF with EXIF should have creation date");
 
         LocalDateTime dateTime = imageMeta.getContentCreationDate().get();
         assertEquals(2025, dateTime.getYear());
@@ -132,31 +132,31 @@ class TiffMetadataExtractorIntegrationTest {
 
         // GPS coordinates should be present in the metadata map
         assertTrue(result.getMetaInfo().keySet().stream().anyMatch(key -> key.contains("GPS")),
-                   "Should have GPS-related metadata keys");
+                "Should have GPS-related metadata keys");
 
         // Verify GPS Latitude is present and contains expected values (48 degrees 51 minutes)
         String gpsLatKey = result.getMetaInfo().keySet().stream()
-                                 .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("latitude"))
-                                 .filter(key -> !key.toLowerCase().contains("ref"))
-                                 .findFirst()
-                                 .orElse(null);
+                .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("latitude"))
+                .filter(key -> !key.toLowerCase().contains("ref"))
+                .findFirst()
+                .orElse(null);
         assertNotNull(gpsLatKey, "GPS Latitude key should be present");
         String gpsLatValue = result.getMetaInfo().get(gpsLatKey);
         assertNotNull(gpsLatValue, "GPS Latitude value should not be null");
         assertTrue(gpsLatValue.contains("48") && gpsLatValue.contains("51"),
-                   "GPS Latitude should contain degrees (48) and minutes (51): " + gpsLatValue);
+                "GPS Latitude should contain degrees (48) and minutes (51): " + gpsLatValue);
 
         // Verify GPS Longitude is present and contains expected values (2 degrees 21 minutes)
         String gpsLonKey = result.getMetaInfo().keySet().stream()
-                                 .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("longitude"))
-                                 .filter(key -> !key.toLowerCase().contains("ref"))
-                                 .findFirst()
-                                 .orElse(null);
+                .filter(key -> key.toLowerCase().contains("gps") && key.toLowerCase().contains("longitude"))
+                .filter(key -> !key.toLowerCase().contains("ref"))
+                .findFirst()
+                .orElse(null);
         assertNotNull(gpsLonKey, "GPS Longitude key should be present");
         String gpsLonValue = result.getMetaInfo().get(gpsLonKey);
         assertNotNull(gpsLonValue, "GPS Longitude value should not be null");
         assertTrue(gpsLonValue.contains("2") && gpsLonValue.contains("21"),
-                   "GPS Longitude should contain degrees (2) and minutes (21): " + gpsLonValue);
+                "GPS Longitude should contain degrees (2) and minutes (21): " + gpsLonValue);
     }
 
     @Test
@@ -211,6 +211,6 @@ class TiffMetadataExtractorIntegrationTest {
 
         assertNotNull(result);
         assertTrue(result.getErrors().isEmpty(),
-                   "Should not have extraction errors");
+                "Should not have extraction errors");
     }
 }

@@ -12,13 +12,19 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class ParentFolderConfig implements TransformationConfig {
-    /** Number of parent folders to include (e.g., 1 = immediate parent, 2 = parent + grandparent). */
+    /**
+     * Number of parent folders to include (e.g., 1 = immediate parent, 2 = parent + grandparent).
+     */
     int numberOfParentFolders;
 
-    /** Position where to add parent folder names (BEGIN or END). */
+    /**
+     * Position where to add parent folder names (BEGIN or END).
+     */
     ItemPosition position;
 
-    /** Separator between folder names and filename. */
+    /**
+     * Separator between folder names and filename.
+     */
     String separator;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation

@@ -191,26 +191,26 @@ class DateTimeConverterTest {
 
         return Stream.of(
                 arguments(null, DateFormat.DO_NOT_USE_DATE, TimeFormat.DO_NOT_USE_TIME,
-                          DateTimeFormat.DATE_TIME_TOGETHER, ""),
+                        DateTimeFormat.DATE_TIME_TOGETHER, ""),
                 arguments(dt, DateFormat.DO_NOT_USE_DATE, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.DATE_TIME_TOGETHER, "153045"),
+                        DateTimeFormat.DATE_TIME_TOGETHER, "153045"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.DO_NOT_USE_TIME,
-                          DateTimeFormat.DATE_TIME_TOGETHER, "20240608"),
+                        DateTimeFormat.DATE_TIME_TOGETHER, "20240608"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.DATE_TIME_TOGETHER, "20240608153045"),
+                        DateTimeFormat.DATE_TIME_TOGETHER, "20240608153045"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.DATE_TIME_WHITE_SPACED, "20240608 153045"),
+                        DateTimeFormat.DATE_TIME_WHITE_SPACED, "20240608 153045"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.DATE_TIME_UNDERSCORED, "20240608_153045"),
+                        DateTimeFormat.DATE_TIME_UNDERSCORED, "20240608_153045"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.DATE_TIME_DOTTED, "20240608.153045"),
+                        DateTimeFormat.DATE_TIME_DOTTED, "20240608.153045"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.DATE_TIME_DASHED, "20240608-153045"),
+                        DateTimeFormat.DATE_TIME_DASHED, "20240608-153045"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.REVERSE_DATE_TIME_TOGETHER, "15304520240608"),
+                        DateTimeFormat.REVERSE_DATE_TIME_TOGETHER, "15304520240608"),
                 arguments(dt, DateFormat.YYYY_MM_DD_TOGETHER, TimeFormat.HH_MM_SS_24_TOGETHER,
-                          DateTimeFormat.NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970,
-                          String.valueOf(dt.toInstant(ZoneOffset.UTC).toEpochMilli()))
+                        DateTimeFormat.NUMBER_OF_SECONDS_SINCE_JANUARY_1_1970,
+                        String.valueOf(dt.toInstant(ZoneOffset.UTC).toEpochMilli()))
         );
     }
 

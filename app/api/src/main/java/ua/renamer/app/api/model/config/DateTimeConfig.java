@@ -2,11 +2,7 @@ package ua.renamer.app.api.model.config;
 
 import lombok.Builder;
 import lombok.Value;
-import ua.renamer.app.api.enums.DateFormat;
-import ua.renamer.app.api.enums.DateTimeFormat;
-import ua.renamer.app.api.enums.DateTimeSource;
-import ua.renamer.app.api.enums.ItemPositionWithReplacement;
-import ua.renamer.app.api.enums.TimeFormat;
+import ua.renamer.app.api.enums.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,25 +14,39 @@ import java.util.Optional;
 @Value
 @Builder(setterPrefix = "with")
 public class DateTimeConfig implements TransformationConfig {
-    /** Source of the datetime (FILE_CREATION, CONTENT_CREATION, etc.). */
+    /**
+     * Source of the datetime (FILE_CREATION, CONTENT_CREATION, etc.).
+     */
     DateTimeSource source;
 
-    /** Date format to use. */
+    /**
+     * Date format to use.
+     */
     DateFormat dateFormat;
 
-    /** Time format to use. */
+    /**
+     * Time format to use.
+     */
     TimeFormat timeFormat;
 
-    /** Combined date-time format to use; optional, may be null. */
+    /**
+     * Combined date-time format to use; optional, may be null.
+     */
     DateTimeFormat dateTimeFormat;
 
-    /** Position where to add datetime (BEGIN, END, or REPLACE). */
+    /**
+     * Position where to add datetime (BEGIN, END, or REPLACE).
+     */
     ItemPositionWithReplacement position;
 
-    /** Custom datetime value (when source is CUSTOM_DATE). */
+    /**
+     * Custom datetime value (when source is CUSTOM_DATE).
+     */
     LocalDateTime customDateTime;
 
-    /** Separator between datetime and filename; optional, may be null. */
+    /**
+     * Separator between datetime and filename; optional, may be null.
+     */
     String separator;
 
     /**
@@ -95,10 +105,10 @@ public class DateTimeConfig implements TransformationConfig {
                         "customDateTime must be set when source is CUSTOM_DATE");
             }
             return new DateTimeConfig(source, dateFormat, timeFormat, dateTimeFormat, position, customDateTime,
-                                      separator,
-                                      useFallbackDateTime$set && useFallbackDateTime$value,
-                                      !useUppercaseForAmPm$set || useUppercaseForAmPm$value,
-                                      useCustomDateTimeAsFallback$set && useCustomDateTimeAsFallback$value);
+                    separator,
+                    useFallbackDateTime$set && useFallbackDateTime$value,
+                    !useUppercaseForAmPm$set || useUppercaseForAmPm$value,
+                    useCustomDateTimeAsFallback$set && useCustomDateTimeAsFallback$value);
         }
     }
 }

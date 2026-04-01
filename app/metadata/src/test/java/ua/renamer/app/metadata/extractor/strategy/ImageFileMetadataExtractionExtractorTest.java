@@ -3,46 +3,67 @@ package ua.renamer.app.metadata.extractor.strategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import ua.renamer.app.metadata.extractor.strategy.format.image.*;
 import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.*;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ImageFileMetadataExtractionExtractorTest {
 
-    @Mock private BmpFileMetadataExtractor bmpExtractor;
-    @Mock private EpsFileMetadataExtractor epsExtractor;
-    @Mock private GifFileMetadataExtractor gifExtractor;
-    @Mock private HeifFileMetadataExtractor heifExtractor;
-    @Mock private IcoFileMetadataExtractor icoExtractor;
-    @Mock private JpegFileMetadataExtractor jpegExtractor;
-    @Mock private PcxFileMetadataExtractor pcxExtractor;
-    @Mock private PngFileMetadataExtractor pngExtractor;
-    @Mock private PsdFileMetadataExtractor psdExtractor;
-    @Mock private TiffFileMetadataExtractor tiffExtractor;
-    @Mock private WebPFileMetadataExtractor webPExtractor;
-    @Mock private AvifFileMetadataExtractor avifExtractor;
-    @Mock private ArwFileMetadataExtractor arwExtractor;
-    @Mock private Cr2FileMetadataExtractor cr2Extractor;
-    @Mock private Cr3FileMetadataExtractor cr3Extractor;
-    @Mock private NefFileMetadataExtractor nefExtractor;
-    @Mock private OrfFileMetadataExtractor orfExtractor;
-    @Mock private RafFileMetadataExtractor rafExtractor;
-    @Mock private Rw2FileMetadataExtractor rw2Extractor;
-    @Mock private DngFileMetadataExtractor dngExtractor;
-    @Mock private File mockFile;
+    @Mock
+    private BmpFileMetadataExtractor bmpExtractor;
+    @Mock
+    private EpsFileMetadataExtractor epsExtractor;
+    @Mock
+    private GifFileMetadataExtractor gifExtractor;
+    @Mock
+    private HeifFileMetadataExtractor heifExtractor;
+    @Mock
+    private IcoFileMetadataExtractor icoExtractor;
+    @Mock
+    private JpegFileMetadataExtractor jpegExtractor;
+    @Mock
+    private PcxFileMetadataExtractor pcxExtractor;
+    @Mock
+    private PngFileMetadataExtractor pngExtractor;
+    @Mock
+    private PsdFileMetadataExtractor psdExtractor;
+    @Mock
+    private TiffFileMetadataExtractor tiffExtractor;
+    @Mock
+    private WebPFileMetadataExtractor webPExtractor;
+    @Mock
+    private AvifFileMetadataExtractor avifExtractor;
+    @Mock
+    private ArwFileMetadataExtractor arwExtractor;
+    @Mock
+    private Cr2FileMetadataExtractor cr2Extractor;
+    @Mock
+    private Cr3FileMetadataExtractor cr3Extractor;
+    @Mock
+    private NefFileMetadataExtractor nefExtractor;
+    @Mock
+    private OrfFileMetadataExtractor orfExtractor;
+    @Mock
+    private RafFileMetadataExtractor rafExtractor;
+    @Mock
+    private Rw2FileMetadataExtractor rw2Extractor;
+    @Mock
+    private DngFileMetadataExtractor dngExtractor;
+    @Mock
+    private File mockFile;
 
     private ImageFileMetadataExtractionExtractor extractor;
 

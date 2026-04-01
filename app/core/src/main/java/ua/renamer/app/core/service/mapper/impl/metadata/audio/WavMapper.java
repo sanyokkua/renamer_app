@@ -48,10 +48,10 @@ public class WavMapper extends FileToMetadataMapper {
             var dateValue = date.map(dateTimeOperations::parseDateTimeString).orElse(null);
 
             return FileInformationMetadata.builder()
-                                          .creationDate(dateValue)
-                                          .audioArtistName(artistValue)
-                                          .audioSongName(titleValue)
-                                          .build();
+                    .creationDate(dateValue)
+                    .audioArtistName(artistValue)
+                    .audioSongName(titleValue)
+                    .build();
         } catch (ImageProcessingException | IOException e) {
             log.warn("Failed to create Metadata", e);
             return FileInformationMetadata.builder().build();

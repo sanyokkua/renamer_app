@@ -63,9 +63,9 @@ public class ModeChangeCaseController extends ModeBaseController {
         var capitalize = capitalizeCheckBox.isSelected();
 
         var curCmd = ChangeCasePreparePrepareInformationCommand.builder()
-                                                               .textCase(textCase)
-                                                               .capitalize(capitalize)
-                                                               .build();
+                .textCase(textCase)
+                .capitalize(capitalize)
+                .build();
 
         log.debug("updateCommand {}", curCmd);
         this.setCommand(curCmd);

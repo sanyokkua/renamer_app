@@ -30,26 +30,26 @@ class AddTextPrepareInformationCommandTest extends BaseRenamePreparationCommandT
         // Prepare Test Data
         var fileInfoMeta = FileInformationMetadata.builder().build();
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File(TEST_DEFAULT_FILE_PATH))
-                                      .fileAbsolutePath(TEST_ABSOLUTE_PATH)
-                                      .isFile(isFile)
-                                      .fileName(originalName)
-                                      .newName(originalName)
-                                      .fileExtension(originalExt)
-                                      .newExtension(originalExt)
-                                      .fileSize(TEST_FILE_SIZE)
-                                      .fsCreationDate(TEST_DEFAULT_TIME)
-                                      .fsModificationDate(TEST_DEFAULT_TIME)
-                                      .metadata(fileInfoMeta)
-                                      .build();
+                .originalFile(new File(TEST_DEFAULT_FILE_PATH))
+                .fileAbsolutePath(TEST_ABSOLUTE_PATH)
+                .isFile(isFile)
+                .fileName(originalName)
+                .newName(originalName)
+                .fileExtension(originalExt)
+                .newExtension(originalExt)
+                .fileSize(TEST_FILE_SIZE)
+                .fsCreationDate(TEST_DEFAULT_TIME)
+                .fsModificationDate(TEST_DEFAULT_TIME)
+                .metadata(fileInfoMeta)
+                .build();
 
         List<FileInformation> inputList = List.of(fileInfo);
 
         // Build the command for test
         Command<List<FileInformation>, List<FileInformation>> command = AddTextPrepareInformationCommand.builder()
-                                                                                                        .position(position)
-                                                                                                        .text(textToAdd)
-                                                                                                        .build();
+                .position(position)
+                .text(textToAdd)
+                .build();
 
         testCommandWithItemChanged(command, inputList, expectedName, expectedExt);
     }

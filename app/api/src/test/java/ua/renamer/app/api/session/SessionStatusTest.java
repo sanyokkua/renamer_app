@@ -60,21 +60,21 @@ class SessionStatusTest {
 
     @Test
     void name_matchesDeclarationNames() {
-        assertEquals("EMPTY",           SessionStatus.EMPTY.name());
-        assertEquals("FILES_LOADED",    SessionStatus.FILES_LOADED.name());
+        assertEquals("EMPTY", SessionStatus.EMPTY.name());
+        assertEquals("FILES_LOADED", SessionStatus.FILES_LOADED.name());
         assertEquals("MODE_CONFIGURED", SessionStatus.MODE_CONFIGURED.name());
-        assertEquals("EXECUTING",       SessionStatus.EXECUTING.name());
-        assertEquals("COMPLETE",        SessionStatus.COMPLETE.name());
-        assertEquals("ERROR",           SessionStatus.ERROR.name());
+        assertEquals("EXECUTING", SessionStatus.EXECUTING.name());
+        assertEquals("COMPLETE", SessionStatus.COMPLETE.name());
+        assertEquals("ERROR", SessionStatus.ERROR.name());
     }
 
     @Test
     void eachConstant_isSameInstance_whenRetrievedTwice() {
-        assertSame(SessionStatus.EMPTY,           SessionStatus.valueOf("EMPTY"));
-        assertSame(SessionStatus.FILES_LOADED,    SessionStatus.valueOf("FILES_LOADED"));
+        assertSame(SessionStatus.EMPTY, SessionStatus.valueOf("EMPTY"));
+        assertSame(SessionStatus.FILES_LOADED, SessionStatus.valueOf("FILES_LOADED"));
         assertSame(SessionStatus.MODE_CONFIGURED, SessionStatus.valueOf("MODE_CONFIGURED"));
-        assertSame(SessionStatus.EXECUTING,       SessionStatus.valueOf("EXECUTING"));
-        assertSame(SessionStatus.COMPLETE,        SessionStatus.valueOf("COMPLETE"));
-        assertSame(SessionStatus.ERROR,           SessionStatus.valueOf("ERROR"));
+        assertSame(SessionStatus.EXECUTING, SessionStatus.valueOf("EXECUTING"));
+        assertSame(SessionStatus.COMPLETE, SessionStatus.valueOf("COMPLETE"));
+        assertSame(SessionStatus.ERROR, SessionStatus.valueOf("ERROR"));
     }
 }

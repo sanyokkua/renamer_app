@@ -44,7 +44,7 @@ public class ModeTruncateFileNameController extends ModeBaseController {
         amountOfSymbolsSpinner.setValueFactory(stepValueFactory);
         amountOfSymbolsSpinner.setEditable(true);
         amountOfSymbolsSpinner.valueProperty()
-                              .addListener((observable, oldValue, newValue) -> handleAmountOfSymbolsChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> handleAmountOfSymbolsChanged(newValue));
     }
 
     private void updateDisplayedItems() {
@@ -76,9 +76,9 @@ public class ModeTruncateFileNameController extends ModeBaseController {
         var numberOfSymbols = amountOfSymbolsSpinner.getValue();
 
         var cmd = TruncateNamePrepareInformationCommand.builder()
-                                                       .truncateOptions(truncateOption)
-                                                       .numberOfSymbols(numberOfSymbols)
-                                                       .build();
+                .truncateOptions(truncateOption)
+                .numberOfSymbols(numberOfSymbols)
+                .build();
 
         log.debug("updateCommand {}", cmd);
         setCommand(cmd);

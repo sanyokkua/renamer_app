@@ -3,12 +3,7 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.Category;
-import ua.renamer.app.api.enums.DateFormat;
-import ua.renamer.app.api.enums.DateTimeFormat;
-import ua.renamer.app.api.enums.DateTimeSource;
-import ua.renamer.app.api.enums.ItemPositionWithReplacement;
-import ua.renamer.app.api.enums.TimeFormat;
+import ua.renamer.app.api.enums.*;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
@@ -40,7 +35,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DateTimeTransformerAmPmTest {
 
-    /** Fixed reference datetime: 14:30:00 on 2024-06-15. In 12-hour format: 02:30:00 PM. */
+    /**
+     * Fixed reference datetime: 14:30:00 on 2024-06-15. In 12-hour format: 02:30:00 PM.
+     */
     private static final LocalDateTime FIXED_DATETIME = LocalDateTime.of(2024, 6, 15, 14, 30, 0);
 
     private DateTimeTransformer transformer;
@@ -63,19 +60,19 @@ class DateTimeTransformerAmPmTest {
      */
     private FileModel buildFileModel() {
         return FileModel.builder()
-                        .withFile(new File("/test/photo.jpg"))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName("photo")
-                        .withExtension("jpg")
-                        .withAbsolutePath("/test/photo.jpg")
-                        .withCreationDate(null)
-                        .withModificationDate(null)
-                        .withDetectedMimeType("image/jpeg")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.IMAGE)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/photo.jpg"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("photo")
+                .withExtension("jpg")
+                .withAbsolutePath("/test/photo.jpg")
+                .withCreationDate(null)
+                .withModificationDate(null)
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(null)
+                .build();
     }
 
     /**
@@ -83,22 +80,22 @@ class DateTimeTransformerAmPmTest {
      * given uppercase flag, using {@code REPLACE} position so that
      * {@code result.getNewName()} equals the formatted datetime string directly.
      *
-     * @param timeFormat      an AM/PM 12-hour format
-     * @param useUppercase    value passed to {@code withUseUppercaseForAmPm}
+     * @param timeFormat   an AM/PM 12-hour format
+     * @param useUppercase value passed to {@code withUseUppercaseForAmPm}
      * @return a fully configured {@link DateTimeConfig}
      */
     private DateTimeConfig amPmConfig(TimeFormat timeFormat, boolean useUppercase) {
         return DateTimeConfig.builder()
-                             .withSource(DateTimeSource.CUSTOM_DATE)
-                             .withCustomDateTime(FIXED_DATETIME)
-                             .withDateFormat(DateFormat.DO_NOT_USE_DATE)
-                             .withTimeFormat(timeFormat)
-                             .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                             .withPosition(ItemPositionWithReplacement.REPLACE)
-                             .withSeparator("")
-                             .withUseFallbackDateTime(false)
-                             .withUseUppercaseForAmPm(useUppercase)
-                             .build();
+                .withSource(DateTimeSource.CUSTOM_DATE)
+                .withCustomDateTime(FIXED_DATETIME)
+                .withDateFormat(DateFormat.DO_NOT_USE_DATE)
+                .withTimeFormat(timeFormat)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("")
+                .withUseFallbackDateTime(false)
+                .withUseUppercaseForAmPm(useUppercase)
+                .build();
     }
 
     /**
@@ -110,16 +107,16 @@ class DateTimeTransformerAmPmTest {
      */
     private DateTimeConfig nonAmPmConfig(TimeFormat timeFormat) {
         return DateTimeConfig.builder()
-                             .withSource(DateTimeSource.CUSTOM_DATE)
-                             .withCustomDateTime(FIXED_DATETIME)
-                             .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                             .withTimeFormat(timeFormat)
-                             .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                             .withPosition(ItemPositionWithReplacement.REPLACE)
-                             .withSeparator("")
-                             .withUseFallbackDateTime(false)
-                             .withUseUppercaseForAmPm(true)
-                             .build();
+                .withSource(DateTimeSource.CUSTOM_DATE)
+                .withCustomDateTime(FIXED_DATETIME)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(timeFormat)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("")
+                .withUseFallbackDateTime(false)
+                .withUseUppercaseForAmPm(true)
+                .build();
     }
 
     // -----------------------------------------------------------------------
@@ -225,14 +222,14 @@ class DateTimeTransformerAmPmTest {
         FileModel input = buildFileModel();
         // Intentionally omit withUseUppercaseForAmPm — rely entirely on the default
         DateTimeConfig config = DateTimeConfig.builder()
-                                             .withSource(DateTimeSource.CUSTOM_DATE)
-                                             .withCustomDateTime(FIXED_DATETIME)
-                                             .withDateFormat(DateFormat.DO_NOT_USE_DATE)
-                                             .withTimeFormat(TimeFormat.HH_MM_SS_AM_PM_TOGETHER)
-                                             .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                             .withPosition(ItemPositionWithReplacement.REPLACE)
-                                             .withSeparator("")
-                                             .build();
+                .withSource(DateTimeSource.CUSTOM_DATE)
+                .withCustomDateTime(FIXED_DATETIME)
+                .withDateFormat(DateFormat.DO_NOT_USE_DATE)
+                .withTimeFormat(TimeFormat.HH_MM_SS_AM_PM_TOGETHER)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("")
+                .build();
 
         // Act
         PreparedFileModel result = transformer.transform(input, config);

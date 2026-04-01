@@ -26,7 +26,7 @@ public class ModeChangeExtensionController extends ModeBaseController {
     private void configTextField() {
         log.info("configTextField()");
         extensionTextField.textProperty()
-                          .addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleTextChanged(newValue));
     }
 
     private void handleTextChanged(String newValue) {

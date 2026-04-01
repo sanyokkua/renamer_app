@@ -10,9 +10,9 @@ import ua.renamer.app.api.model.TransformationMode;
  */
 public sealed interface ModeParameters
         permits AddTextParams, RemoveTextParams, ReplaceTextParams,
-                ChangeCaseParams, SequenceParams, TruncateParams,
-                ExtensionChangeParams, DateTimeParams,
-                ImageDimensionsParams, ParentFolderParams {
+        ChangeCaseParams, SequenceParams, TruncateParams,
+        ExtensionChangeParams, DateTimeParams,
+        ImageDimensionsParams, ParentFolderParams {
 
     /**
      * Returns the transformation mode this parameter object belongs to.
@@ -25,7 +25,7 @@ public sealed interface ModeParameters
      * Validates all fields.
      *
      * @return {@link ValidationResult#valid()} when all fields are valid,
-     *         or a {@link ValidationResult#fieldError(String, String)} describing the first invalid field
+     * or a {@link ValidationResult#fieldError(String, String)} describing the first invalid field
      */
     ValidationResult validate();
 

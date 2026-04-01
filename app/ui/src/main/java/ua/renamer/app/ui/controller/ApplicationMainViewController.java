@@ -303,7 +303,7 @@ public class ApplicationMainViewController implements Initializable {
     private void handleBtnClickedRename() {
         log.debug("handleRenameBtnClicked");
         if (mainControllerHelper.showConfirmationDialog(TextKeys.DIALOG_CONFIRM_CONTENT,
-                                                        TextKeys.DIALOG_CONFIRM_HEADER)) {
+                TextKeys.DIALOG_CONFIRM_HEADER)) {
             log.debug("handleRenameBtnClicked. Confirmed");
             coreHelper.renameFiles(loadedAppFilesList, appProgressBar, result -> {
                 loadedAppFilesList.clear();

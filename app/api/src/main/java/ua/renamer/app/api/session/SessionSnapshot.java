@@ -31,7 +31,7 @@ public record SessionSnapshot(
      *                              or if either list contains a null element
      */
     public SessionSnapshot {
-        files   = List.copyOf(files);
+        files = List.copyOf(files);
         preview = List.copyOf(preview);
     }
 }

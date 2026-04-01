@@ -37,7 +37,7 @@ class FileInformationUtilsTest {
 
     static Stream<Arguments> testCasesGetFileAbsolutePathWithoutName() {
         return Stream.of(arguments("fileName", ".jpg", "/path/fileName.jpg", "/path/"),
-                         arguments("fileName", ".jpg", "/root/folder/fileName.jpg", "/root/folder/"));
+                arguments("fileName", ".jpg", "/root/folder/fileName.jpg", "/root/folder/"));
     }
 
     @Test
@@ -81,18 +81,18 @@ class FileInformationUtilsTest {
                                                                         boolean expectedResult) {
         var meta = FileInformationMetadata.builder().build();
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File(fileName))
-                                      .isFile(true)
-                                      .fileSize(10L)
-                                      .fileName(fileName)
-                                      .newName(newFileName)
-                                      .fileExtension(fileExtension)
-                                      .newExtension(newFileExtension)
-                                      .fileAbsolutePath(fileName)
-                                      .fsCreationDate(null)
-                                      .fsModificationDate(null)
-                                      .metadata(meta)
-                                      .build();
+                .originalFile(new File(fileName))
+                .isFile(true)
+                .fileSize(10L)
+                .fileName(fileName)
+                .newName(newFileName)
+                .fileExtension(fileExtension)
+                .newExtension(newFileExtension)
+                .fileAbsolutePath(fileName)
+                .fsCreationDate(null)
+                .fsModificationDate(null)
+                .metadata(meta)
+                .build();
 
         var result = FileInformationUtils.isFileHasChangedName(fileInfo);
 
@@ -104,21 +104,21 @@ class FileInformationUtilsTest {
     void test_getFileAbsolutePathWithoutName_shouldReturnPathExcludingName(String fileName, String ext,
                                                                            String absolutePath, String expected) {
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File(absolutePath))
-                                      .isFile(true)
-                                      .fileSize(10L)
-                                      .fileName(fileName)
-                                      .newName(fileName)
-                                      .fileExtension(ext)
-                                      .newExtension(ext)
-                                      .fileAbsolutePath(absolutePath)
-                                      .fsCreationDate(null)
-                                      .fsModificationDate(null)
-                                      .metadata(null)
-                                      .build();
+                .originalFile(new File(absolutePath))
+                .isFile(true)
+                .fileSize(10L)
+                .fileName(fileName)
+                .newName(fileName)
+                .fileExtension(ext)
+                .newExtension(ext)
+                .fileAbsolutePath(absolutePath)
+                .fsCreationDate(null)
+                .fsModificationDate(null)
+                .metadata(null)
+                .build();
 
         var result = FileInformationUtils.getFileAbsolutePathWithoutName(fileInfo,
-                                                                         FileInformationUtils::getFileFullName);
+                FileInformationUtils::getFileFullName);
 
         assertNotNull(result);
         assertEquals(expected, result);
@@ -127,23 +127,23 @@ class FileInformationUtilsTest {
     @Test
     void test_getFileAbsolutePathWithoutName_shouldThrowExceptionForInvalidPath() {
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File("invalidPath")) // Set an invalid path
-                                      .isFile(true)
-                                      .fileSize(10L)
-                                      .fileName("fileName")
-                                      .newName("fileName")
-                                      .fileExtension("ext")
-                                      .newExtension("ext")
-                                      .fileAbsolutePath("somePath") // This might not match the actual file path
-                                      .fsCreationDate(null)
-                                      .fsModificationDate(null)
-                                      .metadata(null)
-                                      .build();
+                .originalFile(new File("invalidPath")) // Set an invalid path
+                .isFile(true)
+                .fileSize(10L)
+                .fileName("fileName")
+                .newName("fileName")
+                .fileExtension("ext")
+                .newExtension("ext")
+                .fileAbsolutePath("somePath") // This might not match the actual file path
+                .fsCreationDate(null)
+                .fsModificationDate(null)
+                .metadata(null)
+                .build();
 
         // Assert throws with a specific message (optional)
         assertThrows(IllegalArgumentException.class,
-                     () -> FileInformationUtils.getFileAbsolutePathWithoutName(fileInfo,
-                                                                               FileInformationUtils::getFileFullName),
-                     "File absolute path does not match original file path");
+                () -> FileInformationUtils.getFileAbsolutePathWithoutName(fileInfo,
+                        FileInformationUtils::getFileFullName),
+                "File absolute path does not match original file path");
     }
 }

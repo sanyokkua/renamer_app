@@ -12,10 +12,14 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class CaseChangeConfig implements TransformationConfig {
-    /** Case transformation option (CAMEL_CASE, SNAKE_CASE, etc.). */
+    /**
+     * Case transformation option (CAMEL_CASE, SNAKE_CASE, etc.).
+     */
     TextCaseOptions caseOption;
 
-    /** Whether to capitalize the first letter after transformation. */
+    /**
+     * Whether to capitalize the first letter after transformation.
+     */
     boolean capitalizeFirstLetter;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation

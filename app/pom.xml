@@ -350,7 +350,8 @@
                             <threshold>Medium</threshold>
                             <failOnError>false</failOnError>
                             <xmlOutput>true</xmlOutput>
-                            <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml</excludeFilterFile>
+                            <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml
+                            </excludeFilterFile>
                             <plugins>
                                 <plugin>
                                     <groupId>com.h3xstream.findsecbugs</groupId>

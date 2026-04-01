@@ -7,12 +7,12 @@ import com.drew.metadata.Metadata;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
-import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
-import ua.renamer.app.metadata.extractor.strategy.format.MetadataCommons;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
+import ua.renamer.app.metadata.extractor.strategy.format.MetadataCommons;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,11 +57,11 @@ public abstract class BaseVideoMetadataExtractor implements FileMetadataExtracto
 
         // Build video metadata
         var videoMeta = VideoMeta.builder()
-                                 .withContentCreationDate(creationDate.value())
-                                 .withWidth(width.value())
-                                 .withHeight(height.value())
-                                 .withDuration(duration.value())
-                                 .build();
+                .withContentCreationDate(creationDate.value())
+                .withWidth(width.value())
+                .withHeight(height.value())
+                .withDuration(duration.value())
+                .build();
 
         // Extract all metadata tags as a map
         var metadataMap = MetadataCommons.buildMetadataMap(metadata);
@@ -129,9 +129,9 @@ public abstract class BaseVideoMetadataExtractor implements FileMetadataExtracto
 
     private List<? extends Directory> extractAvailableDirectories(Metadata metadata) {
         return getAvailableDirectories().stream()
-                                        .map(metadata::getFirstDirectoryOfType)
-                                        .filter(Objects::nonNull)
-                                        .toList();
+                .map(metadata::getFirstDirectoryOfType)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @Nullable
@@ -140,10 +140,10 @@ public abstract class BaseVideoMetadataExtractor implements FileMetadataExtracto
         var result = findStringValues(directories, tags);
 
         return result.stream()
-                     .map(dateTimeUtils::parseDateTimeString)
-                     .filter(Objects::nonNull)
-                     .min(LocalDateTime::compareTo)
-                     .orElse(null);
+                .map(dateTimeUtils::parseDateTimeString)
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
     }
 
     @Nullable
@@ -169,29 +169,29 @@ public abstract class BaseVideoMetadataExtractor implements FileMetadataExtracto
 
         // Duration might be in milliseconds, convert to seconds if > 10000 (arbitrary threshold)
         return result.stream()
-                     .filter(Objects::nonNull)
-                     .map(d -> d > 10000 ? d / 1000 : d)
-                     .min(Integer::compareTo)
-                     .orElse(null);
+                .filter(Objects::nonNull)
+                .map(d -> d > 10000 ? d / 1000 : d)
+                .min(Integer::compareTo)
+                .orElse(null);
     }
 
     private List<String> findStringValues(List<? extends Directory> directories, List<Integer> tags) {
         return tags.stream()
-                   .filter(Objects::nonNull)
-                   .flatMap(tag -> directories.stream()
-                                              .filter(Objects::nonNull)
-                                              .map(dir -> dir.getString(tag))
-                                              .filter(Objects::nonNull))
-                   .toList();
+                .filter(Objects::nonNull)
+                .flatMap(tag -> directories.stream()
+                        .filter(Objects::nonNull)
+                        .map(dir -> dir.getString(tag))
+                        .filter(Objects::nonNull))
+                .toList();
     }
 
     private List<Integer> findIntegerValues(List<? extends Directory> directories, List<Integer> tags) {
         return tags.stream()
-                   .filter(Objects::nonNull)
-                   .flatMap(tag -> directories.stream()
-                                              .filter(Objects::nonNull)
-                                              .map(dir -> dir.getInteger(tag))
-                                              .filter(Objects::nonNull))
-                   .toList();
+                .filter(Objects::nonNull)
+                .flatMap(tag -> directories.stream()
+                        .filter(Objects::nonNull)
+                        .map(dir -> dir.getInteger(tag))
+                        .filter(Objects::nonNull))
+                .toList();
     }
 }

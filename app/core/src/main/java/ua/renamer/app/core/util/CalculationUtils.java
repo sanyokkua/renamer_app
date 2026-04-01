@@ -13,7 +13,6 @@ public class CalculationUtils {
      * Converts bytes to megabytes.
      *
      * @param bytes The size in bytes to be converted.
-     *
      * @return The size in megabytes.
      */
     public static long toMegabytes(long bytes) {
@@ -24,7 +23,6 @@ public class CalculationUtils {
      * Converts bytes to kilobytes.
      *
      * @param bytes The size in bytes to be converted.
-     *
      * @return The size in kilobytes.
      */
     public static long toKilobytes(long bytes) {

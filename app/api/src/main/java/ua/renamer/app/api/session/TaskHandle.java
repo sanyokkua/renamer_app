@@ -13,7 +13,9 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface TaskHandle<T> {
 
-    /** Returns the unique identifier for this task. Never null. */
+    /**
+     * Returns the unique identifier for this task. Never null.
+     */
     String taskId();
 
     /**
@@ -34,13 +36,19 @@ public interface TaskHandle<T> {
      */
     boolean isCancellationRequested();
 
-    /** Registers a listener for progress updates. Duplicate registrations are ignored. */
+    /**
+     * Registers a listener for progress updates. Duplicate registrations are ignored.
+     */
     void addProgressListener(ProgressListener listener);
 
-    /** Removes a previously registered progress listener. No-op if not registered. */
+    /**
+     * Removes a previously registered progress listener. No-op if not registered.
+     */
     void removeProgressListener(ProgressListener listener);
 
-    /** Callback for receiving task progress notifications. */
+    /**
+     * Callback for receiving task progress notifications.
+     */
     @FunctionalInterface
     interface ProgressListener {
         /**

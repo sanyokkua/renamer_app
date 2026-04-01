@@ -21,7 +21,6 @@ public class FileUtils {
      * Handles hidden files (files starting with '.') correctly.
      *
      * @param path the file path
-     *
      * @return the base name of the file
      */
     public static String getFileBaseName(Path path) {
@@ -45,7 +44,6 @@ public class FileUtils {
      * Returns the absolute path of the given path as a string.
      *
      * @param path the file path
-     *
      * @return the absolute path string
      */
     public static String getFileAbsolutePath(Path path) {
@@ -58,7 +56,6 @@ public class FileUtils {
      * Returns empty string if no extension is present.
      *
      * @param path the file path
-     *
      * @return the file extension (without the leading dot), or empty string
      */
     public static String getFileExtension(Path path) {
@@ -84,7 +81,6 @@ public class FileUtils {
      * Excludes the root element and the last path component (filename or directory).
      *
      * @param filePath The path of the file or directory.
-     *
      * @return A list containing the names of the parent folders, or empty list if none.
      */
     public static List<String> getParentFolders(String filePath) {

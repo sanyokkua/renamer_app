@@ -13,19 +13,29 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class ImageDimensionsConfig implements TransformationConfig {
-    /** What to show on the left side (DO_NOT_USE, WIDTH, or HEIGHT). */
+    /**
+     * What to show on the left side (DO_NOT_USE, WIDTH, or HEIGHT).
+     */
     ImageDimensionOptions leftSide;
 
-    /** What to show on the right side (DO_NOT_USE, WIDTH, or HEIGHT). */
+    /**
+     * What to show on the right side (DO_NOT_USE, WIDTH, or HEIGHT).
+     */
     ImageDimensionOptions rightSide;
 
-    /** Separator between dimensions (usually "x"). */
+    /**
+     * Separator between dimensions (usually "x").
+     */
     String separator;
 
-    /** Position where to add dimensions (BEGIN, END, or REPLACE). */
+    /**
+     * Position where to add dimensions (BEGIN, END, or REPLACE).
+     */
     ItemPositionWithReplacement position;
 
-    /** Separator between the dimension block and the filename (e.g. " ", "_", "-"). Defaults to empty string. */
+    /**
+     * Separator between the dimension block and the filename (e.g. " ", "_", "-"). Defaults to empty string.
+     */
     String nameSeparator;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation

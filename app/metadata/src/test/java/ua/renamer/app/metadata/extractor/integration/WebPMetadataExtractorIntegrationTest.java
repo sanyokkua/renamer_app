@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.extractor.strategy.format.image.WebPFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.WebPFileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -24,8 +24,24 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 class WebPMetadataExtractorIntegrationTest {
 
-    private WebPFileMetadataExtractor extractor;
     private static final String TEST_DATA_PATH = "test-data/image/webp/";
+    private WebPFileMetadataExtractor extractor;
+
+    static Stream<Arguments> provideWebPTestFiles() {
+        return Stream.of(
+                arguments("test_webp_clean.webp", null, false, true),
+                arguments("test_webp_std_2025-12-11_21-00-35.webp",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                arguments("test_webp_past_2000-01-01_12-00-00.webp",
+                        LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
+                arguments("test_webp_future_2050-01-01_12-00-00.webp",
+                        LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
+                arguments("test_webp_std_no_tz_2025-12-11_21-00-35.webp",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                arguments("test_webp_std_tz_2025-12-11_21-00-35p02-00.webp",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -42,22 +58,6 @@ class WebPMetadataExtractorIntegrationTest {
             fail("Failed to load test file: " + filename);
             return null;
         }
-    }
-
-    static Stream<Arguments> provideWebPTestFiles() {
-        return Stream.of(
-                arguments("test_webp_clean.webp", null, false, true),
-                arguments("test_webp_std_2025-12-11_21-00-35.webp",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
-                arguments("test_webp_past_2000-01-01_12-00-00.webp",
-                         LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
-                arguments("test_webp_future_2050-01-01_12-00-00.webp",
-                         LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
-                arguments("test_webp_std_no_tz_2025-12-11_21-00-35.webp",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
-                arguments("test_webp_std_tz_2025-12-11_21-00-35p02-00.webp",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
-        );
     }
 
     @Test
@@ -94,9 +94,9 @@ class WebPMetadataExtractorIntegrationTest {
 
         if (hasDate) {
             assertTrue(imageMeta.getContentCreationDate().isPresent(),
-                      "Creation date should be present for: " + filename);
+                    "Creation date should be present for: " + filename);
             assertEquals(expectedDate, imageMeta.getContentCreationDate().get(),
-                        "Creation date mismatch for: " + filename);
+                    "Creation date mismatch for: " + filename);
         } else {
             assertTrue(imageMeta.getContentCreationDate().isEmpty());
         }

@@ -68,8 +68,8 @@ public class StringUtilsV2 {
             return List.of();
         }
         var stringWithReplacedDividers = inputString.replace("_", SPACE_SYMBOL)
-                                                    .replace("-", SPACE_SYMBOL)
-                                                    .replace(".", SPACE_SYMBOL);
+                .replace("-", SPACE_SYMBOL)
+                .replace(".", SPACE_SYMBOL);
 
         return divideStringToListOfWords(stringWithReplacedDividers);
     }
@@ -93,10 +93,10 @@ public class StringUtilsV2 {
         Pattern alphanumericPattern = Pattern.compile("(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)");
 
         return Stream.of(splitResult)
-                     .flatMap(part -> Stream.of(camelCasePattern.split(part)))
-                     .flatMap(part -> Stream.of(alphanumericPattern.split(part)))
-                     .filter(word -> !word.isBlank())
-                     .toList();
+                .flatMap(part -> Stream.of(camelCasePattern.split(part)))
+                .flatMap(part -> Stream.of(alphanumericPattern.split(part)))
+                .filter(word -> !word.isBlank())
+                .toList();
     }
 
     /**
@@ -120,9 +120,9 @@ public class StringUtilsV2 {
         var firstWordInLowerCase = separateWords.getFirst().toLowerCase();
 
         return firstWordInLowerCase + separateWords.stream()
-                                                   .skip(1)
-                                                   .map(StringUtilsV2::capitalize)
-                                                   .collect(Collectors.joining());
+                .skip(1)
+                .map(StringUtilsV2::capitalize)
+                .collect(Collectors.joining());
     }
 
     /**

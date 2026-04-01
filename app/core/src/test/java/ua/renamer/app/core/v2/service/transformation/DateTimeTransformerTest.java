@@ -4,13 +4,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ua.renamer.app.api.enums.*;
-import ua.renamer.app.api.model.*;
-import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.DateTimeConfig;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
-import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.core.v2.util.TestDateTimeUtils;
 
 import java.io.File;
@@ -43,73 +45,73 @@ class DateTimeTransformerTest {
 
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                        .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     private FileModel createTestFileModelWithImageMetadata(String name, String extension) {
         ImageMeta imageMeta = ImageMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.of(2023, 6, 10, 8, 15, 0))
-                                       .withWidth(1920)
-                                       .withHeight(1080)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.of(2023, 6, 10, 8, 15, 0))
+                .withWidth(1920)
+                .withHeight(1080)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withImage(imageMeta)
-                                    .build();
+                .withImage(imageMeta)
+                .build();
 
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                        .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                        .withDetectedMimeType("image/jpeg")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.IMAGE)
-                        .withMetadata(fileMeta)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("image/jpeg")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.IMAGE)
+                .withMetadata(fileMeta)
+                .build();
     }
 
     private FileModel createTestFileModelWithVideoMetadata(String name, String extension) {
         VideoMeta videoMeta = VideoMeta.builder()
-                                       .withContentCreationDate(LocalDateTime.of(2023, 7, 5, 12, 0, 0))
-                                       .withWidth(3840)
-                                       .withHeight(2160)
-                                       .build();
+                .withContentCreationDate(LocalDateTime.of(2023, 7, 5, 12, 0, 0))
+                .withWidth(3840)
+                .withHeight(2160)
+                .build();
 
         FileMeta fileMeta = FileMeta.builder()
-                                    .withVideo(videoMeta)
-                                    .build();
+                .withVideo(videoMeta)
+                .build();
 
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(2048L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
-                        .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
-                        .withDetectedMimeType("video/mp4")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.VIDEO)
-                        .withMetadata(fileMeta)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(2048L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.of(2024, 1, 15, 10, 30, 0))
+                .withModificationDate(LocalDateTime.of(2024, 2, 20, 14, 45, 30))
+                .withDetectedMimeType("video/mp4")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.VIDEO)
+                .withMetadata(fileMeta)
+                .build();
     }
 
     // ============================================================================
@@ -121,14 +123,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -144,14 +146,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.END)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.END)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -167,14 +169,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.REPLACE)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -194,14 +196,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -217,14 +219,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.HH_MM_SS_24_DASHED)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.HH_MM_SS_24_DASHED)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -244,14 +246,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModelWithImageMetadata("photo", "jpg");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CONTENT_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.CONTENT_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -267,14 +269,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModelWithVideoMetadata("video", "mp4");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CONTENT_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.END)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.CONTENT_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.END)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -290,14 +292,14 @@ class DateTimeTransformerTest {
         // Given - file without metadata
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CONTENT_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.CONTENT_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -318,14 +320,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CURRENT_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.CURRENT_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -341,14 +343,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CURRENT_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.CURRENT_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -369,14 +371,14 @@ class DateTimeTransformerTest {
         LocalDateTime customDate = LocalDateTime.of(2020, 12, 25, 18, 30, 0);
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CUSTOM_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(customDate)
-                                              .build();
+                .withSource(DateTimeSource.CUSTOM_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(customDate)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -393,14 +395,14 @@ class DateTimeTransformerTest {
         LocalDateTime customDate = LocalDateTime.of(2020, 12, 25, 18, 30, 45);
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CUSTOM_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.HH_MM_SS_24_DASHED)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(customDate)
-                                              .build();
+                .withSource(DateTimeSource.CUSTOM_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.HH_MM_SS_24_DASHED)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(customDate)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -415,15 +417,15 @@ class DateTimeTransformerTest {
     void testCustomDate_NotProvided_Error() {
         // Config validation now rejects CUSTOM_DATE with null customDateTime at construction time
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-            DateTimeConfig.builder()
-                          .withSource(DateTimeSource.CUSTOM_DATE)
-                          .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                          .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                          .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                          .withPosition(ItemPositionWithReplacement.BEGIN)
-                          .withSeparator("_")
-                          .withCustomDateTime(null)
-                          .build()
+                DateTimeConfig.builder()
+                        .withSource(DateTimeSource.CUSTOM_DATE)
+                        .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                        .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                        .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                        .withPosition(ItemPositionWithReplacement.BEGIN)
+                        .withSeparator("_")
+                        .withCustomDateTime(null)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("customDateTime must be set when source is CUSTOM_DATE"));
     }
@@ -437,14 +439,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_TOGETHER)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_TOGETHER)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -459,14 +461,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.DD_MM_YYYY_DOTTED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.DD_MM_YYYY_DOTTED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -481,14 +483,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.MM_DD_YY_UNDERSCORED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.MM_DD_YY_UNDERSCORED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -507,14 +509,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
-                                              .withDateFormat(DateFormat.DO_NOT_USE_DATE)
-                                              .withTimeFormat(TimeFormat.HH_MM_SS_24_TOGETHER)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
+                .withDateFormat(DateFormat.DO_NOT_USE_DATE)
+                .withTimeFormat(TimeFormat.HH_MM_SS_24_TOGETHER)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -529,14 +531,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
-                                              .withDateFormat(DateFormat.DO_NOT_USE_DATE)
-                                              .withTimeFormat(TimeFormat.HH_MM_SS_24_DOTTED)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
+                .withDateFormat(DateFormat.DO_NOT_USE_DATE)
+                .withTimeFormat(TimeFormat.HH_MM_SS_24_DOTTED)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -555,14 +557,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -577,14 +579,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_WHITE_SPACED)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_WHITE_SPACED)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -599,14 +601,14 @@ class DateTimeTransformerTest {
         // Given - time before date
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
-                                              .withDateTimeFormat(DateTimeFormat.REVERSE_DATE_TIME_UNDERSCORED)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
+                .withDateTimeFormat(DateTimeFormat.REVERSE_DATE_TIME_UNDERSCORED)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -625,14 +627,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("-")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("-")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -647,14 +649,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator(" ")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator(" ")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -669,14 +671,14 @@ class DateTimeTransformerTest {
         // Given - no separator
         FileModel input = createTestFileModel("document", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -695,14 +697,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -720,14 +722,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
-                                              .withDateFormat(DateFormat.DD_MM_YYYY_DOTTED)
-                                              .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
-                                              .withPosition(ItemPositionWithReplacement.END)
-                                              .withSeparator("-")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
+                .withDateFormat(DateFormat.DD_MM_YYYY_DOTTED)
+                .withTimeFormat(TimeFormat.HH_MM_24_DASHED)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_UNDERSCORED)
+                .withPosition(ItemPositionWithReplacement.END)
+                .withSeparator("-")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -751,14 +753,14 @@ class DateTimeTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CURRENT_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.CURRENT_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -796,29 +798,29 @@ class DateTimeTransformerTest {
     void testErrorHandling_MissingCreationDate() {
         // Given - file without creation date
         FileModel input = FileModel.builder()
-                                   .withFile(new File("/test/path/file.txt"))
-                                   .withIsFile(true)
-                                   .withFileSize(1024L)
-                                   .withName("file")
-                                   .withExtension("txt")
-                                   .withAbsolutePath("/test/path/file.txt")
-                                   .withCreationDate(null)
-                                   .withModificationDate(LocalDateTime.now())
-                                   .withDetectedMimeType("text/plain")
-                                   .withDetectedExtensions(Collections.emptySet())
-                                   .withCategory(Category.GENERIC)
-                                   .withMetadata(null)
-                                   .build();
+                .withFile(new File("/test/path/file.txt"))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName("file")
+                .withExtension("txt")
+                .withAbsolutePath("/test/path/file.txt")
+                .withCreationDate(null)
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
 
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -840,24 +842,24 @@ class DateTimeTransformerTest {
         FileModel file2 = createTestFileModel("doc2", "pdf");
 
         DateTimeConfig config1 = DateTimeConfig.builder()
-                                               .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                               .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                               .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                               .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                               .withPosition(ItemPositionWithReplacement.BEGIN)
-                                               .withSeparator("_")
-                                               .withCustomDateTime(null)
-                                               .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         DateTimeConfig config2 = DateTimeConfig.builder()
-                                               .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
-                                               .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                               .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                               .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                               .withPosition(ItemPositionWithReplacement.END)
-                                               .withSeparator("_")
-                                               .withCustomDateTime(null)
-                                               .build();
+                .withSource(DateTimeSource.FILE_MODIFICATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.END)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result1 = transformer.transform(file1, config1);
@@ -873,14 +875,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "custom_ext");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CURRENT_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.CURRENT_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -895,14 +897,14 @@ class DateTimeTransformerTest {
         // Given
         FileModel input = createTestFileModel("file", "txt");
         DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.FILE_CREATION_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);

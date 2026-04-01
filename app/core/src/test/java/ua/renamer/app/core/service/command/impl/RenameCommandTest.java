@@ -29,8 +29,8 @@ class RenameCommandTest {
         var itemsList = List.of(model1, model2, model3);
 
         when(filesOperations.renameFile(any(RenameModel.class))).thenReturn(model1)
-                                                                .thenReturn(model2)
-                                                                .thenReturn(model3);
+                .thenReturn(model2)
+                .thenReturn(model3);
 
         var cmd = new RenameCommand(filesOperations);
 

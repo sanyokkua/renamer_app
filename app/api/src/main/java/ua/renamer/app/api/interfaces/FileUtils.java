@@ -15,7 +15,7 @@ public interface FileUtils {
      * Validates that the file exists and is accessible.
      *
      * @param file the file to validate; must not be null
-     * @throws NullPointerException if file is null
+     * @throws NullPointerException                               if file is null
      * @throws ua.renamer.app.api.exception.FileNotFoundException if file does not exist
      */
     void validateFile(File file);

@@ -15,18 +15,18 @@ class MapFileInformationToRenameModelCommandTest {
 
     private static FileInformation createFileInfo(String root, String name, String newName) {
         return FileInformation.builder()
-                              .originalFile(new File(name))
-                              .fileAbsolutePath(root)
-                              .isFile(true)
-                              .fileName(name)
-                              .fileExtension(".ext")
-                              .fileSize(1000L)
-                              .fsCreationDate(LocalDateTime.now())
-                              .fsModificationDate(LocalDateTime.now())
-                              .metadata(null)
-                              .newName(newName)
-                              .newExtension(".ext")
-                              .build();
+                .originalFile(new File(name))
+                .fileAbsolutePath(root)
+                .isFile(true)
+                .fileName(name)
+                .fileExtension(".ext")
+                .fileSize(1000L)
+                .fsCreationDate(LocalDateTime.now())
+                .fsModificationDate(LocalDateTime.now())
+                .metadata(null)
+                .newName(newName)
+                .newExtension(".ext")
+                .build();
     }
 
     @Test

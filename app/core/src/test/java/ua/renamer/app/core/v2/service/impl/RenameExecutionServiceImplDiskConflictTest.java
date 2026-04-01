@@ -1,6 +1,9 @@
 package ua.renamer.app.core.v2.service.impl;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -51,14 +54,14 @@ class RenameExecutionServiceImplDiskConflictTest {
     void cleanTempDir() throws IOException {
         if (Files.exists(tempDir)) {
             Files.walk(tempDir)
-                 .filter(Files::isRegularFile)
-                 .forEach(path -> {
-                     try {
-                         Files.deleteIfExists(path);
-                     } catch (IOException ignored) {
-                         // best-effort cleanup
-                     }
-                 });
+                    .filter(Files::isRegularFile)
+                    .forEach(path -> {
+                        try {
+                            Files.deleteIfExists(path);
+                        } catch (IOException ignored) {
+                            // best-effort cleanup
+                        }
+                    });
         }
     }
 
@@ -79,35 +82,35 @@ class RenameExecutionServiceImplDiskConflictTest {
         String extension = dotIndex > 0 ? fullName.substring(dotIndex + 1) : "";
 
         return FileModel.builder()
-                        .withFile(file)
-                        .withIsFile(true)
-                        .withFileSize(file.length())
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath(file.getAbsolutePath())
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(file)
+                .withIsFile(true)
+                .withFileSize(file.length())
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath(file.getAbsolutePath())
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     private PreparedFileModel createPreparedFile(FileModel fileModel, String newName, String newExtension) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(fileModel)
-                                .withNewName(newName)
-                                .withNewExtension(newExtension)
-                                .withHasError(false)
-                                .withErrorMessage(null)
-                                .withTransformationMeta(
-                                        TransformationMetadata.builder()
-                                                              .withMode(TransformationMode.ADD_TEXT)
-                                                              .withAppliedAt(LocalDateTime.now())
-                                                              .withConfig(Map.of("test", "data"))
-                                                              .build())
-                                .build();
+                .withOriginalFile(fileModel)
+                .withNewName(newName)
+                .withNewExtension(newExtension)
+                .withHasError(false)
+                .withErrorMessage(null)
+                .withTransformationMeta(
+                        TransformationMetadata.builder()
+                                .withMode(TransformationMode.ADD_TEXT)
+                                .withAppliedAt(LocalDateTime.now())
+                                .withConfig(Map.of("test", "data"))
+                                .build())
+                .build();
     }
 
     // ============================================================================
@@ -201,7 +204,7 @@ class RenameExecutionServiceImplDiskConflictTest {
         // On a case-insensitive FS, "photo.jpg" and "PHOTO.JPG" are the same entry;
         // after the rename the entry should exist under the new casing.
         assertTrue(Files.exists(tempDir.resolve("PHOTO.JPG")),
-                   "PHOTO.JPG should exist after case-change rename");
+                "PHOTO.JPG should exist after case-change rename");
     }
 
     /**
@@ -224,9 +227,9 @@ class RenameExecutionServiceImplDiskConflictTest {
         assertEquals(RenameStatus.SUCCESS, result.getStatus());
         assertTrue(result.isSuccess());
         assertTrue(Files.exists(tempDir.resolve("PHOTO.JPG")),
-                   "PHOTO.JPG should exist after rename on case-sensitive FS");
+                "PHOTO.JPG should exist after rename on case-sensitive FS");
         assertFalse(Files.exists(tempDir.resolve("photo.jpg")),
-                    "source photo.jpg should be gone");
+                "source photo.jpg should be gone");
     }
 
     // ============================================================================
@@ -250,12 +253,12 @@ class RenameExecutionServiceImplDiskConflictTest {
         assertTrue(result.isSuccess());
 
         assertTrue(Files.exists(tempDir.resolve("photo.jpg")),
-                   "photo.jpg must exist after conflict-free rename");
+                "photo.jpg must exist after conflict-free rename");
         assertFalse(Files.exists(tempDir.resolve("source.jpg")),
-                    "source.jpg should no longer exist");
+                "source.jpg should no longer exist");
 
         // No suffix variants should have been created
         assertFalse(Files.exists(tempDir.resolve("photo (001).jpg")),
-                    "no suffix should be applied when there is no conflict");
+                "no suffix should be applied when there is no conflict");
     }
 }

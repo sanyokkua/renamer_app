@@ -36,38 +36,38 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
 
     protected LocalDateTime extractCreationDateTimeFromExif(File input) {
         var originalDateTime = findDateTimeInDirectories(input,
-                                                         ExifDirectoryBase.TAG_DATETIME_ORIGINAL,
-                                                         ExifDirectoryBase.TAG_TIME_ZONE_ORIGINAL);
+                ExifDirectoryBase.TAG_DATETIME_ORIGINAL,
+                ExifDirectoryBase.TAG_TIME_ZONE_ORIGINAL);
         var imageDateTime = findDateTimeInDirectories(input,
-                                                      ExifDirectoryBase.TAG_DATETIME,
-                                                      ExifDirectoryBase.TAG_TIME_ZONE);
+                ExifDirectoryBase.TAG_DATETIME,
+                ExifDirectoryBase.TAG_TIME_ZONE);
         var digitizedDateTime = findDateTimeInDirectories(input,
-                                                          ExifDirectoryBase.TAG_DATETIME_DIGITIZED,
-                                                          ExifDirectoryBase.TAG_TIME_ZONE_DIGITIZED);
+                ExifDirectoryBase.TAG_DATETIME_DIGITIZED,
+                ExifDirectoryBase.TAG_TIME_ZONE_DIGITIZED);
 
         var earliestDateTime = dateTimeOperations.findMinOrNull(originalDateTime.orElse(null),
-                                                                imageDateTime.orElse(null),
-                                                                digitizedDateTime.orElse(null));
+                imageDateTime.orElse(null),
+                digitizedDateTime.orElse(null));
         log.debug("Extracted creationDateTime: {}", earliestDateTime);
         return earliestDateTime;
     }
 
     private Optional<LocalDateTime> findDateTimeInDirectories(File input, int dateTimeTag, int offsetTag) {
         return extractExifDirectories(input).stream()
-                                            .map(dir -> new Pair<>(dir.getString(dateTimeTag),
-                                                                   dir.getString(offsetTag)))
-                                            .filter(pair -> pair.first() != null)
-                                            .map(pair -> dateTimeOperations.parseDateTimeString(pair.first(),
-                                                                                                pair.second()))
-                                            .filter(Objects::nonNull).filter(d -> d.isAfter(MINIMAL))
-                                            .min(LocalDateTime::compareTo);
+                .map(dir -> new Pair<>(dir.getString(dateTimeTag),
+                        dir.getString(offsetTag)))
+                .filter(pair -> pair.first() != null)
+                .map(pair -> dateTimeOperations.parseDateTimeString(pair.first(),
+                        pair.second()))
+                .filter(Objects::nonNull).filter(d -> d.isAfter(MINIMAL))
+                .min(LocalDateTime::compareTo);
     }
 
     private Optional<Integer> findIntegerInDirectories(File input, int tag) {
         return extractExifDirectories(input).stream()
-                                            .map(dir -> dir.getInteger(tag))
-                                            .filter(Objects::nonNull)
-                                            .findFirst();
+                .map(dir -> dir.getInteger(tag))
+                .filter(Objects::nonNull)
+                .findFirst();
     }
 
     private List<ExifDirectoryBase> extractExifDirectories(File input) {
@@ -78,10 +78,10 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
             }
 
             return Stream.of(metadata.getFirstDirectoryOfType(ExifImageDirectory.class),
-                             metadata.getFirstDirectoryOfType(ExifIFD0Directory.class),
-                             metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class))
-                         .filter(Objects::nonNull)
-                         .toList();
+                            metadata.getFirstDirectoryOfType(ExifIFD0Directory.class),
+                            metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class))
+                    .filter(Objects::nonNull)
+                    .toList();
         } catch (Exception e) {
             log.warn("Failed to load EXIF directories", e);
             return List.of();
@@ -90,18 +90,18 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
 
     private Integer extractWidthFromExif(File input) {
         return Stream.of(findIntegerInDirectories(input, ExifDirectoryBase.TAG_IMAGE_WIDTH),
-                         findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_WIDTH))
-                     .flatMap(Optional::stream)
-                     .findFirst()
-                     .orElse(null);
+                        findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_WIDTH))
+                .flatMap(Optional::stream)
+                .findFirst()
+                .orElse(null);
     }
 
     private Integer extractHeightFromExif(File input) {
         return Stream.of(findIntegerInDirectories(input, ExifDirectoryBase.TAG_IMAGE_HEIGHT),
-                         findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_HEIGHT))
-                     .flatMap(Optional::stream)
-                     .findFirst()
-                     .orElse(null);
+                        findIntegerInDirectories(input, ExifDirectoryBase.TAG_EXIF_IMAGE_HEIGHT))
+                .flatMap(Optional::stream)
+                .findFirst()
+                .orElse(null);
     }
 
     protected abstract Class<? extends Directory> getBaseDirectoryClass();
@@ -144,10 +144,10 @@ public abstract class ImageBaseMapper extends FileToMetadataMapper {
         }
 
         return FileInformationMetadata.builder()
-                                      .creationDate(creationDate)
-                                      .imgVidWidth(width)
-                                      .imgVidHeight(height)
-                                      .build();
+                .creationDate(creationDate)
+                .imgVidWidth(width)
+                .imgVidHeight(height)
+                .build();
     }
 
     private record Pair<F, S>(F first, S second) {

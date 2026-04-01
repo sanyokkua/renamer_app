@@ -27,11 +27,11 @@ class FileUtilsTest {
                 arguments("/file", List.of()),
                 arguments("/file/path", List.of("file")),
                 arguments("/root/user/home/projects/sources/config/app.json",
-                          List.of("root", "user", "home", "projects", "sources", "config")),
+                        List.of("root", "user", "home", "projects", "sources", "config")),
                 arguments("\\root\\user\\home\\projects\\sources\\config\\app.json",
-                          List.of("root", "user", "home", "projects", "sources", "config")),
+                        List.of("root", "user", "home", "projects", "sources", "config")),
                 arguments("c:\\root\\user\\home\\projects\\sources\\config\\app.json",
-                          List.of("root", "user", "home", "projects", "sources", "config"))
+                        List.of("root", "user", "home", "projects", "sources", "config"))
         );
     }
 

@@ -56,18 +56,18 @@ class ImageDimensionsPrepareInformationCommandTest extends BaseRenamePreparation
         // Prepare Test Data
         var fileInfoMeta = FileInformationMetadata.builder().imgVidWidth(width).imgVidHeight(height).build();
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File(TEST_DEFAULT_FILE_PATH))
-                                      .fileAbsolutePath(TEST_ABSOLUTE_PATH)
-                                      .isFile(TEST_IS_FILE)
-                                      .fileName(originalName)
-                                      .newName(originalName)
-                                      .fileExtension(TEST_FILE_EXTENSION)
-                                      .newExtension(TEST_FILE_EXTENSION)
-                                      .fileSize(TEST_FILE_SIZE)
-                                      .fsCreationDate(TEST_DEFAULT_TIME)
-                                      .fsModificationDate(TEST_DEFAULT_TIME)
-                                      .metadata(fileInfoMeta)
-                                      .build();
+                .originalFile(new File(TEST_DEFAULT_FILE_PATH))
+                .fileAbsolutePath(TEST_ABSOLUTE_PATH)
+                .isFile(TEST_IS_FILE)
+                .fileName(originalName)
+                .newName(originalName)
+                .fileExtension(TEST_FILE_EXTENSION)
+                .newExtension(TEST_FILE_EXTENSION)
+                .fileSize(TEST_FILE_SIZE)
+                .fsCreationDate(TEST_DEFAULT_TIME)
+                .fsModificationDate(TEST_DEFAULT_TIME)
+                .metadata(fileInfoMeta)
+                .build();
 
         List<FileInformation> inputList = List.of(fileInfo);
 
@@ -102,9 +102,9 @@ class ImageDimensionsPrepareInformationCommandTest extends BaseRenamePreparation
     @Override
     Command<List<FileInformation>, List<FileInformation>> getCommand() {
         return ImageDimensionsPrepareInformationCommand.builder()
-                                                       .leftSide(ImageDimensionOptions.WIDTH)
-                                                       .rightSide(ImageDimensionOptions.HEIGHT)
-                                                       .build();
+                .leftSide(ImageDimensionOptions.WIDTH)
+                .rightSide(ImageDimensionOptions.HEIGHT)
+                .build();
     }
 
     @Override

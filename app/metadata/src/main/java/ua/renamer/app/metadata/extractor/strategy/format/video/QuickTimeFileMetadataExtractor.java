@@ -17,8 +17,8 @@ public class QuickTimeFileMetadataExtractor extends BaseVideoMetadataExtractor {
     @Override
     protected List<Class<? extends Directory>> getAvailableDirectories() {
         return List.of(QuickTimeVideoDirectory.class,
-                       QuickTimeMediaDirectory.class,
-                       QuickTimeDirectory.class);
+                QuickTimeMediaDirectory.class,
+                QuickTimeDirectory.class);
     }
 
     @Override

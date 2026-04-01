@@ -39,8 +39,8 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
     public List<PreparedFileModel> transformBatch(List<FileModel> inputs, SequenceConfig config) {
         if (config == null) {
             return inputs.stream()
-                         .map(input -> buildErrorResult(input, "Transformer configuration must not be null"))
-                         .toList();
+                    .map(input -> buildErrorResult(input, "Transformer configuration must not be null"))
+                    .toList();
         }
         try {
             // Step 1: Filter out invalid files and create error results
@@ -64,25 +64,25 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
 
             // Use sequential stream to ensure counter increments in order
             List<PreparedFileModel> sequencedResults = sorted.stream()  // Sequential stream!
-                                                             .map(input -> {
-                                                                 try {
-                                                                     int num = counter.getAndAdd(config.getStepValue());
-                                                                     String newName = formatSequenceNumber(num, config.getPadding());
+                    .map(input -> {
+                        try {
+                            int num = counter.getAndAdd(config.getStepValue());
+                            String newName = formatSequenceNumber(num, config.getPadding());
 
-                                                                     return PreparedFileModel.builder()
-                                                                                             .withOriginalFile(input)
-                                                                                             .withNewName(newName)
-                                                                                             .withNewExtension(input.getExtension())
-                                                                                             .withHasError(false)
-                                                                                             .withErrorMessage(null)
-                                                                                             .withTransformationMeta(buildMetadata(config))
-                                                                                             .build();
-                                                                 } catch (Exception e) {
-                                                                     log.error("Failed to apply sequence to file: {}", input.getName(), e);
-                                                                     return buildErrorResult(input, "Failed to apply sequence: " + e.getMessage());
-                                                                 }
-                                                             })
-                                                             .toList();
+                            return PreparedFileModel.builder()
+                                    .withOriginalFile(input)
+                                    .withNewName(newName)
+                                    .withNewExtension(input.getExtension())
+                                    .withHasError(false)
+                                    .withErrorMessage(null)
+                                    .withTransformationMeta(buildMetadata(config))
+                                    .build();
+                        } catch (Exception e) {
+                            log.error("Failed to apply sequence to file: {}", input.getName(), e);
+                            return buildErrorResult(input, "Failed to apply sequence: " + e.getMessage());
+                        }
+                    })
+                    .toList();
 
             // Step 4: Combine error results and sequenced results
             results.addAll(sequencedResults);
@@ -92,8 +92,8 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
             log.error("Failed to sort files for sequence", e);
             // If sorting fails, return all as errors
             return inputs.stream()
-                         .map(input -> buildErrorResult(input, "Failed to sort: " + e.getMessage()))
-                         .toList();
+                    .map(input -> buildErrorResult(input, "Failed to sort: " + e.getMessage()))
+                    .toList();
         }
     }
 
@@ -109,17 +109,17 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
             case FILE_MODIFICATION_DATETIME -> sorted.sort(Comparator.comparing(
                     m -> m.getModificationDate().orElse(LocalDateTime.MIN)));
             case FILE_CONTENT_CREATION_DATETIME -> sorted.sort(Comparator.comparing(m -> m.getMetadata()
-                                                                                          .flatMap(FileMeta::getImageMeta)
-                                                                                          .flatMap(ImageMeta::getContentCreationDate)
-                                                                                          .orElse(LocalDateTime.MIN)));
+                    .flatMap(FileMeta::getImageMeta)
+                    .flatMap(ImageMeta::getContentCreationDate)
+                    .orElse(LocalDateTime.MIN)));
             case IMAGE_WIDTH -> sorted.sort(Comparator.comparing(m -> m.getMetadata()
-                                                                       .flatMap(FileMeta::getImageMeta)
-                                                                       .flatMap(ImageMeta::getWidth)
-                                                                       .orElse(0)));
+                    .flatMap(FileMeta::getImageMeta)
+                    .flatMap(ImageMeta::getWidth)
+                    .orElse(0)));
             case IMAGE_HEIGHT -> sorted.sort(Comparator.comparing(m -> m.getMetadata()
-                                                                        .flatMap(FileMeta::getImageMeta)
-                                                                        .flatMap(ImageMeta::getHeight)
-                                                                        .orElse(0)));
+                    .flatMap(FileMeta::getImageMeta)
+                    .flatMap(ImageMeta::getHeight)
+                    .orElse(0)));
         }
 
         return sorted;
@@ -135,25 +135,25 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
 
     private TransformationMetadata buildMetadata(SequenceConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.ADD_SEQUENCE)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "startNumber", config.getStartNumber(),
-                                             "stepValue", config.getStepValue(),
-                                             "padding", config.getPadding(),
-                                             "sortSource", config.getSortSource().name()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.ADD_SEQUENCE)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "startNumber", config.getStartNumber(),
+                        "stepValue", config.getStepValue(),
+                        "padding", config.getPadding(),
+                        "sortSource", config.getSortSource().name()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

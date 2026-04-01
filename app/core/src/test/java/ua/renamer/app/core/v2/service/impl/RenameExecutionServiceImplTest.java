@@ -4,13 +4,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.*;
 import ua.renamer.app.core.service.validator.impl.NameValidator;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +17,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Comprehensive unit tests for RenameExecutionServiceImpl.
@@ -94,19 +91,19 @@ class RenameExecutionServiceImplTest {
         String extension = dotIndex > 0 ? fullName.substring(dotIndex + 1) : "";
 
         return FileModel.builder()
-                        .withFile(file)
-                        .withIsFile(true)
-                        .withFileSize(file.length())
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath(file.getAbsolutePath())
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(file)
+                .withIsFile(true)
+                .withFileSize(file.length())
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath(file.getAbsolutePath())
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     /**
@@ -114,17 +111,17 @@ class RenameExecutionServiceImplTest {
      */
     private PreparedFileModel createPreparedFile(FileModel fileModel, String newName, String newExtension, boolean hasError, String errorMessage) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(fileModel)
-                                .withNewName(newName)
-                                .withNewExtension(newExtension)
-                                .withHasError(hasError)
-                                .withErrorMessage(errorMessage)
-                                .withTransformationMeta(TransformationMetadata.builder()
-                                                                              .withMode(TransformationMode.ADD_TEXT)
-                                                                              .withAppliedAt(LocalDateTime.now())
-                                                                              .withConfig(Map.of("test", "data"))
-                                                                              .build())
-                                .build();
+                .withOriginalFile(fileModel)
+                .withNewName(newName)
+                .withNewExtension(newExtension)
+                .withHasError(hasError)
+                .withErrorMessage(errorMessage)
+                .withTransformationMeta(TransformationMetadata.builder()
+                        .withMode(TransformationMode.ADD_TEXT)
+                        .withAppliedAt(LocalDateTime.now())
+                        .withConfig(Map.of("test", "data"))
+                        .build())
+                .build();
     }
 
     // ============================================================================
@@ -537,19 +534,19 @@ class RenameExecutionServiceImplTest {
         File oldFile = noExtPath.toFile();
 
         FileModel fileModel = FileModel.builder()
-                                       .withFile(oldFile)
-                                       .withIsFile(true)
-                                       .withFileSize(oldFile.length())
-                                       .withName("noext")
-                                       .withExtension("")
-                                       .withAbsolutePath(oldFile.getAbsolutePath())
-                                       .withCreationDate(LocalDateTime.now())
-                                       .withModificationDate(LocalDateTime.now())
-                                       .withDetectedMimeType("application/octet-stream")
-                                       .withDetectedExtensions(Collections.emptySet())
-                                       .withCategory(Category.GENERIC)
-                                       .withMetadata(null)
-                                       .build();
+                .withFile(oldFile)
+                .withIsFile(true)
+                .withFileSize(oldFile.length())
+                .withName("noext")
+                .withExtension("")
+                .withAbsolutePath(oldFile.getAbsolutePath())
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("application/octet-stream")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
 
         PreparedFileModel preparedFile = createPreparedFile(fileModel, "renamed", "", false, null);
 

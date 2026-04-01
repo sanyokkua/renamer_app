@@ -13,16 +13,24 @@ import java.util.Optional;
 @Value
 @Builder(setterPrefix = "with")
 public class RenameResult {
-    /** The prepared file model that was executed. */
+    /**
+     * The prepared file model that was executed.
+     */
     PreparedFileModel preparedFile;
 
-    /** Status of the rename operation. */
+    /**
+     * Status of the rename operation.
+     */
     RenameStatus status;
 
-    /** Error message if the operation failed. */
+    /**
+     * Error message if the operation failed.
+     */
     String errorMessage;
 
-    /** When the rename was executed. */
+    /**
+     * When the rename was executed.
+     */
     LocalDateTime executedAt;
 
     /**

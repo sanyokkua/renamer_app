@@ -3,9 +3,12 @@ package ua.renamer.app.core.v2.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.TextCaseOptions;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.TextCaseOptions;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.CaseChangeConfig;
 
 import java.io.File;
@@ -43,19 +46,19 @@ class CaseChangeTransformerTest {
      */
     private FileModel createTestFileModel(String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File("/test/path/" + name + "." + extension))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath("/test/path/" + name + "." + extension)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File("/test/path/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath("/test/path/" + name + "." + extension)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     // ============================================================================
@@ -67,9 +70,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("test_file_name", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -88,9 +91,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("test_file_name", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.PASCAL_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.PASCAL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -109,9 +112,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("TestFileName", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.SNAKE_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.SNAKE_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -130,9 +133,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("TestFileName", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.SNAKE_CASE_SCREAMING)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.SNAKE_CASE_SCREAMING)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -151,9 +154,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("TestFileName", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.KEBAB_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.KEBAB_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -172,9 +175,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("TestFileName", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.UPPERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.UPPERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -193,9 +196,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("TestFileName", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.LOWERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.LOWERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -214,9 +217,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("test_file_name", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.TITLE_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.TITLE_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -239,9 +242,9 @@ class CaseChangeTransformerTest {
         // Given - camelCase normally starts with lowercase
         FileModel input = createTestFileModel("test_file", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(true)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(true)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -258,9 +261,9 @@ class CaseChangeTransformerTest {
         // Given - camelCase without capitalize should start with lowercase
         FileModel input = createTestFileModel("test_file", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -277,9 +280,9 @@ class CaseChangeTransformerTest {
         // Given - snake_case with capitalize should have first letter uppercase
         FileModel input = createTestFileModel("TestFile", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.SNAKE_CASE)
-                                                  .withCapitalizeFirstLetter(true)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.SNAKE_CASE)
+                .withCapitalizeFirstLetter(true)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -296,9 +299,9 @@ class CaseChangeTransformerTest {
         // Given - empty name should not throw exception
         FileModel input = createTestFileModel("", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(true)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(true)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -319,9 +322,9 @@ class CaseChangeTransformerTest {
         // Given - file already in the target case
         FileModel input = createTestFileModel("test_file_name", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.SNAKE_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.SNAKE_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -338,9 +341,9 @@ class CaseChangeTransformerTest {
         // Given - filename with numbers
         FileModel input = createTestFileModel("test123file", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.SNAKE_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.SNAKE_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -357,9 +360,9 @@ class CaseChangeTransformerTest {
         // Given - filename with special characters
         FileModel input = createTestFileModel("test@file", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -377,9 +380,9 @@ class CaseChangeTransformerTest {
         // Given - single character filename
         FileModel input = createTestFileModel("a", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.UPPERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.UPPERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -396,9 +399,9 @@ class CaseChangeTransformerTest {
         // Given - mixed case input
         FileModel input = createTestFileModel("TeSt_FiLe", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.KEBAB_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.KEBAB_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -415,9 +418,9 @@ class CaseChangeTransformerTest {
         // Given - filename with spaces
         FileModel input = createTestFileModel("test file name", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -434,9 +437,9 @@ class CaseChangeTransformerTest {
         // Given - filename with unicode characters
         FileModel input = createTestFileModel("测试File", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.LOWERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.LOWERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -457,9 +460,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("TestFile", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.LOWERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.LOWERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -474,9 +477,9 @@ class CaseChangeTransformerTest {
         // Given - already in correct case
         FileModel input = createTestFileModel("testfile", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.LOWERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.LOWERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -495,9 +498,9 @@ class CaseChangeTransformerTest {
         // Given
         FileModel input = createTestFileModel("TestFile", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.SNAKE_CASE)
-                                                  .withCapitalizeFirstLetter(true)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.SNAKE_CASE)
+                .withCapitalizeFirstLetter(true)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -523,9 +526,9 @@ class CaseChangeTransformerTest {
     void testErrorHandling_NullInput() {
         // Given
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When/Then
         assertThrows(NullPointerException.class, () -> {
@@ -554,10 +557,10 @@ class CaseChangeTransformerTest {
     void testErrorHandling_NullCaseOption() {
         // Config validation now rejects null caseOption at construction time
         NullPointerException ex = assertThrows(NullPointerException.class, () ->
-            CaseChangeConfig.builder()
-                            .withCaseOption(null)
-                            .withCapitalizeFirstLetter(false)
-                            .build()
+                CaseChangeConfig.builder()
+                        .withCaseOption(null)
+                        .withCapitalizeFirstLetter(false)
+                        .build()
         );
         assertTrue(ex.getMessage().contains("caseOption must not be null"));
     }
@@ -583,19 +586,19 @@ class CaseChangeTransformerTest {
         FileModel file3 = createTestFileModel("THIRD-FILE", "jpg");
 
         CaseChangeConfig configCamel = CaseChangeConfig.builder()
-                                                       .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                       .withCapitalizeFirstLetter(false)
-                                                       .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         CaseChangeConfig configSnake = CaseChangeConfig.builder()
-                                                       .withCaseOption(TextCaseOptions.SNAKE_CASE)
-                                                       .withCapitalizeFirstLetter(false)
-                                                       .build();
+                .withCaseOption(TextCaseOptions.SNAKE_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         CaseChangeConfig configKebab = CaseChangeConfig.builder()
-                                                       .withCaseOption(TextCaseOptions.KEBAB_CASE)
-                                                       .withCapitalizeFirstLetter(false)
-                                                       .build();
+                .withCaseOption(TextCaseOptions.KEBAB_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         PreparedFileModel result1 = transformer.transform(file1, configCamel);
         PreparedFileModel result2 = transformer.transform(file2, configSnake);
@@ -611,9 +614,9 @@ class CaseChangeTransformerTest {
         // Verify that extension is always preserved correctly
         FileModel input = createTestFileModel("TestFile", "custom_ext");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.LOWERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.LOWERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -626,9 +629,9 @@ class CaseChangeTransformerTest {
         // Verify that original file reference is preserved
         FileModel input = createTestFileModel("TestFile", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.LOWERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.LOWERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         PreparedFileModel result = transformer.transform(input, config);
 
@@ -641,9 +644,9 @@ class CaseChangeTransformerTest {
         // Given - capitalizeFirstLetter with UPPERCASE (should still apply)
         FileModel input = createTestFileModel("test", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.UPPERCASE)
-                                                  .withCapitalizeFirstLetter(true)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.UPPERCASE)
+                .withCapitalizeFirstLetter(true)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -660,9 +663,9 @@ class CaseChangeTransformerTest {
         // Given - capitalizeFirstLetter with TITLE_CASE (already starts with uppercase)
         FileModel input = createTestFileModel("test_file", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.TITLE_CASE)
-                                                  .withCapitalizeFirstLetter(true)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.TITLE_CASE)
+                .withCapitalizeFirstLetter(true)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);
@@ -679,9 +682,9 @@ class CaseChangeTransformerTest {
         // Given - complex filename with multiple delimiter types
         FileModel input = createTestFileModel("Test_File-Name.With.Dots", "txt");
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.CAMEL_CASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.CAMEL_CASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         // When
         PreparedFileModel result = transformer.transform(input, config);

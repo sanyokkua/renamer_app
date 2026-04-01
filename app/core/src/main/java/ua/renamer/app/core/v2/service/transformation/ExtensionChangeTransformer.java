@@ -41,13 +41,13 @@ public class ExtensionChangeTransformer implements FileTransformationService<Ext
             }
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(input.getName())
-                                    .withNewExtension(newExtension)
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(input.getName())
+                    .withNewExtension(newExtension)
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to change extension of file: {}", input.getName(), e);
@@ -57,22 +57,22 @@ public class ExtensionChangeTransformer implements FileTransformationService<Ext
 
     private TransformationMetadata buildMetadata(ExtensionChangeConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.CHANGE_EXTENSION)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "newExtension", config.getNewExtension()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.CHANGE_EXTENSION)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "newExtension", config.getNewExtension()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

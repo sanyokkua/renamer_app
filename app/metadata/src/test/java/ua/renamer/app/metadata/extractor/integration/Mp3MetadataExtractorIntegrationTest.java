@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.extractor.strategy.format.audio.UnifiedAudioFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.AudioMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.audio.UnifiedAudioFileMetadataExtractor;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -23,8 +23,23 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 class Mp3MetadataExtractorIntegrationTest {
 
-    private UnifiedAudioFileMetadataExtractor extractor;
     private static final String TEST_DATA_PATH = "test-data/audio/mp3/";
+    private UnifiedAudioFileMetadataExtractor extractor;
+
+    static Stream<Arguments> provideMp3TestFiles() {
+        return Stream.of(
+                arguments("test_mp3_clean.mp3"),
+                arguments("test_mp3_std_2025-12-11_21-00-35.mp3"),
+                arguments("test_mp3_past_2000-01-01_12-00-00.mp3"),
+                arguments("test_mp3_future_2050-01-01_12-00-00.mp3"),
+                arguments("test_mp3_std_no_tz_2025-12-11_21-00-35.mp3"),
+                arguments("test_mp3_std_tz_2025-12-11_21-00-35p02-00.mp3")
+        );
+    }
+
+    // ============================================================================
+    // Helper Methods
+    // ============================================================================
 
     @BeforeEach
     void setUp() {
@@ -32,7 +47,7 @@ class Mp3MetadataExtractorIntegrationTest {
     }
 
     // ============================================================================
-    // Helper Methods
+    // Test Data Providers
     // ============================================================================
 
     private File getTestFile(String filename) {
@@ -44,21 +59,6 @@ class Mp3MetadataExtractorIntegrationTest {
             fail("Failed to load test file: " + filename);
             return null;
         }
-    }
-
-    // ============================================================================
-    // Test Data Providers
-    // ============================================================================
-
-    static Stream<Arguments> provideMp3TestFiles() {
-        return Stream.of(
-                arguments("test_mp3_clean.mp3"),
-                arguments("test_mp3_std_2025-12-11_21-00-35.mp3"),
-                arguments("test_mp3_past_2000-01-01_12-00-00.mp3"),
-                arguments("test_mp3_future_2050-01-01_12-00-00.mp3"),
-                arguments("test_mp3_std_no_tz_2025-12-11_21-00-35.mp3"),
-                arguments("test_mp3_std_tz_2025-12-11_21-00-35p02-00.mp3")
-        );
     }
 
     // ============================================================================
@@ -155,12 +155,12 @@ class Mp3MetadataExtractorIntegrationTest {
     void testExtract_AllFilesExist() {
         // Verify all test files can be loaded
         String[] testFiles = {
-            "test_mp3_clean.mp3",
-            "test_mp3_std_2025-12-11_21-00-35.mp3",
-            "test_mp3_past_2000-01-01_12-00-00.mp3",
-            "test_mp3_future_2050-01-01_12-00-00.mp3",
-            "test_mp3_std_no_tz_2025-12-11_21-00-35.mp3",
-            "test_mp3_std_tz_2025-12-11_21-00-35p02-00.mp3"
+                "test_mp3_clean.mp3",
+                "test_mp3_std_2025-12-11_21-00-35.mp3",
+                "test_mp3_past_2000-01-01_12-00-00.mp3",
+                "test_mp3_future_2050-01-01_12-00-00.mp3",
+                "test_mp3_std_no_tz_2025-12-11_21-00-35.mp3",
+                "test_mp3_std_tz_2025-12-11_21-00-35p02-00.mp3"
         };
 
         for (String filename : testFiles) {
@@ -212,7 +212,7 @@ class Mp3MetadataExtractorIntegrationTest {
         // If present, it should be a valid year
         audioMeta.getYear().ifPresent(year -> {
             assertTrue(year >= 1900 && year <= 2100,
-                      "Year should be reasonable: " + year);
+                    "Year should be reasonable: " + year);
         });
     }
 }

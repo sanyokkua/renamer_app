@@ -92,8 +92,8 @@ public class CoreFunctionalityHelper {
 
     public void renameFiles(List<RenameModel> files, ProgressBar bar, ListCallback<RenameModel> resultCallback) {
         var task = buildTaskWithCallbackOnUIThread(progressCallback -> renameCommand.execute(files, progressCallback),
-                                                   bar,
-                                                   resultCallback);
+                bar,
+                resultCallback);
         executorService.execute(task);
     }
 
@@ -107,7 +107,7 @@ public class CoreFunctionalityHelper {
                 }
             }).map(File::new).toList();
             var mappedFilesToFileInfo = mapFileToFileInformationCommand.execute(listOfFilesWithNewNames,
-                                                                                progressCallback);
+                    progressCallback);
             return mapFileInformationToRenameModelCommand.execute(mappedFilesToFileInfo, progressCallback);
         }, bar, resultCallback);
         executorService.execute(task);

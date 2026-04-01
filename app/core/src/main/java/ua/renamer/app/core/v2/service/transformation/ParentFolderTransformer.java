@@ -60,13 +60,13 @@ public class ParentFolderTransformer implements FileTransformationService<Parent
             };
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to add parent folder to file: {}", input.getName(), e);
@@ -76,24 +76,24 @@ public class ParentFolderTransformer implements FileTransformationService<Parent
 
     private TransformationMetadata buildMetadata(ParentFolderConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.USE_PARENT_FOLDER_NAME)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "numberOfParentFolders", config.getNumberOfParentFolders(),
-                                             "position", config.getPosition().name(),
-                                             "separator", config.getSeparator()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.USE_PARENT_FOLDER_NAME)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "numberOfParentFolders", config.getNumberOfParentFolders(),
+                        "position", config.getPosition().name(),
+                        "separator", config.getSeparator()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

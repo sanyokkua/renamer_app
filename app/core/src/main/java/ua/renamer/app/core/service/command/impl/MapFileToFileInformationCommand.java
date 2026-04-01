@@ -20,7 +20,6 @@ public class MapFileToFileInformationCommand extends ListProcessingCommand<File,
      * Processes a single File item to map it to a FileInformation object.
      *
      * @param item The File object to be processed.
-     *
      * @return The resulting FileInformation object.
      */
     @Override

@@ -35,13 +35,13 @@ public class AddTextTransformer implements FileTransformationService<AddTextConf
             };
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to add text to file: {}", input.getName(), e);
@@ -51,23 +51,23 @@ public class AddTextTransformer implements FileTransformationService<AddTextConf
 
     private TransformationMetadata buildMetadata(AddTextConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.ADD_TEXT)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "textToAdd", config.getTextToAdd(),
-                                             "position", config.getPosition().name()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.ADD_TEXT)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "textToAdd", config.getTextToAdd(),
+                        "position", config.getPosition().name()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

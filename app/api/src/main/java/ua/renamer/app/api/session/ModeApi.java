@@ -14,16 +14,24 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface ModeApi<P extends ModeParameters> {
 
-    /** Returns the transformation mode this API manages. Never null. */
+    /**
+     * Returns the transformation mode this API manages. Never null.
+     */
     TransformationMode mode();
 
-    /** Returns an immutable snapshot of the current parameter values. Never null. */
+    /**
+     * Returns an immutable snapshot of the current parameter values. Never null.
+     */
     P currentParameters();
 
-    /** Registers a listener notified on parameter changes. Duplicates are ignored. */
+    /**
+     * Registers a listener notified on parameter changes. Duplicates are ignored.
+     */
     void addParameterListener(ParameterListener<P> listener);
 
-    /** Removes a previously registered listener. No-op if not registered. */
+    /**
+     * Removes a previously registered listener. No-op if not registered.
+     */
     void removeParameterListener(ParameterListener<P> listener);
 
     /**
@@ -32,7 +40,7 @@ public interface ModeApi<P extends ModeParameters> {
      *
      * @param mutator receives the current (immutable) parameters and returns a modified copy
      * @return future completing with {@link ValidationResult#valid()} on success,
-     *         or a field-level error result if validation fails; never null
+     * or a field-level error result if validation fails; never null
      */
     CompletableFuture<ValidationResult> updateParameters(ParamMutator<P> mutator);
 
@@ -43,10 +51,14 @@ public interface ModeApi<P extends ModeParameters> {
      */
     CompletableFuture<Void> resetParameters();
 
-    /** Notified whenever parameters managed by a {@link ModeApi} change. */
+    /**
+     * Notified whenever parameters managed by a {@link ModeApi} change.
+     */
     @FunctionalInterface
     interface ParameterListener<P extends ModeParameters> {
-        /** Called after a successful update or reset. {@code updated} is never null. */
+        /**
+         * Called after a successful update or reset. {@code updated} is never null.
+         */
         void onParametersChanged(P updated);
     }
 
@@ -56,7 +68,9 @@ public interface ModeApi<P extends ModeParameters> {
      */
     @FunctionalInterface
     interface ParamMutator<P extends ModeParameters> {
-        /** @param current the current immutable parameters; never null. Must not return null. */
+        /**
+         * @param current the current immutable parameters; never null. Must not return null.
+         */
         P apply(P current);
     }
 }

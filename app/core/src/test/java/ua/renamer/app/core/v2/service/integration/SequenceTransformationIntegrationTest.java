@@ -35,11 +35,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         assertEquals(3, files.size());
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -73,11 +73,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = getAllFilesInTempDir();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(100)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(100)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -107,11 +107,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = getAllFilesInTempDir();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_SIZE)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_SIZE)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -142,11 +142,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("item", "dat", 100);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -175,11 +175,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("photo", "jpg", 50);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1000)
-                                              .withStepValue(1)
-                                              .withPadding(4)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1000)
+                .withStepValue(1)
+                .withPadding(4)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -204,11 +204,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFilesWithNames("a.txt", "b.txt", "c.txt");
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(0)  // No padding
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)  // No padding
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -231,11 +231,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("file", "txt", 5);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -259,11 +259,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("doc", "pdf", 10);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(0)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(0)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -285,11 +285,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("image", "png", 15);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(4)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(4)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -313,11 +313,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFilesWithNames("a.txt", "b.txt", "c.txt", "d.txt");
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(10)
-                                              .withStepValue(2)  // Increment by 2
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(10)
+                .withStepValue(2)  // Increment by 2
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -340,11 +340,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("item", "dat", 5);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(0)
-                                              .withStepValue(5)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(0)
+                .withStepValue(5)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -368,11 +368,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFilesWithNames("x.txt", "y.txt", "z.txt");
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(100)
-                                              .withStepValue(10)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(100)
+                .withStepValue(10)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -396,11 +396,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("test", "txt", 3);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(0)
-                                              .withStepValue(1)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(0)
+                .withStepValue(1)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -421,11 +421,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFilesWithNames("a.doc", "b.doc");
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1000)
-                                              .withStepValue(1)
-                                              .withPadding(4)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1000)
+                .withStepValue(1)
+                .withPadding(4)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -453,11 +453,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = getAllFilesInTempDir();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -483,11 +483,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = createTestFiles("file", "txt", 20);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -516,11 +516,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = getAllFilesInTempDir();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(1)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(1)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -549,11 +549,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = getAllFilesInTempDir();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(1)
-                                              .withSortSource(SortSource.FILE_SIZE)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(1)
+                .withSortSource(SortSource.FILE_SIZE)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -578,11 +578,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         File file = createTestFile("only.txt");
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
@@ -608,11 +608,11 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
         List<File> files = getAllFilesInTempDir();
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(2)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(2)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,

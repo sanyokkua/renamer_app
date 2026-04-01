@@ -11,7 +11,9 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class ExtensionChangeConfig implements TransformationConfig {
-    /** New extension to use (with or without leading dot). */
+    /**
+     * New extension to use (with or without leading dot).
+     */
     String newExtension;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation

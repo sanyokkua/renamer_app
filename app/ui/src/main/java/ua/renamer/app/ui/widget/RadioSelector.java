@@ -43,9 +43,9 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
     protected RadioSelector(String labelValue, Class<T> enumClass, StringConverter<T> converter) {
         super();
         log.debug("Created new RadioSelector, with labelValue: {}, enumClass: {}, converter: {}",
-                  labelValue,
-                  enumClass.getName(),
-                  converter.getClass().getName());
+                labelValue,
+                enumClass.getName(),
+                converter.getClass().getName());
         this.labelValue = labelValue;
         this.enumClass = enumClass;
         this.converter = converter;
@@ -103,7 +103,6 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
      * Gets the currently selected enum value.
      *
      * @return The currently selected enum value.
-     *
      * @throws IllegalStateException If no radio button is selected.
      */
     public T getSelectedValue() {

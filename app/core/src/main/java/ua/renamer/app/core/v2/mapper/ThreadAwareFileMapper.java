@@ -2,11 +2,11 @@ package ua.renamer.app.core.v2.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.enums.MimeTypes;
 import ua.renamer.app.api.interfaces.FileMapper;
 import ua.renamer.app.api.interfaces.FileMetadataMapper;
 import ua.renamer.app.api.interfaces.FileUtils;
-import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.meta.FileMeta;
 
@@ -49,19 +49,19 @@ public class ThreadAwareFileMapper implements FileMapper {
         var fileMeta = Optional.ofNullable(rawMeta).orElse(FileMeta.empty());
 
         return FileModel.builder()
-                        .withFile(file)
-                        .withName(name)
-                        .withAbsolutePath(absolutePath)
-                        .withIsFile(isFile)
-                        .withExtension(extension)
-                        .withFileSize(fileSize)
-                        .withCreationDate(creationDate)
-                        .withModificationDate(modificationDate)
-                        .withDetectedMimeType(mimeType)
-                        .withDetectedExtensions(detectedExtensions)
-                        .withCategory(category)
-                        .withMetadata(fileMeta)
-                        .build();
+                .withFile(file)
+                .withName(name)
+                .withAbsolutePath(absolutePath)
+                .withIsFile(isFile)
+                .withExtension(extension)
+                .withFileSize(fileSize)
+                .withCreationDate(creationDate)
+                .withModificationDate(modificationDate)
+                .withDetectedMimeType(mimeType)
+                .withDetectedExtensions(detectedExtensions)
+                .withCategory(category)
+                .withMetadata(fileMeta)
+                .build();
     }
 
     private Category determineCategory(String mimeType) {
@@ -90,9 +90,9 @@ public class ThreadAwareFileMapper implements FileMapper {
 
     private Set<String> findExtensions(String mimeType) {
         return Stream.of(MimeTypes.values())
-                     .filter(mime -> mime.getMime().equalsIgnoreCase(mimeType))
-                     .findFirst()
-                     .map(MimeTypes::getExtensions)
-                     .orElse(Collections.emptySet());
+                .filter(mime -> mime.getMime().equalsIgnoreCase(mimeType))
+                .findFirst()
+                .map(MimeTypes::getExtensions)
+                .orElse(Collections.emptySet());
     }
 }

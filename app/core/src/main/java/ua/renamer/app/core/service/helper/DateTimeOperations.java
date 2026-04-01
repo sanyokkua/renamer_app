@@ -24,7 +24,6 @@ public class DateTimeOperations {
      * Parses a date-time string to a LocalDateTime object using various formats.
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return The parsed LocalDateTime, or null if the string could not be parsed.
      */
     public LocalDateTime parseDateTimeString(String dateTimeString) {
@@ -36,7 +35,6 @@ public class DateTimeOperations {
      *
      * @param dateTimeString The date-time string to parse.
      * @param offset         The optional offset to apply.
-     *
      * @return The parsed LocalDateTime, or null if the string could not be parsed.
      */
     public LocalDateTime parseDateTimeString(String dateTimeString, String offset) {
@@ -74,20 +72,19 @@ public class DateTimeOperations {
      * Tries to parse the date-time string using formats that include zone information.
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return An Optional containing the parsed LocalDateTime if successful, or an empty Optional otherwise.
      */
     private Optional<LocalDateTime> parseDateTimeStringWithZoneInfo(String dateTimeString) {
         var formatsWithZoneInfo = List.of("EEE, dd MMM yyyy HH:mm:ss Z",
-                                          "EEE, dd MMM yyyy HH:mm:ss Z",
-                                          "EEE, dd MMM yyyy HH:mm:ss z",
-                                          "EEE, dd MMM yyyy HH:mm:ss ZZZZ",
-                                          "EEE, dd MMM yyyy HH:mm:ss zzzz",
-                                          "EEE, dd MMM yyyy HH:mm:ss SSSZ",
-                                          "E MMM dd HH:mm:ss z yyyy",
-                                          "yyyy-MM-dd HH:mm:ss Z",
-                                          "yyyy-MM-dd'T'HH:mm:ssZ",
-                                          "yyyy-MM-dd'T'HH:mm:ssXXX");
+                "EEE, dd MMM yyyy HH:mm:ss Z",
+                "EEE, dd MMM yyyy HH:mm:ss z",
+                "EEE, dd MMM yyyy HH:mm:ss ZZZZ",
+                "EEE, dd MMM yyyy HH:mm:ss zzzz",
+                "EEE, dd MMM yyyy HH:mm:ss SSSZ",
+                "E MMM dd HH:mm:ss z yyyy",
+                "yyyy-MM-dd HH:mm:ss Z",
+                "yyyy-MM-dd'T'HH:mm:ssZ",
+                "yyyy-MM-dd'T'HH:mm:ssXXX");
 
         // Try parsing with zone info formats first
         Locale[] availableLocales = Locale.getAvailableLocales();
@@ -122,7 +119,6 @@ public class DateTimeOperations {
      *
      * @param dateTimeString The date-time string to parse.
      * @param offset         The offset to apply.
-     *
      * @return An Optional containing the parsed LocalDateTime if successful, or an empty Optional otherwise.
      */
     private Optional<LocalDateTime> parseDateTimeStringWithZoneOffset(String dateTimeString, String offset) {
@@ -136,14 +132,14 @@ public class DateTimeOperations {
         }
 
         var formatsWithoutZoneInfo = List.of("yyyy:MM:dd HH:mm:ss",
-                                             "yyyy:MM:dd HH:mm",
-                                             "yyyy-MM-dd HH:mm:ss",
-                                             "yyyy-MM-dd HH:mm",
-                                             "yyyy.MM.dd HH:mm:ss",
-                                             "yyyy.MM.dd HH:mm",
-                                             "yyyy-MM-dd'T'HH:mm:ss",
-                                             "yyyy-MM-dd'T'HH:mm",
-                                             "EEE, dd MMM yyyy HH:mm:ss");
+                "yyyy:MM:dd HH:mm",
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd HH:mm",
+                "yyyy.MM.dd HH:mm:ss",
+                "yyyy.MM.dd HH:mm",
+                "yyyy-MM-dd'T'HH:mm:ss",
+                "yyyy-MM-dd'T'HH:mm",
+                "EEE, dd MMM yyyy HH:mm:ss");
 
         // Try parsing without zone info formats next
         for (String format : formatsWithoutZoneInfo) {
@@ -162,7 +158,6 @@ public class DateTimeOperations {
      * Tries to parse the date-time string as a date only.
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return An Optional containing the parsed LocalDateTime if successful, or an empty Optional otherwise.
      */
     private Optional<LocalDateTime> parseDateOnly(String dateTimeString) {
@@ -184,7 +179,6 @@ public class DateTimeOperations {
      * Tries to parse the date-time string as a year and month only.
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return An Optional containing the parsed LocalDateTime if successful, or an empty Optional otherwise.
      */
     private Optional<LocalDateTime> parseYearAndMonth(String dateTimeString) {
@@ -215,7 +209,6 @@ public class DateTimeOperations {
      * Formats a LocalDateTime object to a string in the format "yyyy-MM-dd HH:mm:ss".
      *
      * @param localDateTime The LocalDateTime to format.
-     *
      * @return The formatted date-time string.
      */
     public String formatLocalDateTime(LocalDateTime localDateTime) {
@@ -230,7 +223,6 @@ public class DateTimeOperations {
      * @param dateFormat     The DateFormat to apply.
      * @param timeFormat     The TimeFormat to apply.
      * @param dateTimeFormat The DateTimeFormat to apply.
-     *
      * @return The formatted date-time string.
      */
     public String formatDateTime(LocalDateTime localDateTime, DateFormat dateFormat, TimeFormat timeFormat,
@@ -269,7 +261,6 @@ public class DateTimeOperations {
      *
      * @param localDateTime The LocalDateTime to format.
      * @param format        The DateFormat to apply.
-     *
      * @return The formatted date string.
      */
     public String formatDate(LocalDateTime localDateTime, DateFormat format) {
@@ -295,7 +286,6 @@ public class DateTimeOperations {
      *
      * @param localDateTime The LocalDateTime to format.
      * @param format        The TimeFormat to apply.
-     *
      * @return The formatted time string.
      */
     public String formatTime(LocalDateTime localDateTime, TimeFormat format) {
@@ -321,7 +311,6 @@ public class DateTimeOperations {
      * If the input array is null or empty, the method returns null. Null values in the array are ignored.
      *
      * @param values an array of LocalDateTime objects to search
-     *
      * @return the minimum LocalDateTime value, or null if the input array is null, empty, or contains only null values
      */
     public LocalDateTime findMinOrNull(LocalDateTime... values) {

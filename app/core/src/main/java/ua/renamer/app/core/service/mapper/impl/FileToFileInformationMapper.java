@@ -26,7 +26,6 @@ public class FileToFileInformationMapper implements DataMapper<File, FileInforma
      * The mapping includes retrieving various attributes of the file and its metadata.
      *
      * @param file the input File to be mapped
-     *
      * @return the mapped FileInformation object
      */
     @Override
@@ -48,20 +47,20 @@ public class FileToFileInformationMapper implements DataMapper<File, FileInforma
         final var modificationDateTime = fsModificationDate.orElse(null);
 
         return FileInformation.builder()
-                              .originalFile(file)
-                              .fileAbsolutePath(fileAbsolutePath)
-                              .isFile(isFile)
-                              .fileName(fileNameWithoutExtension)
-                              .newName(fileNameWithoutExtension) // Initial value is current file name
-                              .fileExtension(fileExtension)
-                              .newExtension(fileExtension) // Initial value is current file extension
-                              .fileSize(fileSize)
-                              .fsCreationDate(creationDateTime)
-                              .fsModificationDate(modificationDateTime)
-                              .detectedMimeType(mime)
-                              .detectedExtension(extFromMime)
-                              .metadata(metadata)
-                              .build();
+                .originalFile(file)
+                .fileAbsolutePath(fileAbsolutePath)
+                .isFile(isFile)
+                .fileName(fileNameWithoutExtension)
+                .newName(fileNameWithoutExtension) // Initial value is current file name
+                .fileExtension(fileExtension)
+                .newExtension(fileExtension) // Initial value is current file extension
+                .fileSize(fileSize)
+                .fsCreationDate(creationDateTime)
+                .fsModificationDate(modificationDateTime)
+                .detectedMimeType(mime)
+                .detectedExtension(extFromMime)
+                .metadata(metadata)
+                .build();
     }
 
 }

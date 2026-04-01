@@ -5,16 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import ua.renamer.app.api.enums.DateFormat;
-import ua.renamer.app.api.enums.DateTimeSource;
-import ua.renamer.app.api.enums.ImageDimensionOptions;
-import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.enums.ItemPositionExtended;
-import ua.renamer.app.api.enums.ItemPositionWithReplacement;
-import ua.renamer.app.api.enums.SortSource;
-import ua.renamer.app.api.enums.TextCaseOptions;
-import ua.renamer.app.api.enums.TimeFormat;
-import ua.renamer.app.api.enums.TruncateOptions;
+import ua.renamer.app.api.enums.*;
 import ua.renamer.app.api.model.TransformationMode;
 
 import java.time.LocalDateTime;
@@ -1280,16 +1271,16 @@ class ModeParametersValidationTest {
         void defaultRequiresSequentialExecution_returnsFalseForAllNonSequenceTypes() {
             // All non-SequenceParams records must return false from the default method
             ModeParameters[] nonSequential = {
-                new AddTextParams("x", ItemPosition.BEGIN),
-                new RemoveTextParams("x", ItemPosition.END),
-                new ReplaceTextParams("a", "b", ItemPositionExtended.EVERYWHERE),
-                new ChangeCaseParams(TextCaseOptions.UPPERCASE, false),
-                new TruncateParams(3, TruncateOptions.REMOVE_SYMBOLS_FROM_END),
-                new ExtensionChangeParams("jpg"),
-                new ImageDimensionsParams(
-                        ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
-                        ItemPositionWithReplacement.BEGIN, "x"),
-                new ParentFolderParams(1, ItemPosition.BEGIN, "_"),
+                    new AddTextParams("x", ItemPosition.BEGIN),
+                    new RemoveTextParams("x", ItemPosition.END),
+                    new ReplaceTextParams("a", "b", ItemPositionExtended.EVERYWHERE),
+                    new ChangeCaseParams(TextCaseOptions.UPPERCASE, false),
+                    new TruncateParams(3, TruncateOptions.REMOVE_SYMBOLS_FROM_END),
+                    new ExtensionChangeParams("jpg"),
+                    new ImageDimensionsParams(
+                            ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
+                            ItemPositionWithReplacement.BEGIN, "x"),
+                    new ParentFolderParams(1, ItemPosition.BEGIN, "_"),
             };
 
             for (ModeParameters p : nonSequential) {
@@ -1307,16 +1298,16 @@ class ModeParametersValidationTest {
 
         @ParameterizedTest
         @CsvSource({
-            "ADD_TEXT",
-            "REMOVE_TEXT",
-            "REPLACE_TEXT",
-            "CHANGE_CASE",
-            "ADD_SEQUENCE",
-            "TRUNCATE_FILE_NAME",
-            "CHANGE_EXTENSION",
-            "USE_DATETIME",
-            "USE_IMAGE_DIMENSIONS",
-            "USE_PARENT_FOLDER_NAME"
+                "ADD_TEXT",
+                "REMOVE_TEXT",
+                "REPLACE_TEXT",
+                "CHANGE_CASE",
+                "ADD_SEQUENCE",
+                "TRUNCATE_FILE_NAME",
+                "CHANGE_EXTENSION",
+                "USE_DATETIME",
+                "USE_IMAGE_DIMENSIONS",
+                "USE_PARENT_FOLDER_NAME"
         })
         void eachModeConstant_isCoveredByExactlyOneRecord(String modeName) {
             TransformationMode mode = TransformationMode.valueOf(modeName);

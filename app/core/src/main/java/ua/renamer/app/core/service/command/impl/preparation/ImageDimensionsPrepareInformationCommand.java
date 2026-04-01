@@ -56,7 +56,6 @@ public class ImageDimensionsPrepareInformationCommand extends FileInformationCom
      * based on the specified options and positions.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new file name.
      */
     @Override
@@ -88,7 +87,6 @@ public class ImageDimensionsPrepareInformationCommand extends FileInformationCom
      * @param side   the {@link ImageDimensionOptions} specifying which dimension to use.
      * @param width  the width of the image.
      * @param height the height of the image.
-     *
      * @return the dimension value as a string.
      */
     private String getDimensionValue(ImageDimensionOptions side, Integer width, Integer height) {
@@ -104,7 +102,6 @@ public class ImageDimensionsPrepareInformationCommand extends FileInformationCom
      *
      * @param leftSideValue  the value for the left side of the dimensions.
      * @param rightSideValue the value for the right side of the dimensions.
-     *
      * @return the combined dimensions text.
      */
     private String createDimensionsText(String leftSideValue, String rightSideValue) {
@@ -122,7 +119,6 @@ public class ImageDimensionsPrepareInformationCommand extends FileInformationCom
      *
      * @param originalName   the original file name.
      * @param dimensionsText the dimensions text to be added.
-     *
      * @return the new file name with dimensions.
      */
     private String createNewName(String originalName, String dimensionsText) {

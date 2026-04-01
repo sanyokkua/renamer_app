@@ -80,8 +80,8 @@ class FilesOperationsTest {
         var filesOperations = new FilesOperations(basicFileAttributesExtractor, tika);
 
         NullPointerException ex = assertThrows(NullPointerException.class,
-                                               () -> filesOperations.validateFileInstance(null),
-                                               "Expected that NullPointer exception will be thrown");
+                () -> filesOperations.validateFileInstance(null),
+                "Expected that NullPointer exception will be thrown");
         assertNotNull(ex);
     }
 
@@ -93,8 +93,8 @@ class FilesOperationsTest {
         when(mock.exists()).thenReturn(false);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                                                   () -> filesOperations.validateFileInstance(mock),
-                                                   "Expected that IllegalArgumentException exception will be thrown");
+                () -> filesOperations.validateFileInstance(mock),
+                "Expected that IllegalArgumentException exception will be thrown");
         assertNotNull(ex);
         assertTrue(ex.getMessage().contains("File does not exist"));
         verify(mock, Mockito.times(1)).exists();
@@ -286,7 +286,7 @@ class FilesOperationsTest {
         when(mockAttributes.creationTime()).thenReturn(mockFileTime);
         when(mockFileTime.toInstant()).thenReturn(instantNow);
         when(basicFileAttributesExtractor.getAttributes(mockPath,
-                                                        BasicFileAttributes.class)).thenReturn(mockAttributes);
+                BasicFileAttributes.class)).thenReturn(mockAttributes);
 
         var result = filesOperations.getFileCreationTime(mockFile);
 
@@ -336,7 +336,7 @@ class FilesOperationsTest {
         when(mockFile.exists()).thenReturn(true);
         when(mockFile.toPath()).thenReturn(mockPath);
         when(basicFileAttributesExtractor.getAttributes(mockPath,
-                                                        BasicFileAttributes.class)).thenThrow(new IOException());
+                BasicFileAttributes.class)).thenThrow(new IOException());
 
         var result = filesOperations.getFileCreationTime(mockFile);
 
@@ -409,7 +409,7 @@ class FilesOperationsTest {
         when(mockFile.exists()).thenReturn(true);
         when(mockFile.toPath()).thenReturn(mockPath);
         when(basicFileAttributesExtractor.getAttributes(mockPath,
-                                                        BasicFileAttributes.class)).thenThrow(new IOException());
+                BasicFileAttributes.class)).thenThrow(new IOException());
 
         var result = filesOperations.getFileModificationTime(mockFile);
 

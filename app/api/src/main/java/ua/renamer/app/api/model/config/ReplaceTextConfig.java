@@ -12,13 +12,19 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class ReplaceTextConfig implements TransformationConfig {
-    /** Text to find and replace. */
+    /**
+     * Text to find and replace.
+     */
     String textToReplace;
 
-    /** Replacement text. */
+    /**
+     * Replacement text.
+     */
     String replacementText;
 
-    /** Position where to replace (BEGIN, END, or EVERYWHERE). */
+    /**
+     * Position where to replace (BEGIN, END, or EVERYWHERE).
+     */
     ItemPositionExtended position;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation

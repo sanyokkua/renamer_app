@@ -2,9 +2,9 @@ package ua.renamer.app.metadata.extractor.integration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ua.renamer.app.metadata.extractor.strategy.format.image.BmpFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.BmpFileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -72,7 +72,7 @@ class BmpMetadataExtractorIntegrationTest {
 
         // BMP format does not support datetime metadata
         assertFalse(imageMeta.getContentCreationDate().isPresent(),
-                    "BMP format does not support datetime metadata");
+                "BMP format does not support datetime metadata");
     }
 
     @Test
@@ -118,7 +118,7 @@ class BmpMetadataExtractorIntegrationTest {
 
         // Should not have datetime
         assertFalse(imageMeta.getContentCreationDate().isPresent(),
-                    "BMP format does not support datetime metadata");
+                "BMP format does not support datetime metadata");
     }
 
     // ============================================================================
@@ -151,6 +151,6 @@ class BmpMetadataExtractorIntegrationTest {
 
         assertNotNull(result);
         assertTrue(result.getErrors().isEmpty(),
-                   "Should not have extraction errors");
+                "Should not have extraction errors");
     }
 }

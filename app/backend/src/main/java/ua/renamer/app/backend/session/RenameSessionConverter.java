@@ -25,10 +25,10 @@ public final class RenameSessionConverter {
      */
     public static RenameCandidate toCandidate(FileModel model) {
         return new RenameCandidate(
-            model.getAbsolutePath(),    // fileId — stable, unique within session
-            model.getName(),            // base name without extension
-            model.getExtension(),       // no leading dot (ThreadAwareFileMapper convention)
-            model.getFile().toPath()    // java.nio.file.Path from java.io.File
+                model.getAbsolutePath(),    // fileId — stable, unique within session
+                model.getName(),            // base name without extension
+                model.getExtension(),       // no leading dot (ThreadAwareFileMapper convention)
+                model.getFile().toPath()    // java.nio.file.Path from java.io.File
         );
     }
 
@@ -42,11 +42,11 @@ public final class RenameSessionConverter {
     public static RenamePreview toPreview(PreparedFileModel model) {
         boolean hasError = model.isHasError();
         return new RenamePreview(
-            model.getOriginalFile().getAbsolutePath(),    // fileId — matches toCandidate
-            model.getOldFullName(),                        // originalName
-            hasError ? null : model.getNewFullName(),      // null when error
-            hasError,
-            model.getErrorMessage().orElse(null)           // unwrap Optional → nullable
+                model.getOriginalFile().getAbsolutePath(),    // fileId — matches toCandidate
+                model.getOldFullName(),                        // originalName
+                hasError ? null : model.getNewFullName(),      // null when error
+                hasError,
+                model.getErrorMessage().orElse(null)           // unwrap Optional → nullable
         );
     }
 
@@ -60,11 +60,11 @@ public final class RenameSessionConverter {
     public static RenameSessionResult toSessionResult(RenameResult result) {
         boolean succeeded = result.isSuccess();
         return new RenameSessionResult(
-            result.getPreparedFile().getOriginalFile().getAbsolutePath(), // fileId
-            result.getOriginalFileName(),                                  // originalName
-            succeeded ? result.getNewFileName() : result.getOriginalFileName(), // actual disk name
-            result.getStatus(),
-            result.getErrorMessage().orElse(null)
+                result.getPreparedFile().getOriginalFile().getAbsolutePath(), // fileId
+                result.getOriginalFileName(),                                  // originalName
+                succeeded ? result.getNewFileName() : result.getOriginalFileName(), // actual disk name
+                result.getStatus(),
+                result.getErrorMessage().orElse(null)
         );
     }
 }

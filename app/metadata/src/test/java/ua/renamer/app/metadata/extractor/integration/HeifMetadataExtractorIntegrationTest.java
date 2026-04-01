@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.extractor.strategy.format.image.HeifFileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.HeifFileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -24,8 +24,24 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 class HeifMetadataExtractorIntegrationTest {
 
-    private HeifFileMetadataExtractor extractor;
     private static final String TEST_DATA_PATH = "test-data/image/heic/";
+    private HeifFileMetadataExtractor extractor;
+
+    static Stream<Arguments> provideHeifTestFiles() {
+        return Stream.of(
+                arguments("test_heic_clean.heic", null, false, true),
+                arguments("test_heic_std_2025-12-11_21-00-35.heic",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                arguments("test_heic_past_2000-01-01_12-00-00.heic",
+                        LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
+                arguments("test_heic_future_2050-01-01_12-00-00.heic",
+                        LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
+                arguments("test_heic_std_no_tz_2025-12-11_21-00-35.heic",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
+                arguments("test_heic_std_tz_2025-12-11_21-00-35p02-00.heic",
+                        LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -42,22 +58,6 @@ class HeifMetadataExtractorIntegrationTest {
             fail("Failed to load test file: " + filename);
             return null;
         }
-    }
-
-    static Stream<Arguments> provideHeifTestFiles() {
-        return Stream.of(
-                arguments("test_heic_clean.heic", null, false, true),
-                arguments("test_heic_std_2025-12-11_21-00-35.heic",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
-                arguments("test_heic_past_2000-01-01_12-00-00.heic",
-                         LocalDateTime.of(2000, 1, 1, 12, 0, 0), true, true),
-                arguments("test_heic_future_2050-01-01_12-00-00.heic",
-                         LocalDateTime.of(2050, 1, 1, 12, 0, 0), true, true),
-                arguments("test_heic_std_no_tz_2025-12-11_21-00-35.heic",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true),
-                arguments("test_heic_std_tz_2025-12-11_21-00-35p02-00.heic",
-                         LocalDateTime.of(2025, 12, 11, 21, 0, 35), true, true)
-        );
     }
 
     @Test

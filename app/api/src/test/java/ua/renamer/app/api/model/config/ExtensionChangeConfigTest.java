@@ -2,23 +2,24 @@ package ua.renamer.app.api.model.config;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ExtensionChangeConfigTest {
 
     @Test
     void givenValidParams_whenBuild_thenConfigCreatedSuccessfully() {
         assertDoesNotThrow(() ->
-            ExtensionChangeConfig.builder()
-                .withNewExtension("mp4")
-                .build()
+                ExtensionChangeConfig.builder()
+                        .withNewExtension("mp4")
+                        .build()
         );
     }
 
     @Test
     void givenNullNewExtension_whenBuild_thenNullPointerException() {
         var builder = ExtensionChangeConfig.builder()
-            .withNewExtension(null);
+                .withNewExtension(null);
 
         assertThrows(NullPointerException.class, builder::build);
     }
@@ -26,7 +27,7 @@ class ExtensionChangeConfigTest {
     @Test
     void givenBlankExtension_whenBuild_thenIllegalArgumentException() {
         var builder = ExtensionChangeConfig.builder()
-            .withNewExtension("");
+                .withNewExtension("");
 
         assertThrows(IllegalArgumentException.class, builder::build);
     }
@@ -34,7 +35,7 @@ class ExtensionChangeConfigTest {
     @Test
     void givenWhitespaceOnlyExtension_whenBuild_thenIllegalArgumentException() {
         var builder = ExtensionChangeConfig.builder()
-            .withNewExtension("   ");
+                .withNewExtension("   ");
 
         assertThrows(IllegalArgumentException.class, builder::build);
     }
@@ -42,16 +43,16 @@ class ExtensionChangeConfigTest {
     @Test
     void givenExtensionWithLeadingDot_whenBuild_thenConfigCreatedSuccessfully() {
         assertDoesNotThrow(() ->
-            ExtensionChangeConfig.builder()
-                .withNewExtension(".jpg")
-                .build()
+                ExtensionChangeConfig.builder()
+                        .withNewExtension(".jpg")
+                        .build()
         );
     }
 
     @Test
     void givenTabOnlyExtension_whenBuild_thenIllegalArgumentException() {
         var builder = ExtensionChangeConfig.builder()
-            .withNewExtension("\t");
+                .withNewExtension("\t");
 
         assertThrows(IllegalArgumentException.class, builder::build);
     }

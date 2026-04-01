@@ -47,7 +47,6 @@ public class DateTimeUtils {
      * Converts a {@link FileTime} to a {@link LocalDateTime} using the system default time zone.
      *
      * @param fileTime the file time to convert
-     *
      * @return the converted LocalDateTime, or null if fileTime is null
      */
     public static LocalDateTime toLocalDateTime(FileTime fileTime) {
@@ -71,7 +70,6 @@ public class DateTimeUtils {
      * Parses a date-time string to a LocalDateTime object using various formats.
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return The parsed LocalDateTime, or null if the string could not be parsed.
      */
     public static LocalDateTime parseDateTimeString(String dateTimeString) {
@@ -84,7 +82,6 @@ public class DateTimeUtils {
      *
      * @param dateTimeString The date-time string to parse.
      * @param offset         The optional offset to apply (e.g., "+02:00").
-     *
      * @return The parsed LocalDateTime, or null if the string could not be parsed.
      */
     public static LocalDateTime parseDateTimeString(String dateTimeString, String offset) {
@@ -117,7 +114,6 @@ public class DateTimeUtils {
      * Tries to parse the date-time string using formats that include zone information.
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return An Optional containing the parsed LocalDateTime if successful, or an empty Optional otherwise.
      */
     public static Optional<LocalDateTime> parseDateTimeStringWithZoneInfo(String dateTimeString) {
@@ -153,7 +149,6 @@ public class DateTimeUtils {
      *
      * @param dateTimeString The date-time string to parse.
      * @param offset         The offset to apply (e.g., "+02:00"). If null, UTC is used.
-     *
      * @return An Optional containing the parsed LocalDateTime if successful, or an empty Optional otherwise.
      */
     public static Optional<LocalDateTime> parseDateTimeStringWithZoneOffset(String dateTimeString, String offset) {
@@ -192,9 +187,8 @@ public class DateTimeUtils {
      * Tries to parse the date-time string as a date only (yyyy-MM-dd or yyyyMMdd).
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return An Optional containing the parsed LocalDateTime (at midnight) if successful,
-     *         or an empty Optional otherwise.
+     * or an empty Optional otherwise.
      */
     public static Optional<LocalDateTime> parseDateOnly(String dateTimeString) {
         var dateOnly = List.of("yyyy-MM-dd", "yyyyMMdd");
@@ -215,9 +209,8 @@ public class DateTimeUtils {
      * Tries to parse the date-time string as a year and month only (yyyy-MM) or year only (yyyy).
      *
      * @param dateTimeString The date-time string to parse.
-     *
      * @return An Optional containing the parsed LocalDateTime (at day 1, midnight) if successful,
-     *         or an empty Optional otherwise.
+     * or an empty Optional otherwise.
      */
     public static Optional<LocalDateTime> parseYearAndMonth(String dateTimeString) {
         if (dateTimeString.length() == 7) {
@@ -247,7 +240,6 @@ public class DateTimeUtils {
      * Formats a LocalDateTime object to a string in the format "yyyy-MM-dd HH:mm:ss".
      *
      * @param localDateTime The LocalDateTime to format.
-     *
      * @return The formatted date-time string.
      */
     public static String formatLocalDateTime(LocalDateTime localDateTime) {
@@ -260,7 +252,6 @@ public class DateTimeUtils {
      * If the input array is null or empty, the method returns null. Null values in the array are ignored.
      *
      * @param values an array of LocalDateTime objects to search
-     *
      * @return the minimum LocalDateTime value, or null if the input array is null, empty, or contains only null values
      */
     public static @Nullable LocalDateTime findMinOrNull(@Nullable LocalDateTime... values) {

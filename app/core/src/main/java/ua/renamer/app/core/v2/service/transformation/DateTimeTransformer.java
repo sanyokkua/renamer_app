@@ -2,16 +2,16 @@ package ua.renamer.app.core.v2.service.transformation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.enums.TimeFormat;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.TransformationMetadata;
 import ua.renamer.app.api.model.TransformationMode;
-import ua.renamer.app.api.enums.TimeFormat;
 import ua.renamer.app.api.model.config.DateTimeConfig;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
 import ua.renamer.app.core.v2.service.FileTransformationService;
-import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -60,7 +60,7 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
 
             if (dateTime == null) {
                 return buildErrorResult(input,
-                                        "No datetime available for source: " + config.getSource());
+                        "No datetime available for source: " + config.getSource());
             }
 
             // Format datetime using DateTimeConverter
@@ -89,13 +89,13 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
             };
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to add datetime to file: {}", input.getName(), e);
@@ -120,9 +120,9 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
                 LocalDateTime modification = input.getModificationDate().orElse(null);
                 LocalDateTime contentCreation = extractContentCreationDate(input);
                 dateTime = Stream.of(creation, modification, contentCreation)
-                                 .filter(Objects::nonNull)
-                                 .min(Comparator.naturalOrder())
-                                 .orElse(null);
+                        .filter(Objects::nonNull)
+                        .min(Comparator.naturalOrder())
+                        .orElse(null);
             }
         }
 
@@ -131,11 +131,11 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
 
     private LocalDateTime extractContentCreationDate(FileModel input) {
         return input.getMetadata()
-                    .flatMap(meta -> meta.getImageMeta()
-                                        .flatMap(ImageMeta::getContentCreationDate)
-                                        .or(() -> meta.getVideoMeta()
-                                                      .flatMap(VideoMeta::getContentCreationDate)))
-                    .orElse(null);
+                .flatMap(meta -> meta.getImageMeta()
+                        .flatMap(ImageMeta::getContentCreationDate)
+                        .or(() -> meta.getVideoMeta()
+                                .flatMap(VideoMeta::getContentCreationDate)))
+                .orElse(null);
     }
 
     private boolean isAmPmFormat(TimeFormat timeFormat) {
@@ -144,27 +144,27 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
 
     private TransformationMetadata buildMetadata(DateTimeConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.USE_DATETIME)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "source", config.getSource().name(),
-                                             "dateFormat", config.getDateFormat().name(),
-                                             "timeFormat", config.getTimeFormat().name(),
-                                             "dateTimeFormat", config.getDateTimeFormat().name(),
-                                             "position", config.getPosition().name(),
-                                             "separator", config.getSeparator()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.USE_DATETIME)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "source", config.getSource().name(),
+                        "dateFormat", config.getDateFormat().name(),
+                        "timeFormat", config.getTimeFormat().name(),
+                        "dateTimeFormat", config.getDateTimeFormat().name(),
+                        "position", config.getPosition().name(),
+                        "separator", config.getSeparator()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

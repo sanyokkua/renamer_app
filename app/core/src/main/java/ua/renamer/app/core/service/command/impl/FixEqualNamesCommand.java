@@ -20,13 +20,12 @@ public class FixEqualNamesCommand extends FileInformationCommand {
      * Checks if the file has been renamed.
      *
      * @param fileInfo The FileInformation object.
-     *
      * @return true if the file has been renamed, false otherwise.
      */
     private static boolean isFileRenamed(FileInformation fileInfo) {
         log.debug("isFileRenamed({})", fileInfo);
         boolean renamed = !(fileInfo.getFileName().equals(fileInfo.getNewName()) && fileInfo.getFileExtension()
-                                                                                            .equals(fileInfo.getNewExtension()));
+                .equals(fileInfo.getNewExtension()));
         log.debug("isFileRenamed() is renamed={}", renamed);
         return renamed;
     }
@@ -35,7 +34,6 @@ public class FixEqualNamesCommand extends FileInformationCommand {
      * Processes the input list of FileInformation objects to ensure no files have the same name.
      *
      * @param input List of FileInformation objects to be processed.
-     *
      * @return List of processed FileInformation objects with unique names.
      */
     @Override

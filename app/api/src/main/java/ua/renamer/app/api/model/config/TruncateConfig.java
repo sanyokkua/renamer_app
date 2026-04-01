@@ -12,10 +12,14 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class TruncateConfig implements TransformationConfig {
-    /** Number of characters to remove. */
+    /**
+     * Number of characters to remove.
+     */
     int numberOfSymbols;
 
-    /** Truncation option (REMOVE_SYMBOLS_IN_BEGIN, REMOVE_SYMBOLS_FROM_END, TRUNCATE_EMPTY_SYMBOLS). */
+    /**
+     * Truncation option (REMOVE_SYMBOLS_IN_BEGIN, REMOVE_SYMBOLS_FROM_END, TRUNCATE_EMPTY_SYMBOLS).
+     */
     TruncateOptions truncateOption;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation

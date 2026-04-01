@@ -26,18 +26,89 @@ class SequencePrepareInformationCommandTest extends BaseRenamePreparationCommand
 
     static Stream<Arguments> provideCommandArguments() {
         return Stream.of(arguments(SortSource.FILE_NAME, 0, 1, 0),
-                         arguments(SortSource.FILE_PATH, 0, 1, 0),
-                         arguments(SortSource.FILE_SIZE, 0, 1, 0),
-                         arguments(SortSource.FILE_CREATION_DATETIME, 0, 1, 0),
-                         arguments(SortSource.FILE_MODIFICATION_DATETIME, 0, 1, 0),
-                         arguments(SortSource.FILE_CONTENT_CREATION_DATETIME, 0, 1, 0),
-                         arguments(SortSource.IMAGE_WIDTH, 0, 1, 0),
-                         arguments(SortSource.IMAGE_HEIGHT, 0, 1, 0),
-                         arguments(SortSource.FILE_NAME, 1, 1, 0),
-                         arguments(SortSource.FILE_NAME, 1, 1, 1),
-                         arguments(SortSource.FILE_NAME, 1, 10, 1),
-                         arguments(SortSource.FILE_NAME, -1, 10, 1),
-                         arguments(SortSource.FILE_NAME, 1, 10, 10));
+                arguments(SortSource.FILE_PATH, 0, 1, 0),
+                arguments(SortSource.FILE_SIZE, 0, 1, 0),
+                arguments(SortSource.FILE_CREATION_DATETIME, 0, 1, 0),
+                arguments(SortSource.FILE_MODIFICATION_DATETIME, 0, 1, 0),
+                arguments(SortSource.FILE_CONTENT_CREATION_DATETIME, 0, 1, 0),
+                arguments(SortSource.IMAGE_WIDTH, 0, 1, 0),
+                arguments(SortSource.IMAGE_HEIGHT, 0, 1, 0),
+                arguments(SortSource.FILE_NAME, 1, 1, 0),
+                arguments(SortSource.FILE_NAME, 1, 1, 1),
+                arguments(SortSource.FILE_NAME, 1, 10, 1),
+                arguments(SortSource.FILE_NAME, -1, 10, 1),
+                arguments(SortSource.FILE_NAME, 1, 10, 10));
+    }
+
+    static FileInformation[] createFilesFrom1to4() {
+        var file1 = createFileInfo("fileName1",
+                "/file/path/1/fileName1",
+                1000L,
+                LocalDateTime.of(2000, 1, 1, 1, 0),
+                LocalDateTime.of(2000, 1, 1, 1, 0),
+                LocalDateTime.of(2000, 1, 1, 1, 0),
+                1000,
+                2000);
+        var file2 = createFileInfo("fileName2",
+                "/file/path/2/fileName2",
+                1001L,
+                LocalDateTime.of(2001, 1, 1, 1, 0),
+                LocalDateTime.of(2001, 1, 1, 1, 0),
+                LocalDateTime.of(2001, 1, 1, 1, 0),
+                1001,
+                2001);
+        var file3 = createFileInfo("fileName3",
+                "/file/path/3/fileName3",
+                1002L,
+                LocalDateTime.of(2002, 1, 1, 1, 0),
+                LocalDateTime.of(2002, 1, 1, 1, 0),
+                LocalDateTime.of(2002, 1, 1, 1, 0),
+                1002,
+                2002);
+        var file4 = createFileInfo("fileName4",
+                "/file/path/4/fileName4",
+                1003L,
+                LocalDateTime.of(2003, 1, 1, 1, 0),
+                LocalDateTime.of(2003, 1, 1, 1, 0),
+                LocalDateTime.of(2003, 1, 1, 1, 0),
+                1003,
+                2003);
+        return new FileInformation[]{file1, file2, file3, file4};
+    }
+
+    static String buildPadding(int originalNumber, int padding) {
+        StringBuilder stringNumber = new StringBuilder(String.valueOf(originalNumber));
+
+        if (stringNumber.length() >= padding) {
+            return stringNumber.toString();
+        }
+
+        while (stringNumber.length() < padding) {
+            stringNumber.insert(0, "0");
+        }
+
+        return stringNumber.toString();
+    }
+
+    static FileInformation createFileInfo(String fileName, String fileAbsolutePath, long fileSize, LocalDateTime fc, LocalDateTime fm, LocalDateTime cc, int width, int height) {
+        var metadata = FileInformationMetadata.builder()
+                .creationDate(cc)
+                .imgVidWidth(width)
+                .imgVidHeight(height)
+                .build();
+        return FileInformation.builder()
+                .originalFile(new File(fileAbsolutePath))
+                .fileAbsolutePath(fileAbsolutePath)
+                .isFile(TEST_IS_FILE)
+                .fileName(fileName)
+                .newName(fileName)
+                .fileExtension(TEST_FILE_EXTENSION)
+                .newExtension(TEST_FILE_EXTENSION)
+                .fileSize(fileSize)
+                .fsCreationDate(fc)
+                .fsModificationDate(fm)
+                .metadata(metadata)
+                .build();
     }
 
     @Test
@@ -129,77 +200,6 @@ class SequencePrepareInformationCommandTest extends BaseRenamePreparationCommand
         assertEquals(file3Name, result.get(2).getNewName());
         assertEquals(file4Name, result.get(3).getNewName());
         // @formatter:on
-    }
-
-    static FileInformation[] createFilesFrom1to4() {
-        var file1 = createFileInfo("fileName1",
-                                   "/file/path/1/fileName1",
-                                   1000L,
-                                   LocalDateTime.of(2000, 1, 1, 1, 0),
-                                   LocalDateTime.of(2000, 1, 1, 1, 0),
-                                   LocalDateTime.of(2000, 1, 1, 1, 0),
-                                   1000,
-                                   2000);
-        var file2 = createFileInfo("fileName2",
-                                   "/file/path/2/fileName2",
-                                   1001L,
-                                   LocalDateTime.of(2001, 1, 1, 1, 0),
-                                   LocalDateTime.of(2001, 1, 1, 1, 0),
-                                   LocalDateTime.of(2001, 1, 1, 1, 0),
-                                   1001,
-                                   2001);
-        var file3 = createFileInfo("fileName3",
-                                   "/file/path/3/fileName3",
-                                   1002L,
-                                   LocalDateTime.of(2002, 1, 1, 1, 0),
-                                   LocalDateTime.of(2002, 1, 1, 1, 0),
-                                   LocalDateTime.of(2002, 1, 1, 1, 0),
-                                   1002,
-                                   2002);
-        var file4 = createFileInfo("fileName4",
-                                   "/file/path/4/fileName4",
-                                   1003L,
-                                   LocalDateTime.of(2003, 1, 1, 1, 0),
-                                   LocalDateTime.of(2003, 1, 1, 1, 0),
-                                   LocalDateTime.of(2003, 1, 1, 1, 0),
-                                   1003,
-                                   2003);
-        return new FileInformation[]{file1, file2, file3, file4};
-    }
-
-    static String buildPadding(int originalNumber, int padding) {
-        StringBuilder stringNumber = new StringBuilder(String.valueOf(originalNumber));
-
-        if (stringNumber.length() >= padding) {
-            return stringNumber.toString();
-        }
-
-        while (stringNumber.length() < padding) {
-            stringNumber.insert(0, "0");
-        }
-
-        return stringNumber.toString();
-    }
-
-    static FileInformation createFileInfo(String fileName, String fileAbsolutePath, long fileSize, LocalDateTime fc, LocalDateTime fm, LocalDateTime cc, int width, int height) {
-        var metadata = FileInformationMetadata.builder()
-                                              .creationDate(cc)
-                                              .imgVidWidth(width)
-                                              .imgVidHeight(height)
-                                              .build();
-        return FileInformation.builder()
-                              .originalFile(new File(fileAbsolutePath))
-                              .fileAbsolutePath(fileAbsolutePath)
-                              .isFile(TEST_IS_FILE)
-                              .fileName(fileName)
-                              .newName(fileName)
-                              .fileExtension(TEST_FILE_EXTENSION)
-                              .newExtension(TEST_FILE_EXTENSION)
-                              .fileSize(fileSize)
-                              .fsCreationDate(fc)
-                              .fsModificationDate(fm)
-                              .metadata(metadata)
-                              .build();
     }
 
 }

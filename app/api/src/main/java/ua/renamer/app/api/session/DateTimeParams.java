@@ -1,28 +1,29 @@
 package ua.renamer.app.api.session;
 
-import java.time.LocalDateTime;
 import ua.renamer.app.api.enums.DateFormat;
 import ua.renamer.app.api.enums.DateTimeSource;
 import ua.renamer.app.api.enums.ItemPositionWithReplacement;
 import ua.renamer.app.api.enums.TimeFormat;
 import ua.renamer.app.api.model.TransformationMode;
 
+import java.time.LocalDateTime;
+
 /**
  * Parameters for the {@link TransformationMode#USE_DATETIME} transformation mode.
  * Configures how date and/or time values are extracted from a source and embedded in the filename.
  *
- * @param source                    the origin of the date/time value; must not be null
- * @param dateFormat                the format pattern for the date portion; required when {@code useDatePart} is true
- * @param timeFormat                the format pattern for the time portion; required when {@code useTimePart} is true
- * @param position                  where the formatted date/time is inserted or used as replacement; must not be null
- * @param useDatePart               {@code true} to include the date portion in the output
- * @param useTimePart               {@code true} to include the time portion in the output
- * @param applyToExtension          {@code true} to also apply the transformation to the file extension
- * @param useFallbackDateTime       {@code true} to use a fallback date/time when the source value is unavailable
+ * @param source                      the origin of the date/time value; must not be null
+ * @param dateFormat                  the format pattern for the date portion; required when {@code useDatePart} is true
+ * @param timeFormat                  the format pattern for the time portion; required when {@code useTimePart} is true
+ * @param position                    where the formatted date/time is inserted or used as replacement; must not be null
+ * @param useDatePart                 {@code true} to include the date portion in the output
+ * @param useTimePart                 {@code true} to include the time portion in the output
+ * @param applyToExtension            {@code true} to also apply the transformation to the file extension
+ * @param useFallbackDateTime         {@code true} to use a fallback date/time when the source value is unavailable
  * @param useCustomDateTimeAsFallback {@code true} to use {@code customDateTime} as the fallback value
- * @param customDateTime            the custom date/time to use when {@code source} is {@link DateTimeSource#CUSTOM_DATE}
- *                                  or as fallback; required when source is {@code CUSTOM_DATE}
- * @param useUppercaseForAmPm       {@code true} to render AM/PM markers in uppercase
+ * @param customDateTime              the custom date/time to use when {@code source} is {@link DateTimeSource#CUSTOM_DATE}
+ *                                    or as fallback; required when source is {@code CUSTOM_DATE}
+ * @param useUppercaseForAmPm         {@code true} to render AM/PM markers in uppercase
  */
 public record DateTimeParams(
         DateTimeSource source,

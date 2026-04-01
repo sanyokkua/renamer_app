@@ -25,44 +25,42 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  */
 class RenameSessionTest {
 
+    private static final FileModel FILE_A = fileModel("/tmp/a.txt", "a", "txt");
+    private static final FileModel FILE_B = fileModel("/tmp/b.txt", "b", "txt");
+
+    // -------------------------------------------------------------------------
+    // Shared fixture helpers
+    // -------------------------------------------------------------------------
+    private static final AddTextParams DEFAULT_PARAMS =
+            new AddTextParams("prefix_", ItemPosition.BEGIN);
     private RenameSession session;
+
+    private static FileModel fileModel(String absolutePath, String name, String extension) {
+        return FileModel.builder()
+                .withFile(new File(absolutePath))
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath(absolutePath)
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .build();
+    }
+
+    private static PreparedFileModel preparedModel(FileModel original) {
+        return PreparedFileModel.builder()
+                .withOriginalFile(original)
+                .withNewName(original.getName() + "_new")
+                .withNewExtension(original.getExtension())
+                .withHasError(false)
+                .withErrorMessage(null)
+                .withTransformationMeta(null)
+                .build();
+    }
 
     @BeforeEach
     void setUp() {
         session = new RenameSession();
     }
-
-    // -------------------------------------------------------------------------
-    // Shared fixture helpers
-    // -------------------------------------------------------------------------
-
-    private static FileModel fileModel(String absolutePath, String name, String extension) {
-        return FileModel.builder()
-                        .withFile(new File(absolutePath))
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath(absolutePath)
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .build();
-    }
-
-    private static PreparedFileModel preparedModel(FileModel original) {
-        return PreparedFileModel.builder()
-                                .withOriginalFile(original)
-                                .withNewName(original.getName() + "_new")
-                                .withNewExtension(original.getExtension())
-                                .withHasError(false)
-                                .withErrorMessage(null)
-                                .withTransformationMeta(null)
-                                .build();
-    }
-
-    private static final FileModel FILE_A = fileModel("/tmp/a.txt", "a", "txt");
-    private static final FileModel FILE_B = fileModel("/tmp/b.txt", "b", "txt");
-
-    private static final AddTextParams DEFAULT_PARAMS =
-            new AddTextParams("prefix_", ItemPosition.BEGIN);
 
     // =========================================================================
     // Initial state

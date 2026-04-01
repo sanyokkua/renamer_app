@@ -3,8 +3,11 @@ package ua.renamer.app.core.v2.service.impl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -38,19 +41,19 @@ class DuplicateNameResolverImplTest {
      */
     private FileModel createTestFileModel(String name, String extension, String path) {
         return FileModel.builder()
-                        .withFile(new File(path))
-                        .withIsFile(true)
-                        .withFileSize(1024L)
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath(path)
-                        .withCreationDate(LocalDateTime.now().minusDays(1))
-                        .withModificationDate(LocalDateTime.now())
-                        .withDetectedMimeType("text/plain")
-                        .withDetectedExtensions(Collections.emptySet())
-                        .withCategory(Category.GENERIC)
-                        .withMetadata(null)
-                        .build();
+                .withFile(new File(path))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath(path)
+                .withCreationDate(LocalDateTime.now().minusDays(1))
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 
     /**
@@ -62,17 +65,17 @@ class DuplicateNameResolverImplTest {
         FileModel fileModel = createTestFileModel(oldName, oldExt, path);
 
         return PreparedFileModel.builder()
-                                .withOriginalFile(fileModel)
-                                .withNewName(newName)
-                                .withNewExtension(newExt)
-                                .withHasError(false)
-                                .withErrorMessage(null)
-                                .withTransformationMeta(TransformationMetadata.builder()
-                                                                              .withMode(TransformationMode.ADD_TEXT)
-                                                                              .withAppliedAt(LocalDateTime.now())
-                                                                              .withConfig(Map.of("test", "data"))
-                                                                              .build())
-                                .build();
+                .withOriginalFile(fileModel)
+                .withNewName(newName)
+                .withNewExtension(newExt)
+                .withHasError(false)
+                .withErrorMessage(null)
+                .withTransformationMeta(TransformationMetadata.builder()
+                        .withMode(TransformationMode.ADD_TEXT)
+                        .withAppliedAt(LocalDateTime.now())
+                        .withConfig(Map.of("test", "data"))
+                        .build())
+                .build();
     }
 
     /**
@@ -84,13 +87,13 @@ class DuplicateNameResolverImplTest {
         FileModel fileModel = createTestFileModel(oldName, oldExt, path);
 
         return PreparedFileModel.builder()
-                                .withOriginalFile(fileModel)
-                                .withNewName(newName)
-                                .withNewExtension(newExt)
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(fileModel)
+                .withNewName(newName)
+                .withNewExtension(newExt)
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 
     // ============================================================================
@@ -226,7 +229,7 @@ class DuplicateNameResolverImplTest {
         List<PreparedFileModel> models = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             models.add(createPreparedFile("old" + i, "txt", "file", "txt",
-                                          "/test/old" + i + ".txt"));
+                    "/test/old" + i + ".txt"));
         }
 
         // When
@@ -253,7 +256,7 @@ class DuplicateNameResolverImplTest {
         List<PreparedFileModel> models = new ArrayList<>();
         for (int i = 0; i <= 100; i++) {
             models.add(createPreparedFile("old" + i, "txt", "file", "txt",
-                                          "/test/old" + i + ".txt"));
+                    "/test/old" + i + ".txt"));
         }
 
         // When
@@ -412,7 +415,7 @@ class DuplicateNameResolverImplTest {
         List<PreparedFileModel> models = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
             models.add(createPreparedFile("old" + i, "txt", "file", "txt",
-                                          "/test/old" + i + ".txt"));
+                    "/test/old" + i + ".txt"));
         }
 
         // When
@@ -431,7 +434,7 @@ class DuplicateNameResolverImplTest {
         List<PreparedFileModel> models = new ArrayList<>();
         for (int i = 0; i < 150; i++) {
             models.add(createPreparedFile("old" + i, "txt", "file", "txt",
-                                          "/test/old" + i + ".txt"));
+                    "/test/old" + i + ".txt"));
         }
 
         // When
@@ -646,8 +649,8 @@ class DuplicateNameResolverImplTest {
 
     private PreparedFileModel findByPath(List<PreparedFileModel> models, String path) {
         return models.stream()
-                     .filter(m -> m.getOriginalFile().getAbsolutePath().equals(path))
-                     .findFirst()
-                     .orElseThrow(() -> new AssertionError("File not found: " + path));
+                .filter(m -> m.getOriginalFile().getAbsolutePath().equals(path))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("File not found: " + path));
     }
 }

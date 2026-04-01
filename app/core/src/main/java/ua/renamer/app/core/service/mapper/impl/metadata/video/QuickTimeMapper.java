@@ -31,17 +31,17 @@ public class QuickTimeMapper extends VideoBaseMapper {
     @Override
     protected List<Class<? extends Directory>> getAvailableDirectories() {
         return List.of(QuickTimeDirectory.class,
-                       QuickTimeMediaDirectory.class,
-                       QuickTimeVideoDirectory.class,
-                       Mp4VideoDirectory.class,
-                       Mp4MediaDirectory.class);
+                QuickTimeMediaDirectory.class,
+                QuickTimeVideoDirectory.class,
+                Mp4VideoDirectory.class,
+                Mp4MediaDirectory.class);
     }
 
     @Override
     protected List<Integer> getContentCreationTags() {
         return List.of(QuickTimeDirectory.TAG_CREATION_TIME,
-                       QuickTimeDirectory.TAG_MODIFICATION_TIME,
-                       Mp4MediaDirectory.TAG_CREATION_TIME);
+                QuickTimeDirectory.TAG_MODIFICATION_TIME,
+                Mp4MediaDirectory.TAG_CREATION_TIME);
     }
 
     @Override

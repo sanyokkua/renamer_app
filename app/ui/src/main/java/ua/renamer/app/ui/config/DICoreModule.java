@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import ua.renamer.app.core.config.DIV2ServiceModule;
-import ua.renamer.app.metadata.config.DIMetadataModule;
 import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
 import ua.renamer.app.core.model.RenameModel;
@@ -32,6 +31,7 @@ import ua.renamer.app.core.service.mapper.impl.metadata.video.AviMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.video.Mp4Mapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.video.QuickTimeMapper;
 import ua.renamer.app.core.service.validator.impl.NameValidator;
+import ua.renamer.app.metadata.config.DIMetadataModule;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 
 import java.io.File;
@@ -140,22 +140,22 @@ public class DICoreModule extends AbstractModule {
         wavMapper.setNext(webPmapper);
 
         var allMappers = List.of(nullMapper,
-                                 aviMapper,
-                                 bmpMapper,
-                                 epsMapper,
-                                 gifMapper,
-                                 heifMapper,
-                                 icoMapper,
-                                 jpegMapper,
-                                 mp3Mapper,
-                                 mp4Mapper,
-                                 pcxMapper,
-                                 pngMapper,
-                                 psdMapper,
-                                 quickTimeMapper,
-                                 tiffMapper,
-                                 wavMapper,
-                                 webPmapper);
+                aviMapper,
+                bmpMapper,
+                epsMapper,
+                gifMapper,
+                heifMapper,
+                icoMapper,
+                jpegMapper,
+                mp3Mapper,
+                mp4Mapper,
+                pcxMapper,
+                pngMapper,
+                psdMapper,
+                quickTimeMapper,
+                tiffMapper,
+                wavMapper,
+                webPmapper);
 
         var reserveMapper = new LastReserveMapper(filesOperations) {
             // In the case if metadata was parsed incorrectly, this will be slow, but a try to parse by all mappers
@@ -178,8 +178,8 @@ public class DICoreModule extends AbstractModule {
         webPmapper.setNext(reserveMapper);
 
         var supportedExtensions = allMappers.stream()
-                                            .flatMap(v -> v.getSupportedExtensions().stream())
-                                            .collect(Collectors.joining(","));
+                .flatMap(v -> v.getSupportedExtensions().stream())
+                .collect(Collectors.joining(","));
         log.info("Supported extensions: {}", supportedExtensions);
         return nullMapper;
     }

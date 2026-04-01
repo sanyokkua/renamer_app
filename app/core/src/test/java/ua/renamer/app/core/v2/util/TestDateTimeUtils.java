@@ -168,8 +168,8 @@ public class TestDateTimeUtils implements DateTimeUtils {
             return null;
         }
         return Arrays.stream(values)
-                     .filter(Objects::nonNull)
-                     .min(LocalDateTime::compareTo)
-                     .orElse(null);
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
     }
 }

@@ -37,9 +37,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFilesWithNames("doc1.txt", "doc2.txt", "doc3.txt");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("DRAFT_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("DRAFT_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -63,9 +63,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("photo", "jpg", 5);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("_edited")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("_edited")
+                .withPosition(ItemPosition.END)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -95,9 +95,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("OLD_")
-                                                  .withPosition(ItemPosition.BEGIN)
-                                                  .build();
+                .withTextToRemove("OLD_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -125,9 +125,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         RemoveTextConfig config = RemoveTextConfig.builder()
-                                                  .withTextToRemove("_backup")
-                                                  .withPosition(ItemPosition.END)
-                                                  .build();
+                .withTextToRemove("_backup")
+                .withPosition(ItemPosition.END)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -155,10 +155,10 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         ReplaceTextConfig config = ReplaceTextConfig.builder()
-                                                    .withTextToReplace("old")
-                                                    .withReplacementText("new")
-                                                    .withPosition(ItemPositionExtended.EVERYWHERE)
-                                                    .build();
+                .withTextToReplace("old")
+                .withReplacementText("new")
+                .withPosition(ItemPositionExtended.EVERYWHERE)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -183,10 +183,10 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         ReplaceTextConfig config = ReplaceTextConfig.builder()
-                                                    .withTextToReplace("temp")
-                                                    .withReplacementText("final")
-                                                    .withPosition(ItemPositionExtended.BEGIN)
-                                                    .build();
+                .withTextToReplace("temp")
+                .withReplacementText("final")
+                .withPosition(ItemPositionExtended.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -211,9 +211,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.UPPERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.UPPERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -234,9 +234,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(TextCaseOptions.LOWERCASE)
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
+                .withCaseOption(TextCaseOptions.LOWERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -260,11 +260,11 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -289,11 +289,11 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("item", "dat", 5);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(100)
-                                              .withStepValue(5)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(100)
+                .withStepValue(5)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -323,8 +323,8 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("md")
-                                                            .build();
+                .withNewExtension("md")
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -362,10 +362,10 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = List.of(file1, file2, file3);
 
         ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(1)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
+                .withNumberOfParentFolders(1)
+                .withPosition(ItemPosition.BEGIN)
+                .withSeparator("_")
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -393,9 +393,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(10)
-                                              .withTruncateOption(ua.renamer.app.api.enums.TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
-                                              .build();
+                .withNumberOfSymbols(10)
+                .withTruncateOption(ua.renamer.app.api.enums.TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -415,9 +415,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("async", "txt", 10);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("ASYNC_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("ASYNC_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         CompletableFuture<List<RenameResult>> future = orchestrator.executeAsync(
                 files,
@@ -449,9 +449,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("progress", "txt", 20);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("TEST_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("TEST_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Reset progress counters
         progressCurrent.set(0);
@@ -470,7 +470,7 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         // Verify progress callback was called
         assertTrue(progressMax.get() > 0, "Progress max should be set");
         log.info("Progress callback received: current={}, max={}",
-                 progressCurrent.get(), progressMax.get());
+                progressCurrent.get(), progressMax.get());
     }
 
     @Test
@@ -478,9 +478,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("nullcb", "txt", 5);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("TEST_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("TEST_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Execute with null callback (should not throw NPE)
         List<RenameResult> results = orchestrator.execute(
@@ -505,9 +505,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> allFiles = List.of(realFiles.get(0), fakeFile, realFiles.get(1));
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("PREFIX_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("PREFIX_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 allFiles,
@@ -521,8 +521,8 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         // Count successes and failures
         long successCount = results.stream().filter(RenameResult::isSuccess).count();
         long errorCount = results.stream()
-                                 .filter(r -> !r.isSuccess())
-                                 .count();
+                .filter(r -> !r.isSuccess())
+                .count();
 
         assertEquals(2, successCount);
         assertEquals(1, errorCount);
@@ -540,9 +540,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFilesWithNames("before1.txt", "before2.txt");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("after_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("after_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Record original file state
         String originalPath1 = files.get(0).getAbsolutePath();
@@ -574,9 +574,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("meta", "txt", 3);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("TEST_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("TEST_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -610,9 +610,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         File nonExistent = tempDir.resolve("missing.txt").toFile();
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("TEST_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("TEST_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results1 = orchestrator.execute(
                 List.of(nonExistent),
@@ -648,11 +648,11 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
         List<File> files = createTestFiles("bulk", "dat", 100);
 
         SequenceConfig config = SequenceConfig.builder()
-                                              .withStartNumber(1)
-                                              .withStepValue(1)
-                                              .withPadding(3)
-                                              .withSortSource(SortSource.FILE_NAME)
-                                              .build();
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
 
         log.info("Executing full pipeline on 100 files...");
         List<RenameResult> results = orchestrator.execute(
@@ -695,9 +695,9 @@ class FullPipelineIntegrationTest extends BaseTransformationIntegrationTest {
 
         // Step 2: Apply transformation
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("FINAL_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("FINAL_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,

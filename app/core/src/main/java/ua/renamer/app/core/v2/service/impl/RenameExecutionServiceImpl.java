@@ -38,22 +38,22 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
                     : RenameStatus.SKIPPED;
 
             return RenameResult.builder()
-                               .withPreparedFile(preparedFile)
-                               .withStatus(status)
-                               .withErrorMessage(preparedFile.getErrorMessage().orElse(null))
-                               .withExecutedAt(LocalDateTime.now())
-                               .build();
+                    .withPreparedFile(preparedFile)
+                    .withStatus(status)
+                    .withErrorMessage(preparedFile.getErrorMessage().orElse(null))
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
         }
 
         // Skip if no rename needed
         if (!preparedFile.needsRename()) {
             log.debug("Skipping file (same name): {}", preparedFile.getOldFullName());
             return RenameResult.builder()
-                               .withPreparedFile(preparedFile)
-                               .withStatus(RenameStatus.SKIPPED)
-                               .withErrorMessage("Same name, no rename needed")
-                               .withExecutedAt(LocalDateTime.now())
-                               .build();
+                    .withPreparedFile(preparedFile)
+                    .withStatus(RenameStatus.SKIPPED)
+                    .withErrorMessage("Same name, no rename needed")
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
         }
 
         // Execute physical rename
@@ -66,11 +66,11 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
             // Check if source file exists
             if (!Files.exists(oldPath)) {
                 return RenameResult.builder()
-                                   .withPreparedFile(preparedFile)
-                                   .withStatus(RenameStatus.ERROR_EXECUTION)
-                                   .withErrorMessage("Source file does not exist")
-                                   .withExecutedAt(LocalDateTime.now())
-                                   .build();
+                        .withPreparedFile(preparedFile)
+                        .withStatus(RenameStatus.ERROR_EXECUTION)
+                        .withErrorMessage("Source file does not exist")
+                        .withExecutedAt(LocalDateTime.now())
+                        .build();
             }
 
             var isCaseChange = oldPath.toAbsolutePath().toString().equalsIgnoreCase(newPath.toAbsolutePath().toString());
@@ -80,11 +80,11 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
                 Path resolvedPath = resolveConflictWithDisk(newPath);
                 if (resolvedPath == null) {
                     return RenameResult.builder()
-                                       .withPreparedFile(preparedFile)
-                                       .withStatus(RenameStatus.ERROR_EXECUTION)
-                                       .withErrorMessage("Target file already exists and all suffix attempts are exhausted: " + newPath.getFileName())
-                                       .withExecutedAt(LocalDateTime.now())
-                                       .build();
+                            .withPreparedFile(preparedFile)
+                            .withStatus(RenameStatus.ERROR_EXECUTION)
+                            .withErrorMessage("Target file already exists and all suffix attempts are exhausted: " + newPath.getFileName())
+                            .withExecutedAt(LocalDateTime.now())
+                            .build();
                 }
                 newPath = resolvedPath; // May be original path (no conflict) or suffixed path
             }
@@ -94,11 +94,11 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
             if (!nameValidator.isValid(finalName)) {
                 log.warn("Generated filename contains invalid characters: {}", finalName);
                 return RenameResult.builder()
-                                   .withPreparedFile(preparedFile)
-                                   .withStatus(RenameStatus.ERROR_TRANSFORMATION)
-                                   .withErrorMessage("Generated filename contains invalid characters: " + finalName)
-                                   .withExecutedAt(LocalDateTime.now())
-                                   .build();
+                        .withPreparedFile(preparedFile)
+                        .withStatus(RenameStatus.ERROR_TRANSFORMATION)
+                        .withErrorMessage("Generated filename contains invalid characters: " + finalName)
+                        .withExecutedAt(LocalDateTime.now())
+                        .build();
             }
 
             // Perform rename
@@ -108,44 +108,44 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
                 boolean success = oldFile.renameTo(newPath.toFile());
                 if (!success) {
                     return RenameResult.builder()
-                                       .withPreparedFile(preparedFile)
-                                       .withStatus(RenameStatus.ERROR_EXECUTION)
-                                       .withErrorMessage("File renaming failed: " + newPath.getFileName())
-                                       .withExecutedAt(LocalDateTime.now())
-                                       .build();
+                            .withPreparedFile(preparedFile)
+                            .withStatus(RenameStatus.ERROR_EXECUTION)
+                            .withErrorMessage("File renaming failed: " + newPath.getFileName())
+                            .withExecutedAt(LocalDateTime.now())
+                            .build();
                 }
             } else {
                 Files.move(oldPath, newPath);
             }
 
             log.info("Successfully renamed: {} -> {}",
-                     oldPath.getFileName(), newPath.getFileName());
+                    oldPath.getFileName(), newPath.getFileName());
 
             return RenameResult.builder()
-                               .withPreparedFile(preparedFile)
-                               .withStatus(RenameStatus.SUCCESS)
-                               .withErrorMessage(null)
-                               .withExecutedAt(LocalDateTime.now())
-                               .build();
+                    .withPreparedFile(preparedFile)
+                    .withStatus(RenameStatus.SUCCESS)
+                    .withErrorMessage(null)
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
 
         } catch (IOException e) {
             log.error("Failed to rename file: {}", preparedFile.getOldPath(), e);
 
             return RenameResult.builder()
-                               .withPreparedFile(preparedFile)
-                               .withStatus(RenameStatus.ERROR_EXECUTION)
-                               .withErrorMessage("I/O error: " + e.getMessage())
-                               .withExecutedAt(LocalDateTime.now())
-                               .build();
+                    .withPreparedFile(preparedFile)
+                    .withStatus(RenameStatus.ERROR_EXECUTION)
+                    .withErrorMessage("I/O error: " + e.getMessage())
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
         } catch (Exception e) {
             log.error("Unexpected error during rename: {}", preparedFile.getOldPath(), e);
 
             return RenameResult.builder()
-                               .withPreparedFile(preparedFile)
-                               .withStatus(RenameStatus.ERROR_EXECUTION)
-                               .withErrorMessage("Unexpected error: " + e.getMessage())
-                               .withExecutedAt(LocalDateTime.now())
-                               .build();
+                    .withPreparedFile(preparedFile)
+                    .withStatus(RenameStatus.ERROR_EXECUTION)
+                    .withErrorMessage("Unexpected error: " + e.getMessage())
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
         }
     }
 
@@ -164,13 +164,13 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
         String fullName = targetPath.getFileName().toString();
         int dotIndex = fullName.lastIndexOf('.');
         String baseName = (dotIndex > 0) ? fullName.substring(0, dotIndex) : fullName;
-        String ext      = (dotIndex > 0) ? fullName.substring(dotIndex)    : "";
-        Path   parent   = targetPath.getParent();
-        int    digits   = String.valueOf(MAX_SUFFIX_ATTEMPTS).length(); // 3
+        String ext = (dotIndex > 0) ? fullName.substring(dotIndex) : "";
+        Path parent = targetPath.getParent();
+        int digits = String.valueOf(MAX_SUFFIX_ATTEMPTS).length(); // 3
 
         for (int i = 1; i <= MAX_SUFFIX_ATTEMPTS; i++) {
-            String suffix    = String.format(" (%0" + digits + "d)", i);
-            Path   candidate = parent.resolve(baseName + suffix + ext);
+            String suffix = String.format(" (%0" + digits + "d)", i);
+            Path candidate = parent.resolve(baseName + suffix + ext);
             if (!Files.exists(candidate)) {
                 return candidate;
             }

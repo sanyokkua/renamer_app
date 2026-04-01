@@ -124,8 +124,8 @@ class SessionSnapshotTest {
 
     @Test
     void equality_whenSameFields_thenSnapshotsAreEqual() {
-        var files  = List.of(candidate("f1"));
-        var prevs  = List.of(preview("f1"));
+        var files = List.of(candidate("f1"));
+        var prevs = List.of(preview("f1"));
         var params = defaultParams();
         var a = new SessionSnapshot(files, TransformationMode.ADD_TEXT, params, prevs, SessionStatus.MODE_CONFIGURED);
         var b = new SessionSnapshot(files, TransformationMode.ADD_TEXT, params, prevs, SessionStatus.MODE_CONFIGURED);

@@ -48,7 +48,6 @@ public class ParentFoldersPrepareInformationCommand extends FileInformationComma
      * based on the specified options and positions.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new file name.
      */
     @Override

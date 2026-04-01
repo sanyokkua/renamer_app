@@ -13,22 +13,34 @@ import java.util.Optional;
 @Value
 @Builder(setterPrefix = "with", toBuilder = true)
 public class PreparedFileModel {
-    /** Original file model with metadata. */
+    /**
+     * Original file model with metadata.
+     */
     FileModel originalFile;
 
-    /** Calculated new name (without extension). */
+    /**
+     * Calculated new name (without extension).
+     */
     String newName;
 
-    /** Calculated new extension (without dot). */
+    /**
+     * Calculated new extension (without dot).
+     */
     String newExtension;
 
-    /** Whether an error occurred during transformation. */
+    /**
+     * Whether an error occurred during transformation.
+     */
     boolean hasError;
 
-    /** Error message if transformation failed. */
+    /**
+     * Error message if transformation failed.
+     */
     String errorMessage;
 
-    /** Metadata about the transformation that was applied. */
+    /**
+     * Metadata about the transformation that was applied.
+     */
     TransformationMetadata transformationMeta;
 
     /**

@@ -72,7 +72,7 @@ class CommonFileUtilsTest {
         Path invalidPath = tempDir.resolve("non_existent.txt");
 
         assertThrows(FileAttributesReadException.class,
-                     () -> fileUtils.getBasicFileAttributes(invalidPath));
+                () -> fileUtils.getBasicFileAttributes(invalidPath));
     }
 
     @Test
@@ -223,7 +223,7 @@ class CommonFileUtilsTest {
         Path nonExistent = tempDir.resolve("non_existent.txt");
 
         assertThrows(MimeTypeNotFoundException.class,
-                     () -> fileUtils.getFileMimeType(nonExistent));
+                () -> fileUtils.getFileMimeType(nonExistent));
     }
 
     // ============================================================================

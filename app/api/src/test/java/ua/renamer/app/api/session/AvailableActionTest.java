@@ -58,11 +58,11 @@ class AvailableActionTest {
 
     @Test
     void eachConstant_isSameInstance_whenRetrievedTwice() {
-        assertSame(AvailableAction.ADD_FILES,    AvailableAction.valueOf("ADD_FILES"));
+        assertSame(AvailableAction.ADD_FILES, AvailableAction.valueOf("ADD_FILES"));
         assertSame(AvailableAction.REMOVE_FILES, AvailableAction.valueOf("REMOVE_FILES"));
-        assertSame(AvailableAction.CLEAR,        AvailableAction.valueOf("CLEAR"));
-        assertSame(AvailableAction.SELECT_MODE,  AvailableAction.valueOf("SELECT_MODE"));
-        assertSame(AvailableAction.EXECUTE,      AvailableAction.valueOf("EXECUTE"));
-        assertSame(AvailableAction.CANCEL,       AvailableAction.valueOf("CANCEL"));
+        assertSame(AvailableAction.CLEAR, AvailableAction.valueOf("CLEAR"));
+        assertSame(AvailableAction.SELECT_MODE, AvailableAction.valueOf("SELECT_MODE"));
+        assertSame(AvailableAction.EXECUTE, AvailableAction.valueOf("EXECUTE"));
+        assertSame(AvailableAction.CANCEL, AvailableAction.valueOf("CANCEL"));
     }
 }

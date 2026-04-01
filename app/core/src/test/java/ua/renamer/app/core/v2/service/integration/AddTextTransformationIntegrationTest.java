@@ -31,9 +31,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
 
         // Configure transformation: add "NEW_" prefix
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("NEW_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("NEW_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Execute
         List<RenameResult> results = orchestrator.execute(
@@ -63,9 +63,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
 
         // Configure transformation
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("PREFIX_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("PREFIX_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         // Execute
         List<RenameResult> results = orchestrator.execute(
@@ -96,9 +96,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         List<File> files = createTestFilesWithNames("001.txt", "002.txt", "003.txt");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("file_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("file_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -120,9 +120,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         File file = createTestFile("report.pdf");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("_final")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("_final")
+                .withPosition(ItemPosition.END)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
@@ -144,9 +144,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         List<File> files = createTestFiles("image", "jpg", 5);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("_backup")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("_backup")
+                .withPosition(ItemPosition.END)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -173,9 +173,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
 
         // Test with special characters: parentheses, brackets, dashes
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("[2026-02-12]_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("[2026-02-12]_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -196,9 +196,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         File file = createTestFile("document.docx");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("Draft Version ")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("Draft Version ")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
@@ -216,9 +216,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         List<File> files = createTestFilesWithNames("file1.txt", "file2.txt");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("_v2")
-                                            .withPosition(ItemPosition.END)
-                                            .build();
+                .withTextToAdd("_v2")
+                .withPosition(ItemPosition.END)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -240,9 +240,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
 
         // Test with Unicode: Japanese, emoji, Cyrillic
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("日本語_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("日本語_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -263,9 +263,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         File file = createTestFile("file.txt");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("Документ_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("Документ_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
@@ -283,9 +283,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         File file = createTestFile("photo.jpg");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("📷_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("📷_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
@@ -306,9 +306,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         File file = createTestFile("original.txt");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
@@ -332,9 +332,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         List<File> files = createTestFiles("file", "txt", 5);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("test_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("test_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -357,9 +357,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         List<File> files = createTestFiles("item", "dat", 50);
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("processed_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("processed_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -390,9 +390,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         );
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("archive_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("archive_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,
@@ -417,9 +417,9 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
         List<File> files = createTestFilesWithNames("README", "LICENSE", "Makefile");
 
         AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("OLD_")
-                                            .withPosition(ItemPosition.BEGIN)
-                                            .build();
+                .withTextToAdd("OLD_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
 
         List<RenameResult> results = orchestrator.execute(
                 files,

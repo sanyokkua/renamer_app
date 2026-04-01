@@ -34,7 +34,6 @@ public class ChangeCasePreparePrepareInformationCommand extends FileInformationC
      * based on the specified {@link TextCaseOptions} and optionally capitalizing it.
      *
      * @param item the {@link FileInformation} item to be processed.
-     *
      * @return the processed {@link FileInformation} item with the new file name.
      */
     @Override

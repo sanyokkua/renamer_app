@@ -74,13 +74,13 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
             };
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to add dimensions to file: {}", input.getName(), e);
@@ -115,26 +115,26 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
 
     private TransformationMetadata buildMetadata(ImageDimensionsConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.USE_IMAGE_DIMENSIONS)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "leftSide", config.getLeftSide().name(),
-                                             "rightSide", config.getRightSide().name(),
-                                             "separator", config.getSeparator(),
-                                             "position", config.getPosition().name(),
-                                             "nameSeparator", config.getNameSeparator()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.USE_IMAGE_DIMENSIONS)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "leftSide", config.getLeftSide().name(),
+                        "rightSide", config.getRightSide().name(),
+                        "separator", config.getSeparator(),
+                        "position", config.getPosition().name(),
+                        "nameSeparator", config.getNameSeparator()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

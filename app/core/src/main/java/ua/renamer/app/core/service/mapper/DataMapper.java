@@ -12,7 +12,6 @@ public interface DataMapper<I, O> {
      * Maps the given input of type I to an output of type O.
      *
      * @param input the input data to be mapped
-     *
      * @return the mapped output data
      */
     O map(I input);

@@ -51,10 +51,10 @@ public enum MimeTypes {
         }
         try {
             return Arrays.stream(MimeTypes.values())
-                         .filter(mime -> mime.getMime().equals(mimeString))
-                         .findFirst()
-                         .map(MimeTypes::getExtensions)
-                         .orElse(Set.of());
+                    .filter(mime -> mime.getMime().equals(mimeString))
+                    .findFirst()
+                    .map(MimeTypes::getExtensions)
+                    .orElse(Set.of());
         } catch (IllegalArgumentException ex) {
             return Set.of();
         }

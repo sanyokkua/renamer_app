@@ -16,7 +16,6 @@ public class TextUtils {
      * Checks if a given string is empty or null.
      *
      * @param input the string to check
-     *
      * @return true if the string is null or empty, false otherwise
      */
     public static boolean isEmpty(final String input) {
@@ -27,7 +26,6 @@ public class TextUtils {
      * Capitalizes the first letter of the given word and converts the rest of the letters to lowercase.
      *
      * @param word the word to capitalize
-     *
      * @return the capitalized word, or the original word if it is empty or null
      */
     public static String capitalize(final String word) {
@@ -48,7 +46,6 @@ public class TextUtils {
      *
      * @param name the file name
      * @param ext  the file extension
-     *
      * @return the full file name (e.g., "fileName.ext")
      */
     public static String getFileNewFullName(String name, String ext) {

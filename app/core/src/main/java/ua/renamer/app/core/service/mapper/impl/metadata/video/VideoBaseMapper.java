@@ -27,6 +27,26 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
         this.dateTimeOperations = dateTimeOperations;
     }
 
+    private static List<String> findStringValues(List<? extends Directory> directories, List<Integer> tags) {
+        return tags.stream()
+                .filter(Objects::nonNull)
+                .flatMap(tag -> directories.stream()
+                        .filter(Objects::nonNull)
+                        .map(dir -> dir.getString(tag))
+                        .filter(Objects::nonNull))
+                .toList();
+    }
+
+    private static List<Integer> findIntegerValues(List<? extends Directory> directories, List<Integer> tags) {
+        return tags.stream()
+                .filter(Objects::nonNull)
+                .flatMap(tag -> directories.stream()
+                        .filter(Objects::nonNull)
+                        .map(dir -> dir.getInteger(tag))
+                        .filter(Objects::nonNull))
+                .toList();
+    }
+
     @Override
     public FileInformationMetadata process(File input) {
         var directories = getDirectories(input);
@@ -40,10 +60,10 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
         }
 
         return FileInformationMetadata.builder()
-                                      .creationDate(dateTime.orElse(null))
-                                      .imgVidWidth(width.orElse(null))
-                                      .imgVidHeight(height.orElse(null))
-                                      .build();
+                .creationDate(dateTime.orElse(null))
+                .imgVidWidth(width.orElse(null))
+                .imgVidHeight(height.orElse(null))
+                .build();
     }
 
     private List<? extends Directory> getDirectories(File input) {
@@ -51,10 +71,10 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
             Metadata metadata = ImageMetadataReader.readMetadata(input);
             var directoryClasses = getAvailableDirectories();
             return directoryClasses.stream()
-                                   .filter(Objects::nonNull)
-                                   .map(metadata::getFirstDirectoryOfType)
-                                   .filter(Objects::nonNull)
-                                   .toList();
+                    .filter(Objects::nonNull)
+                    .map(metadata::getFirstDirectoryOfType)
+                    .filter(Objects::nonNull)
+                    .toList();
         } catch (ImageProcessingException | IOException e) {
             log.warn("Failed to create Metadata", e);
             return List.of();
@@ -66,9 +86,9 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
         var result = findStringValues(directories, tags);
 
         return result.stream()
-                     .map(dateTimeOperations::parseDateTimeString)
-                     .filter(Objects::nonNull)
-                     .min(LocalDateTime::compareTo);
+                .map(dateTimeOperations::parseDateTimeString)
+                .filter(Objects::nonNull)
+                .min(LocalDateTime::compareTo);
     }
 
     private Optional<Integer> extractVideoWidth(List<? extends Directory> directories) {
@@ -89,27 +109,7 @@ public abstract class VideoBaseMapper extends FileToMetadataMapper {
 
     protected abstract List<Integer> getContentCreationTags();
 
-    private static List<String> findStringValues(List<? extends Directory> directories, List<Integer> tags) {
-        return tags.stream()
-                   .filter(Objects::nonNull)
-                   .flatMap(tag -> directories.stream()
-                                              .filter(Objects::nonNull)
-                                              .map(dir -> dir.getString(tag))
-                                              .filter(Objects::nonNull))
-                   .toList();
-    }
-
     protected abstract List<Integer> getVideoWidthTags();
-
-    private static List<Integer> findIntegerValues(List<? extends Directory> directories, List<Integer> tags) {
-        return tags.stream()
-                   .filter(Objects::nonNull)
-                   .flatMap(tag -> directories.stream()
-                                              .filter(Objects::nonNull)
-                                              .map(dir -> dir.getInteger(tag))
-                                              .filter(Objects::nonNull))
-                   .toList();
-    }
 
     protected abstract List<Integer> getVideoHeightTags();
 

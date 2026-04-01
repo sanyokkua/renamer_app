@@ -42,18 +42,18 @@ class RemoveTextPrepareInformationCommandTest extends BaseRenamePreparationComma
         // Prepare Test Data
         var fileInfoMeta = FileInformationMetadata.builder().build();
         var fileInfo = FileInformation.builder()
-                                      .originalFile(new File(TEST_DEFAULT_FILE_PATH))
-                                      .fileAbsolutePath(TEST_ABSOLUTE_PATH)
-                                      .isFile(TEST_IS_FILE)
-                                      .fileName(originalName)
-                                      .newName(originalName)
-                                      .fileExtension(TEST_FILE_EXTENSION)
-                                      .newExtension(TEST_FILE_EXTENSION)
-                                      .fileSize(TEST_FILE_SIZE)
-                                      .fsCreationDate(TEST_DEFAULT_TIME)
-                                      .fsModificationDate(TEST_DEFAULT_TIME)
-                                      .metadata(fileInfoMeta)
-                                      .build();
+                .originalFile(new File(TEST_DEFAULT_FILE_PATH))
+                .fileAbsolutePath(TEST_ABSOLUTE_PATH)
+                .isFile(TEST_IS_FILE)
+                .fileName(originalName)
+                .newName(originalName)
+                .fileExtension(TEST_FILE_EXTENSION)
+                .newExtension(TEST_FILE_EXTENSION)
+                .fileSize(TEST_FILE_SIZE)
+                .fsCreationDate(TEST_DEFAULT_TIME)
+                .fsModificationDate(TEST_DEFAULT_TIME)
+                .metadata(fileInfoMeta)
+                .build();
 
         List<FileInformation> inputList = List.of(fileInfo);
 

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ua.renamer.app.metadata.extractor.strategy.format.video.Mp4FileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.video.Mp4FileMetadataExtractor;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 
 import java.io.File;
@@ -169,7 +169,7 @@ class Mp4MetadataExtractorIntegrationTest {
             java.time.LocalDateTime dateTime = videoMeta.getContentCreationDate().get();
             // If present, should be a valid date (likely 1904 for clean files)
             assertTrue(dateTime.getYear() >= 1904 && dateTime.getYear() <= 2100,
-                       "If datetime present, should be in valid range");
+                    "If datetime present, should be in valid range");
         }
     }
 

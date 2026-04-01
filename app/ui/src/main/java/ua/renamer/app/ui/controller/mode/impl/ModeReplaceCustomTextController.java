@@ -39,13 +39,13 @@ public class ModeReplaceCustomTextController extends ModeBaseController {
     private void configTextToReplaceTextField() {
         log.info("configTextToReplaceTextField");
         textToReplaceTextField.textProperty()
-                              .addListener((observable, oldValue, newValue) -> this.handleTextToReplaceChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleTextToReplaceChanged(newValue));
     }
 
     private void configTextToAddTextField() {
         log.info("configTextToAddTextField");
         textToAddTextField.textProperty()
-                          .addListener((observable, oldValue, newValue) -> this.handleTextToAddChanged(newValue));
+                .addListener((observable, oldValue, newValue) -> this.handleTextToAddChanged(newValue));
     }
 
     private void handlePositionChanged(ItemPositionExtended itemPositionExtended) {
@@ -70,10 +70,10 @@ public class ModeReplaceCustomTextController extends ModeBaseController {
         var textToAdd = textToAddTextField.getText();
 
         var cmd = ReplaceTextPrepareInformationCommand.builder()
-                                                      .position(position)
-                                                      .textToReplace(textToReplace)
-                                                      .newValueToAdd(textToAdd)
-                                                      .build();
+                .position(position)
+                .textToReplace(textToReplace)
+                .newValueToAdd(textToAdd)
+                .build();
 
         log.debug("updateCommand(): {}", cmd);
         setCommand(cmd);

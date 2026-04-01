@@ -39,20 +39,20 @@ public class RemoveTextTransformer implements FileTransformationService<RemoveTe
                 case END -> {
                     if (input.getName().endsWith(config.getTextToRemove())) {
                         yield input.getName().substring(0,
-                                                        input.getName().length() - config.getTextToRemove().length());
+                                input.getName().length() - config.getTextToRemove().length());
                     }
                     yield input.getName();
                 }
             };
 
             return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
 
         } catch (Exception e) {
             log.error("Failed to remove text from file: {}", input.getName(), e);
@@ -62,23 +62,23 @@ public class RemoveTextTransformer implements FileTransformationService<RemoveTe
 
     private TransformationMetadata buildMetadata(RemoveTextConfig config) {
         return TransformationMetadata.builder()
-                                     .withMode(TransformationMode.REMOVE_TEXT)
-                                     .withAppliedAt(LocalDateTime.now())
-                                     .withConfig(Map.of(
-                                             "textToRemove", config.getTextToRemove(),
-                                             "position", config.getPosition().name()
-                                     ))
-                                     .build();
+                .withMode(TransformationMode.REMOVE_TEXT)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "textToRemove", config.getTextToRemove(),
+                        "position", config.getPosition().name()
+                ))
+                .build();
     }
 
     private PreparedFileModel buildErrorResult(FileModel input, String error) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(input)
-                                .withNewName(input.getName())
-                                .withNewExtension(input.getExtension())
-                                .withHasError(true)
-                                .withErrorMessage(error)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
     }
 }

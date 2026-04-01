@@ -3,9 +3,9 @@ package ua.renamer.app.metadata.extractor.strategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.AppMimeTypes;
-import ua.renamer.app.metadata.extractor.strategy.format.image.*;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.image.*;
 
 import java.io.File;
 
@@ -47,7 +47,7 @@ public class ImageFileMetadataExtractionExtractor implements FileMetadataExtract
             return gifFileMetadataExtractor.extract(file, mimeType);
         }
         if (AppMimeTypes.IMAGE_HEIC.getMime().equals(mimeType) ||
-            AppMimeTypes.IMAGE_HEIF.getMime().equals(mimeType)) {
+                AppMimeTypes.IMAGE_HEIF.getMime().equals(mimeType)) {
             return heifFileMetadataExtractor.extract(file, mimeType);
         }
         if (AppMimeTypes.IMAGE_X_ICON.getMime().equals(mimeType)) {

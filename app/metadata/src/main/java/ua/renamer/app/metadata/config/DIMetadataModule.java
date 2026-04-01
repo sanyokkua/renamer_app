@@ -2,6 +2,10 @@ package ua.renamer.app.metadata.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+import ua.renamer.app.api.interfaces.FileMetadataExtractorResolver;
+import ua.renamer.app.api.interfaces.FileMetadataMapper;
+import ua.renamer.app.api.interfaces.FileUtils;
 import ua.renamer.app.metadata.extractor.CategoryFileMetadataExtractorResolver;
 import ua.renamer.app.metadata.extractor.ThreadAwareFileMetadataMapper;
 import ua.renamer.app.metadata.extractor.strategy.AudioFileMetadataExtractor;
@@ -13,10 +17,6 @@ import ua.renamer.app.metadata.extractor.strategy.format.image.*;
 import ua.renamer.app.metadata.extractor.strategy.format.video.AviFileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.format.video.Mp4FileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.format.video.QuickTimeFileMetadataExtractor;
-import ua.renamer.app.api.interfaces.DateTimeUtils;
-import ua.renamer.app.api.interfaces.FileMetadataExtractorResolver;
-import ua.renamer.app.api.interfaces.FileMetadataMapper;
-import ua.renamer.app.api.interfaces.FileUtils;
 import ua.renamer.app.metadata.util.CommonFileUtils;
 import ua.renamer.app.metadata.util.DateTimeConverter;
 

@@ -27,39 +27,39 @@ class RenameSessionConverterTest {
 
     private static FileModel buildFileModel(String absolutePath, String name, String extension) {
         return FileModel.builder()
-                        .withFile(new File(absolutePath))
-                        .withName(name)
-                        .withExtension(extension)
-                        .withAbsolutePath(absolutePath)
-                        .withIsFile(true)
-                        .withFileSize(2048L)
-                        .build();
+                .withFile(new File(absolutePath))
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath(absolutePath)
+                .withIsFile(true)
+                .withFileSize(2048L)
+                .build();
     }
 
     private static PreparedFileModel buildPreparedModel(FileModel original,
-                                                         String newName,
-                                                         String newExtension,
-                                                         boolean hasError,
-                                                         String errorMessage) {
+                                                        String newName,
+                                                        String newExtension,
+                                                        boolean hasError,
+                                                        String errorMessage) {
         return PreparedFileModel.builder()
-                                .withOriginalFile(original)
-                                .withNewName(newName)
-                                .withNewExtension(newExtension)
-                                .withHasError(hasError)
-                                .withErrorMessage(errorMessage)
-                                .withTransformationMeta(null)
-                                .build();
+                .withOriginalFile(original)
+                .withNewName(newName)
+                .withNewExtension(newExtension)
+                .withHasError(hasError)
+                .withErrorMessage(errorMessage)
+                .withTransformationMeta(null)
+                .build();
     }
 
     private static RenameResult buildRenameResult(PreparedFileModel prepared,
-                                                   RenameStatus status,
-                                                   String errorMessage) {
+                                                  RenameStatus status,
+                                                  String errorMessage) {
         return RenameResult.builder()
-                           .withPreparedFile(prepared)
-                           .withStatus(status)
-                           .withErrorMessage(errorMessage)
-                           .withExecutedAt(LocalDateTime.of(2026, 1, 15, 10, 0))
-                           .build();
+                .withPreparedFile(prepared)
+                .withStatus(status)
+                .withErrorMessage(errorMessage)
+                .withExecutedAt(LocalDateTime.of(2026, 1, 15, 10, 0))
+                .build();
     }
 
     // =========================================================================
@@ -99,13 +99,13 @@ class RenameSessionConverterTest {
             // Arrange
             File file = new File("/tmp/video.mp4");
             FileModel model = FileModel.builder()
-                                       .withFile(file)
-                                       .withName("video")
-                                       .withExtension("mp4")
-                                       .withAbsolutePath("/tmp/video.mp4")
-                                       .withIsFile(true)
-                                       .withFileSize(512L)
-                                       .build();
+                    .withFile(file)
+                    .withName("video")
+                    .withExtension("mp4")
+                    .withAbsolutePath("/tmp/video.mp4")
+                    .withIsFile(true)
+                    .withFileSize(512L)
+                    .build();
 
             // Act
             RenameCandidate candidate = RenameSessionConverter.toCandidate(model);

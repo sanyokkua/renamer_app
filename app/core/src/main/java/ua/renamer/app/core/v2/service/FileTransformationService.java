@@ -32,8 +32,8 @@ public interface FileTransformationService<C> {
      */
     default List<PreparedFileModel> transformBatch(List<FileModel> inputs, C config) {
         return inputs.stream()
-                     .map(input -> transform(input, config))
-                     .toList();
+                .map(input -> transform(input, config))
+                .toList();
     }
 
     /**

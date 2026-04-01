@@ -62,18 +62,18 @@ public class RenameModelToHtmlMapper implements DataMapper<RenameModel, String> 
         var songYear = getIntegerOptional(renameModel, model -> model.getFileInformation().getMetadata().flatMap(FileInformationMetadata::getAudioYear));
         // @formatter:on
         var value = List.of(new TableItem(ABSOLUTE_PATH, absolutePath),
-                            new TableItem(FILE_NAME, fileName),
-                            new TableItem(FILE_EXTENSION, fileExt),
-                            new TableItem(FILE_TYPE, fileType), new TableItem(FILE_MIME_TYPE, fileMime),
-                            new TableItem(FILE_CREATION_TIME, fcTime),
-                            new TableItem(FILE_MODIFICATION_TIME, fmTime),
-                            new TableItem(FILE_CONTENT_CREATION_TIME, ccTime),
-                            new TableItem(WIDTH, width),
-                            new TableItem(HEIGHT, height),
-                            new TableItem(SONG_AUTHOR, songArtist),
-                            new TableItem(SONG_NAME, songName),
-                            new TableItem(SONG_ALBUM, songAlbum),
-                            new TableItem(SONG_YEAR, songYear));
+                new TableItem(FILE_NAME, fileName),
+                new TableItem(FILE_EXTENSION, fileExt),
+                new TableItem(FILE_TYPE, fileType), new TableItem(FILE_MIME_TYPE, fileMime),
+                new TableItem(FILE_CREATION_TIME, fcTime),
+                new TableItem(FILE_MODIFICATION_TIME, fmTime),
+                new TableItem(FILE_CONTENT_CREATION_TIME, ccTime),
+                new TableItem(WIDTH, width),
+                new TableItem(HEIGHT, height),
+                new TableItem(SONG_AUTHOR, songArtist),
+                new TableItem(SONG_NAME, songName),
+                new TableItem(SONG_ALBUM, songAlbum),
+                new TableItem(SONG_YEAR, songYear));
 
         return generateHtmlWithTableItems(value);
     }

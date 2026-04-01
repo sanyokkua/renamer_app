@@ -21,7 +21,7 @@ public interface SessionApi {
      *
      * @param paths file paths to add; must not be null; must not contain null elements
      * @return future completing with {@link CommandResult#succeeded()} on success,
-     *         or {@link CommandResult#failure(String)} on session-level error; never null
+     * or {@link CommandResult#failure(String)} on session-level error; never null
      */
     CompletableFuture<CommandResult> addFiles(List<Path> paths);
 
@@ -56,7 +56,7 @@ public interface SessionApi {
      * Callers should verify {@link #canExecute()} before calling this method.
      *
      * @return a {@link TaskHandle} for monitoring progress, requesting cancellation,
-     *         and obtaining results; never null
+     * and obtaining results; never null
      */
     TaskHandle<List<RenameSessionResult>> execute();
 

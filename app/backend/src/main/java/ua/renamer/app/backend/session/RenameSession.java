@@ -21,11 +21,11 @@ import java.util.List;
 @Getter
 public class RenameSession {
 
-    private final List<FileModel>         files         = new ArrayList<>();
-    private       TransformationMode      activeMode    = null;
-    private       ModeParameters          currentParams = null;
-    private       List<PreparedFileModel> lastPreview   = List.of();
-    private       SessionStatus           status        = SessionStatus.EMPTY;
+    private final List<FileModel> files = new ArrayList<>();
+    private TransformationMode activeMode = null;
+    private ModeParameters currentParams = null;
+    private List<PreparedFileModel> lastPreview = List.of();
+    private SessionStatus status = SessionStatus.EMPTY;
 
     /**
      * Adds files to the session.
@@ -128,11 +128,11 @@ public class RenameSession {
      */
     public SessionSnapshot toSnapshot(List<RenamePreview> previewDtos) {
         return new SessionSnapshot(
-            files.stream().map(RenameSessionConverter::toCandidate).toList(),
-            activeMode,
-            currentParams,
-            previewDtos,
-            status
+                files.stream().map(RenameSessionConverter::toCandidate).toList(),
+                activeMode,
+                currentParams,
+                previewDtos,
+                status
         );
     }
 }

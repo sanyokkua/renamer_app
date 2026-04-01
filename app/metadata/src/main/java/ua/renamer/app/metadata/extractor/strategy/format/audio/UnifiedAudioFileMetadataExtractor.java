@@ -7,10 +7,10 @@ import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jspecify.annotations.Nullable;
-import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.AudioMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,12 +61,12 @@ public class UnifiedAudioFileMetadataExtractor implements FileMetadataExtractor 
 
             // Build audio metadata
             AudioMeta audioMeta = AudioMeta.builder()
-                                           .withArtistName(artist.value())
-                                           .withAlbumName(album.value())
-                                           .withSongName(title.value())
-                                           .withYear(year.value())
-                                           .withLength(duration.value())
-                                           .build();
+                    .withArtistName(artist.value())
+                    .withAlbumName(album.value())
+                    .withSongName(title.value())
+                    .withYear(year.value())
+                    .withLength(duration.value())
+                    .build();
 
             return FileMeta.builder().withAudio(audioMeta).withErrors(errors).build();
 

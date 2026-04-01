@@ -7,7 +7,7 @@ import ua.renamer.app.api.model.TransformationMode;
  * Parameters for the {@link TransformationMode#CHANGE_CASE} transformation mode.
  * Specifies the target case style and whether the first letter should be capitalized.
  *
- * @param caseOption           the target case style to apply; must not be null
+ * @param caseOption            the target case style to apply; must not be null
  * @param capitalizeFirstLetter {@code true} if the first character should always be uppercased after transformation
  */
 public record ChangeCaseParams(TextCaseOptions caseOption, boolean capitalizeFirstLetter)

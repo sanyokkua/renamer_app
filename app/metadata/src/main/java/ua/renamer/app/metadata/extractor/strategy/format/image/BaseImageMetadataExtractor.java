@@ -11,12 +11,12 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
-import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
-import ua.renamer.app.metadata.extractor.strategy.format.MetadataCommons;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.metadata.extractor.strategy.format.ExtractionResult;
+import ua.renamer.app.metadata.extractor.strategy.format.MetadataCommons;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,10 +61,10 @@ public abstract class BaseImageMetadataExtractor implements FileMetadataExtracto
 
         // Build image metadata
         var imgMeta = ImageMeta.builder()
-                               .withWidth(width.value())
-                               .withHeight(height.value())
-                               .withContentCreationDate(creationDate.value())
-                               .build();
+                .withWidth(width.value())
+                .withHeight(height.value())
+                .withContentCreationDate(creationDate.value())
+                .build();
 
         // Extract all metadata tags as a map
         var metadataMap = MetadataCommons.buildMetadataMap(metadata);
@@ -112,13 +112,13 @@ public abstract class BaseImageMetadataExtractor implements FileMetadataExtracto
     @Nullable
     protected Integer extractWidth(Metadata metadata, List<ExifDirectoryBase> directories) {
         return extractIntFromBaseDirectory(metadata, getBaseWidthTag()).or(() -> extractWidthFromExif(directories))
-                                                                       .orElse(null);
+                .orElse(null);
     }
 
     @Nullable
     protected Integer extractHeight(Metadata metadata, List<ExifDirectoryBase> directories) {
         return extractIntFromBaseDirectory(metadata, getBaseHeightTag()).or(() -> extractHeightFromExif(directories))
-                                                                        .orElse(null);
+                .orElse(null);
     }
 
     private Optional<Integer> extractIntFromBaseDirectory(Metadata metadata, Integer tag) {
@@ -172,31 +172,31 @@ public abstract class BaseImageMetadataExtractor implements FileMetadataExtracto
     @Nullable
     protected LocalDateTime extractCreationDateTimeFromExif(List<ExifDirectoryBase> directories) {
         var originalDateTime = findDateTimeInDirectories(directories,
-                                                         ExifDirectoryBase.TAG_DATETIME_ORIGINAL,
-                                                         ExifDirectoryBase.TAG_TIME_ZONE_ORIGINAL);
+                ExifDirectoryBase.TAG_DATETIME_ORIGINAL,
+                ExifDirectoryBase.TAG_TIME_ZONE_ORIGINAL);
 
         var imageDateTime = findDateTimeInDirectories(directories,
-                                                      ExifDirectoryBase.TAG_DATETIME,
-                                                      ExifDirectoryBase.TAG_TIME_ZONE);
+                ExifDirectoryBase.TAG_DATETIME,
+                ExifDirectoryBase.TAG_TIME_ZONE);
 
         var digitizedDateTime = findDateTimeInDirectories(directories,
-                                                          ExifDirectoryBase.TAG_DATETIME_DIGITIZED,
-                                                          ExifDirectoryBase.TAG_TIME_ZONE_DIGITIZED);
+                ExifDirectoryBase.TAG_DATETIME_DIGITIZED,
+                ExifDirectoryBase.TAG_TIME_ZONE_DIGITIZED);
 
         return dateTimeUtils.findMinOrNull(originalDateTime.orElse(null),
-                                           imageDateTime.orElse(null),
-                                           digitizedDateTime.orElse(null));
+                imageDateTime.orElse(null),
+                digitizedDateTime.orElse(null));
     }
 
     private Optional<LocalDateTime> findDateTimeInDirectories(List<ExifDirectoryBase> directories, int dateTimeTag, int offsetTag) {
 
         return directories.stream()
-                          .map(dir -> new ExifDateTime(dir.getString(dateTimeTag), dir.getString(offsetTag)))
-                          .filter(dt -> dt.dateTime() != null)
-                          .map(dt -> dateTimeUtils.parseDateTimeString(dt.dateTime(), dt.timeZone()))
-                          .filter(Objects::nonNull)
-                          .filter(dt -> dt.isAfter(dateTimeUtils.getMinimalDateTime()))
-                          .min(LocalDateTime::compareTo);
+                .map(dir -> new ExifDateTime(dir.getString(dateTimeTag), dir.getString(offsetTag)))
+                .filter(dt -> dt.dateTime() != null)
+                .map(dt -> dateTimeUtils.parseDateTimeString(dt.dateTime(), dt.timeZone()))
+                .filter(Objects::nonNull)
+                .filter(dt -> dt.isAfter(dateTimeUtils.getMinimalDateTime()))
+                .min(LocalDateTime::compareTo);
     }
 
     /**
