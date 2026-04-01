@@ -545,7 +545,7 @@ class CaseChangeTransformerTest {
         assertNotNull(result);
         assertTrue(result.isHasError());
         assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to change case"));
+        assertTrue(result.getErrorMessage().get().contains("Transformer configuration must not be null"));
         assertNull(result.getTransformationMeta());
         assertFalse(result.needsRename());
     }
@@ -560,6 +560,15 @@ class CaseChangeTransformerTest {
                             .build()
         );
         assertTrue(ex.getMessage().contains("caseOption must not be null"));
+    }
+
+    @Test
+    void givenNullConfig_whenTransform_thenErrorResultReturned() {
+        FileModel input = createTestFileModel("document", "txt");
+        PreparedFileModel result = transformer.transform(input, null);
+        assertNotNull(result);
+        assertTrue(result.isHasError());
+        assertFalse(result.getErrorMessage().isEmpty());
     }
 
     // ============================================================================

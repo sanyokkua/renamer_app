@@ -412,6 +412,7 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 ### TASK-1.8 — STABILITY-1: Null-safe `transform()` in all 10 transformers
 
 **Priority:** Round 4 (after TASK-1.3 so configs have validation, making null-config tests meaningful)
+**Status:** COMPLETED
 
 **Goal:** Each transformer's `transform(FileModel, XxxConfig)` method must guard against a null `config` parameter and return a structured error result instead of throwing NPE.
 

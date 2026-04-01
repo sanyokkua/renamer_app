@@ -513,9 +513,18 @@ class ParentFolderTransformerTest {
         assertNotNull(result);
         assertTrue(result.isHasError());
         assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to add parent folder"));
+        assertTrue(result.getErrorMessage().get().contains("Transformer configuration must not be null"));
         assertNull(result.getTransformationMeta());
         assertFalse(result.needsRename());
+    }
+
+    @Test
+    void givenNullConfig_whenTransform_thenErrorResultReturned() {
+        FileModel input = createTestFileModelWithPath("/test/path/document.txt");
+        PreparedFileModel result = transformer.transform(input, null);
+        assertNotNull(result);
+        assertTrue(result.isHasError());
+        assertFalse(result.getErrorMessage().isEmpty());
     }
 
     // ============================================================================

@@ -360,7 +360,7 @@ class AddTextTransformerTest {
         assertNotNull(result);
         assertTrue(result.isHasError());
         assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to add text"));
+        assertTrue(result.getErrorMessage().get().contains("Transformer configuration must not be null"));
         assertNull(result.getTransformationMeta());
         assertFalse(result.needsRename());
     }
@@ -375,6 +375,15 @@ class AddTextTransformerTest {
                          .build()
         );
         assertTrue(ex.getMessage().contains("position must not be null"));
+    }
+
+    @Test
+    void givenNullConfig_whenTransform_thenErrorResultReturned() {
+        FileModel input = createTestFileModel("document", "txt");
+        PreparedFileModel result = transformer.transform(input, null);
+        assertNotNull(result);
+        assertTrue(result.isHasError());
+        assertFalse(result.getErrorMessage().isEmpty());
     }
 
     // ============================================================================

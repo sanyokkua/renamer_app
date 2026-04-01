@@ -19,6 +19,9 @@ public class AddTextTransformer implements FileTransformationService<AddTextConf
 
     @Override
     public PreparedFileModel transform(FileModel input, AddTextConfig config) {
+        if (config == null) {
+            return buildErrorResult(input, "Transformer configuration must not be null");
+        }
         // Check if file extraction failed - propagate as extraction error
         if (!input.isFile()) {
             log.debug("Propagating extraction error for: {}", input.getAbsolutePath());

@@ -22,6 +22,9 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
 
     @Override
     public PreparedFileModel transform(FileModel input, ImageDimensionsConfig config) {
+        if (config == null) {
+            return buildErrorResult(input, "Transformer configuration must not be null");
+        }
         // Check if file extraction failed - propagate as extraction error
         if (!input.isFile()) {
             log.debug("Propagating extraction error for: {}", input.getAbsolutePath());

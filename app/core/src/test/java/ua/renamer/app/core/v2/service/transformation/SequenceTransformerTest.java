@@ -820,6 +820,16 @@ class SequenceTransformerTest {
     }
 
     @Test
+    void givenNullConfig_whenTransformBatch_thenAllErrorResultsReturned() {
+        FileModel input = createTestFileModel("document", "txt");
+        List<PreparedFileModel> results = transformer.transformBatch(List.of(input), null);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isHasError());
+        assertFalse(results.get(0).getErrorMessage().isEmpty());
+    }
+
+    @Test
     void testErrorHandling_EmptyFileList() {
         // Given
         List<FileModel> files = Collections.emptyList();

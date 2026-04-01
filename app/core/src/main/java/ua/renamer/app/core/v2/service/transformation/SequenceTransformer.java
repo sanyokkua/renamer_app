@@ -37,6 +37,11 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
 
     @Override
     public List<PreparedFileModel> transformBatch(List<FileModel> inputs, SequenceConfig config) {
+        if (config == null) {
+            return inputs.stream()
+                         .map(input -> buildErrorResult(input, "Transformer configuration must not be null"))
+                         .toList();
+        }
         try {
             // Step 1: Filter out invalid files and create error results
             List<PreparedFileModel> results = new ArrayList<>();
