@@ -61,6 +61,7 @@ Tasks must be executed in the order listed (each round has no internal dependenc
 ### TASK-1.1 — BUG-3: ThreadAwareFileMapper null-safety after metadata extraction
 
 **Priority:** Round 1 (no dependencies)
+**Status:** COMPLETED
 
 **Goal:** Prevent a potential `NullPointerException` when the metadata chain-of-responsibility returns null for an unrecognized file type.
 
@@ -93,6 +94,7 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/mapper/ThreadAwareFileM
 ### TASK-1.2 — BUG-2: SequenceConfig/SequenceTransformer negative padding
 
 **Priority:** Round 1 (no dependencies)
+**Status:** COMPLETED
 
 **Goal:** Fail fast at config construction when `padding < 0`; add a defensive guard in `formatSequenceNumber()` so the transformer never crashes even if validation is bypassed.
 

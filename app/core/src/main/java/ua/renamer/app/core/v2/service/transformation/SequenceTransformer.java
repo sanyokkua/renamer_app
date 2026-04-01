@@ -121,8 +121,8 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
     }
 
     private String formatSequenceNumber(int number, int padding) {
-        if (padding == 0) {
-            return String.valueOf(number);
+        if (padding <= 0) {
+            return String.valueOf(number);  // No padding: raw number
         }
         String format = "%0" + padding + "d";
         return String.format(format, number);

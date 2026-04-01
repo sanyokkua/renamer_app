@@ -370,6 +370,61 @@ class SequenceTransformerTest {
     }
 
     // ============================================================================
+    // E2. transformBatch() - Padding Guard Tests (zero and defensive negative)
+    // ============================================================================
+
+    @Test
+    void givenZeroPadding_whenFormatSequenceNumber_thenRawNumberReturned() {
+        var config = SequenceConfig.builder()
+                .withStartNumber(5)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
+        List<FileModel> files = List.of(createTestFileModel("file", "txt"));
+
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isHasError());
+        assertEquals("5", results.get(0).getNewName());
+    }
+
+    @Test
+    void givenPositivePadding_whenFormatSequenceNumber_thenZeroPaddedStringReturned() {
+        var config = SequenceConfig.builder()
+                .withStartNumber(5)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
+        List<FileModel> files = List.of(createTestFileModel("file", "txt"));
+
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isHasError());
+        assertEquals("005", results.get(0).getNewName());
+    }
+
+    @Test
+    void givenNegativeStartNumber_whenTransformBatch_thenNegativeNumberReturnedWithoutCrash() {
+        var config = SequenceConfig.builder()
+                .withStartNumber(-5)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .build();
+        List<FileModel> files = List.of(createTestFileModel("file", "txt"));
+
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isHasError());
+        assertEquals("-5", results.get(0).getNewName());
+    }
+
+    // ============================================================================
     // F. transformBatch() - Sort Source Tests
     // ============================================================================
 
