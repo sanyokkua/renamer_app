@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class RenameExecutionServiceImpl implements RenameExecutionService {
 
+    private static final int MAX_SUFFIX_ATTEMPTS = 999;
+
     private final NameValidator nameValidator;
 
     @Override
@@ -73,14 +75,18 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
 
             var isCaseChange = oldPath.toAbsolutePath().toString().equalsIgnoreCase(newPath.toAbsolutePath().toString());
 
-            // Check if target already exists
-            if (Files.exists(newPath) && !isCaseChange) {
-                return RenameResult.builder()
-                                   .withPreparedFile(preparedFile)
-                                   .withStatus(RenameStatus.ERROR_EXECUTION)
-                                   .withErrorMessage("Target file already exists: " + newPath.getFileName())
-                                   .withExecutedAt(LocalDateTime.now())
-                                   .build();
+            // Resolve disk conflict: retry with suffix if target already exists
+            if (!isCaseChange) {
+                Path resolvedPath = resolveConflictWithDisk(newPath);
+                if (resolvedPath == null) {
+                    return RenameResult.builder()
+                                       .withPreparedFile(preparedFile)
+                                       .withStatus(RenameStatus.ERROR_EXECUTION)
+                                       .withErrorMessage("Target file already exists and all suffix attempts are exhausted: " + newPath.getFileName())
+                                       .withExecutedAt(LocalDateTime.now())
+                                       .build();
+                }
+                newPath = resolvedPath; // May be original path (no conflict) or suffixed path
             }
 
             // Validate the final filename before physical rename
@@ -141,5 +147,34 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
                                .withExecutedAt(LocalDateTime.now())
                                .build();
         }
+    }
+
+    /**
+     * Resolves a path conflict with a pre-existing disk file by appending
+     * numbered suffixes: {@code name (001).ext}, {@code name (002).ext}, …
+     *
+     * @param targetPath the originally desired target path
+     * @return a conflict-free path, or {@code null} if all 999 attempts are taken
+     */
+    private Path resolveConflictWithDisk(Path targetPath) {
+        if (!Files.exists(targetPath)) {
+            return targetPath;
+        }
+
+        String fullName = targetPath.getFileName().toString();
+        int dotIndex = fullName.lastIndexOf('.');
+        String baseName = (dotIndex > 0) ? fullName.substring(0, dotIndex) : fullName;
+        String ext      = (dotIndex > 0) ? fullName.substring(dotIndex)    : "";
+        Path   parent   = targetPath.getParent();
+        int    digits   = String.valueOf(MAX_SUFFIX_ATTEMPTS).length(); // 3
+
+        for (int i = 1; i <= MAX_SUFFIX_ATTEMPTS; i++) {
+            String suffix    = String.format(" (%0" + digits + "d)", i);
+            Path   candidate = parent.resolve(baseName + suffix + ext);
+            if (!Files.exists(candidate)) {
+                return candidate;
+            }
+        }
+        return null;
     }
 }

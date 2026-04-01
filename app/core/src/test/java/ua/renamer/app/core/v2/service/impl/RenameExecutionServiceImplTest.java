@@ -332,10 +332,10 @@ class RenameExecutionServiceImplTest {
     // ============================================================================
 
     @Test
-    void testExecute_Error_TargetExists() throws IOException {
-        // Given - Target file already exists
+    void testExecute_ConflictResolved_TargetExists() throws IOException {
+        // Given - Target file already exists; service now resolves with suffix instead of failing
         File oldFile = createTempFile("old", "txt");
-        File targetFile = createTempFile("new", "txt");  // Already exists
+        File targetFile = createTempFile("new", "txt");  // Occupies target slot
 
         FileModel fileModel = createFileModel(oldFile);
         PreparedFileModel preparedFile = createPreparedFile(fileModel, "new", "txt", false, null);
@@ -343,19 +343,19 @@ class RenameExecutionServiceImplTest {
         // When
         RenameResult result = service.execute(preparedFile);
 
-        // Then
-        assertEquals(RenameStatus.ERROR_EXECUTION, result.getStatus());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("already exists"));
+        // Then: conflict resolved with " (001)" suffix — SUCCESS, not ERROR_EXECUTION
+        assertEquals(RenameStatus.SUCCESS, result.getStatus());
+        assertTrue(result.isSuccess());
 
-        // Verify both files still exist
-        assertTrue(Files.exists(oldFile.toPath()));
-        assertTrue(Files.exists(targetFile.toPath()));
+        // old file was moved to the suffixed name; original target is untouched
+        assertFalse(Files.exists(oldFile.toPath()), "source must have moved");
+        assertTrue(Files.exists(targetFile.toPath()), "original new.txt must be untouched");
+        assertTrue(Files.exists(tempDir.resolve("new (001).txt")), "suffix variant must exist");
     }
 
     @Test
-    void testExecute_Error_TargetExistsDifferentContent() throws IOException {
-        // Given - Target exists with different content
+    void testExecute_ConflictResolved_TargetExistsDifferentContent() throws IOException {
+        // Given - Target exists with different content; source has its own content
         File oldFile = createTempFile("old", "txt");
         Files.writeString(oldFile.toPath(), "old content");
 
@@ -368,12 +368,14 @@ class RenameExecutionServiceImplTest {
         // When
         RenameResult result = service.execute(preparedFile);
 
-        // Then
-        assertEquals(RenameStatus.ERROR_EXECUTION, result.getStatus());
-        assertTrue(result.getErrorMessage().get().contains("already exists"));
+        // Then: conflict resolved with suffix — original target content must be preserved
+        assertEquals(RenameStatus.SUCCESS, result.getStatus());
 
-        // Verify original content preserved
+        // Pre-existing file content must not be touched
         assertEquals("different content", Files.readString(targetPath));
+
+        // Source content landed at the suffixed path
+        assertEquals("old content", Files.readString(tempDir.resolve("new (001).txt")));
     }
 
     // ============================================================================

@@ -497,7 +497,7 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/impl/RenameExec
 
 ---
 
-### TASK-1.10 — BUG-4: Disk conflict suffix retry in RenameExecutionServiceImpl
+### TASK-1.10 — BUG-4: Disk conflict suffix retry in RenameExecutionServiceImpl ✅ DONE
 
 **Priority:** Round 5 (last — after TASK-1.9 so executor is already being modified)
 
