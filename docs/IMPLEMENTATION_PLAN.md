@@ -218,7 +218,7 @@ One test class per config: `XxxConfigValidationTest` in `app/api/src/test/...`
 
 ---
 
-### TASK-1.4 — BUG-1/FEATURE-4: ImageDimensionsConfig configurable `nameSeparator`
+### TASK-1.4 — BUG-1/FEATURE-4: ImageDimensionsConfig configurable `nameSeparator` ✅ DONE
 
 **Priority:** Round 2 (after TASK-1.3 so config validation pattern is established)
 

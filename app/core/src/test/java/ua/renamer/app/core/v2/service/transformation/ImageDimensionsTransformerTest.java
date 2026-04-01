@@ -122,6 +122,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -145,6 +146,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.END)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -165,6 +167,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.REPLACE)
+                                                            .withNameSeparator("")
                                                             .build();
 
         // When
@@ -189,6 +192,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.WIDTH)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -209,6 +213,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.WIDTH)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.END)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -233,6 +238,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.DO_NOT_USE)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -253,6 +259,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.DO_NOT_USE)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.END)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -277,6 +284,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.DO_NOT_USE)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -297,6 +305,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.DO_NOT_USE)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.END)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -321,6 +330,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("_")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -340,6 +350,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("-")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -359,6 +370,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator(" by ")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -382,6 +394,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -402,6 +415,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.END)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -426,6 +440,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         PreparedFileModel result1 = transformer.transform(input1, config);
@@ -441,6 +456,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         PreparedFileModel result = transformer.transform(input, config);
@@ -456,6 +472,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         PreparedFileModel result = transformer.transform(input, config);
@@ -471,6 +488,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         PreparedFileModel result = transformer.transform(input, config);
@@ -490,6 +508,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator("")
                                                             .build();
 
         // When
@@ -535,6 +554,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -578,6 +598,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator(" ")
                                                             .build();
 
         // When
@@ -621,6 +642,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator("")
                                                             .build();
 
         // When
@@ -645,6 +667,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator("")
                                                             .build();
 
         // When
@@ -667,6 +690,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.WIDTH)
                                                             .withSeparator("_")
                                                             .withPosition(ItemPositionWithReplacement.END)
+                                                            .withNameSeparator("")
                                                             .build();
 
         // When
@@ -693,6 +717,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator("")
                                                             .build();
 
         // When/Then
@@ -733,6 +758,7 @@ class ImageDimensionsTransformerTest {
                                                              .withRightSide(ImageDimensionOptions.HEIGHT)
                                                              .withSeparator("x")
                                                              .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                             .withNameSeparator(" ")
                                                              .build();
 
         ImageDimensionsConfig config2 = ImageDimensionsConfig.builder()
@@ -740,6 +766,7 @@ class ImageDimensionsTransformerTest {
                                                              .withRightSide(ImageDimensionOptions.HEIGHT)
                                                              .withSeparator("x")
                                                              .withPosition(ItemPositionWithReplacement.END)
+                                                             .withNameSeparator(" ")
                                                              .build();
 
         PreparedFileModel result1 = transformer.transform(file1, config1);
@@ -758,6 +785,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator("")
                                                             .build();
 
         PreparedFileModel result = transformer.transform(input, config);
@@ -775,6 +803,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator("")
                                                             .build();
 
         PreparedFileModel result = transformer.transform(input, config);
@@ -792,6 +821,7 @@ class ImageDimensionsTransformerTest {
                                                             .withRightSide(ImageDimensionOptions.HEIGHT)
                                                             .withSeparator("x")
                                                             .withPosition(ItemPositionWithReplacement.BEGIN)
+                                                            .withNameSeparator("")
                                                             .build();
 
         // When

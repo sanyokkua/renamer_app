@@ -16,6 +16,7 @@ class ImageDimensionsConfigTest {
                 .withLeftSide(ImageDimensionOptions.WIDTH)
                 .withRightSide(ImageDimensionOptions.HEIGHT)
                 .withSeparator("x")
+                .withNameSeparator("")
                 .build()
         );
     }
@@ -59,7 +60,8 @@ class ImageDimensionsConfigTest {
             .withPosition(ItemPositionWithReplacement.BEGIN)
             .withLeftSide(ImageDimensionOptions.DO_NOT_USE)
             .withRightSide(ImageDimensionOptions.DO_NOT_USE)
-            .withSeparator("x");
+            .withSeparator("x")
+            .withNameSeparator("");
 
         assertThrows(IllegalArgumentException.class, builder::build);
     }
@@ -72,6 +74,7 @@ class ImageDimensionsConfigTest {
                 .withLeftSide(ImageDimensionOptions.WIDTH)
                 .withRightSide(ImageDimensionOptions.DO_NOT_USE)
                 .withSeparator("x")
+                .withNameSeparator("")
                 .build()
         );
     }
@@ -84,6 +87,7 @@ class ImageDimensionsConfigTest {
                 .withLeftSide(ImageDimensionOptions.DO_NOT_USE)
                 .withRightSide(ImageDimensionOptions.HEIGHT)
                 .withSeparator("x")
+                .withNameSeparator("")
                 .build()
         );
     }
@@ -96,7 +100,19 @@ class ImageDimensionsConfigTest {
                 .withLeftSide(ImageDimensionOptions.WIDTH)
                 .withRightSide(ImageDimensionOptions.HEIGHT)
                 .withSeparator(null)
+                .withNameSeparator("")
                 .build()
         );
+    }
+
+    @Test
+    void givenNullNameSeparator_whenBuild_thenNullPointerException() {
+        var builder = ImageDimensionsConfig.builder()
+            .withPosition(ItemPositionWithReplacement.BEGIN)
+            .withLeftSide(ImageDimensionOptions.WIDTH)
+            .withRightSide(ImageDimensionOptions.HEIGHT)
+            .withSeparator("x")
+            .withNameSeparator(null);
+        assertThrows(NullPointerException.class, builder::build);
     }
 }

@@ -65,8 +65,8 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
 
             // Apply to filename
             String newName = switch (config.getPosition()) {
-                case BEGIN -> dimensionStr + " " + input.getName();
-                case END -> input.getName() + " " + dimensionStr;
+                case BEGIN -> dimensionStr + config.getNameSeparator() + input.getName();
+                case END -> input.getName() + config.getNameSeparator() + dimensionStr;
                 case REPLACE -> dimensionStr;
             };
 
@@ -118,7 +118,8 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
                                              "leftSide", config.getLeftSide().name(),
                                              "rightSide", config.getRightSide().name(),
                                              "separator", config.getSeparator(),
-                                             "position", config.getPosition().name()
+                                             "position", config.getPosition().name(),
+                                             "nameSeparator", config.getNameSeparator()
                                      ))
                                      .build();
     }
