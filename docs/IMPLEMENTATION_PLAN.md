@@ -703,7 +703,7 @@ Add: `exports ua.renamer.app.api.session;` and `opens ua.renamer.app.api.session
 
 ---
 
-### TASK-2.3 — Implement `ModeParameters` sealed hierarchy (10 parameter records)
+### TASK-2.3 — Implement `ModeParameters` sealed hierarchy (10 parameter records) ✅ DONE
 
 **Goal:** Define the sealed `ModeParameters` interface and all 10 concrete record implementations with typed `withX()` withers and `validate()` methods.
 
