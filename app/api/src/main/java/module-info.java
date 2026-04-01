@@ -11,10 +11,12 @@ module ua.renamer.app.api {
     exports ua.renamer.app.api.model.meta;
     exports ua.renamer.app.api.model.meta.category;
     exports ua.renamer.app.api.service;
+    exports ua.renamer.app.api.session;
 
     opens ua.renamer.app.api.enums;
     opens ua.renamer.app.api.model;
     opens ua.renamer.app.api.model.config;
     opens ua.renamer.app.api.model.meta;
     opens ua.renamer.app.api.model.meta.category;
+    opens ua.renamer.app.api.session;
 }

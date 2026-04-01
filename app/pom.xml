@@ -53,6 +53,7 @@
         <module>utils</module>
         <module>api</module>
         <module>core</module>
+        <module>backend</module>
         <module>metadata</module>
         <module>ui</module>
     </modules>

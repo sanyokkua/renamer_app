@@ -563,7 +563,7 @@ cd app && mvn verify -Pcode-quality -q  # zero Checkstyle/PMD/SpotBugs violation
 
 ---
 
-### TASK-2.1 — Create `app/backend` Maven module skeleton
+### TASK-2.1 — Create `app/backend` Maven module skeleton ✅ DONE
 
 **Priority:** First task in Part 2 (others depend on this)
 
@@ -633,7 +633,7 @@ module ua.renamer.app.backend {
 
 ---
 
-### TASK-2.2 — Add core API value types to `app/api`
+### TASK-2.2 — Add core API value types to `app/api` ✅ DONE
 
 **Goal:** Define the shared value types that both `app/backend` and `app/ui` will use: `ValidationResult`, `CommandResult`, `SessionStatus`, `RenameCandidate`, `RenamePreview`, `RenameSessionResult`.
 
@@ -650,8 +650,8 @@ These are pure-Java records/enums with no JavaFX dependency. They live in `app/a
 **Files to create:**
 ```
 app/api/src/main/java/ua/renamer/app/api/session/
-  ValidationResult.java     — record with ok()/fieldError() factory methods
-  CommandResult.java        — record with success()/failure(String) factory methods
+  ValidationResult.java     — record with valid()/fieldError() factory methods
+  CommandResult.java        — record with succeeded()/failure(String) factory methods
   SessionStatus.java        — enum: EMPTY, FILES_LOADED, MODE_CONFIGURED, EXECUTING, COMPLETE, ERROR
   RenameCandidate.java      — record: String fileId, String name, String extension, Path path
   RenamePreview.java        — record: String fileId, String originalName, String newName, boolean hasError, String errorMessage
@@ -692,10 +692,14 @@ public enum SessionStatus {
 **Update `app/api/module-info.java`:**
 Add: `exports ua.renamer.app.api.session;` and `opens ua.renamer.app.api.session;`
 
+**API deviation:** Java records cannot have a static method with the same name and zero-arg signature as the auto-generated component accessor. `ok()` accessor conflicts with `static ok()` factory; same for `success()`. Renamed: `ok()` → `valid()`, `success()` → `succeeded()`.
+
 **Acceptance criteria:**
-- All 6 types compile
-- `ValidationResult.ok().isError()` is `false`
+- All 6 types compile (83 tests pass)
+- `ValidationResult.valid().isError()` is `false`
 - `ValidationResult.fieldError("text", "empty").field()` equals `"text"`
+- `CommandResult.succeeded().success()` is `true`
+- `SessionStatus.values().length` equals `6`
 
 ---
 
