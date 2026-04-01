@@ -8,9 +8,11 @@ import ua.renamer.app.api.interfaces.FileMetadataMapper;
 import ua.renamer.app.api.interfaces.FileUtils;
 import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -43,7 +45,8 @@ public class ThreadAwareFileMapper implements FileMapper {
         var mimeType = isFile ? fileUtils.getFileMimeType(path) : "application/x-directory";
         var category = determineCategory(mimeType);
         var detectedExtensions = resolveDetectedExtensions(mimeType);
-        var fileMeta = fileMetadataMapper.extract(file, category, mimeType);
+        var rawMeta = fileMetadataMapper.extract(file, category, mimeType);
+        var fileMeta = Optional.ofNullable(rawMeta).orElse(FileMeta.empty());
 
         return FileModel.builder()
                         .withFile(file)
