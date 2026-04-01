@@ -967,6 +967,8 @@ public interface StatePublisher {
 
 ### TASK-3.1 — Implement `RenameSession` (session state holder)
 
+**Status:** COMPLETED
+
 **Goal:** A plain-Java mutable session state object — accessed exclusively from the backend state thread.
 
 **Context:**

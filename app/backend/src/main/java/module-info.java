@@ -12,6 +12,6 @@ module ua.renamer.app.backend {
     // Uncomment each export in TASK-2.2/2.3/2.4 as classes are added:
     //   exports ua.renamer.app.backend.config;     // DIBackendModule
     //   exports ua.renamer.app.backend.service;    // RenameSessionService, BackendExecutor
-    //   exports ua.renamer.app.backend.session;    // RenameSession, SessionApiImpl
+    exports ua.renamer.app.backend.session;     // RenameSession, RenameSessionConverter
     // Internal packages are NOT exported
 }
