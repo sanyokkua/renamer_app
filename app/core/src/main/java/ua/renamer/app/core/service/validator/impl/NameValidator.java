@@ -2,10 +2,8 @@ package ua.renamer.app.core.service.validator.impl;
 
 import ua.renamer.app.core.service.validator.Validator;
 
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -73,10 +71,9 @@ public class NameValidator implements Validator<String> {
         }
 
         try {
-            Path path = FileSystems.getDefault().getPath(fileName); // Can be slow
-            path.toRealPath();  // This will throw an exception if the file name is invalid
+            FileSystems.getDefault().getPath(fileName);
             return true;
-        } catch (InvalidPathException | IOException e) {
+        } catch (InvalidPathException e) {
             return false;
         }
     }

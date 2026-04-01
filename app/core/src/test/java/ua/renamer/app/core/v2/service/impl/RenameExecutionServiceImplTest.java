@@ -1,9 +1,16 @@
 package ua.renamer.app.core.v2.service.impl;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import ua.renamer.app.api.model.*;
 import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.core.service.validator.impl.NameValidator;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +35,12 @@ class RenameExecutionServiceImplTest {
 
     @BeforeAll
     void setUpClass() {
-        service = new RenameExecutionServiceImpl();
+        // Use a mock that always approves valid (non-null, non-empty) names.
+        // Real NameValidator.isValid() calls toRealPath() which throws NoSuchFileException
+        // for filenames that do not yet exist on disk, causing false negatives.
+        NameValidator mockValidator = mock(NameValidator.class);
+        when(mockValidator.isValid(org.mockito.ArgumentMatchers.anyString())).thenReturn(true);
+        service = new RenameExecutionServiceImpl(mockValidator);
     }
 
     @BeforeEach
@@ -579,5 +591,63 @@ class RenameExecutionServiceImplTest {
         assertTrue(Files.exists(tempDir.resolve("renamed1.txt")));
         assertTrue(Files.exists(tempDir.resolve("renamed2.txt")));
         assertTrue(Files.exists(tempDir.resolve("renamed3.txt")));
+    }
+
+    // ============================================================================
+    // H. NameValidator Tests
+    // ============================================================================
+
+    @Test
+    void givenFilenameWithSlash_whenExecute_thenErrorTransformationReturnedOnAllPlatforms() throws IOException {
+        // Given
+        File oldFile = createTempFile("old", "txt");
+        FileModel fileModel = createFileModel(oldFile);
+        PreparedFileModel preparedFile = createPreparedFile(fileModel, "bad/name", "txt", false, null);
+        RenameExecutionServiceImpl svc = new RenameExecutionServiceImpl(new NameValidator());
+
+        // When
+        RenameResult result = svc.execute(preparedFile);
+
+        // Then
+        assertEquals(RenameStatus.ERROR_TRANSFORMATION, result.getStatus());
+        assertTrue(result.getErrorMessage().orElse("").contains("invalid characters"));
+        assertTrue(Files.exists(oldFile.toPath()), "Source file must not be touched");
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void givenFilenameWithColonOnWindows_whenExecute_thenErrorTransformationReturned() throws IOException {
+        // Given
+        File oldFile = createTempFile("old", "txt");
+        FileModel fileModel = createFileModel(oldFile);
+        PreparedFileModel preparedFile = createPreparedFile(fileModel, "2024:01:01", "txt", false, null);
+        RenameExecutionServiceImpl svc = new RenameExecutionServiceImpl(new NameValidator());
+
+        // When
+        RenameResult result = svc.execute(preparedFile);
+
+        // Then
+        assertEquals(RenameStatus.ERROR_TRANSFORMATION, result.getStatus());
+        assertTrue(result.getErrorMessage().orElse("").contains("invalid characters"));
+    }
+
+    @Test
+    void givenValidFilename_whenExecute_thenNameValidatorPassesAndRenameProceeds() throws IOException {
+        // Given
+        File oldFile = createTempFile("old", "txt");
+        FileModel fileModel = createFileModel(oldFile);
+        PreparedFileModel preparedFile = createPreparedFile(fileModel, "valid-new-name", "txt", false, null);
+
+        NameValidator mockValidator = mock(NameValidator.class);
+        when(mockValidator.isValid("valid-new-name.txt")).thenReturn(true);
+        RenameExecutionServiceImpl svc = new RenameExecutionServiceImpl(mockValidator);
+
+        // When
+        RenameResult result = svc.execute(preparedFile);
+
+        // Then
+        assertEquals(RenameStatus.SUCCESS, result.getStatus());
+        verify(mockValidator).isValid("valid-new-name.txt");
+        assertTrue(Files.exists(tempDir.resolve("valid-new-name.txt")));
     }
 }

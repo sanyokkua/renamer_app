@@ -1,9 +1,12 @@
 package ua.renamer.app.core.v2.service.impl;
 
+import com.google.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.RenameResult;
 import ua.renamer.app.api.model.RenameStatus;
+import ua.renamer.app.core.service.validator.impl.NameValidator;
 import ua.renamer.app.core.v2.service.RenameExecutionService;
 
 import java.io.File;
@@ -16,7 +19,10 @@ import java.time.LocalDateTime;
  * Implementation of RenameExecutionService that performs physical file renames.
  */
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class RenameExecutionServiceImpl implements RenameExecutionService {
+
+    private final NameValidator nameValidator;
 
     @Override
     public RenameResult execute(PreparedFileModel preparedFile) {
@@ -73,6 +79,18 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
                                    .withPreparedFile(preparedFile)
                                    .withStatus(RenameStatus.ERROR_EXECUTION)
                                    .withErrorMessage("Target file already exists: " + newPath.getFileName())
+                                   .withExecutedAt(LocalDateTime.now())
+                                   .build();
+            }
+
+            // Validate the final filename before physical rename
+            String finalName = preparedFile.getNewFullName();
+            if (!nameValidator.isValid(finalName)) {
+                log.warn("Generated filename contains invalid characters: {}", finalName);
+                return RenameResult.builder()
+                                   .withPreparedFile(preparedFile)
+                                   .withStatus(RenameStatus.ERROR_TRANSFORMATION)
+                                   .withErrorMessage("Generated filename contains invalid characters: " + finalName)
                                    .withExecutedAt(LocalDateTime.now())
                                    .build();
             }

@@ -458,7 +458,7 @@ One test per transformer (`XxxTransformerTest.java` — extend existing test cla
 
 ---
 
-### TASK-1.9 — STABILITY-3: NameValidator before physical rename
+### TASK-1.9 — STABILITY-3: NameValidator before physical rename ✅ DONE
 
 **Priority:** Round 4 (parallel with TASK-1.8)
 

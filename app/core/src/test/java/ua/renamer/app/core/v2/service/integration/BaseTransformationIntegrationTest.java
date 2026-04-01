@@ -14,6 +14,7 @@ import ua.renamer.app.core.v2.service.RenameExecutionService;
 import ua.renamer.app.core.v2.service.impl.DuplicateNameResolverImpl;
 import ua.renamer.app.core.v2.service.impl.FileRenameOrchestratorImpl;
 import ua.renamer.app.core.v2.service.impl.RenameExecutionServiceImpl;
+import ua.renamer.app.core.service.validator.impl.NameValidator;
 import ua.renamer.app.core.v2.service.transformation.*;
 import ua.renamer.app.api.interfaces.FileUtils;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
@@ -60,7 +61,7 @@ public abstract class BaseTransformationIntegrationTest {
 
         ThreadAwareFileMapper fileMapper = new ThreadAwareFileMapper(fileUtils, mockMetadataMapper);
         DuplicateNameResolver duplicateResolver = new DuplicateNameResolverImpl();
-        RenameExecutionService renameExecutor = new RenameExecutionServiceImpl();
+        RenameExecutionService renameExecutor = new RenameExecutionServiceImpl(new NameValidator());
 
         // Create all transformers
         AddTextTransformer addTextTransformer = new AddTextTransformer();
