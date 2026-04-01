@@ -143,6 +143,7 @@ and `app/api/src/test/java/ua/renamer/app/api/model/config/SequenceConfigTest.ja
 ### TASK-1.3 — STABILITY-2: Constructor/builder validation in all 10 config classes
 
 **Priority:** Round 1 (no dependencies — TASK-1.2 does SequenceConfig, so this covers the other 9)
+**Status:** COMPLETED
 
 **Goal:** All V2 config classes must reject invalid state at construction time, not at transformation time.
 

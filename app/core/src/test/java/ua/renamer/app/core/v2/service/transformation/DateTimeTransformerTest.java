@@ -413,26 +413,19 @@ class DateTimeTransformerTest {
 
     @Test
     void testCustomDate_NotProvided_Error() {
-        // Given - CUSTOM_DATE source but no custom date provided
-        FileModel input = createTestFileModel("document", "txt");
-        DateTimeConfig config = DateTimeConfig.builder()
-                                              .withSource(DateTimeSource.CUSTOM_DATE)
-                                              .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
-                                              .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
-                                              .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
-                                              .withPosition(ItemPositionWithReplacement.BEGIN)
-                                              .withSeparator("_")
-                                              .withCustomDateTime(null)
-                                              .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should error
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("No datetime available"));
-        assertFalse(result.needsRename());
+        // Config validation now rejects CUSTOM_DATE with null customDateTime at construction time
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+            DateTimeConfig.builder()
+                          .withSource(DateTimeSource.CUSTOM_DATE)
+                          .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                          .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                          .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                          .withPosition(ItemPositionWithReplacement.BEGIN)
+                          .withSeparator("_")
+                          .withCustomDateTime(null)
+                          .build()
+        );
+        assertTrue(ex.getMessage().contains("customDateTime must be set when source is CUSTOM_DATE"));
     }
 
     // ============================================================================

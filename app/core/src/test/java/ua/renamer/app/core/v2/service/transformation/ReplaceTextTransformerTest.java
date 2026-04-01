@@ -522,66 +522,41 @@ class ReplaceTextTransformerTest {
 
     @Test
     void testErrorHandling_NullPosition() {
-        // Given - config with null position
-        FileModel input = createTestFileModel("file", "txt");
-        ReplaceTextConfig config = ReplaceTextConfig.builder()
-                                                    .withTextToReplace("old")
-                                                    .withReplacementText("new")
-                                                    .withPosition(null)
-                                                    .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should return error result
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to replace text"));
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects null position at construction time
+        NullPointerException ex = assertThrows(NullPointerException.class, () ->
+            ReplaceTextConfig.builder()
+                             .withTextToReplace("old")
+                             .withReplacementText("new")
+                             .withPosition(null)
+                             .build()
+        );
+        assertTrue(ex.getMessage().contains("position must not be null"));
     }
 
     @Test
     void testErrorHandling_NullTextToReplace() {
-        // Given - config with null text to replace
-        FileModel input = createTestFileModel("file", "txt");
-        ReplaceTextConfig config = ReplaceTextConfig.builder()
-                                                    .withTextToReplace(null)
-                                                    .withReplacementText("new")
-                                                    .withPosition(ItemPositionExtended.BEGIN)
-                                                    .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should return error result
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects null textToReplace at construction time
+        NullPointerException ex = assertThrows(NullPointerException.class, () ->
+            ReplaceTextConfig.builder()
+                             .withTextToReplace(null)
+                             .withReplacementText("new")
+                             .withPosition(ItemPositionExtended.BEGIN)
+                             .build()
+        );
+        assertTrue(ex.getMessage().contains("textToReplace must not be null"));
     }
 
     @Test
     void testErrorHandling_NullReplacementText() {
-        // Given - config with null replacement text
-        FileModel input = createTestFileModel("old_file", "txt");
-        ReplaceTextConfig config = ReplaceTextConfig.builder()
-                                                    .withTextToReplace("old")
-                                                    .withReplacementText(null)
-                                                    .withPosition(ItemPositionExtended.BEGIN)
-                                                    .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should return error result
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects null replacementText at construction time
+        NullPointerException ex = assertThrows(NullPointerException.class, () ->
+            ReplaceTextConfig.builder()
+                             .withTextToReplace("old")
+                             .withReplacementText(null)
+                             .withPosition(ItemPositionExtended.BEGIN)
+                             .build()
+        );
+        assertTrue(ex.getMessage().contains("replacementText must not be null"));
     }
 
     // ============================================================================

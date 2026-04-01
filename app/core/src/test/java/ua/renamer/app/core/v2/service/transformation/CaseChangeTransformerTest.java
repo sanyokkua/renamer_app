@@ -552,23 +552,14 @@ class CaseChangeTransformerTest {
 
     @Test
     void testErrorHandling_NullCaseOption() {
-        // Given - config with null caseOption
-        FileModel input = createTestFileModel("TestFile", "txt");
-        CaseChangeConfig config = CaseChangeConfig.builder()
-                                                  .withCaseOption(null) // This will cause exception in StringUtilsV2.toProvidedCase
-                                                  .withCapitalizeFirstLetter(false)
-                                                  .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should return error result instead of throwing exception
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to change case"));
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects null caseOption at construction time
+        NullPointerException ex = assertThrows(NullPointerException.class, () ->
+            CaseChangeConfig.builder()
+                            .withCaseOption(null)
+                            .withCapitalizeFirstLetter(false)
+                            .build()
+        );
+        assertTrue(ex.getMessage().contains("caseOption must not be null"));
     }
 
     // ============================================================================

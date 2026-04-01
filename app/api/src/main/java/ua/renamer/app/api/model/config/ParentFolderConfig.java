@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Value;
 import ua.renamer.app.api.enums.ItemPosition;
 
+import java.util.Objects;
+
 /**
  * Configuration for adding parent folder name(s) to filenames.
  */
@@ -18,4 +20,24 @@ public class ParentFolderConfig implements TransformationConfig {
 
     /** Separator between folder names and filename. */
     String separator;
+
+    // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+    public static class ParentFolderConfigBuilder {
+        /**
+         * Builds the {@link ParentFolderConfig}, validating that required fields are non-null and
+         * numberOfParentFolders is at least 1.
+         *
+         * @return a new {@link ParentFolderConfig} instance
+         * @throws NullPointerException     if position is null
+         * @throws IllegalArgumentException if numberOfParentFolders is less than 1
+         */
+        public ParentFolderConfig build() {
+            Objects.requireNonNull(position, "position must not be null");
+            if (numberOfParentFolders < 1) {
+                throw new IllegalArgumentException(
+                        "numberOfParentFolders must be >= 1, got: " + numberOfParentFolders);
+            }
+            return new ParentFolderConfig(numberOfParentFolders, position, separator);
+        }
+    }
 }

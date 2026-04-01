@@ -622,21 +622,14 @@ class ParentFolderTransformerTest {
 
     @Test
     void testZeroParentFolders_Error() {
-        // Given - requesting 0 parent folders
-        FileModel input = createTestFileModelWithPath("/root/parent/file.txt");
-        ParentFolderConfig config = ParentFolderConfig.builder()
-                                                      .withNumberOfParentFolders(0)
-                                                      .withPosition(ItemPosition.BEGIN)
-                                                      .withSeparator("_")
-                                                      .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should error because no parents were collected
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("No parent folders"));
-        assertFalse(result.needsRename());
+        // Config validation now rejects numberOfParentFolders < 1 at construction time
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+            ParentFolderConfig.builder()
+                              .withNumberOfParentFolders(0)
+                              .withPosition(ItemPosition.BEGIN)
+                              .withSeparator("_")
+                              .build()
+        );
+        assertTrue(ex.getMessage().contains("numberOfParentFolders must be >= 1"));
     }
 }

@@ -511,23 +511,14 @@ class TruncateTransformerTest {
 
     @Test
     void testErrorHandling_NullTruncateOption() {
-        // Given - config with null option
-        FileModel input = createTestFileModel("file", "txt");
-        TruncateConfig config = TruncateConfig.builder()
-                                              .withNumberOfSymbols(5)
-                                              .withTruncateOption(null)
-                                              .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should return error result
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to truncate"));
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects null truncateOption at construction time
+        NullPointerException ex = assertThrows(NullPointerException.class, () ->
+            TruncateConfig.builder()
+                          .withNumberOfSymbols(5)
+                          .withTruncateOption(null)
+                          .build()
+        );
+        assertTrue(ex.getMessage().contains("truncateOption must not be null"));
     }
 
     // ============================================================================

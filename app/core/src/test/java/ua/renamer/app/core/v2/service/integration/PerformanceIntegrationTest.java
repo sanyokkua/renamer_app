@@ -295,7 +295,7 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
                 createTrackingCallback()
         );
         Instant end1 = Instant.now();
-        long withCallbackMs = Duration.between(start1, end1).toMillis();
+        long withCallbackNs = Duration.between(start1, end1).toNanos();
 
         // Clean up
         results1.forEach(r -> {
@@ -315,19 +315,23 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
                 null
         );
         Instant end2 = Instant.now();
-        long withoutCallbackMs = Duration.between(start2, end2).toMillis();
+        long withoutCallbackNs = Duration.between(start2, end2).toNanos();
 
-        log.info("With callback: {} ms, Without callback: {} ms",
-                 withCallbackMs, withoutCallbackMs);
+        log.info("With callback: {} ns, Without callback: {} ns",
+                 withCallbackNs, withoutCallbackNs);
 
-        // Callback should not add significant overhead (< 20% difference)
-        double overhead = Math.abs(withCallbackMs - withoutCallbackMs) /
-                (double) Math.min(withCallbackMs, withoutCallbackMs);
+        // Callback should not add significant overhead (< 50% relative to baseline)
+        double overhead;
+        if (withoutCallbackNs == 0) {
+            overhead = 0.0; // both effectively instant — no measurable overhead
+        } else {
+            overhead = Math.abs(withCallbackNs - withoutCallbackNs) / (double) withoutCallbackNs;
+        }
 
         log.info("Overhead: {}%", overhead * 100);
 
         // Allow up to 50% overhead for callback (very generous)
-        assertTrue(overhead < 0.5, "Progress callback should not add significant overhead");
+        assertTrue(overhead < 0.5, "Progress callback overhead: " + (overhead * 100) + "%");
     }
 
     // ==================== COMPARISON TESTS ====================

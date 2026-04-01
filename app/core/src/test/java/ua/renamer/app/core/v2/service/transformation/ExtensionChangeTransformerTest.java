@@ -210,42 +210,24 @@ class ExtensionChangeTransformerTest {
 
     @Test
     void testErrorHandling_EmptyExtension() {
-        // Given - empty extension
-        FileModel input = createTestFileModel("document", "txt");
-        ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("")
-                                                            .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should error
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("empty"));
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects blank extension at construction time
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+            ExtensionChangeConfig.builder()
+                                 .withNewExtension("")
+                                 .build()
+        );
+        assertTrue(ex.getMessage().contains("newExtension must not be blank"));
     }
 
     @Test
     void testErrorHandling_WhitespaceOnlyExtension() {
-        // Given - extension is only whitespace
-        FileModel input = createTestFileModel("document", "txt");
-        ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension("   ")
-                                                            .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should error after trimming
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("empty"));
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects whitespace-only extension at construction time
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+            ExtensionChangeConfig.builder()
+                                 .withNewExtension("   ")
+                                 .build()
+        );
+        assertTrue(ex.getMessage().contains("newExtension must not be blank"));
     }
 
     @Test
@@ -300,22 +282,13 @@ class ExtensionChangeTransformerTest {
 
     @Test
     void testErrorHandling_NullNewExtension() {
-        // Given - config with null extension
-        FileModel input = createTestFileModel("file", "txt");
-        ExtensionChangeConfig config = ExtensionChangeConfig.builder()
-                                                            .withNewExtension(null)
-                                                            .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should return error result
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to change extension"));
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects null extension at construction time
+        NullPointerException ex = assertThrows(NullPointerException.class, () ->
+            ExtensionChangeConfig.builder()
+                                 .withNewExtension(null)
+                                 .build()
+        );
+        assertTrue(ex.getMessage().contains("newExtension must not be null"));
     }
 
     // ============================================================================

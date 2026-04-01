@@ -367,23 +367,14 @@ class AddTextTransformerTest {
 
     @Test
     void testErrorHandling_ExceptionInTransform() {
-        // Given - create a config with null position to trigger exception in switch
-        FileModel input = createTestFileModel("file", "txt");
-        AddTextConfig config = AddTextConfig.builder()
-                                            .withTextToAdd("prefix_")
-                                            .withPosition(null) // This will cause NullPointerException in switch
-                                            .build();
-
-        // When
-        PreparedFileModel result = transformer.transform(input, config);
-
-        // Then - should return error result instead of throwing exception
-        assertNotNull(result);
-        assertTrue(result.isHasError());
-        assertTrue(result.getErrorMessage().isPresent());
-        assertTrue(result.getErrorMessage().get().contains("Failed to add text"));
-        assertNull(result.getTransformationMeta());
-        assertFalse(result.needsRename());
+        // Config validation now rejects null position at construction time
+        NullPointerException ex = assertThrows(NullPointerException.class, () ->
+            AddTextConfig.builder()
+                         .withTextToAdd("prefix_")
+                         .withPosition(null)
+                         .build()
+        );
+        assertTrue(ex.getMessage().contains("position must not be null"));
     }
 
     // ============================================================================
