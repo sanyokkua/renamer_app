@@ -57,6 +57,15 @@ public class DateTimeConfig implements TransformationConfig {
     boolean useUppercaseForAmPm = true;
 
     /**
+     * When {@code true} and {@link #useFallbackDateTime} is also {@code true},
+     * uses the user-provided {@link #customDateTime} as the ultimate fallback when
+     * all natural dates (creation, modification, content-creation) are null.
+     * Defaults to {@code false}.
+     */
+    @Builder.Default
+    boolean useCustomDateTimeAsFallback = false;
+
+    /**
      * Returns the custom datetime value wrapped in an {@link Optional}.
      *
      * @return the custom datetime if set, or empty if not set
@@ -88,7 +97,8 @@ public class DateTimeConfig implements TransformationConfig {
             return new DateTimeConfig(source, dateFormat, timeFormat, dateTimeFormat, position, customDateTime,
                                       separator,
                                       useFallbackDateTime$set && useFallbackDateTime$value,
-                    !useUppercaseForAmPm$set || useUppercaseForAmPm$value);
+                                      !useUppercaseForAmPm$set || useUppercaseForAmPm$value,
+                                      useCustomDateTimeAsFallback$set && useCustomDateTimeAsFallback$value);
         }
     }
 }

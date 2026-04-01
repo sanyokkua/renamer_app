@@ -365,6 +365,7 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 ### TASK-1.7 — FEATURE-2: DateTimeTransformer — restore `useCustomDateTimeAsFallback`
 
 **Priority:** Round 3 (depends on TASK-1.5 — fallback logic must exist first)
+**Status:** COMPLETED
 
 **Goal:** When `useFallbackDateTime = true` and all natural dates are null, use the user-provided `customDateTime` as the ultimate fallback instead of returning `ERROR_TRANSFORMATION`.
 

@@ -110,13 +110,17 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
         };
 
         if (dateTime == null && config.isUseFallbackDateTime()) {
-            LocalDateTime creation = input.getCreationDate().orElse(null);
-            LocalDateTime modification = input.getModificationDate().orElse(null);
-            LocalDateTime contentCreation = extractContentCreationDate(input);
-            dateTime = Stream.of(creation, modification, contentCreation)
-                             .filter(Objects::nonNull)
-                             .min(Comparator.naturalOrder())
-                             .orElse(null);
+            if (config.isUseCustomDateTimeAsFallback() && config.getCustomDateTime().orElse(null) != null) {
+                dateTime = config.getCustomDateTime().orElse(null); // Custom date as guaranteed fallback
+            } else {
+                LocalDateTime creation = input.getCreationDate().orElse(null);
+                LocalDateTime modification = input.getModificationDate().orElse(null);
+                LocalDateTime contentCreation = extractContentCreationDate(input);
+                dateTime = Stream.of(creation, modification, contentCreation)
+                                 .filter(Objects::nonNull)
+                                 .min(Comparator.naturalOrder())
+                                 .orElse(null);
+            }
         }
 
         return dateTime;
