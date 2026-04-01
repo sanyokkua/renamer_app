@@ -40,6 +40,14 @@ public class DateTimeConfig implements TransformationConfig {
     String separator;
 
     /**
+     * When {@code true} and the primary datetime source returns null,
+     * falls back to the earliest of creation, modification, and content-creation dates.
+     * Defaults to {@code false} to preserve existing V2 behavior.
+     */
+    @Builder.Default
+    boolean useFallbackDateTime = false;
+
+    /**
      * Returns the custom datetime value wrapped in an {@link Optional}.
      *
      * @return the custom datetime if set, or empty if not set
@@ -50,6 +58,7 @@ public class DateTimeConfig implements TransformationConfig {
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
     public static class DateTimeConfigBuilder {
+
         /**
          * Builds the {@link DateTimeConfig}, validating that required fields are non-null and that
          * customDateTime is provided when source is {@link DateTimeSource#CUSTOM_DATE}.
@@ -68,7 +77,7 @@ public class DateTimeConfig implements TransformationConfig {
                         "customDateTime must be set when source is CUSTOM_DATE");
             }
             return new DateTimeConfig(source, dateFormat, timeFormat, dateTimeFormat, position, customDateTime,
-                                      separator);
+                                      separator, useFallbackDateTime$set && useFallbackDateTime$value);
         }
     }
 }

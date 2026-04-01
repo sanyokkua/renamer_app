@@ -275,6 +275,7 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 ### TASK-1.5 — FEATURE-1: DateTimeTransformer — restore `useFallbackDateTime`
 
 **Priority:** Round 2 (after TASK-1.3)
+**Status:** COMPLETED
 
 **Goal:** When the primary datetime source returns null, and `useFallbackDateTime = true`, use the earliest of all available dates (creation, modification, content creation) instead of immediately returning `ERROR_TRANSFORMATION`.
 

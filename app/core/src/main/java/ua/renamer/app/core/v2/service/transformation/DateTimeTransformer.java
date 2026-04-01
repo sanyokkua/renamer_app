@@ -13,7 +13,10 @@ import ua.renamer.app.core.v2.service.FileTransformationService;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Transformer that adds datetime to filenames from various sources.
@@ -77,27 +80,34 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
     }
 
     private LocalDateTime extractDateTime(FileModel input, DateTimeConfig config) {
-        return switch (config.getSource()) {
+        LocalDateTime dateTime = switch (config.getSource()) {
             case FILE_CREATION_DATE -> input.getCreationDate().orElse(null);
             case FILE_MODIFICATION_DATE -> input.getModificationDate().orElse(null);
-            case CONTENT_CREATION_DATE -> {
-                var metadataOpt = input.getMetadata();
-                if (metadataOpt.isPresent()) {
-                    var metadata = metadataOpt.get();
-                    var imageMetaOpt = metadata.getImageMeta();
-                    if (imageMetaOpt.isPresent()) {
-                        yield imageMetaOpt.flatMap(ImageMeta::getContentCreationDate).orElse(null);
-                    }
-                    var videoMetaOpt = metadata.getVideoMeta();
-                    if (videoMetaOpt.isPresent()) {
-                        yield videoMetaOpt.flatMap(VideoMeta::getContentCreationDate).orElse(null);
-                    }
-                }
-                yield null;
-            }
+            case CONTENT_CREATION_DATE -> extractContentCreationDate(input);
             case CURRENT_DATE -> LocalDateTime.now();
             case CUSTOM_DATE -> config.getCustomDateTime().orElse(null);
         };
+
+        if (dateTime == null && config.isUseFallbackDateTime()) {
+            LocalDateTime creation = input.getCreationDate().orElse(null);
+            LocalDateTime modification = input.getModificationDate().orElse(null);
+            LocalDateTime contentCreation = extractContentCreationDate(input);
+            dateTime = Stream.of(creation, modification, contentCreation)
+                             .filter(Objects::nonNull)
+                             .min(Comparator.naturalOrder())
+                             .orElse(null);
+        }
+
+        return dateTime;
+    }
+
+    private LocalDateTime extractContentCreationDate(FileModel input) {
+        return input.getMetadata()
+                    .flatMap(meta -> meta.getImageMeta()
+                                        .flatMap(ImageMeta::getContentCreationDate)
+                                        .or(() -> meta.getVideoMeta()
+                                                      .flatMap(VideoMeta::getContentCreationDate)))
+                    .orElse(null);
     }
 
     private TransformationMetadata buildMetadata(DateTimeConfig config) {
