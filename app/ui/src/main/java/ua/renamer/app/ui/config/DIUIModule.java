@@ -11,6 +11,8 @@ import javafx.scene.Parent;
 import javafx.util.BuilderFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.session.StatePublisher;
+import ua.renamer.app.backend.config.DIBackendModule;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.ui.controller.ApplicationMainViewController;
 import ua.renamer.app.ui.controller.mode.ModeControllerApi;
@@ -21,6 +23,7 @@ import ua.renamer.app.ui.service.ViewLoaderApi;
 import ua.renamer.app.ui.service.impl.CoreFunctionalityHelper;
 import ua.renamer.app.ui.service.impl.MainViewControllerHelper;
 import ua.renamer.app.ui.service.impl.ViewLoaderService;
+import ua.renamer.app.ui.state.FxStateMirror;
 import ua.renamer.app.ui.widget.builder.ItemPositionExtendedRadioSelectorBuilder;
 import ua.renamer.app.ui.widget.builder.ItemPositionRadioSelectorBuilder;
 import ua.renamer.app.ui.widget.builder.ItemPositionTruncateRadioSelectorBuilder;
@@ -45,6 +48,7 @@ public class DIUIModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        install(new DIBackendModule());
         bindServices();
         bindCustomWidgets();
         bindStringConverters();
@@ -334,6 +338,18 @@ public class DIUIModule extends AbstractModule {
     @Singleton
     public ObservableList<RenameModel> provideAppGlobalRenameModelList() {
         return FXCollections.observableArrayList();
+    }
+
+    @Provides
+    @Singleton
+    public FxStateMirror provideFxStateMirror() {
+        return new FxStateMirror();
+    }
+
+    @Provides
+    @Singleton
+    public StatePublisher provideStatePublisher(FxStateMirror mirror) {
+        return mirror;
     }
 
 }

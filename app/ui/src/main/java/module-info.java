@@ -12,10 +12,13 @@ module ua.renamer.app.ui {
 
     requires ua.renamer.app.core;
     requires ua.renamer.app.metadata;
+    requires ua.renamer.app.backend;
+    requires ua.renamer.app.api;
     requires jakarta.inject;
     requires org.apache.tika.core;
 
     exports ua.renamer.app.ui.config;
+    exports ua.renamer.app.ui.state;
     exports ua.renamer.app.ui.controller.mode.impl;
     exports ua.renamer.app.ui.controller.mode;
     exports ua.renamer.app.ui.controller;

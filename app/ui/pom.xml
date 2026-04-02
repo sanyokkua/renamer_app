@@ -14,12 +14,22 @@
     <dependencies>
         <dependency>
             <groupId>ua.renamer.app</groupId>
+            <artifactId>ua.renamer.app.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ua.renamer.app</groupId>
             <artifactId>ua.renamer.app.core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>ua.renamer.app</groupId>
             <artifactId>ua.renamer.app.metadata</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ua.renamer.app</groupId>
+            <artifactId>ua.renamer.app.backend</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

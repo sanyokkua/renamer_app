@@ -1590,6 +1590,8 @@ public class TaskHandleImpl<T> implements TaskHandle<T> {
 
 ### TASK-3.6 — Implement `DIBackendModule` (Guice wiring for backend)
 
+**Status:** ✅ DONE
+
 **Goal:** Guice module that wires all backend components together, including the `StatePublisher` binding to
 `FxStateMirror`.
 
