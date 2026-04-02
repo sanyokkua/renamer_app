@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.controller;
 
 import com.google.inject.Inject;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,14 +13,19 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.session.ModeApi;
+import ua.renamer.app.api.session.ModeParameters;
+import ua.renamer.app.api.session.SessionApi;
 import ua.renamer.app.core.enums.AppModes;
 import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.command.FileInformationCommand;
+import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.AppModesConverter;
 import ua.renamer.app.ui.enums.TableStyles;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.impl.CoreFunctionalityHelper;
 import ua.renamer.app.ui.service.impl.MainViewControllerHelper;
+import ua.renamer.app.ui.state.FxStateMirror;
 
 import java.net.URL;
 import java.util.Objects;
@@ -34,6 +40,8 @@ public class ApplicationMainViewController implements Initializable {
     private final MainViewControllerHelper mainControllerHelper;
     private final AppModesConverter appModesConverter;
     private final ObservableList<RenameModel> loadedAppFilesList;
+    private final SessionApi sessionApi;
+    private final FxStateMirror fxStateMirror;
 
     @FXML
     private ChoiceBox<AppModes> appModeChoiceBox;
@@ -64,6 +72,12 @@ public class ApplicationMainViewController implements Initializable {
     @FXML
     private ProgressBar appProgressBar;
     private boolean areFilesRenamed = false;
+    private boolean isV2ModeActive = false;
+
+    @SuppressWarnings("unchecked")
+    private static <P extends ModeParameters> void callBind(ModeControllerV2Api<?> ctrl, ModeApi<?> api) {
+        ((ModeControllerV2Api<P>) ctrl).bind((ModeApi<P>) api);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -78,6 +92,7 @@ public class ApplicationMainViewController implements Initializable {
         configureReloadBtn();
         configureProgressBar();
         configureModeCommandChangedListener();
+        configureFxStateMirrorListeners();
         configureControlWidgetsState();
         handleModeChanged(); // Select default view
     }
@@ -177,6 +192,12 @@ public class ApplicationMainViewController implements Initializable {
         });
     }
 
+    private void configureFxStateMirrorListeners() {
+        log.info("Configuring FxStateMirror listeners (V2 path)");
+        // V2 state listeners will be registered here as mode controllers are migrated.
+        // No-op at TASK-4.3 — no controller implements ModeControllerV2Api yet.
+    }
+
     private void configureControlWidgetsState() {
         log.info("Configuring controlWidgetsState");
         reloadBtn.setVisible(areFilesRenamed);
@@ -206,21 +227,29 @@ public class ApplicationMainViewController implements Initializable {
         var mode = appModeChoiceBox.getValue();
         var view = mainControllerHelper.getViewForAppMode(mode);
         StackPane.setMargin(view, new Insets(10, 10, 10, 10));
-
         appModeContainer.getChildren().clear();
         appModeContainer.getChildren().add(view);
 
         log.debug("handleModeChanged: {}", mode.name());
 
         var controllerForAppMode = mainControllerHelper.getControllerForAppMode(mode);
-        var command = controllerForAppMode.getCommand();
 
-        if (!areFilesRenamed) {
-            coreHelper.resetModels(loadedAppFilesList, command, appProgressBar, resultList -> {
-                loadedAppFilesList.clear();
-                loadedAppFilesList.addAll(resultList);
-                filesTableView.setItems(loadedAppFilesList);
-            });
+        if (controllerForAppMode instanceof ModeControllerV2Api<?> v2ctrl) {
+            // V2 path: delegate mode selection to SessionApi
+            isV2ModeActive = true;
+            sessionApi.selectMode(v2ctrl.supportedMode())
+                    .thenAcceptAsync(modeApi -> callBind(v2ctrl, modeApi), Platform::runLater);
+        } else {
+            // V1 path: existing command-based approach (unchanged)
+            isV2ModeActive = false;
+            var command = controllerForAppMode.getCommand();
+            if (!areFilesRenamed) {
+                coreHelper.resetModels(loadedAppFilesList, command, appProgressBar, resultList -> {
+                    loadedAppFilesList.clear();
+                    loadedAppFilesList.addAll(resultList);
+                    filesTableView.setItems(loadedAppFilesList);
+                });
+            }
         }
     }
 
@@ -302,9 +331,30 @@ public class ApplicationMainViewController implements Initializable {
 
     private void handleBtnClickedRename() {
         log.debug("handleRenameBtnClicked");
-        if (mainControllerHelper.showConfirmationDialog(TextKeys.DIALOG_CONFIRM_CONTENT,
+        if (!mainControllerHelper.showConfirmationDialog(TextKeys.DIALOG_CONFIRM_CONTENT,
                 TextKeys.DIALOG_CONFIRM_HEADER)) {
-            log.debug("handleRenameBtnClicked. Confirmed");
+            return;
+        }
+        log.debug("handleRenameBtnClicked. Confirmed");
+
+        if (isV2ModeActive) {
+            // V2 path: delegate execution to SessionApi
+            var handle = sessionApi.execute();
+            handle.addProgressListener((workDone, totalWork, message) ->
+                    Platform.runLater(() -> {
+                        if (totalWork > 0) {
+                            appProgressBar.setProgress(workDone / totalWork);
+                        } else {
+                            appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                        }
+                    })
+            );
+            handle.result().thenRunAsync(() -> {
+                areFilesRenamed = true;
+                configureControlWidgetsState();
+            }, Platform::runLater);
+        } else {
+            // V1 path: unchanged
             coreHelper.renameFiles(loadedAppFilesList, appProgressBar, result -> {
                 loadedAppFilesList.clear();
                 loadedAppFilesList.addAll(result);

@@ -1841,7 +1841,7 @@ public class ModeViewRegistry {
 
 ---
 
-### TASK-4.3 — Update `ApplicationMainViewController` for dual-path routing
+### TASK-4.3 — Update `ApplicationMainViewController` for dual-path routing ✅ done
 
 **Goal:** Inject `SessionApi` into the main controller alongside the existing `CoreFunctionalityHelper`. Add dual-path
 routing: if the loaded mode controller implements `ModeControllerV2Api`, route through V2; otherwise fall back to V1.
