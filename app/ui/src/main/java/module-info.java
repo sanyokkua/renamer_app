@@ -19,6 +19,7 @@ module ua.renamer.app.ui {
 
     exports ua.renamer.app.ui.config;
     exports ua.renamer.app.ui.state;
+    exports ua.renamer.app.ui.view;
     exports ua.renamer.app.ui.controller.mode.impl;
     exports ua.renamer.app.ui.controller.mode;
     exports ua.renamer.app.ui.controller;

@@ -1776,7 +1776,7 @@ public class FxStateMirror implements StatePublisher {
 
 ---
 
-### TASK-4.2 — Define `ModeControllerV2Api` and `ModeViewRegistry`
+### TASK-4.2 — Define `ModeControllerV2Api` and `ModeViewRegistry` ✅ done
 
 **Goal:** Define the interface that migrated mode controllers implement, and the registry that maps `TransformationMode`
 to view factories.
