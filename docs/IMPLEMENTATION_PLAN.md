@@ -5,6 +5,7 @@
 **Created:** 2026-04-01
 **Approach:** Approach 3 — Pragmatic Facade (SessionApi without Generic UI Generation)
 **Source documents:**
+
 - `docs/V2_STABILIZATION_PLAN.md` — Phase 1 bug/feature/stability inventory
 - `docs/V2_API_DESIGN_APPROACHES.md` — Architecture decision and phase plan
 - `docs/MODE_STATE_MACHINES.md` — Per-mode state machines, validation rules, edge cases
@@ -14,16 +15,18 @@
 
 ## Overview
 
-The Renamer App has two fully implemented backend generations (V1 Command Pattern, V2 Strategy+Pipeline) where only V1 is wired to the UI. This plan migrates the UI to use V2 exclusively, via a new `SessionApi` facade, while keeping all 10 FXML-backed mode controllers intact.
+The Renamer App has two fully implemented backend generations (V1 Command Pattern, V2 Strategy+Pipeline) where only V1
+is wired to the UI. This plan migrates the UI to use V2 exclusively, via a new `SessionApi` facade, while keeping all 10
+FXML-backed mode controllers intact.
 
 **The plan is divided into four parts:**
 
-| Part | Focus | Goal |
-|------|--------|------|
-| **Part 1** | V2 Stabilization | Fix V2 bugs, restore missing V1 features, harden null-safety |
-| **Part 2** | Structural Foundation | Create API interfaces, module structure, ModeParameters hierarchy |
-| **Part 3** | Backend API Implementation | Implement RenameSessionService, BackendExecutor, SessionApiImpl |
-| **Part 4** | UI Connection | Implement FxStateMirror, migrate 10 mode controllers, remove V1 |
+| Part       | Focus                      | Goal                                                              |
+|------------|----------------------------|-------------------------------------------------------------------|
+| **Part 1** | V2 Stabilization           | Fix V2 bugs, restore missing V1 features, harden null-safety      |
+| **Part 2** | Structural Foundation      | Create API interfaces, module structure, ModeParameters hierarchy |
+| **Part 3** | Backend API Implementation | Implement RenameSessionService, BackendExecutor, SessionApiImpl   |
+| **Part 4** | UI Connection              | Implement FxStateMirror, migrate 10 mode controllers, remove V1   |
 
 **Golden rule:** The app must compile and run after every task. No task should leave the build broken.
 
@@ -40,8 +43,10 @@ app/utils/    — Standalone utilities (not imported by core or ui)
 ```
 
 **V2 pipeline (app/core, never called by UI):**
+
 1. Phase 1: `ThreadAwareFileMapper` — `File → FileModel` (parallel, virtual threads)
-2. Phase 2: 10 `FileTransformationService` impls — `FileModel → PreparedFileModel` (parallel; sequential for ADD_SEQUENCE)
+2. Phase 2: 10 `FileTransformationService` impls — `FileModel → PreparedFileModel` (parallel; sequential for
+   ADD_SEQUENCE)
 3. Phase 3: `DuplicateNameResolverImpl` — appends ` (01)`, ` (02)` for in-batch conflicts (sequential)
 4. Phase 4: `RenameExecutionServiceImpl` — `PreparedFileModel → RenameResult` (parallel, physical rename)
 
@@ -63,15 +68,22 @@ Tasks must be executed in the order listed (each round has no internal dependenc
 **Priority:** Round 1 (no dependencies)
 **Status:** COMPLETED
 
-**Goal:** Prevent a potential `NullPointerException` when the metadata chain-of-responsibility returns null for an unrecognized file type.
+**Goal:** Prevent a potential `NullPointerException` when the metadata chain-of-responsibility returns null for an
+unrecognized file type.
 
 **Context:**
-`ThreadAwareFileMapper.map(File)` calls `fileMetadataMapper.extract(file, category, mimeType)`. The chain-of-responsibility pattern returns `null` if no handler recognizes the file type. This raw `null` propagates into `FileModel`, which expects `Optional<FileMeta>`, not a bare null. If `Optional<FileMeta>` is stored as `null` (rather than `Optional.empty()`), downstream transformers that call `input.getMetadata().orElse(null)` will throw `NullPointerException`.
+`ThreadAwareFileMapper.map(File)` calls `fileMetadataMapper.extract(file, category, mimeType)`. The
+chain-of-responsibility pattern returns `null` if no handler recognizes the file type. This raw `null` propagates into
+`FileModel`, which expects `Optional<FileMeta>`, not a bare null. If `Optional<FileMeta>` is stored as `null` (rather
+than `Optional.empty()`), downstream transformers that call `input.getMetadata().orElse(null)` will throw
+`NullPointerException`.
 
 **Affected files:**
+
 - `app/core/src/main/java/ua/renamer/app/core/v2/mapper/ThreadAwareFileMapper.java`
 
 **Implementation:**
+
 1. Read `ThreadAwareFileMapper.java` to find the line where `fileMetadataMapper.extract(...)` is called.
 2. After the call, wrap the result:
    ```java
@@ -79,12 +91,15 @@ Tasks must be executed in the order listed (each round has no internal dependenc
    Optional<FileMeta> metadata = Optional.ofNullable(rawMeta);
    ```
 3. Pass `metadata` (the `Optional`) to `FileModel` builder — never pass `rawMeta` directly.
-4. Review `FileModel.getMetadata()` return type — confirm it is `Optional<FileMeta>`. If not, note this as a separate finding for the coder.
+4. Review `FileModel.getMetadata()` return type — confirm it is `Optional<FileMeta>`. If not, note this as a separate
+   finding for the coder.
 
 **Acceptance criteria (JUnit 5):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/mapper/ThreadAwareFileMapperTest.java`
+
 - `givenUnknownFileType_whenMapped_thenMetadataIsEmptyOptional()` — result is `Optional.empty()`, not null, not NPE
-- `givenNullFromMetadataChain_whenMapped_thenFileModelMetadataIsEmptyOptional()` — force chain to return null via mock; explicitly validates `Optional.ofNullable()` wrapping
+- `givenNullFromMetadataChain_whenMapped_thenFileModelMetadataIsEmptyOptional()` — force chain to return null via mock;
+  explicitly validates `Optional.ofNullable()` wrapping
 - `givenKnownFileType_whenMapped_thenMetadataIsPresentOptional()` — happy path
 
 **Build check:** `mvn test -q -ff -Dai=true -Dtest=ThreadAwareFileMapperTest`
@@ -96,31 +111,41 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/mapper/ThreadAwareFileM
 **Priority:** Round 1 (no dependencies)
 **Status:** COMPLETED
 
-**Goal:** Fail fast at config construction when `padding < 0`; add a defensive guard in `formatSequenceNumber()` so the transformer never crashes even if validation is bypassed.
+**Goal:** Fail fast at config construction when `padding < 0`; add a defensive guard in `formatSequenceNumber()` so the
+transformer never crashes even if validation is bypassed.
 
 **Context:**
 `SequenceTransformer.formatSequenceNumber(int number, int padding)` calls:
+
 ```java
-String.format("%0" + padding + "d", number)
+String.format("%0"+padding +"d", number)
 ```
-If `padding` is negative (user types `-1` in a spinner), `String.format` throws `MissingFormatWidthException`. Currently this propagates as `ERROR_TRANSFORMATION` with an opaque message. Root cause should be caught at config construction time, not pipeline execution time.
+
+If `padding` is negative (user types `-1` in a spinner), `String.format` throws `MissingFormatWidthException`. Currently
+this propagates as `ERROR_TRANSFORMATION` with an opaque message. Root cause should be caught at config construction
+time, not pipeline execution time.
 
 **Affected files:**
+
 - `app/api/src/main/java/ua/renamer/app/api/model/config/SequenceConfig.java`
 - `app/core/src/main/java/ua/renamer/app/core/v2/service/transformation/SequenceTransformer.java`
 
 **Implementation:**
 
 `SequenceConfig.java`:
+
 - Add a compact constructor (or override `@Builder`'s build method) that validates:
   ```java
   if (padding < 0) {
       throw new IllegalArgumentException("padding must be >= 0, got: " + padding);
   }
   ```
-- Note: `SequenceConfig` uses `@Value @Builder(setterPrefix = "with")` (Lombok). Use a static factory or add `@Builder.ObtainVia` + validation method. The simplest approach: add a static `validated(...)` factory method and keep `@Value`. See STABILITY-2 for the general config validation pattern.
+- Note: `SequenceConfig` uses `@Value @Builder(setterPrefix = "with")` (Lombok). Use a static factory or add
+  `@Builder.ObtainVia` + validation method. The simplest approach: add a static `validated(...)` factory method and keep
+  `@Value`. See STABILITY-2 for the general config validation pattern.
 
 `SequenceTransformer.java`:
+
 - In `formatSequenceNumber(int number, int padding)`, add a guard:
   ```java
   if (padding <= 0) {
@@ -133,6 +158,7 @@ If `padding` is negative (user types `-1` in a spinner), `String.format` throws 
 **Acceptance criteria (JUnit 5):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/SequenceTransformerTest.java`
 and `app/api/src/test/java/ua/renamer/app/api/model/config/SequenceConfigTest.java`
+
 - `givenNegativePadding_whenConfigConstructed_thenIllegalArgumentExceptionThrown()`
 - `givenZeroPadding_whenFormatSequenceNumber_thenRawNumberReturned()`
 - `givenPositivePadding_whenFormatSequenceNumber_thenZeroPaddedStringReturned()`
@@ -148,9 +174,12 @@ and `app/api/src/test/java/ua/renamer/app/api/model/config/SequenceConfigTest.ja
 **Goal:** All V2 config classes must reject invalid state at construction time, not at transformation time.
 
 **Context:**
-All 10 V2 config classes use `@Value @Builder(setterPrefix = "with")` (Lombok). Lombok generates an all-args constructor with no validation. Invalid values are discovered deep inside the pipeline, producing confusing error messages. Validating at construction provides clear failure points and makes misconfiguration impossible.
+All 10 V2 config classes use `@Value @Builder(setterPrefix = "with")` (Lombok). Lombok generates an all-args constructor
+with no validation. Invalid values are discovered deep inside the pipeline, producing confusing error messages.
+Validating at construction provides clear failure points and makes misconfiguration impossible.
 
 **Affected files (one validation per file):**
+
 ```
 app/api/src/main/java/ua/renamer/app/api/model/config/
   DateTimeConfig.java
@@ -163,10 +192,13 @@ app/api/src/main/java/ua/renamer/app/api/model/config/
   CaseChangeConfig.java
   ParentFolderConfig.java
 ```
+
 (SequenceConfig already covered in TASK-1.2)
 
 **Implementation pattern:**
-Since `@Value` generates an immutable class with a Lombok-generated constructor, the cleanest approach is to add a `@Builder.ObtainVia` or a custom builder `build()` method that calls a `validate()` helper. The recommended pattern for each:
+Since `@Value` generates an immutable class with a Lombok-generated constructor, the cleanest approach is to add a
+`@Builder.ObtainVia` or a custom builder `build()` method that calls a `validate()` helper. The recommended pattern for
+each:
 
 ```java
 // Option: override builder's build() in a nested static class
@@ -196,20 +228,21 @@ Alternatively, add validation in a compact constructor if migrating to Java reco
 
 **Validation rules per config:**
 
-| Config | Required non-null | Numeric constraints | Business rules |
-|--------|-------------------|--------------------|----|
-| `DateTimeConfig` | `source`, `dateFormat`, `timeFormat`, `position` | — | If `source == CUSTOM_DATE`, `customDateTime` must be present |
-| `ImageDimensionsConfig` | `position` | — | At least one of `leftSide`/`rightSide` must not be `DO_NOT_USE` |
-| `TruncateConfig` | `truncateOption` | `numberOfSymbols >= 0` | — |
-| `ExtensionChangeConfig` | `newExtension` | — | `newExtension` must not be blank after trim |
-| `AddTextConfig` | `position`, `textToAdd` | — | — |
-| `RemoveTextConfig` | `position`, `textToRemove` | — | — |
-| `ReplaceTextConfig` | `position`, `textToReplace`, `replacementText` | — | — |
-| `CaseChangeConfig` | `caseOption` | — | — |
-| `ParentFolderConfig` | `position` | `numberOfParentFolders >= 1` | — |
+| Config                  | Required non-null                                | Numeric constraints          | Business rules                                                  |
+|-------------------------|--------------------------------------------------|------------------------------|-----------------------------------------------------------------|
+| `DateTimeConfig`        | `source`, `dateFormat`, `timeFormat`, `position` | —                            | If `source == CUSTOM_DATE`, `customDateTime` must be present    |
+| `ImageDimensionsConfig` | `position`                                       | —                            | At least one of `leftSide`/`rightSide` must not be `DO_NOT_USE` |
+| `TruncateConfig`        | `truncateOption`                                 | `numberOfSymbols >= 0`       | —                                                               |
+| `ExtensionChangeConfig` | `newExtension`                                   | —                            | `newExtension` must not be blank after trim                     |
+| `AddTextConfig`         | `position`, `textToAdd`                          | —                            | —                                                               |
+| `RemoveTextConfig`      | `position`, `textToRemove`                       | —                            | —                                                               |
+| `ReplaceTextConfig`     | `position`, `textToReplace`, `replacementText`   | —                            | —                                                               |
+| `CaseChangeConfig`      | `caseOption`                                     | —                            | —                                                               |
+| `ParentFolderConfig`    | `position`                                       | `numberOfParentFolders >= 1` | —                                                               |
 
 **Acceptance criteria (JUnit 5):**
 One test class per config: `XxxConfigValidationTest` in `app/api/src/test/...`
+
 - `givenNullRequiredField_whenBuild_thenNullPointerExceptionOrIllegalArgumentException()`
 - `givenInvalidNumericValue_whenBuild_thenIllegalArgumentException()`
 - `givenValidParams_whenBuild_thenConfigCreatedSuccessfully()`
@@ -222,29 +255,37 @@ One test class per config: `XxxConfigValidationTest` in `app/api/src/test/...`
 
 **Priority:** Round 2 (after TASK-1.3 so config validation pattern is established)
 
-**Goal:** Add a configurable `nameSeparator` field to `ImageDimensionsConfig` and use it in `ImageDimensionsTransformer`, replacing the hardcoded `" "` (space).
+**Goal:** Add a configurable `nameSeparator` field to `ImageDimensionsConfig` and use it in
+`ImageDimensionsTransformer`, replacing the hardcoded `" "` (space).
 
 **Context:**
-V1's `ImageDimensionsPrepareInformationCommand` accepted a `nameSeparator` constructor parameter. The user could configure it to `"_"`, `"-"`, or any separator. V2's `ImageDimensionsTransformer` hardcodes `" "` between the dimension block and the filename, making this a bug (user-visible regression) and a missing feature simultaneously.
+V1's `ImageDimensionsPrepareInformationCommand` accepted a `nameSeparator` constructor parameter. The user could
+configure it to `"_"`, `"-"`, or any separator. V2's `ImageDimensionsTransformer` hardcodes `" "` between the dimension
+block and the filename, making this a bug (user-visible regression) and a missing feature simultaneously.
 
 Example broken behavior:
+
 ```
 // User wants: "1920x1080_photo.jpg" (separator = "_")
 // V2 produces: "1920x1080 photo.jpg" (hardcoded space — wrong)
 ```
 
 **Affected files:**
+
 - `app/api/src/main/java/ua/renamer/app/api/model/config/ImageDimensionsConfig.java`
 - `app/core/src/main/java/ua/renamer/app/core/v2/service/transformation/ImageDimensionsTransformer.java`
 
 **Implementation:**
 
 `ImageDimensionsConfig.java`:
+
 - Add field: `String nameSeparator`
 - Set `@Builder.Default` value to `""` (empty string — explicit no-separator, closest neutral default)
-- The field must be non-null; add to validation: `Objects.requireNonNull(nameSeparator, "nameSeparator must not be null (use empty string for no separator)")`
+- The field must be non-null; add to validation:
+  `Objects.requireNonNull(nameSeparator, "nameSeparator must not be null (use empty string for no separator)")`
 
 `ImageDimensionsTransformer.java`:
+
 - Find the `BEGIN` case where it builds the output name. Replace:
   ```java
   dimensionStr + " " + input.getName()
@@ -265,9 +306,11 @@ Example broken behavior:
 
 **Acceptance criteria (JUnit 5):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/ImageDimensionsTransformerTest.java`
+
 - `givenNameSeparatorUnderscore_whenPositionBegin_thenDimensionAndNameJoinedWithUnderscore()`
 - `givenNameSeparatorEmpty_whenPositionEnd_thenDimensionAndNameConcatenatedDirectly()`
-- `givenNameSeparatorSpace_whenPositionBegin_thenSpaceInserted()` — verifies old space behavior achievable with explicit config
+- `givenNameSeparatorSpace_whenPositionBegin_thenSpaceInserted()` — verifies old space behavior achievable with explicit
+  config
 - `givenImageDimensionsConfig_whenNameSeparatorNull_thenValidationThrows()` — null rejected at construction
 
 ---
@@ -277,21 +320,28 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 **Priority:** Round 2 (after TASK-1.3)
 **Status:** COMPLETED
 
-**Goal:** When the primary datetime source returns null, and `useFallbackDateTime = true`, use the earliest of all available dates (creation, modification, content creation) instead of immediately returning `ERROR_TRANSFORMATION`.
+**Goal:** When the primary datetime source returns null, and `useFallbackDateTime = true`, use the earliest of all
+available dates (creation, modification, content creation) instead of immediately returning `ERROR_TRANSFORMATION`.
 
 **Context (from V1 behavior):**
-V1's `DateTimeRenamePrepareInformationCommand` had `useFallbackDateTime: boolean`. When the user selects `CONTENT_CREATION_DATE` as source but the file has no EXIF data (e.g., a PNG or plain document), V1 would find the minimum of `fsCreationDate`, `fsModificationDate`, `contentCreationDate`. V2 immediately returns `ERROR_TRANSFORMATION` with no fallback. This breaks V1 workflows where users relied on this fallback for mixed media libraries.
+V1's `DateTimeRenamePrepareInformationCommand` had `useFallbackDateTime: boolean`. When the user selects
+`CONTENT_CREATION_DATE` as source but the file has no EXIF data (e.g., a PNG or plain document), V1 would find the
+minimum of `fsCreationDate`, `fsModificationDate`, `contentCreationDate`. V2 immediately returns `ERROR_TRANSFORMATION`
+with no fallback. This breaks V1 workflows where users relied on this fallback for mixed media libraries.
 
 **Affected files:**
+
 - `app/api/src/main/java/ua/renamer/app/api/model/config/DateTimeConfig.java`
 - `app/core/src/main/java/ua/renamer/app/core/v2/service/transformation/DateTimeTransformer.java`
 
 **Implementation:**
 
 `DateTimeConfig.java`:
+
 - Add field: `boolean useFallbackDateTime` (default: `false` — preserves current V2 behavior)
 
 `DateTimeTransformer.java`:
+
 - In `extractDateTime()` (or equivalent method), after the primary source extraction returns null, add:
   ```java
   if (dateTime == null && config.isUseFallbackDateTime()) {
@@ -309,6 +359,7 @@ V1's `DateTimeRenamePrepareInformationCommand` had `useFallbackDateTime: boolean
 
 **Acceptance criteria (JUnit 5):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/DateTimeTransformerFallbackTest.java`
+
 - `givenContentCreationDateMissingAndFallbackEnabled_whenExtract_thenEarliestAvailableDateUsed()`
 - `givenAllDatesNullAndFallbackEnabled_whenExtract_thenErrorTransformationReturned()`
 - `givenFallbackDisabled_whenPrimarySourceNull_thenErrorTransformationReturned()` — existing V2 behavior preserved
@@ -321,21 +372,27 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 **Priority:** Round 2 (parallel with TASK-1.5, both touch same files)
 **Status:** COMPLETED
 
-**Goal:** After datetime formatting, when an AM/PM time format is used, apply `toUpperCase()` or `toLowerCase()` based on the `useUppercaseForAmPm` flag.
+**Goal:** After datetime formatting, when an AM/PM time format is used, apply `toUpperCase()` or `toLowerCase()` based
+on the `useUppercaseForAmPm` flag.
 
 **Context:**
-V1 had `useUppercaseForAmPm: boolean`. When the user picks a `TimeFormat` that includes AM/PM (Java format character `a`), the locale-dependent result (AM/PM vs am/pm) was controlled by this flag. V2 uses whatever `DateTimeFormatter` returns, which is locale-dependent. The flag ensures predictable, locale-independent behavior in filenames.
+V1 had `useUppercaseForAmPm: boolean`. When the user picks a `TimeFormat` that includes AM/PM (Java format character
+`a`), the locale-dependent result (AM/PM vs am/pm) was controlled by this flag. V2 uses whatever `DateTimeFormatter`
+returns, which is locale-dependent. The flag ensures predictable, locale-independent behavior in filenames.
 
 **Affected files:**
+
 - `app/api/src/main/java/ua/renamer/app/api/model/config/DateTimeConfig.java`
 - `app/core/src/main/java/ua/renamer/app/core/v2/service/transformation/DateTimeTransformer.java`
 
 **Implementation:**
 
 `DateTimeConfig.java`:
+
 - Add field: `boolean useUppercaseForAmPm` (default: `true` — uppercase AM/PM is conventional in filenames)
 
 `DateTimeTransformer.java`:
+
 - After formatting datetime to string, add:
   ```java
   private boolean isAmPmFormat(TimeFormat timeFormat) {
@@ -349,16 +406,21 @@ V1 had `useUppercaseForAmPm: boolean`. When the user picks a `TimeFormat` that i
           : formattedDatetime.toLowerCase();
   }
   ```
-- `toUpperCase()` / `toLowerCase()` on the full string is safe because the date portion uses digits and separators (unaffected by case). Only AM/PM contains letters in an AM/PM formatted string.
+- `toUpperCase()` / `toLowerCase()` on the full string is safe because the date portion uses digits and separators (
+  unaffected by case). Only AM/PM contains letters in an AM/PM formatted string.
 
-**Note:** If TASK-1.5 is being implemented in the same sitting, coordinate changes to `DateTimeConfig.java` — one coder session should handle all three `DateTimeConfig` field additions (TASK-1.5, TASK-1.6, TASK-1.7 together to avoid conflicts).
+**Note:** If TASK-1.5 is being implemented in the same sitting, coordinate changes to `DateTimeConfig.java` — one coder
+session should handle all three `DateTimeConfig` field additions (TASK-1.5, TASK-1.6, TASK-1.7 together to avoid
+conflicts).
 
 **Acceptance criteria (JUnit 5):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/DateTimeTransformerAmPmTest.java`
+
 - `givenAmPmFormatAndUppercaseTrue_whenFormat_thenResultContainsUppercaseAMPM()`
 - `givenAmPmFormatAndUppercaseFalse_whenFormat_thenResultContainsLowercaseAmPm()`
 - `givenNonAmPmFormat_whenFormat_thenUppercaseFlagHasNoEffect()`
-- `givenAmPmFormatAndUppercaseTrue_whenDatePortionHasLetters_thenOnlyAmPmAffected()` — edge case for locales where month/day abbreviations may contain letters; confirms only AM/PM designator changes case
+- `givenAmPmFormatAndUppercaseTrue_whenDatePortionHasLetters_thenOnlyAmPmAffected()` — edge case for locales where
+  month/day abbreviations may contain letters; confirms only AM/PM designator changes case
 
 ---
 
@@ -367,23 +429,30 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 **Priority:** Round 3 (depends on TASK-1.5 — fallback logic must exist first)
 **Status:** COMPLETED
 
-**Goal:** When `useFallbackDateTime = true` and all natural dates are null, use the user-provided `customDateTime` as the ultimate fallback instead of returning `ERROR_TRANSFORMATION`.
+**Goal:** When `useFallbackDateTime = true` and all natural dates are null, use the user-provided `customDateTime` as
+the ultimate fallback instead of returning `ERROR_TRANSFORMATION`.
 
 **Context:**
-V1 allowed the user to specify a `customDateTime` that serves as a guaranteed fallback. This is useful for batch-processing files with no metadata (e.g., scanned documents) where the user knows the approximate capture date. Without this feature, such files always return `ERROR_TRANSFORMATION` even with fallback enabled.
+V1 allowed the user to specify a `customDateTime` that serves as a guaranteed fallback. This is useful for
+batch-processing files with no metadata (e.g., scanned documents) where the user knows the approximate capture date.
+Without this feature, such files always return `ERROR_TRANSFORMATION` even with fallback enabled.
 
 **Affected files:**
+
 - `app/api/src/main/java/ua/renamer/app/api/model/config/DateTimeConfig.java`
 - `app/core/src/main/java/ua/renamer/app/core/v2/service/transformation/DateTimeTransformer.java`
 
 **Implementation:**
 
 `DateTimeConfig.java`:
+
 - Add field: `boolean useCustomDateTimeAsFallback` (default: `false`)
 - This field is meaningful only when `useFallbackDateTime = true`
-- Note: `customDateTime` field should already exist in V2's `DateTimeConfig` (from V2 implementation). Verify this; if absent, also add `LocalDateTime customDateTime` (nullable/Optional).
+- Note: `customDateTime` field should already exist in V2's `DateTimeConfig` (from V2 implementation). Verify this; if
+  absent, also add `LocalDateTime customDateTime` (nullable/Optional).
 
 `DateTimeTransformer.java`:
+
 - Extend the fallback logic added in TASK-1.5:
   ```java
   if (dateTime == null && config.isUseFallbackDateTime()) {
@@ -402,6 +471,7 @@ V1 allowed the user to specify a `customDateTime` that serves as a guaranteed fa
 **Acceptance criteria (JUnit 5):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/DateTimeTransformerFallbackTest.java`
 (extend the test class created in TASK-1.5)
+
 - `givenAllNaturalDatesNullAndCustomFallbackEnabled_whenExtract_thenCustomDateUsed()`
 - `givenCustomFallbackEnabledButCustomDateNull_whenExtract_thenFallsBackToMinNaturalDates()`
 - `givenCustomFallbackEnabledAndPrimarySourcePresent_thenPrimaryUsedNotCustom()`
@@ -414,12 +484,16 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/transformation/
 **Priority:** Round 4 (after TASK-1.3 so configs have validation, making null-config tests meaningful)
 **Status:** COMPLETED
 
-**Goal:** Each transformer's `transform(FileModel, XxxConfig)` method must guard against a null `config` parameter and return a structured error result instead of throwing NPE.
+**Goal:** Each transformer's `transform(FileModel, XxxConfig)` method must guard against a null `config` parameter and
+return a structured error result instead of throwing NPE.
 
 **Context:**
-During refactoring, incorrect DI wiring, or test setup errors, a transformer may receive a null config. Without a guard, NPE propagates from inside the method body as an unhandled exception, breaking the V2 "never throws" contract. A null config should produce `ERROR_TRANSFORMATION` with a clear message, the same as any other transformation failure.
+During refactoring, incorrect DI wiring, or test setup errors, a transformer may receive a null config. Without a guard,
+NPE propagates from inside the method body as an unhandled exception, breaking the V2 "never throws" contract. A null
+config should produce `ERROR_TRANSFORMATION` with a clear message, the same as any other transformation failure.
 
 **Affected files (one change per transformer):**
+
 ```
 app/core/src/main/java/ua/renamer/app/core/v2/service/transformation/
   AddTextTransformer.java
@@ -436,23 +510,33 @@ app/core/src/main/java/ua/renamer/app/core/v2/service/transformation/
 
 **Implementation (same pattern for all 10):**
 At the top of each `transform(FileModel input, XxxConfig config)` method, before any existing logic:
+
 ```java
-if (input == null) {
-    throw new IllegalArgumentException("input FileModel must not be null");
+if(input ==null){
+        throw new
+
+IllegalArgumentException("input FileModel must not be null");
 }
-if (config == null) {
-    return buildErrorResult(input, "Transformer configuration must not be null");
+        if(config ==null){
+        return
+
+buildErrorResult(input, "Transformer configuration must not be null");
 }
 ```
-Where `buildErrorResult(FileModel, String)` returns a `PreparedFileModel` with `hasError = true` and the given message. Find the existing error-result builder in each transformer and use the same pattern.
 
-For string fields in configs that transformers use without null checks (e.g., `config.getTextToAdd()`), add null-to-empty coercion where appropriate:
+Where `buildErrorResult(FileModel, String)` returns a `PreparedFileModel` with `hasError = true` and the given message.
+Find the existing error-result builder in each transformer and use the same pattern.
+
+For string fields in configs that transformers use without null checks (e.g., `config.getTextToAdd()`), add
+null-to-empty coercion where appropriate:
+
 ```java
 String text = config.getTextToAdd() != null ? config.getTextToAdd() : "";
 ```
 
 **Acceptance criteria (JUnit 5):**
 One test per transformer (`XxxTransformerTest.java` — extend existing test classes):
+
 - `givenNullConfig_whenTransform_thenErrorResultReturned()` — not NPE, not exception
 - `givenNullInput_whenTransform_thenIllegalArgumentExceptionThrown()`
 
@@ -462,20 +546,27 @@ One test per transformer (`XxxTransformerTest.java` — extend existing test cla
 
 **Priority:** Round 4 (parallel with TASK-1.8)
 
-**Goal:** Before calling `Files.move()`, validate the final filename using `NameValidator.isValid()`. Return `ERROR_TRANSFORMATION` (not `ERROR_EXECUTION`) for invalid names.
+**Goal:** Before calling `Files.move()`, validate the final filename using `NameValidator.isValid()`. Return
+`ERROR_TRANSFORMATION` (not `ERROR_EXECUTION`) for invalid names.
 
 **Context:**
-After transformation and duplicate resolution, the final filename may contain OS-restricted characters (e.g., `:` on Windows from datetime format `"2024:01:01"`, `*`, `?`, `<`, `>`, `|`). If `Files.move()` is called with an invalid name, it throws `InvalidPathException` with an OS-level message that is confusing to users. Validating upfront produces a clear, structured error.
+After transformation and duplicate resolution, the final filename may contain OS-restricted characters (e.g., `:` on
+Windows from datetime format `"2024:01:01"`, `*`, `?`, `<`, `>`, `|`). If `Files.move()` is called with an invalid name,
+it throws `InvalidPathException` with an OS-level message that is confusing to users. Validating upfront produces a
+clear, structured error.
 
 `NameValidator` already exists at:
 `app/core/src/main/java/ua/renamer/app/core/service/validator/impl/NameValidator.java`
 
 **Affected files:**
+
 - `app/core/src/main/java/ua/renamer/app/core/v2/service/impl/RenameExecutionServiceImpl.java`
 
 **Implementation:**
+
 1. Read `RenameExecutionServiceImpl.java` to understand current structure.
-2. Inject `NameValidator` via constructor injection (Guice will provide it — it should already be bound in `DICoreModule`).
+2. Inject `NameValidator` via constructor injection (Guice will provide it — it should already be bound in
+   `DICoreModule`).
 3. In the rename method, before `Files.move()`:
    ```java
    String finalName = preparedFile.getNewFullName(); // or however the full name is obtained
@@ -487,12 +578,16 @@ After transformation and duplicate resolution, the final filename may contain OS
            .build();
    }
    ```
-4. Use `ERROR_TRANSFORMATION` (not `ERROR_EXECUTION`) — the issue is with the transformation output, not the physical disk operation.
+4. Use `ERROR_TRANSFORMATION` (not `ERROR_EXECUTION`) — the issue is with the transformation output, not the physical
+   disk operation.
 
 **Acceptance criteria (JUnit 5):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/impl/RenameExecutionServiceImplTest.java`
+
 - `givenFilenameWithSlash_whenExecute_thenErrorTransformationReturnedOnAllPlatforms()`
-- `givenFilenameWithColonOnWindows_whenExecute_thenErrorTransformationReturned()` — annotate with `@EnabledOnOs(OS.WINDOWS)` since `:` is only invalid on Windows; verifies the NameValidator catches OS-specific restrictions before `Files.move()`
+- `givenFilenameWithColonOnWindows_whenExecute_thenErrorTransformationReturned()` — annotate with
+  `@EnabledOnOs(OS.WINDOWS)` since `:` is only invalid on Windows; verifies the NameValidator catches OS-specific
+  restrictions before `Files.move()`
 - `givenValidFilename_whenExecute_thenNameValidatorPassesAndRenameProceeds()`
 
 ---
@@ -501,31 +596,37 @@ Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/impl/RenameExec
 
 **Priority:** Round 5 (last — after TASK-1.9 so executor is already being modified)
 
-**Goal:** When the rename target file already exists on disk (not in the current batch), retry with suffix ` (01)`, ` (02)`, ... ` (999)` before returning `ERROR_EXECUTION`.
+**Goal:** When the rename target file already exists on disk (not in the current batch), retry with suffix ` (01)`,
+` (02)`, ... ` (999)` before returning `ERROR_EXECUTION`.
 
 **Context:**
-Currently, when `Files.exists(newPath)` returns true for a pre-existing file (not in the current batch), `RenameExecutionServiceImpl` immediately returns `ERROR_EXECUTION` with "Target file already exists". This is inconsistent with `DuplicateNameResolverImpl` (Phase 3), which auto-appends suffixes for in-batch conflicts. Users see a confusing error when the solution is straightforward: try `name (01).ext`, then `name (02).ext`, etc.
+Currently, when `Files.exists(newPath)` returns true for a pre-existing file (not in the current batch),
+`RenameExecutionServiceImpl` immediately returns `ERROR_EXECUTION` with "Target file already exists". This is
+inconsistent with `DuplicateNameResolverImpl` (Phase 3), which auto-appends suffixes for in-batch conflicts. Users see a
+confusing error when the solution is straightforward: try `name (01).ext`, then `name (02).ext`, etc.
 
 **Affected files:**
+
 - `app/core/src/main/java/ua/renamer/app/core/v2/service/impl/RenameExecutionServiceImpl.java`
 
 **Implementation:**
 Add a private helper method:
+
 ```java
 private static final int MAX_SUFFIX_ATTEMPTS = 999;
 
 private Path resolveConflictWithDisk(Path targetPath) {
     if (!Files.exists(targetPath)) return targetPath; // No conflict
 
-    String fullName   = targetPath.getFileName().toString();
-    String baseName   = getNameWithoutExtension(fullName);   // helper for name without ext
-    String ext        = getExtensionWithDot(fullName);       // helper for ".ext" or ""
-    Path   parent     = targetPath.getParent();
-    int    digits     = String.valueOf(MAX_SUFFIX_ATTEMPTS).length(); // = 3
+    String fullName = targetPath.getFileName().toString();
+    String baseName = getNameWithoutExtension(fullName);   // helper for name without ext
+    String ext = getExtensionWithDot(fullName);       // helper for ".ext" or ""
+    Path parent = targetPath.getParent();
+    int digits = String.valueOf(MAX_SUFFIX_ATTEMPTS).length(); // = 3
 
     for (int i = 1; i <= MAX_SUFFIX_ATTEMPTS; i++) {
-        String suffix    = String.format(" (%0" + digits + "d)", i);
-        Path   candidate = parent.resolve(baseName + suffix + ext);
+        String suffix = String.format(" (%0" + digits + "d)", i);
+        Path candidate = parent.resolve(baseName + suffix + ext);
         if (!Files.exists(candidate)) return candidate;
     }
     return null; // All 999 attempts exhausted — essentially impossible in practice
@@ -533,21 +634,28 @@ private Path resolveConflictWithDisk(Path targetPath) {
 ```
 
 In the main rename flow:
+
 - Before calling `Files.move()`, call `resolveConflictWithDisk(newPath)`.
 - If it returns a non-null path different from `newPath`, use that path for the rename.
 - If it returns null, return `ERROR_EXECUTION` with a message explaining all suffix attempts were exhausted.
-- **Edge case:** Case-change rename on a case-insensitive filesystem (e.g., `photo.jpg` → `PHOTO.JPG`). The source and target refer to the same file. Detect this: `sourceFile.toPath().equals(targetPath)` or use `Files.isSameFile()`. If same file, proceed without suffix.
+- **Edge case:** Case-change rename on a case-insensitive filesystem (e.g., `photo.jpg` → `PHOTO.JPG`). The source and
+  target refer to the same file. Detect this: `sourceFile.toPath().equals(targetPath)` or use `Files.isSameFile()`. If
+  same file, proceed without suffix.
 
-**Note:** `RenameResult` must carry the *actual* final name used when it differs from the planned name. Verify whether `RenameResult` has a field for the actual path used; if not, the coder should note this as a minor finding but it is not a blocker for this task.
+**Note:** `RenameResult` must carry the *actual* final name used when it differs from the planned name. Verify whether
+`RenameResult` has a field for the actual path used; if not, the coder should note this as a minor finding but it is not
+a blocker for this task.
 
 **Acceptance criteria (JUnit 5 — integration tests with `@TempDir`):**
 Location: `app/core/src/test/java/ua/renamer/app/core/v2/service/impl/RenameExecutionServiceImplDiskConflictTest.java`
+
 - `givenTargetFileExistsOnDisk_whenExecute_thenSuffixAppliedAndFileRenamed()` — uses `@TempDir`, creates real files
 - `givenTargetAndSuffix01ExistOnDisk_whenExecute_thenSuffix02Applied()`
 - `givenCaseChangeRename_whenSourceAndTargetSameFile_thenRenameSucceedsWithoutSuffix()`
 - `givenNormalRename_whenNoConflict_thenNoSuffixAdded()`
 
 **Build check after all Part 1 tasks:**
+
 ```bash
 cd app && mvn test -q -ff -Dai=true    # zero failures
 cd app && mvn verify -Pcode-quality -q  # zero Checkstyle/PMD/SpotBugs violations
@@ -557,9 +665,15 @@ cd app && mvn verify -Pcode-quality -q  # zero Checkstyle/PMD/SpotBugs violation
 
 ## Part 2 — Structural Foundation (API Interfaces & Module Structure)
 
-**Goal:** Create the `SessionApi`, `ModeApi<P>`, and `ModeParameters` sealed hierarchy as pure-Java interfaces and records. Extend the existing `app/api` Maven module with new packages. Create a new `app/backend` Maven module with no JavaFX dependency.
+**Goal:** Create the `SessionApi`, `ModeApi<P>`, and `ModeParameters` sealed hierarchy as pure-Java interfaces and
+records. Extend the existing `app/api` Maven module with new packages. Create a new `app/backend` Maven module with no
+JavaFX dependency.
 
-**Key design decision:** Rather than creating a brand new Maven module `app-api`, the session API types will be added to the **existing `app/api` module** in new sub-packages (`ua.renamer.app.api.session.*`). This avoids Maven module proliferation while maintaining clean separation. The implementation (`RenameSessionService`, `BackendExecutor`) goes into a **new `app/backend` module** which has no `require javafx.*` dependency — JPMS enforces the FX-free boundary at compile time.
+**Key design decision:** Rather than creating a brand new Maven module `app-api`, the session API types will be added to
+the **existing `app/api` module** in new sub-packages (`ua.renamer.app.api.session.*`). This avoids Maven module
+proliferation while maintaining clean separation. The implementation (`RenameSessionService`, `BackendExecutor`) goes
+into a **new `app/backend` module** which has no `require javafx.*` dependency — JPMS enforces the FX-free boundary at
+compile time.
 
 ---
 
@@ -567,15 +681,19 @@ cd app && mvn verify -Pcode-quality -q  # zero Checkstyle/PMD/SpotBugs violation
 
 **Priority:** First task in Part 2 (others depend on this)
 
-**Goal:** Create the Maven module structure for `app/backend`. At this stage, it is empty except for the module definition and POM.
+**Goal:** Create the Maven module structure for `app/backend`. At this stage, it is empty except for the module
+definition and POM.
 
 **Context:**
-`app/backend` will house the implementation of `SessionApi` — specifically `RenameSessionService`, `BackendExecutor`, `RenameSession`, and the Guice module `DIBackendModule`. It must:
+`app/backend` will house the implementation of `SessionApi` — specifically `RenameSessionService`, `BackendExecutor`,
+`RenameSession`, and the Guice module `DIBackendModule`. It must:
+
 - depend on `app/api` and `app/core`
 - NOT depend on `app/ui`
 - NOT have `require javafx.*` in `module-info.java` (JPMS enforcement of FX-free backend)
 
 **Files to create:**
+
 1. `app/backend/pom.xml` — Maven POM
 2. `app/backend/src/main/java/module-info.java` — JPMS module definition
 3. `app/backend/src/main/java/ua/renamer/app/backend/` — empty package placeholder (`.gitkeep` or first class)
@@ -583,7 +701,9 @@ cd app && mvn verify -Pcode-quality -q  # zero Checkstyle/PMD/SpotBugs violation
 5. Update `app/pom.xml` — add `backend` to `<modules>` list
 
 **POM content:**
+
 ```xml
+
 <parent>
     <groupId>ua.renamer</groupId>
     <artifactId>app</artifactId>
@@ -593,23 +713,24 @@ cd app && mvn verify -Pcode-quality -q  # zero Checkstyle/PMD/SpotBugs violation
 <packaging>jar</packaging>
 
 <dependencies>
-    <dependency>
-        <groupId>ua.renamer</groupId>
-        <artifactId>api</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>ua.renamer</groupId>
-        <artifactId>core</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-    </dependency>
-    <!-- test dependencies: JUnit 5, Mockito, AssertJ -->
+<dependency>
+    <groupId>ua.renamer</groupId>
+    <artifactId>api</artifactId>
+</dependency>
+<dependency>
+    <groupId>ua.renamer</groupId>
+    <artifactId>core</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.google.inject</groupId>
+    <artifactId>guice</artifactId>
+</dependency>
+<!-- test dependencies: JUnit 5, Mockito, AssertJ -->
 </dependencies>
 ```
 
 **module-info.java content:**
+
 ```java
 module ua.renamer.app.backend {
     requires ua.renamer.app.api;
@@ -628,6 +749,7 @@ module ua.renamer.app.backend {
 ```
 
 **Acceptance criteria:**
+
 - `mvn compile -q -ff` passes (empty module compiles)
 - `mvn dependency:tree -pl app/backend` shows no JavaFX dependency
 
@@ -635,19 +757,24 @@ module ua.renamer.app.backend {
 
 ### TASK-2.2 — Add core API value types to `app/api` ✅ DONE
 
-**Goal:** Define the shared value types that both `app/backend` and `app/ui` will use: `ValidationResult`, `CommandResult`, `SessionStatus`, `RenameCandidate`, `RenamePreview`, `RenameSessionResult`.
+**Goal:** Define the shared value types that both `app/backend` and `app/ui` will use: `ValidationResult`,
+`CommandResult`, `SessionStatus`, `RenameCandidate`, `RenamePreview`, `RenameSessionResult`.
 
 **Context:**
-These are pure-Java records/enums with no JavaFX dependency. They live in `app/api` so both the backend implementation and the UI can use them without circular dependencies.
+These are pure-Java records/enums with no JavaFX dependency. They live in `app/api` so both the backend implementation
+and the UI can use them without circular dependencies.
 
-- `ValidationResult` — result of `ModeParameters.validate()` or `ModeApi.updateParameters()`. Either `ok()` or `fieldError(field, message)`.
-- `CommandResult` — result of file management operations (`addFiles`, `removeFiles`, `clearFiles`). Either success or error with message.
+- `ValidationResult` — result of `ModeParameters.validate()` or `ModeApi.updateParameters()`. Either `ok()` or
+  `fieldError(field, message)`.
+- `CommandResult` — result of file management operations (`addFiles`, `removeFiles`, `clearFiles`). Either success or
+  error with message.
 - `SessionStatus` — enum representing the session lifecycle state for UI enable/disable logic.
 - `RenameCandidate` — FX-safe snapshot of `FileModel` (name, extension, path; no V2 internal types exposed).
 - `RenamePreview` — FX-safe snapshot of `PreparedFileModel` (originalName, newName, hasError, errorMessage).
 - `RenameSessionResult` — FX-safe snapshot of `RenameResult` (originalName, finalName, status, errorMessage).
 
 **Files to create:**
+
 ```
 app/api/src/main/java/ua/renamer/app/api/session/
   ValidationResult.java     — record with valid()/fieldError() factory methods
@@ -666,16 +793,25 @@ public record ValidationResult(boolean ok, String field, String message) {
     public static ValidationResult ok() {
         return new ValidationResult(true, null, null);
     }
+
     public static ValidationResult fieldError(String field, String message) {
         return new ValidationResult(false, field, message);
     }
-    public boolean isError() { return !ok; }
+
+    public boolean isError() {
+        return !ok;
+    }
 }
 
 // CommandResult
 public record CommandResult(boolean success, String errorMessage) {
-    public static CommandResult success() { return new CommandResult(true, null); }
-    public static CommandResult failure(String message) { return new CommandResult(false, message); }
+    public static CommandResult success() {
+        return new CommandResult(true, null);
+    }
+
+    public static CommandResult failure(String message) {
+        return new CommandResult(false, message);
+    }
 }
 
 // SessionStatus (enum)
@@ -692,9 +828,12 @@ public enum SessionStatus {
 **Update `app/api/module-info.java`:**
 Add: `exports ua.renamer.app.api.session;` and `opens ua.renamer.app.api.session;`
 
-**API deviation:** Java records cannot have a static method with the same name and zero-arg signature as the auto-generated component accessor. `ok()` accessor conflicts with `static ok()` factory; same for `success()`. Renamed: `ok()` → `valid()`, `success()` → `succeeded()`.
+**API deviation:** Java records cannot have a static method with the same name and zero-arg signature as the
+auto-generated component accessor. `ok()` accessor conflicts with `static ok()` factory; same for `success()`. Renamed:
+`ok()` → `valid()`, `success()` → `succeeded()`.
 
 **Acceptance criteria:**
+
 - All 6 types compile (83 tests pass)
 - `ValidationResult.valid().isError()` is `false`
 - `ValidationResult.fieldError("text", "empty").field()` equals `"text"`
@@ -705,10 +844,13 @@ Add: `exports ua.renamer.app.api.session;` and `opens ua.renamer.app.api.session
 
 ### TASK-2.3 — Implement `ModeParameters` sealed hierarchy (10 parameter records) ✅ DONE
 
-**Goal:** Define the sealed `ModeParameters` interface and all 10 concrete record implementations with typed `withX()` withers and `validate()` methods.
+**Goal:** Define the sealed `ModeParameters` interface and all 10 concrete record implementations with typed `withX()`
+withers and `validate()` methods.
 
 **Context:**
-`ModeParameters` is the typed parameter contract between the UI controllers and the backend. Each record is a Java record (immutable value type) with:
+`ModeParameters` is the typed parameter contract between the UI controllers and the backend. Each record is a Java
+record (immutable value type) with:
+
 - Fields matching exactly the V2 config class it maps to (see mapping table below)
 - A `validate()` method that returns `ValidationResult` — runs validation client-side before sending to backend
 - Typed `withX()` withers for each field (creates a new record with one field changed)
@@ -716,22 +858,26 @@ Add: `exports ua.renamer.app.api.session;` and `opens ua.renamer.app.api.session
 
 **Config → ModeParameters field mapping:**
 
-| ModeParameters Record | V2 Config Class | Fields |
-|---|---|---|
-| `AddTextParams` | `AddTextConfig` | `String textToAdd`, `ItemPosition position` |
-| `RemoveTextParams` | `RemoveTextConfig` | `String textToRemove`, `ItemPosition position` |
-| `ReplaceTextParams` | `ReplaceTextConfig` | `String textToReplace`, `String replacementText`, `ItemPositionWithReplacement position` |
-| `ChangeCaseParams` | `CaseChangeConfig` | `TextCaseOptions caseOption`, `boolean capitalizeFirstLetter` |
-| `SequenceParams` | `SequenceConfig` | `int startNumber`, `int stepValue`, `int paddingDigits`, `SortSource sortSource` |
-| `TruncateParams` | `TruncateConfig` | `int numberOfSymbols`, `TruncateOptions truncateOption` |
-| `ExtensionChangeParams` | `ExtensionChangeConfig` | `String newExtension` |
-| `DateTimeParams` | `DateTimeConfig` | `DateTimeSource source`, `DateFormat dateFormat`, `TimeFormat timeFormat`, `ItemPosition position`, `boolean useDatePart`, `boolean useTimePart`, `boolean applyToExtension`, `boolean useFallbackDateTime`, `boolean useCustomDateTimeAsFallback`, `LocalDateTime customDateTime`, `boolean useUppercaseForAmPm` |
-| `ImageDimensionsParams` | `ImageDimensionsConfig` | `ImageDimensionOptions leftSide`, `ImageDimensionOptions rightSide`, `ItemPositionWithReplacement position`, `String nameSeparator` |
-| `ParentFolderParams` | `ParentFolderConfig` | `int numberOfParentFolders`, `ItemPosition position`, `String separator` |
+| ModeParameters Record   | V2 Config Class         | Fields                                                                                                                                                                                                                                                                                                            |
+|-------------------------|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AddTextParams`         | `AddTextConfig`         | `String textToAdd`, `ItemPosition position`                                                                                                                                                                                                                                                                       |
+| `RemoveTextParams`      | `RemoveTextConfig`      | `String textToRemove`, `ItemPosition position`                                                                                                                                                                                                                                                                    |
+| `ReplaceTextParams`     | `ReplaceTextConfig`     | `String textToReplace`, `String replacementText`, `ItemPositionWithReplacement position`                                                                                                                                                                                                                          |
+| `ChangeCaseParams`      | `CaseChangeConfig`      | `TextCaseOptions caseOption`, `boolean capitalizeFirstLetter`                                                                                                                                                                                                                                                     |
+| `SequenceParams`        | `SequenceConfig`        | `int startNumber`, `int stepValue`, `int paddingDigits`, `SortSource sortSource`                                                                                                                                                                                                                                  |
+| `TruncateParams`        | `TruncateConfig`        | `int numberOfSymbols`, `TruncateOptions truncateOption`                                                                                                                                                                                                                                                           |
+| `ExtensionChangeParams` | `ExtensionChangeConfig` | `String newExtension`                                                                                                                                                                                                                                                                                             |
+| `DateTimeParams`        | `DateTimeConfig`        | `DateTimeSource source`, `DateFormat dateFormat`, `TimeFormat timeFormat`, `ItemPosition position`, `boolean useDatePart`, `boolean useTimePart`, `boolean applyToExtension`, `boolean useFallbackDateTime`, `boolean useCustomDateTimeAsFallback`, `LocalDateTime customDateTime`, `boolean useUppercaseForAmPm` |
+| `ImageDimensionsParams` | `ImageDimensionsConfig` | `ImageDimensionOptions leftSide`, `ImageDimensionOptions rightSide`, `ItemPositionWithReplacement position`, `String nameSeparator`                                                                                                                                                                               |
+| `ParentFolderParams`    | `ParentFolderConfig`    | `int numberOfParentFolders`, `ItemPosition position`, `String separator`                                                                                                                                                                                                                                          |
 
-**Note on enums:** The existing enums (`ItemPosition`, `ItemPositionExtended`, `ItemPositionWithReplacement`, `DateTimeSource`, `DateFormat`, `TimeFormat`, `SortSource`, `TextCaseOptions`, `TruncateOptions`, `ImageDimensionOptions`, `TransformationMode`) already live in `app/api/src/main/java/ua/renamer/app/api/enums/` or `app/core/src/main/java/ua/renamer/app/core/enums/`. Verify locations; import from there.
+**Note on enums:** The existing enums (`ItemPosition`, `ItemPositionExtended`, `ItemPositionWithReplacement`,
+`DateTimeSource`, `DateFormat`, `TimeFormat`, `SortSource`, `TextCaseOptions`, `TruncateOptions`,
+`ImageDimensionOptions`, `TransformationMode`) already live in `app/api/src/main/java/ua/renamer/app/api/enums/` or
+`app/core/src/main/java/ua/renamer/app/core/enums/`. Verify locations; import from there.
 
 **Files to create:**
+
 ```
 app/api/src/main/java/ua/renamer/app/api/session/
   ModeParameters.java           — sealed interface
@@ -748,30 +894,37 @@ app/api/src/main/java/ua/renamer/app/api/session/
 ```
 
 **Sealed interface:**
+
 ```java
 package ua.renamer.app.api.session;
 
 public sealed interface ModeParameters permits
-    AddTextParams, RemoveTextParams, ReplaceTextParams,
-    ChangeCaseParams, SequenceParams, TruncateParams,
-    ExtensionChangeParams, DateTimeParams, ImageDimensionsParams,
-    ParentFolderParams {
+        AddTextParams, RemoveTextParams, ReplaceTextParams,
+        ChangeCaseParams, SequenceParams, TruncateParams,
+        ExtensionChangeParams, DateTimeParams, ImageDimensionsParams,
+        ParentFolderParams {
 
     TransformationMode mode();
+
     ValidationResult validate();
 
     // Sequential execution marker (only SequenceParams overrides to true)
-    default boolean requiresSequentialExecution() { return false; }
+    default boolean requiresSequentialExecution() {
+        return false;
+    }
 }
 ```
 
 **Example — AddTextParams:**
+
 ```java
 public record AddTextParams(String textToAdd, ItemPosition position)
-    implements ModeParameters {
+        implements ModeParameters {
 
     @Override
-    public TransformationMode mode() { return TransformationMode.ADD_TEXT; }
+    public TransformationMode mode() {
+        return TransformationMode.ADD_TEXT;
+    }
 
     @Override
     public ValidationResult validate() {
@@ -784,6 +937,7 @@ public record AddTextParams(String textToAdd, ItemPosition position)
     public AddTextParams withTextToAdd(String textToAdd) {
         return new AddTextParams(textToAdd, position);
     }
+
     public AddTextParams withPosition(ItemPosition position) {
         return new AddTextParams(textToAdd, position);
     }
@@ -791,12 +945,15 @@ public record AddTextParams(String textToAdd, ItemPosition position)
 ```
 
 **Special case — SequenceParams:**
+
 ```java
 public record SequenceParams(int startNumber, int stepValue, int paddingDigits, SortSource sortSource)
-    implements ModeParameters {
+        implements ModeParameters {
 
     @Override
-    public boolean requiresSequentialExecution() { return true; } // ADD_SEQUENCE is always sequential
+    public boolean requiresSequentialExecution() {
+        return true;
+    } // ADD_SEQUENCE is always sequential
 
     @Override
     public ValidationResult validate() {
@@ -811,24 +968,27 @@ public record SequenceParams(int startNumber, int stepValue, int paddingDigits, 
 
 **Validate() rules from MODE_STATE_MACHINES.md:**
 
-| Mode | Validate() rules |
-|------|-----------------|
-| AddText | `position != null` (textToAdd may be empty) |
-| RemoveText | `position != null`, `textToRemove != null` |
-| ReplaceText | `position != null`, `textToReplace != null`, `replacementText != null` |
-| ChangeCase | `caseOption != null` |
-| Sequence | `sortSource != null`, `stepValue > 0`, `paddingDigits >= 0` |
-| Truncate | `truncateOption != null`, `numberOfSymbols >= 0` |
-| ExtensionChange | `newExtension != null`, `!newExtension.isBlank()` |
-| DateTime | `source != null`, `dateFormat != null` OR `timeFormat != null`, `useDatePart \|\| useTimePart`; if `source == CUSTOM_DATE` then `customDateTime != null` |
-| ImageDimensions | `position != null`; at least one of `leftSide`/`rightSide` != `DO_NOT_USE` |
-| ParentFolder | `position != null`, `numberOfParentFolders >= 1` |
+| Mode            | Validate() rules                                                                                                                                         |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AddText         | `position != null` (textToAdd may be empty)                                                                                                              |
+| RemoveText      | `position != null`, `textToRemove != null`                                                                                                               |
+| ReplaceText     | `position != null`, `textToReplace != null`, `replacementText != null`                                                                                   |
+| ChangeCase      | `caseOption != null`                                                                                                                                     |
+| Sequence        | `sortSource != null`, `stepValue > 0`, `paddingDigits >= 0`                                                                                              |
+| Truncate        | `truncateOption != null`, `numberOfSymbols >= 0`                                                                                                         |
+| ExtensionChange | `newExtension != null`, `!newExtension.isBlank()`                                                                                                        |
+| DateTime        | `source != null`, `dateFormat != null` OR `timeFormat != null`, `useDatePart \|\| useTimePart`; if `source == CUSTOM_DATE` then `customDateTime != null` |
+| ImageDimensions | `position != null`; at least one of `leftSide`/`rightSide` != `DO_NOT_USE`                                                                               |
+| ParentFolder    | `position != null`, `numberOfParentFolders >= 1`                                                                                                         |
 
 **Acceptance criteria (JUnit 5):**
+
 ```
 app/api/src/test/java/ua/renamer/app/api/session/ModeParametersValidationTest.java
 ```
+
 One test class covering all 10 params records:
+
 - `givenAddTextWithNullPosition_whenValidate_thenFieldError()`
 - `givenSequenceWithNegativeStep_whenValidate_thenFieldError()`
 - `givenDateTimeWithNeitherDateNorTimePart_whenValidate_thenFieldError()`
@@ -843,11 +1003,14 @@ One test class covering all 10 params records:
 **Context:**
 These are pure-Java interfaces (no JavaFX types). They live in `app/api`. The implementations live in `app/backend`.
 
-- `TaskHandle<T>` — represents a long-running operation; provides `result()` (CompletableFuture), progress listeners, and cancellation.
-- `ModeApi<P>` — typed per-mode operations: read current parameters, update parameters via mutator function, reset to defaults.
+- `TaskHandle<T>` — represents a long-running operation; provides `result()` (CompletableFuture), progress listeners,
+  and cancellation.
+- `ModeApi<P>` — typed per-mode operations: read current parameters, update parameters via mutator function, reset to
+  defaults.
 - `SessionApi` — single facade entry point: add/remove/clear files, select mode, execute rename, query state.
 
 **Files to create:**
+
 ```
 app/api/src/main/java/ua/renamer/app/api/session/
   TaskHandle.java
@@ -859,13 +1022,19 @@ app/api/src/main/java/ua/renamer/app/api/session/
 ```
 
 **TaskHandle\<T\> interface:**
+
 ```java
 public interface TaskHandle<T> {
     String taskId();
+
     CompletableFuture<T> result();          // Completes normally with result or exceptionally
+
     void requestCancellation();
+
     boolean isCancellationRequested();
+
     void addProgressListener(ProgressListener listener);
+
     void removeProgressListener(ProgressListener listener);
 
     @FunctionalInterface
@@ -876,30 +1045,42 @@ public interface TaskHandle<T> {
 ```
 
 **ModeApi\<P extends ModeParameters\> interface:**
+
 ```java
 public interface ModeApi<P extends ModeParameters> {
     TransformationMode mode();
+
     P currentParameters();
+
     void addParameterListener(ParameterListener<P> listener);
+
     void removeParameterListener(ParameterListener<P> listener);
+
     CompletableFuture<ValidationResult> updateParameters(ParamMutator<P> mutator);
+
     CompletableFuture<Void> resetParameters();
 
-    @FunctionalInterface interface ParameterListener<P extends ModeParameters> {
+    @FunctionalInterface
+    interface ParameterListener<P extends ModeParameters> {
         void onParametersChanged(P updated);
     }
-    @FunctionalInterface interface ParamMutator<P extends ModeParameters> {
+
+    @FunctionalInterface
+    interface ParamMutator<P extends ModeParameters> {
         P apply(P current);
     }
 }
 ```
 
 **SessionApi interface:**
+
 ```java
 public interface SessionApi {
     // File management
     CompletableFuture<CommandResult> addFiles(List<Path> paths);
+
     CompletableFuture<CommandResult> removeFiles(List<String> fileIds);
+
     CompletableFuture<CommandResult> clearFiles();
 
     // Mode selection — returns typed API for selected mode
@@ -907,26 +1088,31 @@ public interface SessionApi {
 
     // Execution
     TaskHandle<List<RenameSessionResult>> execute();
+
     boolean canExecute();
 
     // Agent/test support
     SessionSnapshot snapshot();
+
     List<AvailableAction> availableActions();
 }
 ```
 
 **SessionSnapshot:**
+
 ```java
 public record SessionSnapshot(
-    List<RenameCandidate> files,
-    TransformationMode activeMode,
-    ModeParameters currentParameters,
-    List<RenamePreview> preview,
-    SessionStatus status
-) {}
+        List<RenameCandidate> files,
+        TransformationMode activeMode,
+        ModeParameters currentParameters,
+        List<RenamePreview> preview,
+        SessionStatus status
+) {
+}
 ```
 
 **StatePublisher interface:**
+
 ```java
 package ua.renamer.app.api.session;
 
@@ -943,14 +1129,19 @@ package ua.renamer.app.api.session;
  */
 public interface StatePublisher {
     void publishFilesChanged(List<RenameCandidate> files, List<RenamePreview> preview);
+
     void publishPreviewChanged(List<RenamePreview> preview);
+
     void publishModeChanged(TransformationMode mode, ModeParameters params);
+
     void publishRenameComplete(List<RenameSessionResult> results, SessionStatus status);
+
     void publishStatusChanged(SessionStatus status);
 }
 ```
 
 **Acceptance criteria:**
+
 - All interfaces and records compile
 - `SessionApi` has no `javafx.*` imports
 - `ModeApi` has no `javafx.*` imports
@@ -961,7 +1152,8 @@ public interface StatePublisher {
 
 ## Part 3 — Backend API Implementation
 
-**Goal:** Implement the backend: `RenameSession` (state), `BackendExecutor` (threading), `RenameSessionService` (business logic), `SessionApiImpl`, `DIBackendModule` (Guice wiring), and the `ModeParameters → XxxConfig` converters.
+**Goal:** Implement the backend: `RenameSession` (state), `BackendExecutor` (threading), `RenameSessionService` (
+business logic), `SessionApiImpl`, `DIBackendModule` (Guice wiring), and the `ModeParameters → XxxConfig` converters.
 
 ---
 
@@ -972,87 +1164,119 @@ public interface StatePublisher {
 **Goal:** A plain-Java mutable session state object — accessed exclusively from the backend state thread.
 
 **Context:**
-`RenameSession` holds all mutable session state: loaded files, active mode, current parameters, last preview results, session status. It is **not thread-safe** on its own — thread safety is enforced by `BackendExecutor` which gates all mutations to its single state thread.
+`RenameSession` holds all mutable session state: loaded files, active mode, current parameters, last preview results,
+session status. It is **not thread-safe** on its own — thread safety is enforced by `BackendExecutor` which gates all
+mutations to its single state thread.
 
 **File to create:**
+
 ```
 app/backend/src/main/java/ua/renamer/app/backend/session/RenameSession.java
 ```
 
 **Implementation:**
+
 ```java
+
 @Getter
 public class RenameSession {
-    private final List<FileModel>           files          = new ArrayList<>();
-    private       TransformationMode        activeMode     = null;
-    private       ModeParameters            currentParams  = null;
-    private       List<PreparedFileModel>   lastPreview    = List.of();
-    private       SessionStatus             status         = SessionStatus.EMPTY;
+    private final List<FileModel> files = new ArrayList<>();
+    private TransformationMode activeMode = null;
+    private ModeParameters currentParams = null;
+    private final List<PreparedFileModel> lastPreview = List.of();
+    private SessionStatus status = SessionStatus.EMPTY;
 
     // Mutation methods (called only from BackendExecutor state thread)
-    public void addFiles(List<FileModel> newFiles) { ... }
-    public void removeFiles(List<String> fileIds)  { ... }
-    public void clearFiles()                        { ... }
-    public void setActiveMode(TransformationMode mode, ModeParameters defaultParams) { ... }
-    public void setParameters(ModeParameters params) { ... }
-    public void setLastPreview(List<PreparedFileModel> preview) { ... }
-    public void setStatus(SessionStatus status) { this.status = status; }
+    public void addFiles(List<FileModel> newFiles) { ...}
+
+    public void removeFiles(List<String> fileIds) { ...}
+
+    public void clearFiles() { ...}
+
+    public void setActiveMode(TransformationMode mode, ModeParameters defaultParams) { ...}
+
+    public void setParameters(ModeParameters params) { ...}
+
+    public void setLastPreview(List<PreparedFileModel> preview) { ...}
+
+    public void setStatus(SessionStatus status) {
+        this.status = status;
+    }
 
     public SessionSnapshot toSnapshot(List<RenamePreview> previewDtos) {
         return new SessionSnapshot(
-            files.stream().map(RenameSessionConverter::toCandidate).toList(),
-            activeMode, currentParams,
-            previewDtos, status
+                files.stream().map(RenameSessionConverter::toCandidate).toList(),
+                activeMode, currentParams,
+                previewDtos, status
         );
     }
 }
 ```
 
-**Note:** `FileModel` is V2's internal type from `app/core`. It never leaves the backend module — it is converted to `RenameCandidate` (for the UI) inside `RenameSession.toSnapshot()`.
+**Note:** `FileModel` is V2's internal type from `app/core`. It never leaves the backend module — it is converted to
+`RenameCandidate` (for the UI) inside `RenameSession.toSnapshot()`.
 
 **Acceptance criteria:**
+
 - `RenameSession` has no `javafx.*` imports
 - `toSnapshot()` returns a `SessionSnapshot` record (not a V2 internal type)
 
 ---
 
-### TASK-3.2 — Implement `BackendExecutor` (state thread + virtual pool)
+### TASK-3.2 — Implement `BackendExecutor` (state thread + virtual pool) ✅ DONE
 
 **Goal:** Provide a single state thread for all state mutations and a virtual thread pool for I/O-bound work.
 
 **Context:**
 `BackendExecutor` owns two ExecutorService instances:
-1. **State thread** (`Executors.newSingleThreadExecutor()`) — all mutations to `RenameSession` run here. Ensures no concurrent modification.
-2. **Virtual pool** (`Executors.newVirtualThreadPerTaskExecutor()`) — used by `RenameSessionService` when submitting V2 pipeline work via `FileRenameOrchestrator`.
 
-`BackendExecutor` does NOT call `FileRenameOrchestrator` directly — it provides the threading primitives; `RenameSessionService` composes them.
+1. **State thread** (`Executors.newSingleThreadExecutor()`) — all mutations to `RenameSession` run here. Ensures no
+   concurrent modification.
+2. **Virtual pool** (`Executors.newVirtualThreadPerTaskExecutor()`) — used by `RenameSessionService` when submitting V2
+   pipeline work via `FileRenameOrchestrator`.
+
+`BackendExecutor` does NOT call `FileRenameOrchestrator` directly — it provides the threading primitives;
+`RenameSessionService` composes them.
 
 **File to create:**
+
 ```
 app/backend/src/main/java/ua/renamer/app/backend/service/BackendExecutor.java
 ```
 
 **Implementation:**
+
 ```java
+
 @Singleton
 public class BackendExecutor implements Closeable {
-    private final ExecutorService stateThread  = Executors.newSingleThreadExecutor(
-        r -> { Thread t = new Thread(r, "backend-state"); t.setDaemon(true); return t; });
-    private final ExecutorService virtualPool  = Executors.newVirtualThreadPerTaskExecutor();
+    private final ExecutorService stateThread = Executors.newSingleThreadExecutor(
+            r -> {
+                Thread t = new Thread(r, "backend-state");
+                t.setDaemon(true);
+                return t;
+            });
+    private final ExecutorService virtualPool = Executors.newVirtualThreadPerTaskExecutor();
 
     // Submit a state mutation — runs on state thread, returns CompletableFuture
     public <T> CompletableFuture<T> submitStateChange(Callable<T> mutation) {
         return CompletableFuture.supplyAsync(() -> {
-            try { return mutation.call(); }
-            catch (Exception e) { throw new CompletionException(e); }
+            try {
+                return mutation.call();
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
         }, stateThread);
     }
 
     // Submit heavy work (V2 pipeline) — runs on virtual thread pool
     public <T> CompletableFuture<T> submitWork(Callable<T> work) {
         return CompletableFuture.supplyAsync(() -> {
-            try { return work.call(); }
-            catch (Exception e) { throw new CompletionException(e); }
+            try {
+                return work.call();
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
         }, virtualPool);
     }
 
@@ -1065,6 +1289,7 @@ public class BackendExecutor implements Closeable {
 ```
 
 **Acceptance criteria:**
+
 - `BackendExecutor` has no `javafx.*` imports
 - `submitStateChange()` executes serially when called concurrently (state thread guarantee)
 - `close()` shuts down both executors
@@ -1073,133 +1298,156 @@ public class BackendExecutor implements Closeable {
 
 ### TASK-3.3 — Implement `ModeParametersConverter` (ModeParameters → V2 Config)
 
-**Goal:** A centralized converter that maps each `ModeParameters` record to the corresponding V2 `XxxConfig` object consumed by `FileRenameOrchestratorImpl`.
+**Goal:** A centralized converter that maps each `ModeParameters` record to the corresponding V2 `XxxConfig` object
+consumed by `FileRenameOrchestratorImpl`.
 
 **Context:**
-`RenameSessionService` needs to call `FileRenameOrchestrator.execute(files, mode, config, callback)`. The `config` parameter is a typed V2 `XxxConfig`. The `ModeParameters` record holds the same data in a UI-friendly form. This converter bridges the two representations and is the single point where parameter mapping is defined.
+`RenameSessionService` needs to call `FileRenameOrchestrator.execute(files, mode, config, callback)`. The `config`
+parameter is a typed V2 `XxxConfig`. The `ModeParameters` record holds the same data in a UI-friendly form. This
+converter bridges the two representations and is the single point where parameter mapping is defined.
 
-This is the only class in the codebase that knows about both `ModeParameters` (API layer) and V2 config classes (core layer).
+This is the only class in the codebase that knows about both `ModeParameters` (API layer) and V2 config classes (core
+layer).
 
 **File to create:**
+
 ```
 app/backend/src/main/java/ua/renamer/app/backend/session/ModeParametersConverter.java
 ```
 
 **Implementation (sealed switch — compiler-checked):**
+
 ```java
 public final class ModeParametersConverter {
-    private ModeParametersConverter() {}
+    private ModeParametersConverter() {
+    }
 
     public static TransformationConfig toConfig(ModeParameters params) {
         return switch (params) {
             case AddTextParams p -> AddTextConfig.builder()
-                .withTextToAdd(p.textToAdd())
-                .withPosition(p.position())
-                .build();
+                    .withTextToAdd(p.textToAdd())
+                    .withPosition(p.position())
+                    .build();
             case RemoveTextParams p -> RemoveTextConfig.builder()
-                .withTextToRemove(p.textToRemove())
-                .withPosition(p.position())
-                .build();
+                    .withTextToRemove(p.textToRemove())
+                    .withPosition(p.position())
+                    .build();
             case ReplaceTextParams p -> ReplaceTextConfig.builder()
-                .withTextToReplace(p.textToReplace())
-                .withReplacementText(p.replacementText())
-                .withPosition(p.position())
-                .build();
+                    .withTextToReplace(p.textToReplace())
+                    .withReplacementText(p.replacementText())
+                    .withPosition(p.position())
+                    .build();
             case ChangeCaseParams p -> CaseChangeConfig.builder()
-                .withCaseOption(p.caseOption())
-                .withCapitalizeFirstLetter(p.capitalizeFirstLetter())
-                .build();
+                    .withCaseOption(p.caseOption())
+                    .withCapitalizeFirstLetter(p.capitalizeFirstLetter())
+                    .build();
             case SequenceParams p -> SequenceConfig.builder()
-                .withStartNumber(p.startNumber())
-                .withStepValue(p.stepValue())
-                .withPadding(p.paddingDigits())
-                .withSortSource(p.sortSource())
-                .build();
+                    .withStartNumber(p.startNumber())
+                    .withStepValue(p.stepValue())
+                    .withPadding(p.paddingDigits())
+                    .withSortSource(p.sortSource())
+                    .build();
             case TruncateParams p -> TruncateConfig.builder()
-                .withNumberOfSymbols(p.numberOfSymbols())
-                .withTruncateOption(p.truncateOption())
-                .build();
+                    .withNumberOfSymbols(p.numberOfSymbols())
+                    .withTruncateOption(p.truncateOption())
+                    .build();
             case ExtensionChangeParams p -> ExtensionChangeConfig.builder()
-                .withNewExtension(p.newExtension())
-                .build();
+                    .withNewExtension(p.newExtension())
+                    .build();
             case DateTimeParams p -> DateTimeConfig.builder()
-                .withSource(p.source())
-                .withDateFormat(p.dateFormat())
-                .withTimeFormat(p.timeFormat())
-                .withPosition(p.position())
-                .withUseDatePart(p.useDatePart())
-                .withUseTimePart(p.useTimePart())
-                .withApplyToExtension(p.applyToExtension())
-                .withUseFallbackDateTime(p.useFallbackDateTime())
-                .withUseCustomDateTimeAsFallback(p.useCustomDateTimeAsFallback())
-                .withCustomDateTime(p.customDateTime())
-                .withUseUppercaseForAmPm(p.useUppercaseForAmPm())
-                .build();
+                    .withSource(p.source())
+                    .withDateFormat(p.dateFormat())
+                    .withTimeFormat(p.timeFormat())
+                    .withPosition(p.position())
+                    .withUseDatePart(p.useDatePart())
+                    .withUseTimePart(p.useTimePart())
+                    .withApplyToExtension(p.applyToExtension())
+                    .withUseFallbackDateTime(p.useFallbackDateTime())
+                    .withUseCustomDateTimeAsFallback(p.useCustomDateTimeAsFallback())
+                    .withCustomDateTime(p.customDateTime())
+                    .withUseUppercaseForAmPm(p.useUppercaseForAmPm())
+                    .build();
             case ImageDimensionsParams p -> ImageDimensionsConfig.builder()
-                .withLeftSide(p.leftSide())
-                .withRightSide(p.rightSide())
-                .withPosition(p.position())
-                .withNameSeparator(p.nameSeparator())
-                .build();
+                    .withLeftSide(p.leftSide())
+                    .withRightSide(p.rightSide())
+                    .withPosition(p.position())
+                    .withNameSeparator(p.nameSeparator())
+                    .build();
             case ParentFolderParams p -> ParentFolderConfig.builder()
-                .withNumberOfParentFolders(p.numberOfParentFolders())
-                .withPosition(p.position())
-                .withSeparator(p.separator())
-                .build();
+                    .withNumberOfParentFolders(p.numberOfParentFolders())
+                    .withPosition(p.position())
+                    .withSeparator(p.separator())
+                    .build();
         };
     }
 }
 ```
 
-**Note:** The `switch` is exhaustive over the sealed hierarchy — adding a new `ModeParameters` permit without updating this converter will be a **compile error**. This is the intended safety guarantee.
+**Note:** The `switch` is exhaustive over the sealed hierarchy — adding a new `ModeParameters` permit without updating
+this converter will be a **compile error**. This is the intended safety guarantee.
 
 **Acceptance criteria:**
+
 - `switch` covers all 10 sealed permits — compiler-verified exhaustiveness
 - `givenAddTextParams_whenConvert_thenAddTextConfigFieldsMatch()` (JUnit 5)
 - `givenDateTimeParams_whenConvert_thenAllFieldsTransferred()` — especially the 3 new fields from TASK-1.5/1.6/1.7
-- `givenSequenceParamsWithNegativePadding_whenConvert_thenIllegalArgumentExceptionFromConfig()` — validates integration with TASK-1.2 config validation
+- `givenSequenceParamsWithNegativePadding_whenConvert_thenIllegalArgumentExceptionFromConfig()` — validates integration
+  with TASK-1.2 config validation
 
 ---
 
 ### TASK-3.4 — Implement `RenameSessionService` (core business logic)
 
-**Goal:** The central class that orchestrates all backend operations: file management, preview computation, and rename execution.
+**Goal:** The central class that orchestrates all backend operations: file management, preview computation, and rename
+execution.
 
 **Context:**
 `RenameSessionService` is the implementation of `SessionApi`. It:
+
 1. Holds a `RenameSession` (state) accessed via `BackendExecutor.submitStateChange()`
 2. Calls `FileRenameOrchestratorImpl` for preview (phases 1–3) and execution (all 4 phases)
 3. Publishes results to `FxStateMirror` via a `Consumer<FxPublishEvent>` callback (decoupled from JavaFX)
 4. Returns `TaskHandle` instances for long-running operations
 
 **File to create:**
+
 ```
 app/backend/src/main/java/ua/renamer/app/backend/session/RenameSessionService.java
 ```
 
 **Key design point — FxStateMirror decoupling:**
-`RenameSessionService` lives in `app/backend` which has no `require javafx.*`. `FxStateMirror` lives in `app/ui`. The connection is via a `StatePublisher` interface (defined in `app/api`):
+`RenameSessionService` lives in `app/backend` which has no `require javafx.*`. `FxStateMirror` lives in `app/ui`. The
+connection is via a `StatePublisher` interface (defined in `app/api`):
+
 ```java
 // In app/api/session/
 public interface StatePublisher {
     void publishFilesChanged(List<RenameCandidate> files, List<RenamePreview> preview);
+
     void publishPreviewChanged(List<RenamePreview> preview);
+
     void publishModeChanged(TransformationMode mode, ModeParameters params);
+
     void publishRenameComplete(List<RenameSessionResult> results, SessionStatus status);
+
     void publishStatusChanged(SessionStatus status);
 }
 ```
-`FxStateMirror` implements `StatePublisher` (wrapping each call in `Platform.runLater`). `RenameSessionService` receives `StatePublisher` via constructor injection.
+
+`FxStateMirror` implements `StatePublisher` (wrapping each call in `Platform.runLater`). `RenameSessionService` receives
+`StatePublisher` via constructor injection.
 
 **Implementation sketch:**
+
 ```java
+
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Singleton
 public class RenameSessionService implements SessionApi {
-    private final FileRenameOrchestrator  orchestrator;
-    private final BackendExecutor         executor;
-    private final StatePublisher          publisher;    // FxStateMirror injected here
-    private final RenameSession           session = new RenameSession();
+    private final FileRenameOrchestrator orchestrator;
+    private final BackendExecutor executor;
+    private final StatePublisher publisher;    // FxStateMirror injected here
+    private final RenameSession session = new RenameSession();
 
     @Override
     public CompletableFuture<CommandResult> addFiles(List<Path> paths) {
@@ -1252,20 +1500,21 @@ public class RenameSessionService implements SessionApi {
 
 **Default parameters per mode (for `selectMode()`):**
 
-| Mode | Default Parameters |
-|------|-------------------|
-| AddText | `new AddTextParams("", ItemPosition.BEGIN)` |
-| RemoveText | `new RemoveTextParams("", ItemPosition.BEGIN)` |
-| ReplaceText | `new ReplaceTextParams("", "", ItemPositionWithReplacement.BEGIN)` |
-| ChangeCase | `new ChangeCaseParams(TextCaseOptions.UPPERCASE, false)` |
-| Sequence | `new SequenceParams(1, 1, 2, SortSource.FILE_NAME)` |
-| Truncate | `new TruncateParams(0, TruncateOptions.REMOVE_FROM_END)` |
-| ExtensionChange | `new ExtensionChangeParams("")` |
-| DateTime | `new DateTimeParams(DateTimeSource.FILE_CREATION_DATETIME, DateFormat.YYYY_MM_DD, TimeFormat.NONE, ItemPosition.BEGIN, true, false, false, false, false, null, true)` |
-| ImageDimensions | `new ImageDimensionsParams(ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT, ItemPositionWithReplacement.BEGIN, " ")` |
-| ParentFolder | `new ParentFolderParams(1, ItemPosition.BEGIN, " ")` |
+| Mode            | Default Parameters                                                                                                                                                    |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AddText         | `new AddTextParams("", ItemPosition.BEGIN)`                                                                                                                           |
+| RemoveText      | `new RemoveTextParams("", ItemPosition.BEGIN)`                                                                                                                        |
+| ReplaceText     | `new ReplaceTextParams("", "", ItemPositionWithReplacement.BEGIN)`                                                                                                    |
+| ChangeCase      | `new ChangeCaseParams(TextCaseOptions.UPPERCASE, false)`                                                                                                              |
+| Sequence        | `new SequenceParams(1, 1, 2, SortSource.FILE_NAME)`                                                                                                                   |
+| Truncate        | `new TruncateParams(0, TruncateOptions.REMOVE_FROM_END)`                                                                                                              |
+| ExtensionChange | `new ExtensionChangeParams("")`                                                                                                                                       |
+| DateTime        | `new DateTimeParams(DateTimeSource.FILE_CREATION_DATETIME, DateFormat.YYYY_MM_DD, TimeFormat.NONE, ItemPosition.BEGIN, true, false, false, false, false, null, true)` |
+| ImageDimensions | `new ImageDimensionsParams(ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT, ItemPositionWithReplacement.BEGIN, " ")`                                        |
+| ParentFolder    | `new ParentFolderParams(1, ItemPosition.BEGIN, " ")`                                                                                                                  |
 
 **Acceptance criteria:**
+
 - `givenFilesAdded_whenAddFiles_thenPublisherReceivesFilesChangedEvent()` (mock `StatePublisher`)
 - `givenModeSelected_whenSelectMode_thenPreviewComputedAndPublished()`
 - `givenValidParams_whenUpdateParameters_thenValidationOkAndPreviewRecomputed()`
@@ -1276,20 +1525,23 @@ public class RenameSessionService implements SessionApi {
 
 ### TASK-3.5 — Implement `ModeApiImpl<P>` and `TaskHandleImpl<T>`
 
-**Goal:** Implement the concrete `ModeApi<P>` and `TaskHandle<T>` interfaces used by UI controllers and returned from `SessionApi`.
+**Goal:** Implement the concrete `ModeApi<P>` and `TaskHandle<T>` interfaces used by UI controllers and returned from
+`SessionApi`.
 
 **Files to create:**
+
 ```
 app/backend/src/main/java/ua/renamer/app/backend/session/ModeApiImpl.java
 app/backend/src/main/java/ua/renamer/app/backend/session/TaskHandleImpl.java
 ```
 
 **ModeApiImpl\<P\>:**
+
 ```java
 public class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
-    private final TransformationMode  mode;
+    private final TransformationMode mode;
     private final RenameSessionService service;
-    private final AtomicReference<P>  currentParams;
+    private final AtomicReference<P> currentParams;
     private final CopyOnWriteArrayList<ParameterListener<P>> listeners = new CopyOnWriteArrayList<>();
 
     @Override
@@ -1308,6 +1560,7 @@ public class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
 ```
 
 **TaskHandleImpl\<T\>:**
+
 ```java
 public class TaskHandleImpl<T> implements TaskHandle<T> {
     private final String taskId = UUID.randomUUID().toString();
@@ -1325,6 +1578,7 @@ public class TaskHandleImpl<T> implements TaskHandle<T> {
 ```
 
 **Acceptance criteria:**
+
 - `givenUpdateParametersCalledConcurrently_whenMultipleUpdates_thenNoRaceCondition()`
 - `givenTaskHandleCancel_whenRequested_thenCancellationFlagSet()`
 
@@ -1332,16 +1586,22 @@ public class TaskHandleImpl<T> implements TaskHandle<T> {
 
 ### TASK-3.6 — Implement `DIBackendModule` (Guice wiring for backend)
 
-**Goal:** Guice module that wires all backend components together, including the `StatePublisher` binding to `FxStateMirror`.
+**Goal:** Guice module that wires all backend components together, including the `StatePublisher` binding to
+`FxStateMirror`.
 
 **Context:**
-`DIBackendModule` lives in `app/backend`. However, `FxStateMirror` lives in `app/ui` (JavaFX is allowed there). The binding of `StatePublisher` to `FxStateMirror` must happen in `app/ui`'s `DIUIModule` — not in `DIBackendModule`. `DIBackendModule` only declares that `StatePublisher` is required; `DIUIModule` provides it.
+`DIBackendModule` lives in `app/backend`. However, `FxStateMirror` lives in `app/ui` (JavaFX is allowed there). The
+binding of `StatePublisher` to `FxStateMirror` must happen in `app/ui`'s `DIUIModule` — not in `DIBackendModule`.
+`DIBackendModule` only declares that `StatePublisher` is required; `DIUIModule` provides it.
 
 **Files to create/modify:**
+
 - `app/backend/src/main/java/ua/renamer/app/backend/config/DIBackendModule.java` — new file
-- `app/ui/src/main/java/ua/renamer/app/ui/config/DIUIModule.java` — add `install(new DIBackendModule())` and provide `StatePublisher` binding
+- `app/ui/src/main/java/ua/renamer/app/ui/config/DIUIModule.java` — add `install(new DIBackendModule())` and provide
+  `StatePublisher` binding
 
 **DIBackendModule.java:**
+
 ```java
 public class DIBackendModule extends AbstractModule {
     @Override
@@ -1354,23 +1614,27 @@ public class DIBackendModule extends AbstractModule {
 ```
 
 **DIUIModule.java additions:**
+
 ```java
 // Install backend module
 install(new DIBackendModule());
 
 // Provide FxStateMirror as StatePublisher
-@Provides @Singleton
+@Provides
+@Singleton
 StatePublisher provideStatePublisher(FxStateMirror mirror) {
     return mirror; // FxStateMirror implements StatePublisher
 }
 
-@Provides @Singleton
+@Provides
+@Singleton
 FxStateMirror provideFxStateMirror() {
     return new FxStateMirror();
 }
 ```
 
 **Acceptance criteria:**
+
 - `mvn compile -q -ff` passes (Guice wiring verified at compile time via JPMS)
 - `DIBackendModule` has no `javafx.*` imports
 
@@ -1378,9 +1642,11 @@ FxStateMirror provideFxStateMirror() {
 
 ### TASK-3.7 — Add `StatePublisher` interface and update module-info files
 
-**Goal:** Define `StatePublisher` in `app/api`, add `StatePublisher` to `app/api` exports, add `app/backend` requirement to `app/ui`, add `app/api` and `app/backend` to parent POM.
+**Goal:** Define `StatePublisher` in `app/api`, add `StatePublisher` to `app/api` exports, add `app/backend` requirement
+to `app/ui`, add `app/api` and `app/backend` to parent POM.
 
 **Files to modify:**
+
 - `app/api/src/main/java/ua/renamer/app/api/session/StatePublisher.java` — new file (defined in TASK-3.4)
 - `app/api/src/main/java/module-info.java` — confirm `ua.renamer.app.api.session` is exported
 - `app/ui/src/main/java/module-info.java` — add `requires ua.renamer.app.backend;`
@@ -1388,6 +1654,7 @@ FxStateMirror provideFxStateMirror() {
 - `app/pom.xml` — confirm `backend` is in `<modules>` list
 
 **Acceptance criteria:**
+
 - `mvn compile -q -ff` from `app/` directory passes with all modules
 - `mvn dependency:tree -pl app/backend` shows no JavaFX dependency
 
@@ -1395,40 +1662,63 @@ FxStateMirror provideFxStateMirror() {
 
 ## Part 4 — Connecting UI to New Backend API
 
-**Goal:** Implement `FxStateMirror`, `ModeViewRegistry`, define `ModeControllerV2Api`, update `ApplicationMainViewController` for dual-path routing, then migrate all 10 mode controllers one at a time.
+**Goal:** Implement `FxStateMirror`, `ModeViewRegistry`, define `ModeControllerV2Api`, update
+`ApplicationMainViewController` for dual-path routing, then migrate all 10 mode controllers one at a time.
 
-**Key principle:** App remains runnable throughout. Each migrated controller is independently testable. The dual-path routing (V1 fallback for unmigrated controllers) ensures no big-bang transition.
+**Key principle:** App remains runnable throughout. Each migrated controller is independently testable. The dual-path
+routing (V1 fallback for unmigrated controllers) ensures no big-bang transition.
 
 ---
 
 ### TASK-4.1 — Implement `FxStateMirror` in `app/ui`
 
-**Goal:** The FX-thread-safe bridge between backend state and JavaFX observable properties. Implements `StatePublisher`. Every `publishX()` method wraps its body in `Platform.runLater()`.
+**Goal:** The FX-thread-safe bridge between backend state and JavaFX observable properties. Implements `StatePublisher`.
+Every `publishX()` method wraps its body in `Platform.runLater()`.
 
 **Context:**
-`FxStateMirror` is the **only** class in the system that has both backend-side responsibilities (`StatePublisher` publish methods) and FX-side responsibilities (observable properties for UI binding). It lives in `app/ui` where JavaFX is allowed. All `publishX()` methods are called from the backend state thread and must dispatch to the FX thread before mutating observable collections.
+`FxStateMirror` is the **only** class in the system that has both backend-side responsibilities (`StatePublisher`
+publish methods) and FX-side responsibilities (observable properties for UI binding). It lives in `app/ui` where JavaFX
+is allowed. All `publishX()` methods are called from the backend state thread and must dispatch to the FX thread before
+mutating observable collections.
 
 **File to create:**
+
 ```
 app/ui/src/main/java/ua/renamer/app/ui/state/FxStateMirror.java
 ```
 
 **Implementation:**
+
 ```java
+
 @Singleton
 public class FxStateMirror implements StatePublisher {
     // Read-only observable properties for UI binding
-    private final ObservableList<RenameCandidate>   filesList    = FXCollections.observableArrayList();
-    private final ObservableList<RenamePreview>     previewList  = FXCollections.observableArrayList();
-    private final SimpleObjectProperty<SessionStatus>     statusProp = new SimpleObjectProperty<>(SessionStatus.EMPTY);
-    private final SimpleObjectProperty<TransformationMode> modeProp  = new SimpleObjectProperty<>();
-    private final SimpleObjectProperty<ModeParameters>     paramsProp = new SimpleObjectProperty<>();
+    private final ObservableList<RenameCandidate> filesList = FXCollections.observableArrayList();
+    private final ObservableList<RenamePreview> previewList = FXCollections.observableArrayList();
+    private final SimpleObjectProperty<SessionStatus> statusProp = new SimpleObjectProperty<>(SessionStatus.EMPTY);
+    private final SimpleObjectProperty<TransformationMode> modeProp = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<ModeParameters> paramsProp = new SimpleObjectProperty<>();
 
-    public ReadOnlyListProperty<RenameCandidate>   files()   { return new ReadOnlyListWrapper<>(filesList).getReadOnlyProperty(); }
-    public ReadOnlyListProperty<RenamePreview>     preview() { return new ReadOnlyListWrapper<>(previewList).getReadOnlyProperty(); }
-    public ReadOnlyObjectProperty<SessionStatus>   status()  { return statusProp; }
-    public ReadOnlyObjectProperty<TransformationMode> activeMode() { return modeProp; }
-    public ReadOnlyObjectProperty<ModeParameters>  currentParameters() { return paramsProp; }
+    public ReadOnlyListProperty<RenameCandidate> files() {
+        return new ReadOnlyListWrapper<>(filesList).getReadOnlyProperty();
+    }
+
+    public ReadOnlyListProperty<RenamePreview> preview() {
+        return new ReadOnlyListWrapper<>(previewList).getReadOnlyProperty();
+    }
+
+    public ReadOnlyObjectProperty<SessionStatus> status() {
+        return statusProp;
+    }
+
+    public ReadOnlyObjectProperty<TransformationMode> activeMode() {
+        return modeProp;
+    }
+
+    public ReadOnlyObjectProperty<ModeParameters> currentParameters() {
+        return paramsProp;
+    }
 
     @Override
     public void publishFilesChanged(List<RenameCandidate> files, List<RenamePreview> preview) {
@@ -1445,7 +1735,10 @@ public class FxStateMirror implements StatePublisher {
 
     @Override
     public void publishModeChanged(TransformationMode mode, ModeParameters params) {
-        Platform.runLater(() -> { modeProp.set(mode); paramsProp.set(params); });
+        Platform.runLater(() -> {
+            modeProp.set(mode);
+            paramsProp.set(params);
+        });
     }
 
     @Override
@@ -1464,6 +1757,7 @@ public class FxStateMirror implements StatePublisher {
 ```
 
 **Acceptance criteria:**
+
 - `FxStateMirror implements StatePublisher` compiles
 - `publishFilesChanged()` called from non-FX thread does not throw
 - Observable properties change only on FX thread (verified with `Platform.isFxApplicationThread()` assertion)
@@ -1472,20 +1766,27 @@ public class FxStateMirror implements StatePublisher {
 
 ### TASK-4.2 — Define `ModeControllerV2Api` and `ModeViewRegistry`
 
-**Goal:** Define the interface that migrated mode controllers implement, and the registry that maps `TransformationMode` to view factories.
+**Goal:** Define the interface that migrated mode controllers implement, and the registry that maps `TransformationMode`
+to view factories.
 
 **Context:**
-`ModeControllerV2Api<P>` is the marker interface that `ApplicationMainViewController` uses to detect whether a mode controller has been migrated. During Phase 4 migration, some controllers implement it; others still use the old V1 path. Once all 10 are migrated, the V1 fallback is removed.
+`ModeControllerV2Api<P>` is the marker interface that `ApplicationMainViewController` uses to detect whether a mode
+controller has been migrated. During Phase 4 migration, some controllers implement it; others still use the old V1 path.
+Once all 10 are migrated, the V1 fallback is removed.
 
-`ModeViewRegistry` replaces the `InjectQualifiers` boilerplate for FXML loading. Instead of 10 `@Provides @Named("ModeXxx") FXMLLoader` methods, a registry maps each `TransformationMode` to a `Supplier<Node>` that loads the FXML and returns the view.
+`ModeViewRegistry` replaces the `InjectQualifiers` boilerplate for FXML loading. Instead of 10
+`@Provides @Named("ModeXxx") FXMLLoader` methods, a registry maps each `TransformationMode` to a `Supplier<Node>` that
+loads the FXML and returns the view.
 
 **Files to create:**
+
 ```
 app/ui/src/main/java/ua/renamer/app/ui/controller/mode/ModeControllerV2Api.java
 app/ui/src/main/java/ua/renamer/app/ui/view/ModeViewRegistry.java
 ```
 
 **ModeControllerV2Api:**
+
 ```java
 public interface ModeControllerV2Api<P extends ModeParameters> {
     /**
@@ -1501,7 +1802,9 @@ public interface ModeControllerV2Api<P extends ModeParameters> {
 ```
 
 **ModeViewRegistry:**
+
 ```java
+
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class ModeViewRegistry {
@@ -1520,6 +1823,7 @@ public class ModeViewRegistry {
 ```
 
 **Acceptance criteria:**
+
 - `ModeControllerV2Api` compiles with generic `P extends ModeParameters`
 - `ModeViewRegistry.register()` and `getView()` work for all 10 modes
 
@@ -1527,17 +1831,22 @@ public class ModeViewRegistry {
 
 ### TASK-4.3 — Update `ApplicationMainViewController` for dual-path routing
 
-**Goal:** Inject `SessionApi` into the main controller alongside the existing `CoreFunctionalityHelper`. Add dual-path routing: if the loaded mode controller implements `ModeControllerV2Api`, route through V2; otherwise fall back to V1.
+**Goal:** Inject `SessionApi` into the main controller alongside the existing `CoreFunctionalityHelper`. Add dual-path
+routing: if the loaded mode controller implements `ModeControllerV2Api`, route through V2; otherwise fall back to V1.
 
 **Context:**
-This task makes the V2 path active for the first time in the UI — but only for controllers that have been migrated (none yet at this point). The V1 path remains fully functional. This is the enabler for all subsequent controller migration tasks.
+This task makes the V2 path active for the first time in the UI — but only for controllers that have been migrated (none
+yet at this point). The V1 path remains fully functional. This is the enabler for all subsequent controller migration
+tasks.
 
 **File to modify:**
+
 ```
 app/ui/src/main/java/ua/renamer/app/ui/controller/ApplicationMainViewController.java
 ```
 
 **Changes:**
+
 1. Add `SessionApi sessionApi` as a constructor parameter (inject alongside existing params)
 2. Add `FxStateMirror fxStateMirror` as a constructor parameter
 3. In `initialize()`, bind FxStateMirror observable properties to TableView columns and status indicators
@@ -1558,11 +1867,13 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/ApplicationMainViewController.
        }
    }
    ```
-5. The Rename button: if `sessionApi.canExecute()`, call `sessionApi.execute()` and bind the returned `TaskHandle` to the progress bar. Otherwise use legacy path.
+5. The Rename button: if `sessionApi.canExecute()`, call `sessionApi.execute()` and bind the returned `TaskHandle` to
+   the progress bar. Otherwise use legacy path.
 
 **Important:** Do NOT remove `CoreFunctionalityHelper` or any V1 code in this task. The dual path must coexist.
 
 **Acceptance criteria:**
+
 - `mvn compile -q -ff` passes
 - App starts and loads successfully
 - All 10 modes work exactly as before (all still on V1 path at this point — no controller has been migrated yet)
@@ -1579,11 +1890,13 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/ApplicationMainViewController.
 **V2 behavior:** `ERROR_TRANSFORMATION` for blank extension (stricter than V1 which allowed it)
 
 **File to modify:**
+
 ```
 app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionController.java
 ```
 
 **Changes:**
+
 1. Add `implements ModeControllerV2Api<ExtensionChangeParams>` to the class declaration.
 2. Add `@Override public TransformationMode supportedMode() { return TransformationMode.CHANGE_EXTENSION; }`
 3. Replace `updateCommand()` method with `bind(ModeApi<ExtensionChangeParams> modeApi)`:
@@ -1608,6 +1921,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 4. Keep the FXML file and `@FXML` field references unchanged.
 
 **Acceptance criteria:**
+
 - `mvn compile -q -ff` passes
 - Change Extension mode works in the running app (V2 path active)
 - V2 extension validation error message appears in UI when extension is blank
@@ -1624,7 +1938,9 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 **Validation:** `caseOption != null`
 
 **Behavior from MODE_STATE_MACHINES.md:**
-- `TextCaseOptions` enum: `CAMEL_CASE`, `PASCAL_CASE`, `SNAKE_CASE`, `SNAKE_CASE_SCREAMING`, `KEBAB_CASE`, `UPPERCASE`, `LOWERCASE`, `TITLE_CASE`
+
+- `TextCaseOptions` enum: `CAMEL_CASE`, `PASCAL_CASE`, `SNAKE_CASE`, `SNAKE_CASE_SCREAMING`, `KEBAB_CASE`, `UPPERCASE`,
+  `LOWERCASE`, `TITLE_CASE`
 - `capitalizeFirstLetter`: additional first-character uppercase after the case change (V1 had a "Capitalize" flag)
 - V2 is safe: guards `!newName.isEmpty()` before `substring(1)` — V1 had `IndexOutOfBoundsException` bug on empty names
 
@@ -1632,8 +1948,10 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 `app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeCaseController.java`
 
 **Changes:** Same pattern as TASK-4.4:
+
 1. `implements ModeControllerV2Api<ChangeCaseParams>`
-2. `bind(ModeApi<ChangeCaseParams> modeApi)` — attach listener to case option ChoiceBox and capitalize checkbox; call `modeApi.updateParameters(p -> p.withCaseOption(val))` on each change.
+2. `bind(ModeApi<ChangeCaseParams> modeApi)` — attach listener to case option ChoiceBox and capitalize checkbox; call
+   `modeApi.updateParameters(p -> p.withCaseOption(val))` on each change.
 
 **Acceptance criteria:** Change Case mode works via V2; 8 remaining modes still on V1.
 
@@ -1646,6 +1964,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 **Validation:** `position != null` (empty text is allowed — no-op transformation)
 
 **Behavior from MODE_STATE_MACHINES.md:**
+
 - `ItemPosition`: `BEGIN` (prepend), `END` (append)
 - Empty `textToAdd` is a no-op (not an error) — this differs from some other modes
 - Result: `textToAdd + originalName` for BEGIN; `originalName + textToAdd` for END
@@ -1663,6 +1982,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 **Validation:** `position != null`; `textToRemove` can be empty (no-op)
 
 **Behavior from MODE_STATE_MACHINES.md:**
+
 - `ItemPosition`: `BEGIN` (remove if filename starts with text), `END` (remove if filename ends with text)
 - If text not found at position: original name returned (not error)
 - If removing text leaves empty name: V2 returns `ERROR_TRANSFORMATION`
@@ -1673,12 +1993,18 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 ### TASK-4.8 — Migrate `ModeReplaceCustomTextController` to V2
 
 **Mode:** Replace Text (`REPLACE_TEXT`)
-**ModeParameters:** `ReplaceTextParams(String textToReplace, String replacementText, ItemPositionWithReplacement position)`
-**Validation:** `position != null`; both text fields can be empty (empty replace = remove; empty replacement = delete match)
+**ModeParameters:**
+`ReplaceTextParams(String textToReplace, String replacementText, ItemPositionWithReplacement position)`
+**Validation:** `position != null`; both text fields can be empty (empty replace = remove; empty replacement = delete
+match)
 
 **Behavior from MODE_STATE_MACHINES.md:**
-- `ItemPositionWithReplacement`: `BEGIN` (replace first occurrence at start), `END` (replace last at end), `EVERYWHERE` (replace all occurrences)
-- **Critical V2 fix vs V1:** V2 uses **literal** string matching (`String.replace()`, `startsWith()`, `endsWith()`). V1 used `replaceFirst(regex, replacement)` — which treated user input as a regex pattern. This is a V1 security issue. V2's literal matching is correct and intentional. Do NOT revert.
+
+- `ItemPositionWithReplacement`: `BEGIN` (replace first occurrence at start), `END` (replace last at end),
+  `EVERYWHERE` (replace all occurrences)
+- **Critical V2 fix vs V1:** V2 uses **literal** string matching (`String.replace()`, `startsWith()`, `endsWith()`). V1
+  used `replaceFirst(regex, replacement)` — which treated user input as a regex pattern. This is a V1 security issue.
+  V2's literal matching is correct and intentional. Do NOT revert.
 - If text not found: original name returned unchanged (no error)
 - Result after replacement must not be empty: `ERROR_TRANSFORMATION` if result is empty
 - Parallelizable: YES
@@ -1692,8 +2018,10 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 **Validation:** `truncateOption != null`, `numberOfSymbols >= 0`
 
 **Behavior from MODE_STATE_MACHINES.md:**
+
 - `TruncateOptions`: `REMOVE_FROM_BEGIN` (remove first N chars), `REMOVE_FROM_END` (remove last N chars)
-- If `numberOfSymbols >= name.length()`: entire name removed → V2 returns `ERROR_TRANSFORMATION` (empty name not allowed)
+- If `numberOfSymbols >= name.length()`: entire name removed → V2 returns `ERROR_TRANSFORMATION` (empty name not
+  allowed)
 - V2's strict "empty name = error" is intentional and correct (V1 allowed empty names silently)
 - Parallelizable: YES
 
@@ -1706,10 +2034,13 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 **Validation:** `position != null`, `numberOfParentFolders >= 1`
 
 **Behavior from MODE_STATE_MACHINES.md:**
+
 - `ItemPosition`: `BEGIN` (prepend folder path), `END` (append folder path)
-- `numberOfParentFolders`: how many parent directory levels to include (1 = immediate parent, 2 = parent/grandparent, etc.)
+- `numberOfParentFolders`: how many parent directory levels to include (1 = immediate parent, 2 = parent/grandparent,
+  etc.)
 - `separator`: string inserted between folder path and filename (e.g., `" "`, `"_"`, `"-"`)
-- **V2 strict behavior:** If file is at root level (no parent folder): `ERROR_TRANSFORMATION` (V1 returned unchanged name silently — V2's behavior is correct)
+- **V2 strict behavior:** If file is at root level (no parent folder): `ERROR_TRANSFORMATION` (V1 returned unchanged
+  name silently — V2's behavior is correct)
 - Parallelizable: YES
 
 ---
@@ -1717,15 +2048,20 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 ### TASK-4.11 — Migrate `ModeUseImageDimensionsController` to V2
 
 **Mode:** Use Image Dimensions (`USE_IMAGE_DIMENSIONS`)
-**ModeParameters:** `ImageDimensionsParams(ImageDimensionOptions leftSide, ImageDimensionOptions rightSide, ItemPositionWithReplacement position, String nameSeparator)`
+**ModeParameters:**
+`ImageDimensionsParams(ImageDimensionOptions leftSide, ImageDimensionOptions rightSide, ItemPositionWithReplacement position, String nameSeparator)`
 **Validation:** `position != null`; at least one of `leftSide`/`rightSide` must not be `DO_NOT_USE`
 
 **Behavior from MODE_STATE_MACHINES.md:**
+
 - `ImageDimensionOptions`: `DO_NOT_USE`, `WIDTH`, `HEIGHT`
-- The dimension string is built as: `[leftSide value][separator][rightSide value]` — e.g., `"1920x1080"` if separator is `"x"`, left=WIDTH, right=HEIGHT
-- `ItemPositionWithReplacement`: `BEGIN` (prepend with nameSeparator), `END` (append with nameSeparator), `REPLACE` (replace filename entirely)
+- The dimension string is built as: `[leftSide value][separator][rightSide value]` — e.g., `"1920x1080"` if separator is
+  `"x"`, left=WIDTH, right=HEIGHT
+- `ItemPositionWithReplacement`: `BEGIN` (prepend with nameSeparator), `END` (append with nameSeparator), `REPLACE` (
+  replace filename entirely)
 - For non-image files: metadata extraction returns no dimensions → `ERROR_TRANSFORMATION`
-- `nameSeparator` (fixed in TASK-1.4): now configurable, default `""` (no separator between dimension block and filename)
+- `nameSeparator` (fixed in TASK-1.4): now configurable, default `""` (no separator between dimension block and
+  filename)
 
 **This mode requires the fix from TASK-1.4 (BUG-1) to be complete before migration.**
 
@@ -1738,11 +2074,16 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 **Validation:** `sortSource != null`, `stepValue > 0`, `paddingDigits >= 0`
 
 **Behavior from MODE_STATE_MACHINES.md:**
-- **SEQUENTIAL ONLY** — cannot be parallelized. `SequenceParams.requiresSequentialExecution()` returns `true`. The V2 orchestrator checks this and uses `transformBatch()` instead of `transform()`.
-- `SortSource` enum: `FILE_NAME`, `FILE_PATH`, `FILE_SIZE`, `FILE_CREATION_DATETIME`, `FILE_MODIFICATION_DATETIME`, `FILE_CONTENT_CREATION_DATETIME`, `IMAGE_WIDTH`, `IMAGE_HEIGHT`
-- Files are sorted by `sortSource` before sequence number assignment; files with null source values sort first (0 / alphabetically first)
+
+- **SEQUENTIAL ONLY** — cannot be parallelized. `SequenceParams.requiresSequentialExecution()` returns `true`. The V2
+  orchestrator checks this and uses `transformBatch()` instead of `transform()`.
+- `SortSource` enum: `FILE_NAME`, `FILE_PATH`, `FILE_SIZE`, `FILE_CREATION_DATETIME`, `FILE_MODIFICATION_DATETIME`,
+  `FILE_CONTENT_CREATION_DATETIME`, `IMAGE_WIDTH`, `IMAGE_HEIGHT`
+- Files are sorted by `sortSource` before sequence number assignment; files with null source values sort first (0 /
+  alphabetically first)
 - `startNumber`: first sequence number (e.g., 1 for `001`)
-- `stepValue`: increment per file (must be > 0; stepValue=0 causes all files to get the same number → all become conflicts → high duplicate rate)
+- `stepValue`: increment per file (must be > 0; stepValue=0 causes all files to get the same number → all become
+  conflicts → high duplicate rate)
 - `paddingDigits`: number of zero-padding digits (0 = no padding; validated >= 0 in TASK-1.2)
 - Conflict risk: HIGH when stepValue is small; `DuplicateNameResolverImpl` handles in-batch conflicts with suffixes
 
@@ -1756,13 +2097,16 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 **ModeParameters:** `DateTimeParams` (11 fields — most complex mode)
 
 **Validation:**
+
 - `source != null`
 - At least one of `useDatePart` or `useTimePart` must be `true`
 - If `source == CUSTOM_DATE`, `customDateTime` must not be null
 - `position != null`
 
 **Behavior from MODE_STATE_MACHINES.md:**
-- `DateTimeSource`: `FILE_CREATION_DATETIME`, `FILE_MODIFICATION_DATETIME`, `FILE_CONTENT_CREATION_DATETIME`, `CURRENT_DATE`, `CUSTOM_DATE`
+
+- `DateTimeSource`: `FILE_CREATION_DATETIME`, `FILE_MODIFICATION_DATETIME`, `FILE_CONTENT_CREATION_DATETIME`,
+  `CURRENT_DATE`, `CUSTOM_DATE`
 - `DateFormat`: multiple date format patterns
 - `TimeFormat`: multiple time format patterns (some include AM/PM `a` pattern)
 - `position`: `ItemPosition.BEGIN` or `ItemPosition.END`
@@ -1774,17 +2118,22 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 
 **This mode requires TASK-1.5, TASK-1.6, TASK-1.7 to be complete before migration.**
 
-**Note:** This controller has the most complex FXML — 10+ interdependent controls with conditional visibility. Read the existing `ModeUseDatetimeController.java` before implementing `bind()` to understand which controls exist. The FXML is unchanged; only `bind()` replaces `updateCommand()`.
+**Note:** This controller has the most complex FXML — 10+ interdependent controls with conditional visibility. Read the
+existing `ModeUseDatetimeController.java` before implementing `bind()` to understand which controls exist. The FXML is
+unchanged; only `bind()` replaces `updateCommand()`.
 
 ---
 
 ### TASK-4.14 — Final cleanup: remove V1 infrastructure
 
-**Goal:** After all 10 mode controllers are migrated to V2, remove the dual-path routing, `CoreFunctionalityHelper`, V1 command wiring, and unused `InjectQualifiers` entries.
+**Goal:** After all 10 mode controllers are migrated to V2, remove the dual-path routing, `CoreFunctionalityHelper`, V1
+command wiring, and unused `InjectQualifiers` entries.
 
-**Prerequisite:** ALL of TASK-4.4 through TASK-4.13 are complete. All modes work on the V2 path. The V1 fallback branch in `ApplicationMainViewController.onModeSelected()` is dead code.
+**Prerequisite:** ALL of TASK-4.4 through TASK-4.13 are complete. All modes work on the V2 path. The V1 fallback branch
+in `ApplicationMainViewController.onModeSelected()` is dead code.
 
 **Files to delete — V1 command classes (app/core):**
+
 - All 10 `*PrepareInformationCommand.java` in `app/core/.../service/command/impl/preparation/`
 - `MapFileToFileInformationCommand.java`
 - `MapFileInformationToRenameModelCommand.java`
@@ -1793,35 +2142,45 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 - `RenameCommand.java`
 
 **Files to delete — V1 domain model (app/core):**
-- `FileInformation.java` — V1 mutable file model; all binding migrated to `FxStateMirror` snapshot types (`RenameCandidate`, `RenamePreview`, `RenameSessionResult`)
+
+- `FileInformation.java` — V1 mutable file model; all binding migrated to `FxStateMirror` snapshot types (
+  `RenameCandidate`, `RenamePreview`, `RenameSessionResult`)
 - `RenameModel.java` — V1 result model; replaced by `RenameCandidate` + `RenamePreview` + `RenameSessionResult`
-- `RenameModelToHtmlMapper.java` — WebView HTML display replaced by structured `TableView` columns bound to `RenameSessionResult` fields
+- `RenameModelToHtmlMapper.java` — WebView HTML display replaced by structured `TableView` columns bound to
+  `RenameSessionResult` fields
 
 **Files to delete — V1 UI infrastructure (app/ui):**
+
 - `CoreFunctionalityHelper.java` — replaced by `SessionApi` injection in `ApplicationMainViewController`
 - `CommandModel.java` — replaced by `ModeApi<P>.currentParameters()` + `FxStateMirror`
 - `ModeControllerApi.java` (old V1 interface) — replaced by `ModeControllerV2Api`
 - `MainViewControllerHelper.java` — mode binding responsibility moves to `ModeViewRegistry`
 
 **Qualifier cleanup (app/ui):**
+
 - Remove 20 of 30 `InjectQualifiers` annotations (FXMLLoader and Parent qualifiers — replaced by `ModeViewRegistry`)
 - Remove corresponding `@Provides` methods in `DIUIModule` (20 of 30 mode-related methods)
-- Remove the `@AppGlobalRenameModelList` qualifier and its `@Provides` singleton binding for `ObservableList<RenameModel>` — replaced by `FxStateMirror.files()` and `FxStateMirror.preview()`
+- Remove the `@AppGlobalRenameModelList` qualifier and its `@Provides` singleton binding for
+  `ObservableList<RenameModel>` — replaced by `FxStateMirror.files()` and `FxStateMirror.preview()`
 
 **Files to update:**
-- `ApplicationMainViewController.java` — remove V1 fallback branch, remove `CoreFunctionalityHelper` injection, bind to `FxStateMirror` observable properties instead of `ObservableList<RenameModel>`
+
+- `ApplicationMainViewController.java` — remove V1 fallback branch, remove `CoreFunctionalityHelper` injection, bind to
+  `FxStateMirror` observable properties instead of `ObservableList<RenameModel>`
 - `DIUIModule.java` — remove V1 command bindings, remove `@AppGlobalRenameModelList` binding, clean up unused qualifiers
 - `DICoreModule.java` — remove V1 command bindings
 - `module-info.java` files — remove exports of now-deleted packages
 - `InjectQualifiers.java` — reduce from 31 to 10 annotations (only controller qualifiers remain)
 
 **Post-cleanup build check:**
+
 ```bash
 cd app && mvn clean install -q      # Full build with all modules
 cd app && mvn verify -Pcode-quality -q  # Checkstyle, PMD, SpotBugs — zero violations
 ```
 
 **Acceptance criteria:**
+
 - All 10 modes work via V2 pipeline exclusively
 - No `CoreFunctionalityHelper` class exists
 - No `FileInformationCommand` implementations exist in `preparation/` package
@@ -1833,17 +2192,19 @@ cd app && mvn verify -Pcode-quality -q  # Checkstyle, PMD, SpotBugs — zero vio
 
 ## Testing Strategy Summary
 
-Each task requires tests before the next task begins. The following matrix summarizes test locations and required coverage:
+Each task requires tests before the next task begins. The following matrix summarizes test locations and required
+coverage:
 
-| Part | Test Type | Location Pattern | Coverage Gate |
-|------|-----------|-----------------|---------------|
-| Part 1 | Unit (fast, no I/O) | `app/core/src/test/...` | 100% branch on new/changed code |
-| Part 1 (BUG-4) | Integration (`@TempDir`) | `...RenameExecutionServiceImplDiskConflictTest` | Happy + 2 conflict cases |
-| Part 2 | Unit | `app/api/src/test/...` | All records + validate() |
-| Part 3 | Unit (mock StatePublisher) | `app/backend/src/test/...` | Session lifecycle + preview |
-| Part 4 | Manual (JavaFX) | App runs | Each mode end-to-end |
+| Part           | Test Type                  | Location Pattern                                | Coverage Gate                   |
+|----------------|----------------------------|-------------------------------------------------|---------------------------------|
+| Part 1         | Unit (fast, no I/O)        | `app/core/src/test/...`                         | 100% branch on new/changed code |
+| Part 1 (BUG-4) | Integration (`@TempDir`)   | `...RenameExecutionServiceImplDiskConflictTest` | Happy + 2 conflict cases        |
+| Part 2         | Unit                       | `app/api/src/test/...`                          | All records + validate()        |
+| Part 3         | Unit (mock StatePublisher) | `app/backend/src/test/...`                      | Session lifecycle + preview     |
+| Part 4         | Manual (JavaFX)            | App runs                                        | Each mode end-to-end            |
 
 **Running tests after each task:**
+
 ```bash
 # Single test class
 cd app && mvn test -q -ff -Dai=true -Dtest=ClassName
@@ -1900,14 +2261,17 @@ Part 4:
 
 ## Quick Reference: Files Changed Per Part
 
-| Part | Module | Files Created | Files Modified |
-|------|--------|---------------|----------------|
-| 1 | `app/core`, `app/api` | test classes | 10 transformers, 10 configs, `ThreadAwareFileMapper`, `RenameExecutionServiceImpl` |
-| 2 | `app/api`, `app/backend` (skeleton) | `SessionApi`, `ModeApi`, `ModeParameters` + 10 records, `TaskHandle`, value types | `module-info.java`, `pom.xml` |
-| 3 | `app/backend` | `RenameSession`, `BackendExecutor`, `ModeParametersConverter`, `RenameSessionService`, `SessionApiImpl`, `DIBackendModule`, `ModeApiImpl`, `TaskHandleImpl` | `DIUIModule` |
-| 4 | `app/ui` | `FxStateMirror`, `ModeViewRegistry`, `ModeControllerV2Api` | `ApplicationMainViewController`, 10 mode controllers |
-| Cleanup | `app/core`, `app/ui` | — | Delete V1 command classes; reduce `InjectQualifiers` |
+| Part    | Module                              | Files Created                                                                                                                                               | Files Modified                                                                     |
+|---------|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| 1       | `app/core`, `app/api`               | test classes                                                                                                                                                | 10 transformers, 10 configs, `ThreadAwareFileMapper`, `RenameExecutionServiceImpl` |
+| 2       | `app/api`, `app/backend` (skeleton) | `SessionApi`, `ModeApi`, `ModeParameters` + 10 records, `TaskHandle`, value types                                                                           | `module-info.java`, `pom.xml`                                                      |
+| 3       | `app/backend`                       | `RenameSession`, `BackendExecutor`, `ModeParametersConverter`, `RenameSessionService`, `SessionApiImpl`, `DIBackendModule`, `ModeApiImpl`, `TaskHandleImpl` | `DIUIModule`                                                                       |
+| 4       | `app/ui`                            | `FxStateMirror`, `ModeViewRegistry`, `ModeControllerV2Api`                                                                                                  | `ApplicationMainViewController`, 10 mode controllers                               |
+| Cleanup | `app/core`, `app/ui`                | —                                                                                                                                                           | Delete V1 command classes; reduce `InjectQualifiers`                               |
 
 ---
 
-*This document is the authoritative implementation plan. Each task is designed to be implementable by the Coder agent in a single session. Before starting any task, the Coder agent should read: (1) this task's section, (2) the relevant sections from `docs/MODE_STATE_MACHINES.md` (for mode-specific tasks), (3) the actual source files listed under "Affected files".*
+*This document is the authoritative implementation plan. Each task is designed to be implementable by the Coder agent in
+a single session. Before starting any task, the Coder agent should read: (1) this task's section, (2) the relevant
+sections from `docs/MODE_STATE_MACHINES.md` (for mode-specific tasks), (3) the actual source files listed under "
+Affected files".*

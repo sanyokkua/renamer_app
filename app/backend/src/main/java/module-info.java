@@ -8,10 +8,10 @@ module ua.renamer.app.backend {
     requires org.slf4j;
     // IMPORTANT: NO require javafx.* — JPMS enforces FX-free backend
 
-    // exports below are commented out until real types exist in each package (javac 25 rejects exports of package-info-only packages)
-    // Uncomment each export in TASK-2.2/2.3/2.4 as classes are added:
-    //   exports ua.renamer.app.backend.config;     // DIBackendModule
-    //   exports ua.renamer.app.backend.service;    // RenameSessionService, BackendExecutor
-    exports ua.renamer.app.backend.session;     // RenameSession, RenameSessionConverter
-    // Internal packages are NOT exported
+    exports ua.renamer.app.backend.service;    // RenameSessionService, BackendExecutor
+    exports ua.renamer.app.backend.session;    // RenameSession, RenameSessionConverter
+    // exports ua.renamer.app.backend.config;  // DIBackendModule — uncomment in TASK-3.6
+
+    opens ua.renamer.app.backend.service;
+    opens ua.renamer.app.backend.session;
 }
