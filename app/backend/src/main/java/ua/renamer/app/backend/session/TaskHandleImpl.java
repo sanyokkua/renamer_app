@@ -4,12 +4,15 @@ import ua.renamer.app.api.session.TaskHandle;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Package-private implementation of {@link TaskHandle} that wraps a {@link CompletableFuture}.
  *
- * <p>Full progress listener fan-out will be added in TASK-3.5.
- * This stub provides the handle contract required by {@link RenameSessionService#execute()}.
+ * <p>Cancellation sets a cooperative flag and calls {@link CompletableFuture#cancel(boolean) cancel(false)}
+ * on the underlying future — no interrupt is sent so that mid-rename virtual threads are not corrupted.
+ * Progress listeners are stored in a {@link CopyOnWriteArrayList}; {@code addIfAbsent} silently drops
+ * duplicate registrations as required by the interface contract.
  *
  * @param <T> the type of the task's result value
  */
@@ -17,6 +20,8 @@ class TaskHandleImpl<T> implements TaskHandle<T> {
 
     private final String id = UUID.randomUUID().toString();
     private final CompletableFuture<T> future;
+    private final CopyOnWriteArrayList<TaskHandle.ProgressListener> listeners =
+            new CopyOnWriteArrayList<>();
     private volatile boolean cancelRequested = false;
 
     /**
@@ -41,6 +46,7 @@ class TaskHandleImpl<T> implements TaskHandle<T> {
     @Override
     public void requestCancellation() {
         cancelRequested = true;
+        future.cancel(false);
     }
 
     @Override
@@ -50,23 +56,24 @@ class TaskHandleImpl<T> implements TaskHandle<T> {
 
     @Override
     public void addProgressListener(TaskHandle.ProgressListener listener) {
-        // Full implementation in TASK-3.5
+        listeners.addIfAbsent(listener);
     }
 
     @Override
     public void removeProgressListener(TaskHandle.ProgressListener listener) {
-        // Full implementation in TASK-3.5
+        listeners.remove(listener);
     }
 
     /**
-     * Notifies registered progress listeners of task progress.
-     * Fan-out to registered listeners will be added in TASK-3.5.
+     * Notifies all registered progress listeners of task progress.
      *
-     * @param done  units of work completed
-     * @param total total units of work expected
+     * <p>Called from the virtual-thread work pool inside {@link RenameSessionService#execute()}.
+     *
+     * @param done  units of work completed; {@code -1} if indeterminate
+     * @param total total units of work expected; {@code -1} if indeterminate
      * @param msg   human-readable description of the current step; may be null
      */
     void notifyProgress(double done, double total, String msg) {
-        // Fan-out to registered listeners — TASK-3.5
+        listeners.forEach(l -> l.onProgress(done, total, msg));
     }
 }

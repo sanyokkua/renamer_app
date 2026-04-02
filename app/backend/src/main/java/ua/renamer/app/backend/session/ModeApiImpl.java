@@ -6,12 +6,16 @@ import ua.renamer.app.api.session.ModeParameters;
 import ua.renamer.app.api.session.ValidationResult;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Package-private implementation of {@link ModeApi} backed by {@link RenameSessionService}.
  *
- * <p>Full listener fan-out and reset support will be added in TASK-3.5.
- * This stub satisfies the {@link RenameSessionService#selectMode} call contract.
+ * <p>Parameter state is stored in an {@link AtomicReference} so that concurrent calls to
+ * {@link #updateParameters} from any thread are race-free. Listener fan-out uses a
+ * {@link CopyOnWriteArrayList} for lock-free reads; {@code addIfAbsent} silently drops
+ * duplicate registrations as required by the interface contract.
  *
  * @param <P> the concrete {@link ModeParameters} subtype for this mode
  */
@@ -19,7 +23,9 @@ class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
 
     private final TransformationMode mode;
     private final RenameSessionService service;
-    private volatile P currentParams;
+    private final P defaultParams;
+    private final AtomicReference<P> currentParams;
+    private final CopyOnWriteArrayList<ModeApi.ParameterListener<P>> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * Creates a new {@code ModeApiImpl} with the given initial parameters, mode, and backing service.
@@ -29,7 +35,8 @@ class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
      * @param service       the backing session service used to delegate parameter updates; must not be null
      */
     ModeApiImpl(P initialParams, TransformationMode mode, RenameSessionService service) {
-        this.currentParams = initialParams;
+        this.defaultParams = initialParams;
+        this.currentParams = new AtomicReference<>(initialParams);
         this.mode = mode;
         this.service = service;
     }
@@ -41,32 +48,39 @@ class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
 
     @Override
     public P currentParameters() {
-        return currentParams;
+        return currentParams.get();
     }
 
     @Override
     public void addParameterListener(ModeApi.ParameterListener<P> listener) {
-        // Full implementation in TASK-3.5
+        listeners.addIfAbsent(listener);
     }
 
     @Override
     public void removeParameterListener(ModeApi.ParameterListener<P> listener) {
-        // Full implementation in TASK-3.5
+        listeners.remove(listener);
     }
 
     @Override
     public CompletableFuture<ValidationResult> updateParameters(ModeApi.ParamMutator<P> mutator) {
-        P updated = mutator.apply(currentParams);
-        return service.updateParameters(updated).thenApply(v -> {
-            if (!v.isError()) {
-                currentParams = updated;
+        P updated = mutator.apply(currentParams.get());
+        return service.updateParameters(updated).thenApply(result -> {
+            if (result.ok()) {
+                currentParams.set(updated);
+                listeners.forEach(l -> l.onParametersChanged(updated));
             }
-            return v;
+            return result;
         });
     }
 
     @Override
     public CompletableFuture<Void> resetParameters() {
-        throw new UnsupportedOperationException("resetParameters() will be implemented in TASK-3.5");
+        return service.updateParameters(defaultParams).thenApply(result -> {
+            if (result.ok()) {
+                currentParams.set(defaultParams);
+                listeners.forEach(l -> l.onParametersChanged(defaultParams));
+            }
+            return null;
+        });
     }
 }

@@ -1181,7 +1181,7 @@ app/backend/src/main/java/ua/renamer/app/backend/session/RenameSession.java
 @Getter
 public class RenameSession {
     private final List<FileModel> files = new ArrayList<>();
-    private TransformationMode activeMode = null;
+    private final TransformationMode activeMode = null;
     private final ModeParameters currentParams = null;
     private final List<PreparedFileModel> lastPreview = List.of();
     private SessionStatus status = SessionStatus.EMPTY;
@@ -1526,6 +1526,8 @@ public class RenameSessionService implements SessionApi {
 ---
 
 ### TASK-3.5 — Implement `ModeApiImpl<P>` and `TaskHandleImpl<T>`
+
+**Status:** ✅ DONE
 
 **Goal:** Implement the concrete `ModeApi<P>` and `TaskHandle<T>` interfaces used by UI controllers and returned from
 `SessionApi`.
