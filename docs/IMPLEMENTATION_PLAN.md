@@ -1298,6 +1298,8 @@ public class BackendExecutor implements Closeable {
 
 ### TASK-3.3 — Implement `ModeParametersConverter` (ModeParameters → V2 Config)
 
+**Status:** COMPLETED
+
 **Goal:** A centralized converter that maps each `ModeParameters` record to the corresponding V2 `XxxConfig` object
 consumed by `FileRenameOrchestratorImpl`.
 
