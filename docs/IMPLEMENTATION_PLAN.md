@@ -1682,7 +1682,7 @@ routing (V1 fallback for unmigrated controllers) ensures no big-bang transition.
 
 ---
 
-### TASK-4.1 — Implement `FxStateMirror` in `app/ui`
+### TASK-4.1 — Implement `FxStateMirror` in `app/ui` ✅ done
 
 **Goal:** The FX-thread-safe bridge between backend state and JavaFX observable properties. Implements `StatePublisher`.
 Every `publishX()` method wraps its body in `Platform.runLater()`.

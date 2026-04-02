@@ -44,4 +44,5 @@ module ua.renamer.app.ui {
     opens ua.renamer.app.ui.widget to javafx.fxml;
     opens ua.renamer.app.ui.widget.impl to javafx.fxml;
     opens ua.renamer.app.ui.widget.table to javafx.fxml;
+    opens ua.renamer.app.ui.state;
 }
