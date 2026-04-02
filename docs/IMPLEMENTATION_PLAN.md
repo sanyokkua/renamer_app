@@ -1182,7 +1182,7 @@ app/backend/src/main/java/ua/renamer/app/backend/session/RenameSession.java
 public class RenameSession {
     private final List<FileModel> files = new ArrayList<>();
     private TransformationMode activeMode = null;
-    private ModeParameters currentParams = null;
+    private final ModeParameters currentParams = null;
     private final List<PreparedFileModel> lastPreview = List.of();
     private SessionStatus status = SessionStatus.EMPTY;
 
@@ -1398,7 +1398,7 @@ this converter will be a **compile error**. This is the intended safety guarante
 
 ---
 
-### TASK-3.4 — Implement `RenameSessionService` (core business logic)
+### TASK-3.4 — Implement `RenameSessionService` (core business logic) ✅ DONE
 
 **Goal:** The central class that orchestrates all backend operations: file management, preview computation, and rename
 execution.

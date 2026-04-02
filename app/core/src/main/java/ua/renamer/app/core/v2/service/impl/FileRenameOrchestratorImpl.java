@@ -85,6 +85,54 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
         return CompletableFuture.supplyAsync(() -> execute(files, mode, config, progressCallback));
     }
 
+    @Override
+    public List<FileModel> extractMetadata(List<File> files, ProgressCallback progressCallback) {
+        log.info("Phase 1 only: extracting metadata for {} files", files.size());
+        try (ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor()) {
+            return extractMetadataParallel(files, virtualExecutor, progressCallback);
+        } catch (Exception e) {
+            log.error("Metadata extraction failed", e);
+            return files.stream()
+                    .map(f -> FileModel.builder()
+                            .withFile(f)
+                            .withName(f.getName())
+                            .withExtension("")
+                            .withAbsolutePath(f.getAbsolutePath())
+                            .withIsFile(false)
+                            .withFileSize(0L)
+                            .build())
+                    .toList();
+        }
+    }
+
+    @Override
+    public List<PreparedFileModel> computePreview(
+            List<FileModel> fileModels,
+            TransformationMode mode,
+            Object config,
+            ProgressCallback progressCallback) {
+        log.info("Phases 2-2.5: computing preview for {} files, mode={}", fileModels.size(), mode);
+        try (ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<PreparedFileModel> prepared =
+                    applyTransformation(fileModels, mode, config, virtualExecutor, progressCallback);
+            log.debug("Phase 2 complete: {} files prepared", prepared.size());
+            prepared = duplicateResolver.resolve(prepared);
+            log.debug("Phase 2.5 complete: {} files after dedup", prepared.size());
+            return prepared;
+        } catch (Exception e) {
+            log.error("Preview computation failed", e);
+            return fileModels.stream()
+                    .map(fm -> PreparedFileModel.builder()
+                            .withOriginalFile(fm)
+                            .withNewName(fm.getName())
+                            .withNewExtension(fm.getExtension())
+                            .withHasError(true)
+                            .withErrorMessage("Preview error: " + e.getMessage())
+                            .build())
+                    .toList();
+        }
+    }
+
     // ==================== PHASE 1: METADATA EXTRACTION ====================
 
     private List<FileModel> extractMetadataParallel(List<File> files, ExecutorService executor, ProgressCallback progressCallback) {
