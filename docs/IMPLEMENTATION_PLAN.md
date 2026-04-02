@@ -1396,6 +1396,10 @@ this converter will be a **compile error**. This is the intended safety guarante
 - `givenSequenceParamsWithNegativePadding_whenConvert_thenIllegalArgumentExceptionFromConfig()` — validates integration
   with TASK-1.2 config validation
 
+**Post-verification fix:** Added `applyToExtension` field to `DateTimeConfig`, wired it through
+`DateTimeTransformer`, and mapped it in `ModeParametersConverter`. Gap discovered during Part 3
+compliance review. All 3 affected modules (`api`, `core`, `backend`) pass tests after the fix.
+
 ---
 
 ### TASK-3.4 — Implement `RenameSessionService` (core business logic) ✅ DONE
@@ -1647,6 +1651,8 @@ FxStateMirror provideFxStateMirror() {
 ---
 
 ### TASK-3.7 — Add `StatePublisher` interface and update module-info files
+
+**Status:** ✅ DONE
 
 **Goal:** Define `StatePublisher` in `app/api`, add `StatePublisher` to `app/api` exports, add `app/backend` requirement
 to `app/ui`, add `app/api` and `app/backend` to parent POM.

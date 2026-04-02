@@ -76,6 +76,14 @@ public class DateTimeConfig implements TransformationConfig {
     boolean useCustomDateTimeAsFallback = false;
 
     /**
+     * When {@code true}, applies the same position-based datetime transformation to the
+     * file extension in addition to the filename stem.
+     * Defaults to {@code false} (extension is always preserved unchanged).
+     */
+    @Builder.Default
+    boolean applyToExtension = false;
+
+    /**
      * Returns the custom datetime value wrapped in an {@link Optional}.
      *
      * @return the custom datetime if set, or empty if not set
@@ -108,7 +116,8 @@ public class DateTimeConfig implements TransformationConfig {
                     separator,
                     useFallbackDateTime$set && useFallbackDateTime$value,
                     !useUppercaseForAmPm$set || useUppercaseForAmPm$value,
-                    useCustomDateTimeAsFallback$set && useCustomDateTimeAsFallback$value);
+                    useCustomDateTimeAsFallback$set && useCustomDateTimeAsFallback$value,
+                    applyToExtension$set && applyToExtension$value);
         }
     }
 }

@@ -913,4 +913,103 @@ class DateTimeTransformerTest {
         assertTrue(result.needsRename());
         assertNotEquals(result.getOldFullName(), result.getNewFullName());
     }
+
+    // ============================================================================
+    // M. Apply To Extension Tests
+    // ============================================================================
+
+    @Test
+    void givenApplyToExtensionFalse_whenTransform_thenExtensionUnchanged() {
+        // Arrange - applyToExtension not set, so defaults to false
+        FileModel input = createTestFileModel("document", "txt");
+        DateTimeConfig config = DateTimeConfig.builder()
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .build();
+
+        // Act
+        PreparedFileModel result = transformer.transform(input, config);
+
+        // Assert
+        assertFalse(result.isHasError());
+        assertEquals("2024-01-15_document", result.getNewName());
+        assertEquals("txt", result.getNewExtension());
+    }
+
+    @Test
+    void givenApplyToExtensionTrue_andPositionBegin_whenTransform_thenExtensionPrefixedWithDatetime() {
+        // Arrange
+        FileModel input = createTestFileModel("document", "txt");
+        DateTimeConfig config = DateTimeConfig.builder()
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.BEGIN)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .withApplyToExtension(true)
+                .build();
+
+        // Act
+        PreparedFileModel result = transformer.transform(input, config);
+
+        // Assert
+        assertFalse(result.isHasError());
+        assertEquals("2024-01-15_document", result.getNewName());
+        assertEquals("2024-01-15_txt", result.getNewExtension());
+    }
+
+    @Test
+    void givenApplyToExtensionTrue_andPositionEnd_whenTransform_thenExtensionSuffixedWithDatetime() {
+        // Arrange
+        FileModel input = createTestFileModel("document", "txt");
+        DateTimeConfig config = DateTimeConfig.builder()
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.END)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .withApplyToExtension(true)
+                .build();
+
+        // Act
+        PreparedFileModel result = transformer.transform(input, config);
+
+        // Assert
+        assertFalse(result.isHasError());
+        assertEquals("document_2024-01-15", result.getNewName());
+        assertEquals("txt_2024-01-15", result.getNewExtension());
+    }
+
+    @Test
+    void givenApplyToExtensionTrue_andPositionReplace_whenTransform_thenExtensionReplacedByDatetime() {
+        // Arrange
+        FileModel input = createTestFileModel("document", "txt");
+        DateTimeConfig config = DateTimeConfig.builder()
+                .withSource(DateTimeSource.FILE_CREATION_DATE)
+                .withDateFormat(DateFormat.YYYY_MM_DD_DASHED)
+                .withTimeFormat(TimeFormat.DO_NOT_USE_TIME)
+                .withDateTimeFormat(DateTimeFormat.DATE_TIME_TOGETHER)
+                .withPosition(ItemPositionWithReplacement.REPLACE)
+                .withSeparator("_")
+                .withCustomDateTime(null)
+                .withApplyToExtension(true)
+                .build();
+
+        // Act
+        PreparedFileModel result = transformer.transform(input, config);
+
+        // Assert
+        assertFalse(result.isHasError());
+        assertEquals("2024-01-15", result.getNewName());
+        assertEquals("2024-01-15", result.getNewExtension());
+    }
 }

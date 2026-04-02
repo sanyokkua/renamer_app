@@ -1,27 +1,7 @@
 package ua.renamer.app.backend.session;
 
-import ua.renamer.app.api.model.config.AddTextConfig;
-import ua.renamer.app.api.model.config.CaseChangeConfig;
-import ua.renamer.app.api.model.config.DateTimeConfig;
-import ua.renamer.app.api.model.config.ExtensionChangeConfig;
-import ua.renamer.app.api.model.config.ImageDimensionsConfig;
-import ua.renamer.app.api.model.config.ParentFolderConfig;
-import ua.renamer.app.api.model.config.RemoveTextConfig;
-import ua.renamer.app.api.model.config.ReplaceTextConfig;
-import ua.renamer.app.api.model.config.SequenceConfig;
-import ua.renamer.app.api.model.config.TransformationConfig;
-import ua.renamer.app.api.model.config.TruncateConfig;
-import ua.renamer.app.api.session.AddTextParams;
-import ua.renamer.app.api.session.ChangeCaseParams;
-import ua.renamer.app.api.session.DateTimeParams;
-import ua.renamer.app.api.session.ExtensionChangeParams;
-import ua.renamer.app.api.session.ImageDimensionsParams;
-import ua.renamer.app.api.session.ModeParameters;
-import ua.renamer.app.api.session.ParentFolderParams;
-import ua.renamer.app.api.session.RemoveTextParams;
-import ua.renamer.app.api.session.ReplaceTextParams;
-import ua.renamer.app.api.session.SequenceParams;
-import ua.renamer.app.api.session.TruncateParams;
+import ua.renamer.app.api.model.config.*;
+import ua.renamer.app.api.session.*;
 
 /**
  * Stateless utility that converts a {@link ModeParameters} record to the
@@ -86,6 +66,7 @@ public final class ModeParametersConverter {
                     .withUseFallbackDateTime(p.useFallbackDateTime())
                     .withUseCustomDateTimeAsFallback(p.useCustomDateTimeAsFallback())
                     .withUseUppercaseForAmPm(p.useUppercaseForAmPm())
+                    .withApplyToExtension(p.applyToExtension())
                     .build();
             case ImageDimensionsParams p -> ImageDimensionsConfig.builder()
                     .withLeftSide(p.leftSide())

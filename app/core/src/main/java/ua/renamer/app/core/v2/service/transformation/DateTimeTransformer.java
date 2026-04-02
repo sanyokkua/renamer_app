@@ -88,10 +88,19 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
                 case REPLACE -> formattedDateTime;
             };
 
+            // Apply to extension if requested; otherwise preserve original
+            String newExtension = config.isApplyToExtension()
+                    ? switch (config.getPosition()) {
+                case BEGIN -> formattedDateTime + config.getSeparator() + input.getExtension();
+                case END -> input.getExtension() + config.getSeparator() + formattedDateTime;
+                case REPLACE -> formattedDateTime;
+            }
+                    : input.getExtension();
+
             return PreparedFileModel.builder()
                     .withOriginalFile(input)
                     .withNewName(newName)
-                    .withNewExtension(input.getExtension())
+                    .withNewExtension(newExtension)
                     .withHasError(false)
                     .withErrorMessage(null)
                     .withTransformationMeta(buildMetadata(config))

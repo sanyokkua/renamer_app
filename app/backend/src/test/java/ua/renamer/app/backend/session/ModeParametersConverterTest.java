@@ -2,36 +2,9 @@ package ua.renamer.app.backend.session;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ua.renamer.app.api.enums.DateFormat;
-import ua.renamer.app.api.enums.DateTimeSource;
-import ua.renamer.app.api.enums.ImageDimensionOptions;
-import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.enums.ItemPositionExtended;
-import ua.renamer.app.api.enums.ItemPositionWithReplacement;
-import ua.renamer.app.api.enums.SortSource;
-import ua.renamer.app.api.enums.TextCaseOptions;
-import ua.renamer.app.api.enums.TimeFormat;
-import ua.renamer.app.api.enums.TruncateOptions;
-import ua.renamer.app.api.model.config.AddTextConfig;
-import ua.renamer.app.api.model.config.CaseChangeConfig;
-import ua.renamer.app.api.model.config.DateTimeConfig;
-import ua.renamer.app.api.model.config.ExtensionChangeConfig;
-import ua.renamer.app.api.model.config.ImageDimensionsConfig;
-import ua.renamer.app.api.model.config.ParentFolderConfig;
-import ua.renamer.app.api.model.config.RemoveTextConfig;
-import ua.renamer.app.api.model.config.ReplaceTextConfig;
-import ua.renamer.app.api.model.config.SequenceConfig;
-import ua.renamer.app.api.model.config.TruncateConfig;
-import ua.renamer.app.api.session.AddTextParams;
-import ua.renamer.app.api.session.ChangeCaseParams;
-import ua.renamer.app.api.session.DateTimeParams;
-import ua.renamer.app.api.session.ExtensionChangeParams;
-import ua.renamer.app.api.session.ImageDimensionsParams;
-import ua.renamer.app.api.session.ParentFolderParams;
-import ua.renamer.app.api.session.RemoveTextParams;
-import ua.renamer.app.api.session.ReplaceTextParams;
-import ua.renamer.app.api.session.SequenceParams;
-import ua.renamer.app.api.session.TruncateParams;
+import ua.renamer.app.api.enums.*;
+import ua.renamer.app.api.model.config.*;
+import ua.renamer.app.api.session.*;
 
 import java.time.LocalDateTime;
 
@@ -232,7 +205,7 @@ class ModeParametersConverterTest {
             // Act
             var config = (DateTimeConfig) ModeParametersConverter.toConfig(params);
 
-            // Assert — 8 mapped fields
+            // Assert — 9 mapped fields
             assertThat(config.getSource()).isEqualTo(DateTimeSource.FILE_CREATION_DATE);
             assertThat(config.getDateFormat()).isEqualTo(DateFormat.YYYY_MM_DD_TOGETHER);
             assertThat(config.getTimeFormat()).isEqualTo(TimeFormat.HH_MM_SS_24_TOGETHER);
@@ -241,9 +214,34 @@ class ModeParametersConverterTest {
             assertThat(config.isUseFallbackDateTime()).isTrue();
             assertThat(config.isUseCustomDateTimeAsFallback()).isTrue();
             assertThat(config.isUseUppercaseForAmPm()).isFalse();
+            assertThat(config.isApplyToExtension()).isFalse();
             // Fields not in DateTimeConfig — just verify config builds without error
             assertThat(config.getDateTimeFormat()).isNull();
             assertThat(config.getSeparator()).isNull();
+        }
+
+        @Test
+        void givenDateTimeParamsWithApplyToExtensionTrue_whenConvert_thenApplyToExtensionMappedTrue() {
+            // Arrange
+            var params = new DateTimeParams(
+                    DateTimeSource.FILE_CREATION_DATE,
+                    DateFormat.YYYY_MM_DD_TOGETHER,
+                    TimeFormat.HH_MM_SS_24_TOGETHER,
+                    ItemPositionWithReplacement.END,
+                    true,   // useDatePart
+                    false,  // useTimePart
+                    true,   // applyToExtension ← true this time
+                    false,  // useFallbackDateTime
+                    false,  // useCustomDateTimeAsFallback
+                    null,   // customDateTime
+                    true    // useUppercaseForAmPm
+            );
+
+            // Act
+            var config = (DateTimeConfig) ModeParametersConverter.toConfig(params);
+
+            // Assert
+            assertThat(config.isApplyToExtension()).isTrue();
         }
     }
 
