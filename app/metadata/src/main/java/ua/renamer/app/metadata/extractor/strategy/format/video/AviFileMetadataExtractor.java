@@ -2,12 +2,14 @@ package ua.renamer.app.metadata.extractor.strategy.format.video;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.avi.AviDirectory;
+import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.util.List;
 
 public class AviFileMetadataExtractor extends BaseVideoMetadataExtractor {
 
+    @Inject
     public AviFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);
     }

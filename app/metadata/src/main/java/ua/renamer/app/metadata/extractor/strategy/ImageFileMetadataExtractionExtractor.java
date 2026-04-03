@@ -1,6 +1,6 @@
 package ua.renamer.app.metadata.extractor.strategy;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.AppMimeTypes;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
@@ -10,7 +10,6 @@ import ua.renamer.app.metadata.extractor.strategy.format.image.*;
 import java.io.File;
 
 @Slf4j
-@RequiredArgsConstructor
 public class ImageFileMetadataExtractionExtractor implements FileMetadataExtractor {
     private final BmpFileMetadataExtractor bmpFileMetadataExtractor;
     private final EpsFileMetadataExtractor epsFileMetadataExtractor;
@@ -32,6 +31,49 @@ public class ImageFileMetadataExtractionExtractor implements FileMetadataExtract
     private final RafFileMetadataExtractor rafFileMetadataExtractor;
     private final Rw2FileMetadataExtractor rw2FileMetadataExtractor;
     private final DngFileMetadataExtractor dngFileMetadataExtractor;
+
+    @Inject
+    public ImageFileMetadataExtractionExtractor(BmpFileMetadataExtractor bmpFileMetadataExtractor,
+                                                EpsFileMetadataExtractor epsFileMetadataExtractor,
+                                                GifFileMetadataExtractor gifFileMetadataExtractor,
+                                                HeifFileMetadataExtractor heifFileMetadataExtractor,
+                                                IcoFileMetadataExtractor icoFileMetadataExtractor,
+                                                JpegFileMetadataExtractor jpegFileMetadataExtractor,
+                                                PcxFileMetadataExtractor pcxFileMetadataExtractor,
+                                                PngFileMetadataExtractor pngFileMetadataExtractor,
+                                                PsdFileMetadataExtractor psdFileMetadataExtractor,
+                                                TiffFileMetadataExtractor tiffFileMetadataExtractor,
+                                                WebPFileMetadataExtractor webPFileMetadataExtractor,
+                                                AvifFileMetadataExtractor avifFileMetadataExtractor,
+                                                ArwFileMetadataExtractor arwFileMetadataExtractor,
+                                                Cr2FileMetadataExtractor cr2FileMetadataExtractor,
+                                                Cr3FileMetadataExtractor cr3FileMetadataExtractor,
+                                                NefFileMetadataExtractor nefFileMetadataExtractor,
+                                                OrfFileMetadataExtractor orfFileMetadataExtractor,
+                                                RafFileMetadataExtractor rafFileMetadataExtractor,
+                                                Rw2FileMetadataExtractor rw2FileMetadataExtractor,
+                                                DngFileMetadataExtractor dngFileMetadataExtractor) {
+        this.bmpFileMetadataExtractor = bmpFileMetadataExtractor;
+        this.epsFileMetadataExtractor = epsFileMetadataExtractor;
+        this.gifFileMetadataExtractor = gifFileMetadataExtractor;
+        this.heifFileMetadataExtractor = heifFileMetadataExtractor;
+        this.icoFileMetadataExtractor = icoFileMetadataExtractor;
+        this.jpegFileMetadataExtractor = jpegFileMetadataExtractor;
+        this.pcxFileMetadataExtractor = pcxFileMetadataExtractor;
+        this.pngFileMetadataExtractor = pngFileMetadataExtractor;
+        this.psdFileMetadataExtractor = psdFileMetadataExtractor;
+        this.tiffFileMetadataExtractor = tiffFileMetadataExtractor;
+        this.webPFileMetadataExtractor = webPFileMetadataExtractor;
+        this.avifFileMetadataExtractor = avifFileMetadataExtractor;
+        this.arwFileMetadataExtractor = arwFileMetadataExtractor;
+        this.cr2FileMetadataExtractor = cr2FileMetadataExtractor;
+        this.cr3FileMetadataExtractor = cr3FileMetadataExtractor;
+        this.nefFileMetadataExtractor = nefFileMetadataExtractor;
+        this.orfFileMetadataExtractor = orfFileMetadataExtractor;
+        this.rafFileMetadataExtractor = rafFileMetadataExtractor;
+        this.rw2FileMetadataExtractor = rw2FileMetadataExtractor;
+        this.dngFileMetadataExtractor = dngFileMetadataExtractor;
+    }
 
     @Override
     public FileMeta extract(File file, String mimeType) {

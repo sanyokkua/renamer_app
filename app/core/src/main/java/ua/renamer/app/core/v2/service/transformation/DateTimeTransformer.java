@@ -1,5 +1,6 @@
 package ua.renamer.app.core.v2.service.transformation;
 
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.TimeFormat;
@@ -25,7 +26,7 @@ import java.util.stream.Stream;
  * Uses V2 DateTimeConverter for formatting.
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class DateTimeTransformer implements FileTransformationService<DateTimeConfig> {
 
     private static final List<TimeFormat> AM_PM_FORMATS = List.of(

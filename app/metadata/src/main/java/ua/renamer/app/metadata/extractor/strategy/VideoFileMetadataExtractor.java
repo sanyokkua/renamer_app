@@ -1,6 +1,6 @@
 package ua.renamer.app.metadata.extractor.strategy;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.AppMimeTypes;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
@@ -12,11 +12,19 @@ import ua.renamer.app.metadata.extractor.strategy.format.video.QuickTimeFileMeta
 import java.io.File;
 
 @Slf4j
-@RequiredArgsConstructor
 public class VideoFileMetadataExtractor implements FileMetadataExtractor {
     private final AviFileMetadataExtractor aviFileMetadataExtractor;
     private final Mp4FileMetadataExtractor mp4FileMetadataExtractor;
     private final QuickTimeFileMetadataExtractor quickTimeFileMetadataExtractor;
+
+    @Inject
+    public VideoFileMetadataExtractor(AviFileMetadataExtractor aviFileMetadataExtractor,
+                                      Mp4FileMetadataExtractor mp4FileMetadataExtractor,
+                                      QuickTimeFileMetadataExtractor quickTimeFileMetadataExtractor) {
+        this.aviFileMetadataExtractor = aviFileMetadataExtractor;
+        this.mp4FileMetadataExtractor = mp4FileMetadataExtractor;
+        this.quickTimeFileMetadataExtractor = quickTimeFileMetadataExtractor;
+    }
 
     @Override
     public FileMeta extract(File file, String mimeType) {

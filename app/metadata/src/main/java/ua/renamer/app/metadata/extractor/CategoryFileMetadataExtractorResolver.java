@@ -1,6 +1,6 @@
 package ua.renamer.app.metadata.extractor;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import ua.renamer.app.api.enums.Category;
@@ -12,12 +12,22 @@ import ua.renamer.app.metadata.extractor.strategy.ImageFileMetadataExtractionExt
 import ua.renamer.app.metadata.extractor.strategy.VideoFileMetadataExtractor;
 
 @Slf4j
-@RequiredArgsConstructor
 public class CategoryFileMetadataExtractorResolver implements FileMetadataExtractorResolver {
     private final GenericFileMetadataExtractor genericFileMetadataExtractor;
     private final ImageFileMetadataExtractionExtractor imageFileMetadataExtractor;
     private final AudioFileMetadataExtractor audioFileMetadataExtractor;
     private final VideoFileMetadataExtractor videoFileMetadataExtractor;
+
+    @Inject
+    public CategoryFileMetadataExtractorResolver(GenericFileMetadataExtractor genericFileMetadataExtractor,
+                                                 ImageFileMetadataExtractionExtractor imageFileMetadataExtractor,
+                                                 AudioFileMetadataExtractor audioFileMetadataExtractor,
+                                                 VideoFileMetadataExtractor videoFileMetadataExtractor) {
+        this.genericFileMetadataExtractor = genericFileMetadataExtractor;
+        this.imageFileMetadataExtractor = imageFileMetadataExtractor;
+        this.audioFileMetadataExtractor = audioFileMetadataExtractor;
+        this.videoFileMetadataExtractor = videoFileMetadataExtractor;
+    }
 
 
     @Override

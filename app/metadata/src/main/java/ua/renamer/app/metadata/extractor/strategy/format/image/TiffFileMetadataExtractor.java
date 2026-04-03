@@ -2,10 +2,12 @@ package ua.renamer.app.metadata.extractor.strategy.format.image;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 public class TiffFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    @Inject
     public TiffFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);
     }

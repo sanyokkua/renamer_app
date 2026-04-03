@@ -1,6 +1,6 @@
 package ua.renamer.app.metadata.util;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.inject.Inject;
 import org.apache.tika.Tika;
 import ua.renamer.app.api.exception.FileAttributesReadException;
 import ua.renamer.app.api.exception.FileNotFoundException;
@@ -16,10 +16,14 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
 public class CommonFileUtils implements FileUtils {
     private static final ThreadLocal<Tika> TIKA_INSTANCE = ThreadLocal.withInitial(Tika::new);
     private final DateTimeUtils dateTimeUtils;
+
+    @Inject
+    public CommonFileUtils(DateTimeUtils dateTimeUtils) {
+        this.dateTimeUtils = dateTimeUtils;
+    }
 
     @Override
     public void validateFile(File file) {

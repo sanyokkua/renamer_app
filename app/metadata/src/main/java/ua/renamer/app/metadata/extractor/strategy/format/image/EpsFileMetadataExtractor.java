@@ -2,10 +2,12 @@ package ua.renamer.app.metadata.extractor.strategy.format.image;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.eps.EpsDirectory;
+import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 public class EpsFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    @Inject
     public EpsFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);
     }

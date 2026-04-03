@@ -1,5 +1,6 @@
 package ua.renamer.app.core.v2.service.impl;
 
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.model.*;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Uses virtual threads for I/O-bound parallel operations.
  */
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
 
     private final ThreadAwareFileMapper fileMapper;

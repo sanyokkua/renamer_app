@@ -2,10 +2,12 @@ package ua.renamer.app.metadata.extractor.strategy.format.image;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.heif.HeifDirectory;
+import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 public class HeifFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    @Inject
     public HeifFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);
     }

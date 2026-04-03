@@ -4,12 +4,14 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mov.media.QuickTimeMediaDirectory;
 import com.drew.metadata.mov.media.QuickTimeVideoDirectory;
+import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.util.List;
 
 public class QuickTimeFileMetadataExtractor extends BaseVideoMetadataExtractor {
 
+    @Inject
     public QuickTimeFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);
     }

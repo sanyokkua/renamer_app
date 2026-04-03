@@ -1,6 +1,6 @@
 package ua.renamer.app.metadata.extractor.strategy;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.AppMimeTypes;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
@@ -10,9 +10,13 @@ import ua.renamer.app.metadata.extractor.strategy.format.audio.UnifiedAudioFileM
 import java.io.File;
 
 @Slf4j
-@RequiredArgsConstructor
 public class AudioFileMetadataExtractor implements FileMetadataExtractor {
     private final UnifiedAudioFileMetadataExtractor unifiedAudioFileMetadataExtractor;
+
+    @Inject
+    public AudioFileMetadataExtractor(UnifiedAudioFileMetadataExtractor unifiedAudioFileMetadataExtractor) {
+        this.unifiedAudioFileMetadataExtractor = unifiedAudioFileMetadataExtractor;
+    }
 
     @Override
     public FileMeta extract(File file, String mimeType) {

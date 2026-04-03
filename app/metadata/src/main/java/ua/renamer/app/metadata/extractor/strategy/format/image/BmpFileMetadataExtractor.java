@@ -2,10 +2,12 @@ package ua.renamer.app.metadata.extractor.strategy.format.image;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.bmp.BmpHeaderDirectory;
+import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 public class BmpFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    @Inject
     public BmpFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);
     }

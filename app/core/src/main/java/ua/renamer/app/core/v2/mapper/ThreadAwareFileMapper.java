@@ -1,5 +1,6 @@
 package ua.renamer.app.core.v2.mapper;
 
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import ua.renamer.app.api.enums.Category;
@@ -17,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class ThreadAwareFileMapper implements FileMapper {
     private static final ConcurrentHashMap<String, Set<String>> MIME_EXTENSIONS_CACHE = new ConcurrentHashMap<>();
 
