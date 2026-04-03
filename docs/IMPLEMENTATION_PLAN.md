@@ -2039,7 +2039,7 @@ match)
 
 ---
 
-### TASK-4.10 — Migrate `ModeUseParentFolderNameController` to V2
+### TASK-4.10 — Migrate `ModeUseParentFolderNameController` to V2 ✅ done
 
 **Mode:** Use Parent Folder Name (`USE_PARENT_FOLDER_NAME`)
 **ModeParameters:** `ParentFolderParams(int numberOfParentFolders, ItemPosition position, String separator)`
