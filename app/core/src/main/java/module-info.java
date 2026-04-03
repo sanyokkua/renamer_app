@@ -17,11 +17,7 @@ module ua.renamer.app.core {
     exports ua.renamer.app.core.model;
     exports ua.renamer.app.core.util;
     exports ua.renamer.app.core.service;
-    exports ua.renamer.app.core.service.command;
-    exports ua.renamer.app.core.service.command.impl;
-    exports ua.renamer.app.core.service.command.impl.preparation;
     exports ua.renamer.app.core.service.mapper;
-    exports ua.renamer.app.core.service.mapper.impl;
     exports ua.renamer.app.core.service.mapper.impl.metadata;
     exports ua.renamer.app.core.service.mapper.impl.metadata.audio;
     exports ua.renamer.app.core.service.mapper.impl.metadata.video;
@@ -43,11 +39,7 @@ module ua.renamer.app.core {
     opens ua.renamer.app.core.model;
     opens ua.renamer.app.core.util;
     opens ua.renamer.app.core.service;
-    opens ua.renamer.app.core.service.command;
-    opens ua.renamer.app.core.service.command.impl;
-    opens ua.renamer.app.core.service.command.impl.preparation;
     opens ua.renamer.app.core.service.mapper;
-    opens ua.renamer.app.core.service.mapper.impl;
     opens ua.renamer.app.core.service.mapper.impl.metadata;
     opens ua.renamer.app.core.service.mapper.impl.metadata.audio;
     opens ua.renamer.app.core.service.mapper.impl.metadata.video;

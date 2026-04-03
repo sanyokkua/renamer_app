@@ -222,33 +222,6 @@ class ModeChangeExtensionControllerTest {
     }
 
     // -----------------------------------------------------------------------
-    // updateCommand() — V1 path: reads extensionTextField and sets command
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_setsCommandWithCurrentTextFieldValue() throws Exception {
-            // Arrange — set a value in the text field before calling updateCommand
-            runOnFxThreadAndWait(() -> readTextFieldUnchecked(controller).setText("avi"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert — getCommand() triggers updateCommand() internally; the command
-            // must not be null (it was just set with the current text)
-            assertThat(controller.getCommand()).isNotNull();
-        }
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-    }
-
-    // -----------------------------------------------------------------------
     // FX threading utilities
     // -----------------------------------------------------------------------
 

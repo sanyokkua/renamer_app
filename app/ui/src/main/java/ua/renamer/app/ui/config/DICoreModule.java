@@ -3,25 +3,16 @@ package ua.renamer.app.ui.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import ua.renamer.app.core.config.DIV2ServiceModule;
-import ua.renamer.app.core.model.FileInformation;
 import ua.renamer.app.core.model.FileInformationMetadata;
-import ua.renamer.app.core.model.RenameModel;
 import ua.renamer.app.core.service.TextExtractorByKey;
-import ua.renamer.app.core.service.command.ListProcessingCommand;
-import ua.renamer.app.core.service.command.impl.*;
 import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
 import ua.renamer.app.core.service.file.impl.FilesOperations;
 import ua.renamer.app.core.service.helper.DateTimeOperations;
-import ua.renamer.app.core.service.mapper.DataMapper;
 import ua.renamer.app.core.service.mapper.FileToMetadataMapper;
-import ua.renamer.app.core.service.mapper.impl.FileInformationToRenameModelMapper;
-import ua.renamer.app.core.service.mapper.impl.FileToFileInformationMapper;
-import ua.renamer.app.core.service.mapper.impl.RenameModelToHtmlMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.LastReserveMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.NullMapper;
 import ua.renamer.app.core.service.mapper.impl.metadata.audio.Mp3Mapper;
@@ -50,7 +41,6 @@ public class DICoreModule extends AbstractModule {
     protected void configure() {
         bindExternalDependencies();
         bindApplicationMappers();
-        bindApplicationCommands();
         bindApplicationServices();
 
         // Install v2 services and infrastructure modules
@@ -64,17 +54,6 @@ public class DICoreModule extends AbstractModule {
     }
 
     private void bindApplicationMappers() {
-        TypeLiteral<DataMapper<RenameModel, String>> renameModelToHtmlMapperLiteral = new TypeLiteral<>() {
-        };
-        TypeLiteral<DataMapper<File, FileInformation>> fileToFileInfoMapperLiteral = new TypeLiteral<>() {
-        };
-        TypeLiteral<DataMapper<FileInformation, RenameModel>> fileInfoToRenameModelLiteral = new TypeLiteral<>() {
-        };
-
-        bind(renameModelToHtmlMapperLiteral).to(RenameModelToHtmlMapper.class).in(Singleton.class);
-        bind(fileToFileInfoMapperLiteral).to(FileToFileInformationMapper.class).in(Singleton.class);
-        bind(fileInfoToRenameModelLiteral).to(FileInformationToRenameModelMapper.class).in(Singleton.class);
-
         bind(AviMapper.class).in(Singleton.class);
         bind(BmpMapper.class).in(Singleton.class);
         bind(EpsMapper.class).in(Singleton.class);
@@ -92,16 +71,6 @@ public class DICoreModule extends AbstractModule {
         bind(WavMapper.class).in(Singleton.class);
         bind(WebPMapper.class).in(Singleton.class);
         bind(NullMapper.class).in(Singleton.class);
-    }
-
-    private void bindApplicationCommands() {
-        TypeLiteral<ListProcessingCommand<File, FileInformation>> fileToFileInfoCmdLiteral = new TypeLiteral<>() {
-        };
-        bind(fileToFileInfoCmdLiteral).to(MapFileToFileInformationCommand.class).in(Singleton.class);
-        bind(MapFileInformationToRenameModelCommand.class).in(Singleton.class);
-        bind(FixEqualNamesCommand.class).in(Singleton.class);
-        bind(RenameCommand.class).in(Singleton.class);
-        bind(ResetRenameModelsCommand.class).in(Singleton.class);
     }
 
     private void bindApplicationServices() {

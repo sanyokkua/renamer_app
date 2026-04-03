@@ -19,7 +19,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ParentFolderParams;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.command.impl.preparation.ParentFoldersPrepareInformationCommand;
 import ua.renamer.app.core.service.file.impl.FilesOperations;
 import ua.renamer.app.ui.converter.ItemPositionConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
@@ -45,7 +44,6 @@ import static org.mockito.Mockito.when;
  * <ul>
  *   <li>Pure (no-FX) tests for {@code supportedMode()} — no toolkit required</li>
  *   <li>FX tests for {@code bind()} — toolkit started once via {@code Platform.startup}</li>
- *   <li>FX tests for {@code updateCommand()} — verifies V1-bridge enum mapping</li>
  * </ul>
  *
  * <p>{@code parentsNumberSpinner}, {@code fileNameSeparatorTextField}, and
@@ -482,189 +480,10 @@ class ModeUseParentFolderNameControllerTest {
         @ParameterizedTest(name = "bind maps api ItemPosition [{0}] to core enum without exception")
         @EnumSource(ItemPosition.class)
         void bind_allApiPositionValues_mapToCoreEnumWithoutException(ItemPosition apiPos) {
-            // This validates the valueOf name-bridge used in bind() and updateCommand()
+            // This validates the valueOf name-bridge used in bind()
             assertThatCode(() ->
                     ua.renamer.app.core.enums.ItemPosition.valueOf(apiPos.name())
             ).doesNotThrowAnyException();
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // updateCommand() — V1 bridge: widget state → ParentFoldersPrepareInformationCommand
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            // Act + Assert
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_buildsV1CommandCorrectly_withDefaultSpinnerAndSeparator() throws Exception {
-            // Arrange — default spinner value is 1, default text is "", default position is BEGIN
-            // (all set in setUp via SpinnerValueFactory initial value)
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(ParentFoldersPrepareInformationCommand.class);
-
-            ParentFoldersPrepareInformationCommand cmd = (ParentFoldersPrepareInformationCommand) command;
-            assertThat(cmd.getNumberOfParents()).isEqualTo(1);
-            assertThat(cmd.getSeparator()).isEqualTo("");
-            assertThat(cmd.getPosition()).isEqualTo(ua.renamer.app.core.enums.ItemPosition.BEGIN);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithCorrectNumberOfParents() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readSpinnerUnchecked(controller).getValueFactory().setValue(5));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ParentFoldersPrepareInformationCommand cmd =
-                    (ParentFoldersPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getNumberOfParents()).isEqualTo(5);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithCorrectSeparator() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readTextFieldUnchecked(controller).setText("__PREFIX__"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ParentFoldersPrepareInformationCommand cmd =
-                    (ParentFoldersPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getSeparator()).isEqualTo("__PREFIX__");
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithPositionEnd_whenEndRadioSelected() throws Exception {
-            // Arrange — select END
-            ua.renamer.app.core.enums.ItemPosition coreEnd = ua.renamer.app.core.enums.ItemPosition.END;
-            runOnFxThreadAndWait(() -> {
-                ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == coreEnd)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ParentFoldersPrepareInformationCommand cmd =
-                    (ParentFoldersPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPosition()).isEqualTo(ua.renamer.app.core.enums.ItemPosition.END);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithPositionBegin_whenBeginRadioSelected() throws Exception {
-            // Arrange — explicitly select BEGIN (it is the default, but make it explicit)
-            ua.renamer.app.core.enums.ItemPosition coreBegin = ua.renamer.app.core.enums.ItemPosition.BEGIN;
-            runOnFxThreadAndWait(() -> {
-                ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == coreBegin)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ParentFoldersPrepareInformationCommand cmd =
-                    (ParentFoldersPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPosition()).isEqualTo(ua.renamer.app.core.enums.ItemPosition.BEGIN);
-        }
-
-        @Test
-        void updateCommand_producesNonNullCommand() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand()).isNotNull();
-        }
-
-        @ParameterizedTest(name = "updateCommand produces PARENT_FOLDER command for core position [{0}]")
-        @EnumSource(ua.renamer.app.core.enums.ItemPosition.class)
-        void updateCommand_allCorePositions_produceParentFolderCommand(
-                ua.renamer.app.core.enums.ItemPosition corePos) throws Exception {
-            // Arrange — select the button for the given core position
-            runOnFxThreadAndWait(() -> {
-                ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == corePos)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand())
-                    .isNotNull()
-                    .isInstanceOf(ParentFoldersPrepareInformationCommand.class);
-        }
-
-        @ParameterizedTest(name = "updateCommand core position name [{0}] matches api enum name")
-        @EnumSource(ua.renamer.app.core.enums.ItemPosition.class)
-        void updateCommand_corePositionNameMatchesApiPositionName(
-                ua.renamer.app.core.enums.ItemPosition corePos) throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> {
-                ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == corePos)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert — core and api enum names must match (the bridge relies on this)
-            ParentFoldersPrepareInformationCommand cmd =
-                    (ParentFoldersPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPosition().name()).isEqualTo(corePos.name());
-        }
-
-        @Test
-        void updateCommand_withUnicodeSeparator_preservesSeparatorExactly() throws Exception {
-            // Arrange — Unicode separator including emoji and CJK
-            String unicodeSep = "\u2014\u4e2d\uD83D\uDCC2";
-            runOnFxThreadAndWait(() -> readTextFieldUnchecked(controller).setText(unicodeSep));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ParentFoldersPrepareInformationCommand cmd =
-                    (ParentFoldersPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getSeparator()).isEqualTo(unicodeSep);
-        }
-
-        @Test
-        void updateCommand_withMaxIntegerParents_doesNotThrow() throws Exception {
-            // Arrange — push spinner to a large boundary value
-            runOnFxThreadAndWait(() -> readSpinnerUnchecked(controller).getValueFactory().setValue(Integer.MAX_VALUE));
-
-            // Act + Assert
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
         }
     }
 
@@ -678,12 +497,6 @@ class ModeUseParentFolderNameControllerTest {
         @Test
         void supportedMode_neverThrows() {
             assertThatCode(() -> controller.supportedMode()).doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_neverThrows_withDefaultWidgetState() {
-            assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
         }
 
         @Test

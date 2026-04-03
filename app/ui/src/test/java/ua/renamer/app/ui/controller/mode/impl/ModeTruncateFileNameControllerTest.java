@@ -9,8 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +16,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.TruncateParams;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.command.impl.preparation.TruncateNamePrepareInformationCommand;
 import ua.renamer.app.ui.converter.TruncateOptionsConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.widget.impl.ItemPositionTruncateRadioSelector;
@@ -43,7 +40,6 @@ import static org.mockito.Mockito.when;
  * <ul>
  *   <li>Pure (no-FX) tests for {@code supportedMode()} — no toolkit required</li>
  *   <li>FX tests for {@code bind()} — toolkit started once via {@code Platform.startup}</li>
- *   <li>FX tests for {@code updateCommand()} — verifies V1-bridge option mapping</li>
  * </ul>
  *
  * <p>{@code amountOfSymbolsSpinner}, {@code itemPositionRadioSelector}, and
@@ -374,82 +370,6 @@ class ModeTruncateFileNameControllerTest {
             // Act + Assert
             assertThatCode(() -> runOnFxThreadAndWait(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // updateCommand() — V1 bridge: widget state → TruncateNamePrepareInformationCommand
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            // Act + Assert
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_setsCommandWithCorrectNumberOfSymbols() throws Exception {
-            // Arrange — set spinner to 3 on FX thread
-            runOnFxThreadAndWait(() -> readSpinnerUnchecked(controller).getValueFactory().setValue(3));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(TruncateNamePrepareInformationCommand.class);
-            TruncateNamePrepareInformationCommand cmd = (TruncateNamePrepareInformationCommand) command;
-            assertThat(cmd.getNumberOfSymbols()).isEqualTo(3);
-        }
-
-        @Test
-        void updateCommand_setsCommandWithCorrectTruncateOption() throws Exception {
-            // Arrange — select REMOVE_SYMBOLS_FROM_END button
-            ua.renamer.app.core.enums.TruncateOptions coreTarget =
-                    ua.renamer.app.core.enums.TruncateOptions.REMOVE_SYMBOLS_FROM_END;
-            runOnFxThreadAndWait(() -> {
-                ItemPositionTruncateRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == coreTarget)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(TruncateNamePrepareInformationCommand.class);
-            TruncateNamePrepareInformationCommand cmd = (TruncateNamePrepareInformationCommand) command;
-            assertThat(cmd.getTruncateOptions())
-                    .isEqualTo(ua.renamer.app.core.enums.TruncateOptions.REMOVE_SYMBOLS_FROM_END);
-        }
-
-        @ParameterizedTest(name = "updateCommand produces non-null TRUNCATE command for core option [{0}]")
-        @EnumSource(ua.renamer.app.core.enums.TruncateOptions.class)
-        void updateCommand_allOptions_produceNonNullCommand(ua.renamer.app.core.enums.TruncateOptions coreOpt)
-                throws Exception {
-            // Arrange — select the button for coreOpt
-            runOnFxThreadAndWait(() -> {
-                ItemPositionTruncateRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == coreOpt)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand())
-                    .isNotNull()
-                    .isInstanceOf(TruncateNamePrepareInformationCommand.class);
         }
     }
 

@@ -19,7 +19,6 @@ import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ValidationResult;
 import ua.renamer.app.core.enums.ImageDimensionOptions;
 import ua.renamer.app.core.enums.ItemPositionWithReplacement;
-import ua.renamer.app.core.service.command.impl.preparation.ImageDimensionsPrepareInformationCommand;
 import ua.renamer.app.ui.converter.ImageDimensionOptionsConverter;
 import ua.renamer.app.ui.converter.ItemPositionWithReplacementConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
@@ -48,7 +47,6 @@ import static org.mockito.Mockito.when;
  * <ul>
  *   <li>Pure (no-FX) tests for {@code supportedMode()} — no toolkit required</li>
  *   <li>FX tests for {@code bind()} — toolkit started once via {@code Platform.startup}</li>
- *   <li>FX tests for {@code updateCommand()} — verifies V1-bridge enum mapping</li>
  * </ul>
  *
  * <p>{@code leftDimensionChoiceBox}, {@code rightDimensionChoiceBox},
@@ -812,173 +810,6 @@ class ModeUseImageDimensionsControllerTest {
     }
 
     // -----------------------------------------------------------------------
-    // updateCommand() — V1 bridge: widget state → ImageDimensionsPrepareInformationCommand
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_buildsV1CommandCorrectly_withDefaults() throws Exception {
-            // Arrange — default state: both boxes = DO_NOT_USE, position = BEGIN,
-            // both text fields = "" (seeded in setUp)
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(ImageDimensionsPrepareInformationCommand.class);
-
-            ImageDimensionsPrepareInformationCommand cmd =
-                    (ImageDimensionsPrepareInformationCommand) command;
-            assertThat(cmd.getLeftSide()).isEqualTo(ImageDimensionOptions.DO_NOT_USE);
-            assertThat(cmd.getRightSide()).isEqualTo(ImageDimensionOptions.DO_NOT_USE);
-            assertThat(cmd.getPosition()).isEqualTo(ItemPositionWithReplacement.BEGIN);
-            assertThat(cmd.getDimensionSeparator()).isEqualTo("");
-            assertThat(cmd.getNameSeparator()).isEqualTo("");
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithLeftSideWidth() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readLeftBoxUnchecked(controller).setValue(ImageDimensionOptions.WIDTH));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ImageDimensionsPrepareInformationCommand cmd =
-                    (ImageDimensionsPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getLeftSide()).isEqualTo(ImageDimensionOptions.WIDTH);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithRightSideHeight() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readRightBoxUnchecked(controller).setValue(ImageDimensionOptions.HEIGHT));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ImageDimensionsPrepareInformationCommand cmd =
-                    (ImageDimensionsPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getRightSide()).isEqualTo(ImageDimensionOptions.HEIGHT);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithDimensionSeparator() throws Exception {
-            // Arrange — dimensionsSeparatorTextField feeds getDimensionSeparator() in V1
-            runOnFxThreadAndWait(() -> readDimensionsSepUnchecked(controller).setText("x"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ImageDimensionsPrepareInformationCommand cmd =
-                    (ImageDimensionsPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getDimensionSeparator()).isEqualTo("x");
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithNameSeparator() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readNameSepUnchecked(controller).setText("_"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ImageDimensionsPrepareInformationCommand cmd =
-                    (ImageDimensionsPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getNameSeparator()).isEqualTo("_");
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithPositionEnd() throws Exception {
-            // Arrange
-            ItemPositionWithReplacement coreEnd = ItemPositionWithReplacement.END;
-            runOnFxThreadAndWait(() -> {
-                ItemPositionWithReplacementRadioSelector selector =
-                        readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == coreEnd)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ImageDimensionsPrepareInformationCommand cmd =
-                    (ImageDimensionsPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPosition()).isEqualTo(ItemPositionWithReplacement.END);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithPositionReplace() throws Exception {
-            // Arrange
-            ItemPositionWithReplacement coreReplace = ItemPositionWithReplacement.REPLACE;
-            runOnFxThreadAndWait(() -> {
-                ItemPositionWithReplacementRadioSelector selector =
-                        readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == coreReplace)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            ImageDimensionsPrepareInformationCommand cmd =
-                    (ImageDimensionsPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPosition()).isEqualTo(ItemPositionWithReplacement.REPLACE);
-        }
-
-        @Test
-        void updateCommand_producesNonNullCommand() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand()).isNotNull();
-        }
-
-        @ParameterizedTest(name = "updateCommand produces ImageDimensions command for core position [{0}]")
-        @EnumSource(ItemPositionWithReplacement.class)
-        void updateCommand_allCorePositions_produceImageDimensionsCommand(
-                ItemPositionWithReplacement corePos) throws Exception {
-            // Arrange — select the button for the given core position
-            runOnFxThreadAndWait(() -> {
-                ItemPositionWithReplacementRadioSelector selector =
-                        readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == corePos)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand())
-                    .isNotNull()
-                    .isInstanceOf(ImageDimensionsPrepareInformationCommand.class);
-        }
-    }
-
-    // -----------------------------------------------------------------------
     // No-throw contract — V2 pipeline must never propagate exceptions
     // -----------------------------------------------------------------------
 
@@ -988,12 +819,6 @@ class ModeUseImageDimensionsControllerTest {
         @Test
         void supportedMode_neverThrows() {
             assertThatCode(() -> controller.supportedMode()).doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_neverThrows_withDefaultWidgetState() {
-            assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
         }
 
         @Test

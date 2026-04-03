@@ -7,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,7 +15,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.AddTextParams;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.command.impl.preparation.AddTextPrepareInformationCommand;
 import ua.renamer.app.ui.converter.ItemPositionConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.widget.impl.ItemPositionRadioSelector;
@@ -324,96 +321,6 @@ class ModeAddCustomTextControllerTest {
             // Act + Assert
             assertThatCode(() -> runOnFxThreadAndWait(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // updateCommand() — V1 bridge: widget state → AddTextPrepareInformationCommand
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            // Arrange — set a non-empty value so updateCommand() reads sensible data
-            runOnFxThreadAndWaitUnchecked(() -> readTextFieldUnchecked(controller).setText("test"));
-
-            // Act + Assert
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_setsCommandWithCorrectText() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readTextFieldUnchecked(controller).setText("world"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(AddTextPrepareInformationCommand.class);
-            AddTextPrepareInformationCommand cmd = (AddTextPrepareInformationCommand) command;
-            assertThat(cmd.getText()).isEqualTo("world");
-        }
-
-        @Test
-        void updateCommand_setsCommandWithBeginPosition() throws Exception {
-            // Arrange — widget selects BEGIN by default (first button selected in RadioSelector)
-            runOnFxThreadAndWait(() -> readTextFieldUnchecked(controller).setText("prefix"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            AddTextPrepareInformationCommand cmd =
-                    (AddTextPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPosition()).isEqualTo(ua.renamer.app.core.enums.ItemPosition.BEGIN);
-        }
-
-        @Test
-        void updateCommand_setsCommandWithEndPosition() throws Exception {
-            // Arrange — programmatically select the END button
-            runOnFxThreadAndWait(() -> {
-                ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == ua.renamer.app.core.enums.ItemPosition.END)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-                readTextFieldUnchecked(controller).setText("suffix");
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            AddTextPrepareInformationCommand cmd =
-                    (AddTextPrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPosition()).isEqualTo(ua.renamer.app.core.enums.ItemPosition.END);
-        }
-
-        @ParameterizedTest(name = "updateCommand produces non-null ADD_TEXT command for core position [{0}]")
-        @EnumSource(ua.renamer.app.core.enums.ItemPosition.class)
-        void updateCommand_allCorePositions_produceNonNullCommandOfCorrectType(
-                ua.renamer.app.core.enums.ItemPosition corePosition) throws Exception {
-            // Arrange — select the target position button
-            runOnFxThreadAndWait(() -> {
-                ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == corePosition)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand())
-                    .isNotNull()
-                    .isInstanceOf(AddTextPrepareInformationCommand.class);
         }
     }
 

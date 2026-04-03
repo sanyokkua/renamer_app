@@ -8,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,7 +16,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ChangeCaseParams;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.command.impl.preparation.ChangeCasePreparePrepareInformationCommand;
 import ua.renamer.app.ui.converter.TextCaseOptionsConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 
@@ -308,108 +305,6 @@ class ModeChangeCaseControllerTest {
             // Act + Assert
             assertThatCode(() -> runOnFxThreadAndWait(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // updateCommand() — V1 bridge: api enum → core enum mapping
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            // Arrange — set a value so updateCommand() has something to read
-            runOnFxThreadAndWaitUnchecked(() -> readChoiceBoxUnchecked(controller).setValue(TextCaseOptions.CAMEL_CASE));
-
-            // Act + Assert
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithCorrectCapitalizeFlagTrue() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> {
-                readChoiceBoxUnchecked(controller).setValue(TextCaseOptions.TITLE_CASE);
-                readCheckBoxUnchecked(controller).setSelected(true);
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert — getCommand() internally calls updateCommand() and returns the built command
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(ChangeCasePreparePrepareInformationCommand.class);
-            ChangeCasePreparePrepareInformationCommand cmd =
-                    (ChangeCasePreparePrepareInformationCommand) command;
-            assertThat(cmd.isCapitalize()).isTrue();
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithCorrectCapitalizeFlagFalse() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> {
-                readChoiceBoxUnchecked(controller).setValue(TextCaseOptions.SNAKE_CASE);
-                readCheckBoxUnchecked(controller).setSelected(false);
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(ChangeCasePreparePrepareInformationCommand.class);
-            ChangeCasePreparePrepareInformationCommand cmd =
-                    (ChangeCasePreparePrepareInformationCommand) command;
-            assertThat(cmd.isCapitalize()).isFalse();
-        }
-
-        /**
-         * Verifies that every api-enum constant is correctly mirrored in the core enum —
-         * i.e. {@code TextCaseOptions.valueOf(apiEnum.name())} never throws
-         * {@link IllegalArgumentException}.
-         */
-        @ParameterizedTest(name = "updateCommand maps api enum [{0}] without IllegalArgumentException")
-        @EnumSource(TextCaseOptions.class)
-        void updateCommand_allApiEnumValues_mapToCoreEnumWithoutException(TextCaseOptions apiEnum)
-                throws Exception {
-            // Arrange — put the target enum value in the ChoiceBox
-            runOnFxThreadAndWait(() -> readChoiceBoxUnchecked(controller).setValue(apiEnum));
-
-            // Act + Assert — must not throw
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @ParameterizedTest(name = "updateCommand produces CHANGE_CASE command for api enum [{0}]")
-        @EnumSource(TextCaseOptions.class)
-        void updateCommand_allApiEnumValues_produceChangeCaseCommand(TextCaseOptions apiEnum)
-                throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readChoiceBoxUnchecked(controller).setValue(apiEnum));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert — correct command type produced for every enum value
-            assertThat(controller.getCommand())
-                    .isNotNull()
-                    .isInstanceOf(ChangeCasePreparePrepareInformationCommand.class);
-        }
-
-        @ParameterizedTest(name = "updateCommand core enum name matches api enum name for [{0}]")
-        @EnumSource(TextCaseOptions.class)
-        void updateCommand_coreEnumNameMatchesApiEnumName(TextCaseOptions apiEnum) throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readChoiceBoxUnchecked(controller).setValue(apiEnum));
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert — retrieve the built command and check the core enum's name matches the api enum's name
-            ChangeCasePreparePrepareInformationCommand cmd =
-                    (ChangeCasePreparePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getTextCase().name()).isEqualTo(apiEnum.name());
         }
     }
 

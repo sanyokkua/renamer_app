@@ -7,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,7 +15,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ReplaceTextParams;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.command.impl.preparation.ReplaceTextPrepareInformationCommand;
 import ua.renamer.app.ui.converter.ItemPositionExtendedConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.widget.impl.ItemPositionExtendedRadioSelector;
@@ -42,7 +39,6 @@ import static org.mockito.Mockito.when;
  * <ul>
  *   <li>Pure (no-FX) tests for {@code supportedMode()} — no toolkit required</li>
  *   <li>FX tests for {@code bind()} — toolkit started once via {@code Platform.startup}</li>
- *   <li>FX tests for {@code updateCommand()} — verifies V1-bridge position mapping</li>
  * </ul>
  *
  * <p>{@code textToReplaceTextField}, {@code textToAddTextField}, and
@@ -375,79 +371,6 @@ class ModeReplaceCustomTextControllerTest {
             // Act + Assert
             assertThatCode(() -> runOnFxThreadAndWait(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // updateCommand() — V1 bridge: widget state → ReplaceTextPrepareInformationCommand
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            // Arrange — set non-empty values so updateCommand() reads sensible data
-            runOnFxThreadAndWaitUnchecked(() -> {
-                readTextToReplaceFieldUnchecked(controller).setText("foo");
-                readTextToAddFieldUnchecked(controller).setText("bar");
-            });
-
-            // Act + Assert
-            assertThatCode(() -> runOnFxThreadAndWait(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_setsCommandWithCorrectTextToReplace() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readTextToReplaceFieldUnchecked(controller).setText("foo"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(ReplaceTextPrepareInformationCommand.class);
-            ReplaceTextPrepareInformationCommand cmd = (ReplaceTextPrepareInformationCommand) command;
-            assertThat(cmd.getTextToReplace()).isEqualTo("foo");
-        }
-
-        @Test
-        void updateCommand_setsCommandWithCorrectNewValueToAdd() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() -> readTextToAddFieldUnchecked(controller).setText("bar"));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            var command = controller.getCommand();
-            assertThat(command).isInstanceOf(ReplaceTextPrepareInformationCommand.class);
-            ReplaceTextPrepareInformationCommand cmd = (ReplaceTextPrepareInformationCommand) command;
-            assertThat(cmd.getNewValueToAdd()).isEqualTo("bar");
-        }
-
-        @ParameterizedTest(name = "updateCommand produces non-null REPLACE_TEXT command for core position [{0}]")
-        @EnumSource(ua.renamer.app.core.enums.ItemPositionExtended.class)
-        void updateCommand_allCorePositions_produceNonNullCommandOfCorrectType(
-                ua.renamer.app.core.enums.ItemPositionExtended corePosition) throws Exception {
-            // Arrange — select the target position button
-            runOnFxThreadAndWait(() -> {
-                ItemPositionExtendedRadioSelector selector = readRadioSelectorUnchecked(controller);
-                selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == corePosition)
-                        .findFirst()
-                        .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
-            });
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand())
-                    .isNotNull()
-                    .isInstanceOf(ReplaceTextPrepareInformationCommand.class);
         }
     }
 

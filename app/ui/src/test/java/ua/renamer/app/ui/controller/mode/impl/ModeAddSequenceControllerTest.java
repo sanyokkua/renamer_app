@@ -19,7 +19,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.SequenceParams;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.command.impl.preparation.SequencePrepareInformationCommand;
 import ua.renamer.app.ui.converter.SortSourceConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 
@@ -476,159 +475,6 @@ class ModeAddSequenceControllerTest {
     }
 
     // -----------------------------------------------------------------------
-    // updateCommand() — V1 bridge: widget state → SequencePrepareInformationCommand
-    // -----------------------------------------------------------------------
-
-    @Nested
-    class UpdateCommandTests {
-
-        @Test
-        void updateCommand_doesNotThrow() {
-            assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_producesNonNullCommand() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand()).isNotNull();
-        }
-
-        @Test
-        void updateCommand_producesSequenceCommand() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand())
-                    .isInstanceOf(SequencePrepareInformationCommand.class);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithDefaultStartNumber() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert — spinner was seeded with 0, initialize() wires value factory
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getStartNumber()).isEqualTo(0);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithDefaultStepValue() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getStepValue()).isEqualTo(1);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithDefaultPadding() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPadding()).isEqualTo(0);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithDefaultSortSource() throws Exception {
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getSortSource()).isEqualTo(ua.renamer.app.core.enums.SortSource.FILE_NAME);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithChangedStartNumber() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() ->
-                    readStartSpinnerUnchecked(controller).getValueFactory().setValue(7));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getStartNumber()).isEqualTo(7);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithChangedStepValue() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() ->
-                    readStepSpinnerUnchecked(controller).getValueFactory().setValue(10));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getStepValue()).isEqualTo(10);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithChangedPadding() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() ->
-                    readPaddingSpinnerUnchecked(controller).getValueFactory().setValue(5));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getPadding()).isEqualTo(5);
-        }
-
-        @Test
-        void updateCommand_buildsCommandWithChangedSortSource() throws Exception {
-            // Arrange
-            runOnFxThreadAndWait(() ->
-                    readSortBoxUnchecked(controller).setValue(ua.renamer.app.core.enums.SortSource.IMAGE_WIDTH));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            SequencePrepareInformationCommand cmd =
-                    (SequencePrepareInformationCommand) controller.getCommand();
-            assertThat(cmd.getSortSource()).isEqualTo(ua.renamer.app.core.enums.SortSource.IMAGE_WIDTH);
-        }
-
-        @ParameterizedTest(name = "updateCommand produces SequenceCommand for core SortSource [{0}]")
-        @EnumSource(ua.renamer.app.core.enums.SortSource.class)
-        void updateCommand_allCoreSortSources_produceSequenceCommand(
-                ua.renamer.app.core.enums.SortSource coreSort) throws Exception {
-            // Arrange — set sort source to each core value
-            runOnFxThreadAndWait(() -> readSortBoxUnchecked(controller).setValue(coreSort));
-
-            // Act
-            runOnFxThreadAndWait(() -> controller.updateCommand());
-
-            // Assert
-            assertThat(controller.getCommand())
-                    .isNotNull()
-                    .isInstanceOf(SequencePrepareInformationCommand.class);
-        }
-    }
-
-    // -----------------------------------------------------------------------
     // No-throw contract — V2 pipeline must never propagate exceptions
     // -----------------------------------------------------------------------
 
@@ -641,12 +487,6 @@ class ModeAddSequenceControllerTest {
         @Test
         void supportedMode_neverThrows() {
             assertThatCode(() -> controller.supportedMode()).doesNotThrowAnyException();
-        }
-
-        @Test
-        void updateCommand_neverThrows_withDefaultWidgetState() {
-            assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
         }
 
         @Test

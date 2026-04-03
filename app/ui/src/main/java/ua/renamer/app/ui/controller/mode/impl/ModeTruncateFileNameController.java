@@ -2,6 +2,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -11,17 +12,18 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.TruncateParams;
 import ua.renamer.app.core.enums.TruncateOptions;
-import ua.renamer.app.core.service.command.impl.preparation.TruncateNamePrepareInformationCommand;
-import ua.renamer.app.ui.controller.mode.ModeBaseController;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.widget.impl.ItemPositionTruncateRadioSelector;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the Truncate File Name transformation mode.
+ */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeTruncateFileNameController extends ModeBaseController implements ModeControllerV2Api<TruncateParams> {
+public class ModeTruncateFileNameController implements ModeControllerV2Api<TruncateParams>, Initializable {
 
     @FXML
     private Label amountOfSymbolsLabel;
@@ -32,23 +34,16 @@ public class ModeTruncateFileNameController extends ModeBaseController implement
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        configItemPositionRadioSelector();
         configAmountOfSymbolsSpinner();
         updateDisplayedItems();
     }
 
-    private void configItemPositionRadioSelector() {
-        log.info("configItemPositionRadioSelector");
-        itemPositionRadioSelector.addValueSelectedHandler(this::handlePositionChanged);
-    }
-
     private void configAmountOfSymbolsSpinner() {
         log.info("configAmountOfSymbolsSpinner()");
-        SpinnerValueFactory<Integer> stepValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0);
+        SpinnerValueFactory<Integer> stepValueFactory =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0);
         amountOfSymbolsSpinner.setValueFactory(stepValueFactory);
         amountOfSymbolsSpinner.setEditable(true);
-        amountOfSymbolsSpinner.valueProperty()
-                .addListener((observable, oldValue, newValue) -> handleAmountOfSymbolsChanged(newValue));
     }
 
     private void updateDisplayedItems() {
@@ -61,31 +56,6 @@ public class ModeTruncateFileNameController extends ModeBaseController implement
             amountOfSymbolsSpinner.setVisible(true);
             amountOfSymbolsLabel.setVisible(true);
         }
-    }
-
-    private void handlePositionChanged(TruncateOptions truncateOptions) {
-        log.debug("handlePositionChanged(): {}", truncateOptions);
-        updateDisplayedItems();
-        updateCommand();
-    }
-
-    private void handleAmountOfSymbolsChanged(Integer newValue) {
-        log.debug("handleAmountOfSymbolsChanged(): {}", newValue);
-        updateCommand();
-    }
-
-    @Override
-    public void updateCommand() {
-        var truncateOption = itemPositionRadioSelector.getSelectedValue();
-        var numberOfSymbols = amountOfSymbolsSpinner.getValue();
-
-        var cmd = TruncateNamePrepareInformationCommand.builder()
-                .truncateOptions(truncateOption)
-                .numberOfSymbols(numberOfSymbols)
-                .build();
-
-        log.debug("updateCommand {}", cmd);
-        setCommand(cmd);
     }
 
     @Override

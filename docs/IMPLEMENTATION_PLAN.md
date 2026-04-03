@@ -2138,7 +2138,7 @@ unchanged; only `bind()` replaces `updateCommand()`.
 
 ---
 
-### TASK-4.14 — Final cleanup: remove V1 infrastructure
+### TASK-4.14 — Final cleanup: remove V1 infrastructure ✅ DONE
 
 **Goal:** After all 10 mode controllers are migrated to V2, remove the dual-path routing, `CoreFunctionalityHelper`, V1
 command wiring, and unused `InjectQualifiers` entries.

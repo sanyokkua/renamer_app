@@ -1144,11 +1144,6 @@ class ModeUseDatetimeControllerV2Test {
                     .doesNotThrowAnyException();
         }
 
-        @Test
-        void updateCommand_neverThrows() {
-            assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.updateCommand()))
-                    .doesNotThrowAnyException();
-        }
     }
 
     // -----------------------------------------------------------------------
