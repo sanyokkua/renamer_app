@@ -2081,7 +2081,7 @@ match)
 
 ---
 
-### TASK-4.12 — Migrate `ModeAddSequenceController` to V2
+### TASK-4.12 — Migrate `ModeAddSequenceController` to V2 ✅ DONE
 
 **Mode:** Add Sequence (`ADD_SEQUENCE`)
 **ModeParameters:** `SequenceParams(int startNumber, int stepValue, int paddingDigits, SortSource sortSource)`

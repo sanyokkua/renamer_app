@@ -7,9 +7,13 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.session.ModeApi;
+import ua.renamer.app.api.session.SequenceParams;
 import ua.renamer.app.core.enums.SortSource;
 import ua.renamer.app.core.service.command.impl.preparation.SequencePrepareInformationCommand;
 import ua.renamer.app.ui.controller.mode.ModeBaseController;
+import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.SortSourceConverter;
 
 import java.net.URL;
@@ -17,7 +21,8 @@ import java.util.ResourceBundle;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeAddSequenceController extends ModeBaseController {
+public class ModeAddSequenceController extends ModeBaseController
+        implements ModeControllerV2Api<SequenceParams> {
 
     private final SortSourceConverter converter;
 
@@ -110,6 +115,69 @@ public class ModeAddSequenceController extends ModeBaseController {
         SortSource sortSource = sortingSourceChoiceBox.getValue();
         log.debug("handleSortingSourceChanged: {}", sortSource);
         updateCommand();
+    }
+
+    @Override
+    public TransformationMode supportedMode() {
+        return TransformationMode.ADD_SEQUENCE;
+    }
+
+    @Override
+    public void bind(ModeApi<SequenceParams> modeApi) {
+        var params = modeApi.currentParameters();
+
+        // ── Init: startNumber ─────────────────────────────────────────────────
+        startSeqNumberSpinner.getValueFactory().setValue(params.startNumber());
+
+        // ── Init: stepValue ───────────────────────────────────────────────────
+        stepValueSpinner.getValueFactory().setValue(params.stepValue());
+
+        // ── Init: paddingDigits ───────────────────────────────────────────────
+        minDigitAmountSpinner.getValueFactory().setValue(params.paddingDigits());
+
+        // ── Init: sortSource (API → core enum) ────────────────────────────────
+        if (params.sortSource() != null) {
+            var coreSort = ua.renamer.app.core.enums.SortSource.valueOf(params.sortSource().name());
+            sortingSourceChoiceBox.setValue(coreSort);
+        }
+
+        // ── Wire: startSeqNumberSpinner → modeApi ─────────────────────────────
+        startSeqNumberSpinner.valueProperty()
+                .addListener((obs, oldVal, newVal) -> {
+                    if (newVal != null) {
+                        log.debug("bind: startNumber changed → {}", newVal);
+                        modeApi.updateParameters(p -> p.withStartNumber(newVal));
+                    }
+                });
+
+        // ── Wire: stepValueSpinner → modeApi ──────────────────────────────────
+        stepValueSpinner.valueProperty()
+                .addListener((obs, oldVal, newVal) -> {
+                    if (newVal != null) {
+                        log.debug("bind: stepValue changed → {}", newVal);
+                        modeApi.updateParameters(p -> p.withStepValue(newVal));
+                    }
+                });
+
+        // ── Wire: minDigitAmountSpinner → modeApi ─────────────────────────────
+        minDigitAmountSpinner.valueProperty()
+                .addListener((obs, oldVal, newVal) -> {
+                    if (newVal != null) {
+                        log.debug("bind: paddingDigits changed → {}", newVal);
+                        modeApi.updateParameters(p -> p.withPaddingDigits(newVal));
+                    }
+                });
+
+        // ── Wire: sortingSourceChoiceBox → modeApi (core → API enum) ──────────
+        // Use selectedItemProperty addListener — NOT setOnAction (would replace V1 handler)
+        sortingSourceChoiceBox.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldVal, newVal) -> {
+                    if (newVal != null) {
+                        var apiSort = ua.renamer.app.api.enums.SortSource.valueOf(newVal.name());
+                        log.debug("bind: sortSource changed → {}", apiSort);
+                        modeApi.updateParameters(p -> p.withSortSource(apiSort));
+                    }
+                });
     }
 
 }
