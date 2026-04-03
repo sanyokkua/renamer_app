@@ -1969,7 +1969,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 
 ---
 
-### TASK-4.6 — Migrate `ModeAddCustomTextController` to V2
+### TASK-4.6 — Migrate `ModeAddCustomTextController` to V2 ✅ done
 
 **Mode:** Add Text (`ADD_TEXT`)
 **ModeParameters:** `AddTextParams(String textToAdd, ItemPosition position)`
