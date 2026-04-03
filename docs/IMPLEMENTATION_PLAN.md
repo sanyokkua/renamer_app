@@ -1892,7 +1892,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/ApplicationMainViewController.
 
 ---
 
-### TASK-4.4 — Migrate `ModeChangeExtensionController` to V2
+### TASK-4.4 — Migrate `ModeChangeExtensionController` to V2 ✅ done
 
 **Goal:** First controller migration — simplest mode (1 field, minimal validation).
 

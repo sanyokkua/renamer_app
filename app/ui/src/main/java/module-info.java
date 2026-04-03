@@ -39,7 +39,7 @@ module ua.renamer.app.ui {
     opens images; // Required by JavaFX
     opens ua.renamer.app.ui.controller to javafx.fxml;
     opens ua.renamer.app.ui.controller.mode to javafx.fxml;
-    opens ua.renamer.app.ui.controller.mode.impl to javafx.fxml;
+    opens ua.renamer.app.ui.controller.mode.impl; // open to javafx.fxml for FXML injection and to tests for reflection
     opens ua.renamer.app.ui.converter to javafx.fxml;
     opens ua.renamer.app.ui.service to javafx.fxml;
     opens ua.renamer.app.ui.widget to javafx.fxml;
