@@ -1943,7 +1943,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 
 ---
 
-### TASK-4.5 — Migrate `ModeChangeCaseController` to V2
+### TASK-4.5 — Migrate `ModeChangeCaseController` to V2 ✅ done
 
 **Mode:** Change Case (`CHANGE_CASE`)
 **ModeParameters:** `ChangeCaseParams(TextCaseOptions caseOption, boolean capitalizeFirstLetter)`
