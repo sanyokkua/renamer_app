@@ -1987,7 +1987,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 
 ---
 
-### TASK-4.7 — Migrate `ModeRemoveCustomTextController` to V2
+### TASK-4.7 — Migrate `ModeRemoveCustomTextController` to V2 ✅ done
 
 **Mode:** Remove Text (`REMOVE_TEXT`)
 **ModeParameters:** `RemoveTextParams(String textToRemove, ItemPosition position)`
