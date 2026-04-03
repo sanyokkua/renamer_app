@@ -199,13 +199,15 @@ class ModeParametersConverterTest {
                     true,    // useFallbackDateTime
                     true,    // useCustomDateTimeAsFallback
                     custom,  // customDateTime
-                    false    // useUppercaseForAmPm
+                    false,   // useUppercaseForAmPm
+                    DateTimeFormat.DATE_TIME_TOGETHER, // dateTimeFormat
+                    "_"      // separator
             );
 
             // Act
             var config = (DateTimeConfig) ModeParametersConverter.toConfig(params);
 
-            // Assert — 9 mapped fields
+            // Assert — all fields mapped
             assertThat(config.getSource()).isEqualTo(DateTimeSource.FILE_CREATION_DATE);
             assertThat(config.getDateFormat()).isEqualTo(DateFormat.YYYY_MM_DD_TOGETHER);
             assertThat(config.getTimeFormat()).isEqualTo(TimeFormat.HH_MM_SS_24_TOGETHER);
@@ -215,9 +217,8 @@ class ModeParametersConverterTest {
             assertThat(config.isUseCustomDateTimeAsFallback()).isTrue();
             assertThat(config.isUseUppercaseForAmPm()).isFalse();
             assertThat(config.isApplyToExtension()).isFalse();
-            // Fields not in DateTimeConfig — just verify config builds without error
-            assertThat(config.getDateTimeFormat()).isNull();
-            assertThat(config.getSeparator()).isNull();
+            assertThat(config.getDateTimeFormat()).isEqualTo(DateTimeFormat.DATE_TIME_TOGETHER);
+            assertThat(config.getSeparator()).isEqualTo("_");
         }
 
         @Test
@@ -234,7 +235,9 @@ class ModeParametersConverterTest {
                     false,  // useFallbackDateTime
                     false,  // useCustomDateTimeAsFallback
                     null,   // customDateTime
-                    true    // useUppercaseForAmPm
+                    true,   // useUppercaseForAmPm
+                    DateTimeFormat.DATE_TIME_TOGETHER, // dateTimeFormat
+                    ""      // separator
             );
 
             // Act
@@ -259,7 +262,8 @@ class ModeParametersConverterTest {
                     ImageDimensionOptions.WIDTH,
                     ImageDimensionOptions.HEIGHT,
                     ItemPositionWithReplacement.END,
-                    "_"
+                    "_",
+                    "x"
             );
 
             // Act
@@ -270,8 +274,7 @@ class ModeParametersConverterTest {
             assertThat(config.getRightSide()).isEqualTo(ImageDimensionOptions.HEIGHT);
             assertThat(config.getPosition()).isEqualTo(ItemPositionWithReplacement.END);
             assertThat(config.getNameSeparator()).isEqualTo("_");
-            // separator ("x" between WxH) is not present in Params — must be null
-            assertThat(config.getSeparator()).isNull();
+            assertThat(config.getSeparator()).isEqualTo("x");
         }
     }
 

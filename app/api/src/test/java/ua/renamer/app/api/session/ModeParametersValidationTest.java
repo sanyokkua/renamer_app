@@ -668,7 +668,9 @@ class ModeParametersValidationTest {
                     false,
                     false,
                     null,
-                    false
+                    false,
+                    DateTimeFormat.DATE_TIME_TOGETHER,
+                    ""
             );
         }
 
@@ -694,7 +696,8 @@ class ModeParametersValidationTest {
                     DateFormat.YYYY_MM_DD_DASHED,
                     TimeFormat.HH_MM_SS_24_TOGETHER,
                     ItemPositionWithReplacement.BEGIN,
-                    true, true, false, false, false, null, false
+                    true, true, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             ValidationResult result = params.validate();
@@ -710,7 +713,8 @@ class ModeParametersValidationTest {
                     DateFormat.YYYY_MM_DD_DASHED,
                     TimeFormat.HH_MM_SS_24_TOGETHER,
                     ItemPositionWithReplacement.END,
-                    false, false, false, false, false, null, false
+                    false, false, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             ValidationResult result = params.validate();
@@ -727,7 +731,8 @@ class ModeParametersValidationTest {
                     null,
                     TimeFormat.HH_MM_SS_24_TOGETHER,
                     ItemPositionWithReplacement.BEGIN,
-                    true, true, false, false, false, null, false
+                    true, true, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             ValidationResult result = params.validate();
@@ -743,7 +748,8 @@ class ModeParametersValidationTest {
                     DateFormat.YYYY_MM_DD_DASHED,
                     null,
                     ItemPositionWithReplacement.BEGIN,
-                    true, true, false, false, false, null, false
+                    true, true, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             ValidationResult result = params.validate();
@@ -759,7 +765,8 @@ class ModeParametersValidationTest {
                     DateFormat.YYYY_MM_DD_DASHED,
                     TimeFormat.HH_MM_SS_24_TOGETHER,
                     ItemPositionWithReplacement.BEGIN,
-                    true, true, false, false, false, null, false
+                    true, true, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             ValidationResult result = params.validate();
@@ -775,7 +782,8 @@ class ModeParametersValidationTest {
                     DateFormat.YYYY_MM_DD_DASHED,
                     TimeFormat.HH_MM_SS_24_TOGETHER,
                     ItemPositionWithReplacement.BEGIN,
-                    true, true, false, false, false, FIXED_DT, false
+                    true, true, false, false, false, FIXED_DT, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             assertThat(params.validate().ok()).isTrue();
@@ -788,7 +796,8 @@ class ModeParametersValidationTest {
                     DateFormat.YYYY_MM_DD_DASHED,
                     null,
                     ItemPositionWithReplacement.BEGIN,
-                    true, false, false, false, false, null, false
+                    true, false, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             assertThat(params.validate().ok()).isTrue();
@@ -801,7 +810,8 @@ class ModeParametersValidationTest {
                     null,
                     TimeFormat.HH_MM_SS_24_TOGETHER,
                     ItemPositionWithReplacement.BEGIN,
-                    false, true, false, false, false, null, false
+                    false, true, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
 
             assertThat(params.validate().ok()).isTrue();
@@ -928,6 +938,7 @@ class ModeParametersValidationTest {
                     ImageDimensionOptions.WIDTH,
                     ImageDimensionOptions.HEIGHT,
                     ItemPositionWithReplacement.BEGIN,
+                    "x",
                     "x"
             );
         }
@@ -950,7 +961,7 @@ class ModeParametersValidationTest {
         @Test
         void validate_whenPositionIsNull_thenReturnsFieldError() {
             ImageDimensionsParams params = new ImageDimensionsParams(
-                    ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT, null, "x"
+                    ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT, null, "x", "x"
             );
 
             ValidationResult result = params.validate();
@@ -965,6 +976,7 @@ class ModeParametersValidationTest {
                     ImageDimensionOptions.DO_NOT_USE,
                     ImageDimensionOptions.DO_NOT_USE,
                     ItemPositionWithReplacement.END,
+                    "x",
                     "x"
             );
 
@@ -981,7 +993,8 @@ class ModeParametersValidationTest {
                     ImageDimensionOptions.DO_NOT_USE,
                     ImageDimensionOptions.WIDTH,
                     ItemPositionWithReplacement.BEGIN,
-                    "-"
+                    "-",
+                    "x"
             );
 
             assertThat(params.validate().ok()).isTrue();
@@ -993,7 +1006,8 @@ class ModeParametersValidationTest {
                     ImageDimensionOptions.HEIGHT,
                     ImageDimensionOptions.DO_NOT_USE,
                     ItemPositionWithReplacement.BEGIN,
-                    ""
+                    "",
+                    "x"
             );
 
             assertThat(params.validate().ok()).isTrue();
@@ -1006,6 +1020,7 @@ class ModeParametersValidationTest {
                     ImageDimensionOptions.DO_NOT_USE,
                     ImageDimensionOptions.DO_NOT_USE,
                     null,
+                    "x",
                     "x"
             );
 
@@ -1021,7 +1036,8 @@ class ModeParametersValidationTest {
                     ImageDimensionOptions.WIDTH,
                     ImageDimensionOptions.HEIGHT,
                     ItemPositionWithReplacement.END,
-                    null
+                    null,
+                    "x"
             );
 
             assertThat(params.validate().ok()).isTrue();
@@ -1247,7 +1263,8 @@ class ModeParametersValidationTest {
                     DateFormat.YYYY_MM_DD_DASHED,
                     TimeFormat.HH_MM_SS_24_TOGETHER,
                     ItemPositionWithReplacement.BEGIN,
-                    true, true, false, false, false, null, false
+                    true, true, false, false, false, null, false,
+                    DateTimeFormat.DATE_TIME_TOGETHER, ""
             );
             assertThat(params).isInstanceOf(ModeParameters.class);
         }
@@ -1256,7 +1273,7 @@ class ModeParametersValidationTest {
         void imageDimensionsParams_implementsModeParameters() {
             ModeParameters params = new ImageDimensionsParams(
                     ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
-                    ItemPositionWithReplacement.BEGIN, "x"
+                    ItemPositionWithReplacement.BEGIN, "x", "x"
             );
             assertThat(params).isInstanceOf(ModeParameters.class);
         }
@@ -1279,7 +1296,7 @@ class ModeParametersValidationTest {
                     new ExtensionChangeParams("jpg"),
                     new ImageDimensionsParams(
                             ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
-                            ItemPositionWithReplacement.BEGIN, "x"),
+                            ItemPositionWithReplacement.BEGIN, "x", "x"),
                     new ParentFolderParams(1, ItemPosition.BEGIN, "_"),
             };
 
@@ -1360,14 +1377,15 @@ class ModeParametersValidationTest {
         @Test
         void dateTimeParams_validateNeverReturnsNull() {
             DateTimeParams params = new DateTimeParams(
-                    null, null, null, null, false, false, false, false, false, null, false
+                    null, null, null, null, false, false, false, false, false, null, false,
+                    null, null
             );
             assertThat(params.validate()).isNotNull();
         }
 
         @Test
         void imageDimensionsParams_validateNeverReturnsNull() {
-            ImageDimensionsParams params = new ImageDimensionsParams(null, null, null, null);
+            ImageDimensionsParams params = new ImageDimensionsParams(null, null, null, null, null);
             assertThat(params.validate()).isNotNull();
         }
 

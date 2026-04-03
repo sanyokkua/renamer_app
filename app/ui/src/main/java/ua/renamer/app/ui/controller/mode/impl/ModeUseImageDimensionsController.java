@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
@@ -39,6 +40,11 @@ public class ModeUseImageDimensionsController
     @FXML
     private TextField dimensionsAndFileSeparatorTextField;
 
+    private ChangeListener<ImageDimensionOptions> leftSideListener;
+    private ChangeListener<ImageDimensionOptions> rightSideListener;
+    private ChangeListener<String> separatorListener;
+    private ChangeListener<String> nameSeparatorListener;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configLeftDimensionChoiceBox();
@@ -68,25 +74,35 @@ public class ModeUseImageDimensionsController
     public void bind(ModeApi<ImageDimensionsParams> modeApi) {
         var params = modeApi.currentParameters();
 
-        // ── Init: leftSide (API → core enum) ──────────────────────────────────
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (leftSideListener != null)
+            leftDimensionChoiceBox.getSelectionModel().selectedItemProperty().removeListener(leftSideListener);
+        if (rightSideListener != null)
+            rightDimensionChoiceBox.getSelectionModel().selectedItemProperty().removeListener(rightSideListener);
+        if (separatorListener != null)
+            dimensionsSeparatorTextField.textProperty().removeListener(separatorListener);
+        if (nameSeparatorListener != null)
+            dimensionsAndFileSeparatorTextField.textProperty().removeListener(nameSeparatorListener);
+
+        // ── Init ──────────────────────────────────────────────────────────────
         if (params.leftSide() != null) {
             var coreLeft = ua.renamer.app.core.enums.ImageDimensionOptions
                     .valueOf(params.leftSide().name());
             leftDimensionChoiceBox.setValue(coreLeft);
         }
 
-        // ── Init: rightSide (API → core enum) ─────────────────────────────────
         if (params.rightSide() != null) {
             var coreRight = ua.renamer.app.core.enums.ImageDimensionOptions
                     .valueOf(params.rightSide().name());
             rightDimensionChoiceBox.setValue(coreRight);
         }
 
-        // ── Init: nameSeparator (null-safe) ────────────────────────────────────
+        dimensionsSeparatorTextField.setText(
+                params.separator() != null ? params.separator() : "x");
+
         dimensionsAndFileSeparatorTextField.setText(
                 params.nameSeparator() != null ? params.nameSeparator() : "");
 
-        // ── Init: position (API → core enum, button scan) ─────────────────────
         if (params.position() != null) {
             var corePos = ua.renamer.app.core.enums.ItemPositionWithReplacement
                     .valueOf(params.position().name());
@@ -96,38 +112,40 @@ public class ModeUseImageDimensionsController
                     .ifPresent(btn -> itemPositionRadioSelector.getToggleGroup().selectToggle(btn));
         }
 
-        // ── Wire: leftDimensionChoiceBox → modeApi (core → API enum) ──────────
-        leftDimensionChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        var apiLeft = ua.renamer.app.api.enums.ImageDimensionOptions
-                                .valueOf(newVal.name());
-                        log.debug("bind: leftSide changed → {}", apiLeft);
-                        modeApi.updateParameters(p -> p.withLeftSide(apiLeft));
-                    }
-                });
+        // ── Wire ──────────────────────────────────────────────────────────────
+        leftSideListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                var apiLeft = ua.renamer.app.api.enums.ImageDimensionOptions
+                        .valueOf(newVal.name());
+                log.debug("bind: leftSide changed → {}", apiLeft);
+                modeApi.updateParameters(p -> p.withLeftSide(apiLeft));
+            }
+        };
+        leftDimensionChoiceBox.getSelectionModel().selectedItemProperty().addListener(leftSideListener);
 
-        // ── Wire: rightDimensionChoiceBox → modeApi (core → API enum) ─────────
-        rightDimensionChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        var apiRight = ua.renamer.app.api.enums.ImageDimensionOptions
-                                .valueOf(newVal.name());
-                        log.debug("bind: rightSide changed → {}", apiRight);
-                        modeApi.updateParameters(p -> p.withRightSide(apiRight));
-                    }
-                });
+        rightSideListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                var apiRight = ua.renamer.app.api.enums.ImageDimensionOptions
+                        .valueOf(newVal.name());
+                log.debug("bind: rightSide changed → {}", apiRight);
+                modeApi.updateParameters(p -> p.withRightSide(apiRight));
+            }
+        };
+        rightDimensionChoiceBox.getSelectionModel().selectedItemProperty().addListener(rightSideListener);
 
-        // ── Wire: dimensionsAndFileSeparatorTextField → modeApi ───────────────
-        // NOTE: dimensionsSeparatorTextField is NOT wired here — it has no V2 counterpart
-        dimensionsAndFileSeparatorTextField.textProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    log.debug("bind: nameSeparator changed → {}", newVal);
-                    modeApi.updateParameters(p -> p.withNameSeparator(newVal != null ? newVal : ""));
-                });
+        separatorListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: separator changed → {}", newVal);
+            modeApi.updateParameters(p -> p.withSeparator(newVal != null ? newVal : "x"));
+        };
+        dimensionsSeparatorTextField.textProperty().addListener(separatorListener);
 
-        // ── Wire: itemPositionRadioSelector → modeApi (core → API enum) ───────
-        itemPositionRadioSelector.addValueSelectedHandler(corePos -> {
+        nameSeparatorListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: nameSeparator changed → {}", newVal);
+            modeApi.updateParameters(p -> p.withNameSeparator(newVal != null ? newVal : ""));
+        };
+        dimensionsAndFileSeparatorTextField.textProperty().addListener(nameSeparatorListener);
+
+        itemPositionRadioSelector.setValueSelectedHandler(corePos -> {
             var apiPos = ua.renamer.app.api.enums.ItemPositionWithReplacement
                     .valueOf(corePos.name());
             log.debug("bind: position changed → {}", apiPos);

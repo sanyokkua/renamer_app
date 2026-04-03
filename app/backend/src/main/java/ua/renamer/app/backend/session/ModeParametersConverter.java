@@ -67,12 +67,15 @@ public final class ModeParametersConverter {
                     .withUseCustomDateTimeAsFallback(p.useCustomDateTimeAsFallback())
                     .withUseUppercaseForAmPm(p.useUppercaseForAmPm())
                     .withApplyToExtension(p.applyToExtension())
+                    .withDateTimeFormat(p.dateTimeFormat())
+                    .withSeparator(p.separator())
                     .build();
             case ImageDimensionsParams p -> ImageDimensionsConfig.builder()
                     .withLeftSide(p.leftSide())
                     .withRightSide(p.rightSide())
                     .withPosition(p.position())
                     .withNameSeparator(p.nameSeparator())
+                    .withSeparator(p.separator())
                     .build();
             case ParentFolderParams p -> ParentFolderConfig.builder()
                     .withNumberOfParentFolders(p.numberOfParentFolders())

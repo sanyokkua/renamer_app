@@ -153,7 +153,8 @@ class ModeUseDatetimeControllerV2Test {
                 ua.renamer.app.api.enums.DateFormat.DO_NOT_USE_DATE,
                 ua.renamer.app.api.enums.TimeFormat.DO_NOT_USE_TIME,
                 ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                false, false, false, false, false, null, false);
+                false, false, false, false, false, null, false,
+                ua.renamer.app.api.enums.DateTimeFormat.DATE_TIME_TOGETHER, "");
     }
 
     /**
@@ -991,41 +992,52 @@ class ModeUseDatetimeControllerV2Test {
         }
 
         @Test
-        void dateTimeFormatChoiceBox_change_doesNotCallModeApi() throws Exception {
-            // Arrange — dateTimeFormatChoiceBox is NOT wired in V2.
-            // Use lenient stubbing: bind() may fire V1 setOnAction which never
-            // calls modeApi.updateParameters, so that stub would be unused.
-            lenient().when(modeApi.updateParameters(any()))
-                    .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
+        void dateTimeFormat_change_propagates() throws Exception {
+            // Arrange
             when(modeApi.currentParameters()).thenReturn(baseline());
+            when(modeApi.updateParameters(any()))
+                    .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
             clearInvocations(modeApi);
+            when(modeApi.updateParameters(any()))
+                    .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
-            // Act — change dateTimeFormatChoiceBox (V1-only control)
+            // Act — change dateTimeFormatChoiceBox
             ChoiceBox<ua.renamer.app.core.enums.DateTimeFormat> dateTimeFormatBox =
                     readFieldUnchecked(controller, "dateTimeFormatChoiceBox");
             runOnFxThreadAndWait(() -> dateTimeFormatBox.setValue(
-                    ua.renamer.app.core.enums.DateTimeFormat.DATE_TIME_TOGETHER));
+                    ua.renamer.app.core.enums.DateTimeFormat.DATE_TIME_DASHED));
 
-            // Assert — modeApi.updateParameters must NOT have been called
-            verify(modeApi, never()).updateParameters(any());
+            // Assert — updateParameters must have been called
+            ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
+                    ArgumentCaptor.forClass(ModeApi.ParamMutator.class);
+            verify(modeApi, atLeastOnce()).updateParameters(captor.capture());
+            DateTimeParams updated = captor.getValue().apply(baseline());
+            assertThat(updated.dateTimeFormat())
+                    .isEqualTo(ua.renamer.app.api.enums.DateTimeFormat.DATE_TIME_DASHED);
         }
 
         @Test
-        void dateTimeAndNameSeparatorTextField_change_doesNotCallModeApi() throws Exception {
-            // Arrange — dateTimeAndNameSeparatorTextField is NOT wired in V2.
-            lenient().when(modeApi.updateParameters(any()))
-                    .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
+        void separator_change_propagates() throws Exception {
+            // Arrange
             when(modeApi.currentParameters()).thenReturn(baseline());
+            when(modeApi.updateParameters(any()))
+                    .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
             clearInvocations(modeApi);
+            when(modeApi.updateParameters(any()))
+                    .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
-            // Act — type in the separator text field
+            // Act — change separator text field
             TextField separatorField = readFieldUnchecked(controller, "dateTimeAndNameSeparatorTextField");
             runOnFxThreadAndWait(() -> separatorField.setText("_-_"));
 
             // Assert
-            verify(modeApi, never()).updateParameters(any());
+            ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
+                    ArgumentCaptor.forClass(ModeApi.ParamMutator.class);
+            verify(modeApi, atLeastOnce()).updateParameters(captor.capture());
+            DateTimeParams updated = captor.getValue().apply(baseline());
+            assertThat(updated.separator()).isEqualTo("_-_");
         }
     }
 
@@ -1157,7 +1169,10 @@ class ModeUseDatetimeControllerV2Test {
                     ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
                     false, false, false, false, false,
                     null, // customDateTime
-                    false));
+                    false,
+                    null, // dateTimeFormat
+                    null  // separator
+            ));
 
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
@@ -1171,7 +1186,8 @@ class ModeUseDatetimeControllerV2Test {
                     ua.renamer.app.api.enums.DateFormat.DO_NOT_USE_DATE,
                     ua.renamer.app.api.enums.TimeFormat.DO_NOT_USE_TIME,
                     null, // position
-                    false, false, false, false, false, null, false));
+                    false, false, false, false, false, null, false,
+                    ua.renamer.app.api.enums.DateTimeFormat.DATE_TIME_TOGETHER, ""));
 
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
@@ -1185,7 +1201,8 @@ class ModeUseDatetimeControllerV2Test {
                     ua.renamer.app.api.enums.DateFormat.DO_NOT_USE_DATE,
                     ua.renamer.app.api.enums.TimeFormat.DO_NOT_USE_TIME,
                     ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                    false, false, false, false, false, null, false));
+                    false, false, false, false, false, null, false,
+                    ua.renamer.app.api.enums.DateTimeFormat.DATE_TIME_TOGETHER, ""));
 
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();

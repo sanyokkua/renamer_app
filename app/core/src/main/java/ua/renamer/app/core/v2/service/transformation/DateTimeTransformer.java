@@ -160,9 +160,10 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
                         "source", config.getSource().name(),
                         "dateFormat", config.getDateFormat().name(),
                         "timeFormat", config.getTimeFormat().name(),
-                        "dateTimeFormat", config.getDateTimeFormat().name(),
+                        "dateTimeFormat", config.getDateTimeFormat() != null
+                                ? config.getDateTimeFormat().name() : "null",
                         "position", config.getPosition().name(),
-                        "separator", config.getSeparator()
+                        "separator", config.getSeparator() != null ? config.getSeparator() : ""
                 ))
                 .build();
     }

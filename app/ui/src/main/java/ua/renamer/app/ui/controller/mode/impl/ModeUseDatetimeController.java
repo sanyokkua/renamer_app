@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -70,6 +71,19 @@ public class ModeUseDatetimeController
     private Spinner<Integer> secondSpinner;
     @FXML
     private CheckBox useUppercaseForAmPmCheckBox;
+
+    private ChangeListener<DateTimeSource> sourceListener;
+    private ChangeListener<DateFormat> dateFormatListener;
+    private ChangeListener<TimeFormat> timeFormatListener;
+    private ChangeListener<Boolean> useFallbackListener;
+    private ChangeListener<Boolean> useCustomFallbackListener;
+    private ChangeListener<LocalDate> datePickerListener;
+    private ChangeListener<Integer> hourListener;
+    private ChangeListener<Integer> minuteListener;
+    private ChangeListener<Integer> secondListener;
+    private ChangeListener<Boolean> useUppercaseListener;
+    private ChangeListener<DateTimeFormat> dateTimeFormatListener;
+    private ChangeListener<String> separatorListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -218,6 +232,32 @@ public class ModeUseDatetimeController
     public void bind(ModeApi<DateTimeParams> modeApi) {
         var params = modeApi.currentParameters();
 
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (sourceListener != null)
+            dateTimeSourceChoiceBox.getSelectionModel().selectedItemProperty().removeListener(sourceListener);
+        if (dateFormatListener != null)
+            dateFormatChoiceBox.getSelectionModel().selectedItemProperty().removeListener(dateFormatListener);
+        if (timeFormatListener != null)
+            timeFormatChoiceBox.getSelectionModel().selectedItemProperty().removeListener(timeFormatListener);
+        if (useFallbackListener != null)
+            useFallbackDateTimeCheckBox.selectedProperty().removeListener(useFallbackListener);
+        if (useCustomFallbackListener != null)
+            useCustomDateTimeAsFallbackCheckBox.selectedProperty().removeListener(useCustomFallbackListener);
+        if (datePickerListener != null)
+            datePicker.valueProperty().removeListener(datePickerListener);
+        if (hourListener != null)
+            hourSpinner.valueProperty().removeListener(hourListener);
+        if (minuteListener != null)
+            minuteSpinner.valueProperty().removeListener(minuteListener);
+        if (secondListener != null)
+            secondSpinner.valueProperty().removeListener(secondListener);
+        if (useUppercaseListener != null)
+            useUppercaseForAmPmCheckBox.selectedProperty().removeListener(useUppercaseListener);
+        if (dateTimeFormatListener != null)
+            dateTimeFormatChoiceBox.getSelectionModel().selectedItemProperty().removeListener(dateTimeFormatListener);
+        if (separatorListener != null)
+            dateTimeAndNameSeparatorTextField.textProperty().removeListener(separatorListener);
+
         // ── Init: source (API → core enum) ──────────────────────────────────────
         if (params.source() != null) {
             var coreSource = ua.renamer.app.core.enums.DateTimeSource.valueOf(params.source().name());
@@ -252,6 +292,17 @@ public class ModeUseDatetimeController
         useCustomDateTimeAsFallbackCheckBox.setSelected(params.useCustomDateTimeAsFallback());
         useUppercaseForAmPmCheckBox.setSelected(params.useUppercaseForAmPm());
 
+        // ── Init: dateTimeFormat (API → core enum) ───────────────────────────────
+        if (params.dateTimeFormat() != null) {
+            var coreFmt = ua.renamer.app.core.enums.DateTimeFormat.valueOf(params.dateTimeFormat().name());
+            dateTimeFormatChoiceBox.setValue(coreFmt);
+        }
+
+        // ── Init: separator ──────────────────────────────────────────────────────
+        if (params.separator() != null) {
+            dateTimeAndNameSeparatorTextField.setText(params.separator());
+        }
+
         // ── Init: customDateTime (null-safe) ────────────────────────────────────
         if (params.customDateTime() != null) {
             datePicker.setValue(params.customDateTime().toLocalDate());
@@ -264,40 +315,40 @@ public class ModeUseDatetimeController
         updateDisplayedItems();
 
         // ── Wire: source ─────────────────────────────────────────────────────────
-        dateTimeSourceChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        var apiSource = ua.renamer.app.api.enums.DateTimeSource.valueOf(newVal.name());
-                        log.debug("bind: source changed → {}", apiSource);
-                        modeApi.updateParameters(p -> p.withSource(apiSource));
-                        updateDisplayedItems();
-                    }
-                });
+        sourceListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                var apiSource = ua.renamer.app.api.enums.DateTimeSource.valueOf(newVal.name());
+                log.debug("bind: source changed → {}", apiSource);
+                modeApi.updateParameters(p -> p.withSource(apiSource));
+                updateDisplayedItems();
+            }
+        };
+        dateTimeSourceChoiceBox.getSelectionModel().selectedItemProperty().addListener(sourceListener);
 
         // ── Wire: dateFormat (atomic with useDatePart) ───────────────────────────
-        dateFormatChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        var apiDateFormat = ua.renamer.app.api.enums.DateFormat.valueOf(newVal.name());
-                        boolean useDatePart = newVal != ua.renamer.app.core.enums.DateFormat.DO_NOT_USE_DATE;
-                        log.debug("bind: dateFormat changed → {}, useDatePart={}", apiDateFormat, useDatePart);
-                        modeApi.updateParameters(p -> p.withDateFormat(apiDateFormat).withUseDatePart(useDatePart));
-                    }
-                });
+        dateFormatListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                var apiDateFormat = ua.renamer.app.api.enums.DateFormat.valueOf(newVal.name());
+                boolean useDatePart = newVal != ua.renamer.app.core.enums.DateFormat.DO_NOT_USE_DATE;
+                log.debug("bind: dateFormat changed → {}, useDatePart={}", apiDateFormat, useDatePart);
+                modeApi.updateParameters(p -> p.withDateFormat(apiDateFormat).withUseDatePart(useDatePart));
+            }
+        };
+        dateFormatChoiceBox.getSelectionModel().selectedItemProperty().addListener(dateFormatListener);
 
         // ── Wire: timeFormat (atomic with useTimePart) ───────────────────────────
-        timeFormatChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        var apiTimeFormat = ua.renamer.app.api.enums.TimeFormat.valueOf(newVal.name());
-                        boolean useTimePart = newVal != ua.renamer.app.core.enums.TimeFormat.DO_NOT_USE_TIME;
-                        log.debug("bind: timeFormat changed → {}, useTimePart={}", apiTimeFormat, useTimePart);
-                        modeApi.updateParameters(p -> p.withTimeFormat(apiTimeFormat).withUseTimePart(useTimePart));
-                    }
-                });
+        timeFormatListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                var apiTimeFormat = ua.renamer.app.api.enums.TimeFormat.valueOf(newVal.name());
+                boolean useTimePart = newVal != ua.renamer.app.core.enums.TimeFormat.DO_NOT_USE_TIME;
+                log.debug("bind: timeFormat changed → {}, useTimePart={}", apiTimeFormat, useTimePart);
+                modeApi.updateParameters(p -> p.withTimeFormat(apiTimeFormat).withUseTimePart(useTimePart));
+            }
+        };
+        timeFormatChoiceBox.getSelectionModel().selectedItemProperty().addListener(timeFormatListener);
 
         // ── Wire: position ───────────────────────────────────────────────────────
-        dateTimePositionInTheNameRadioSelector.addValueSelectedHandler(corePos -> {
+        dateTimePositionInTheNameRadioSelector.setValueSelectedHandler(corePos -> {
             var apiPos = ua.renamer.app.api.enums.ItemPositionWithReplacement.valueOf(corePos.name());
             log.debug("bind: position changed → {}", apiPos);
             modeApi.updateParameters(p -> p.withPosition(apiPos));
@@ -305,58 +356,79 @@ public class ModeUseDatetimeController
         });
 
         // ── Wire: useFallbackDateTime ────────────────────────────────────────────
-        useFallbackDateTimeCheckBox.selectedProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    log.debug("bind: useFallbackDateTime changed → {}", newVal);
-                    modeApi.updateParameters(p -> p.withUseFallbackDateTime(newVal));
-                    updateDisplayedItems();
-                });
+        useFallbackListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: useFallbackDateTime changed → {}", newVal);
+            modeApi.updateParameters(p -> p.withUseFallbackDateTime(newVal));
+            updateDisplayedItems();
+        };
+        useFallbackDateTimeCheckBox.selectedProperty().addListener(useFallbackListener);
 
         // ── Wire: useCustomDateTimeAsFallback ────────────────────────────────────
-        useCustomDateTimeAsFallbackCheckBox.selectedProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    log.debug("bind: useCustomDateTimeAsFallback changed → {}", newVal);
-                    modeApi.updateParameters(p -> p.withUseCustomDateTimeAsFallback(newVal));
-                    updateDisplayedItems();
-                });
+        useCustomFallbackListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: useCustomDateTimeAsFallback changed → {}", newVal);
+            modeApi.updateParameters(p -> p.withUseCustomDateTimeAsFallback(newVal));
+            updateDisplayedItems();
+        };
+        useCustomDateTimeAsFallbackCheckBox.selectedProperty().addListener(useCustomFallbackListener);
 
         // ── Wire: customDateTime pickers (all 4 map to a single field) ───────────
-        datePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
+        datePickerListener = (obs, oldVal, newVal) -> {
             var dt = getCustomLocalDateTime();
             log.debug("bind: customDateTime (date) changed → {}", dt);
             modeApi.updateParameters(p -> p.withCustomDateTime(dt));
-        });
-        hourSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
+        };
+        datePicker.valueProperty().addListener(datePickerListener);
+
+        hourListener = (obs, oldVal, newVal) -> {
             if (newVal != null) {
                 var dt = getCustomLocalDateTime();
                 log.debug("bind: customDateTime (hour) changed → {}", dt);
                 modeApi.updateParameters(p -> p.withCustomDateTime(dt));
             }
-        });
-        minuteSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
+        };
+        hourSpinner.valueProperty().addListener(hourListener);
+
+        minuteListener = (obs, oldVal, newVal) -> {
             if (newVal != null) {
                 var dt = getCustomLocalDateTime();
                 log.debug("bind: customDateTime (minute) changed → {}", dt);
                 modeApi.updateParameters(p -> p.withCustomDateTime(dt));
             }
-        });
-        secondSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
+        };
+        minuteSpinner.valueProperty().addListener(minuteListener);
+
+        secondListener = (obs, oldVal, newVal) -> {
             if (newVal != null) {
                 var dt = getCustomLocalDateTime();
                 log.debug("bind: customDateTime (second) changed → {}", dt);
                 modeApi.updateParameters(p -> p.withCustomDateTime(dt));
             }
-        });
+        };
+        secondSpinner.valueProperty().addListener(secondListener);
 
         // ── Wire: useUppercaseForAmPm ────────────────────────────────────────────
-        useUppercaseForAmPmCheckBox.selectedProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    log.debug("bind: useUppercaseForAmPm changed → {}", newVal);
-                    modeApi.updateParameters(p -> p.withUseUppercaseForAmPm(newVal));
-                });
+        useUppercaseListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: useUppercaseForAmPm changed → {}", newVal);
+            modeApi.updateParameters(p -> p.withUseUppercaseForAmPm(newVal));
+        };
+        useUppercaseForAmPmCheckBox.selectedProperty().addListener(useUppercaseListener);
 
-        // NOTE: dateTimeFormatChoiceBox is NOT wired — no DateTimeParams field.
-        // NOTE: dateTimeAndNameSeparatorTextField is NOT wired — no DateTimeParams field.
+        // ── Wire: dateTimeFormat ─────────────────────────────────────────────────
+        dateTimeFormatListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                var apiFmt = ua.renamer.app.api.enums.DateTimeFormat.valueOf(newVal.name());
+                log.debug("bind: dateTimeFormat changed → {}", apiFmt);
+                modeApi.updateParameters(p -> p.withDateTimeFormat(apiFmt));
+            }
+        };
+        dateTimeFormatChoiceBox.getSelectionModel().selectedItemProperty().addListener(dateTimeFormatListener);
+
+        // ── Wire: separator ──────────────────────────────────────────────────────
+        separatorListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: separator changed → '{}'", newVal);
+            modeApi.updateParameters(p -> p.withSeparator(newVal != null ? newVal : ""));
+        };
+        dateTimeAndNameSeparatorTextField.textProperty().addListener(separatorListener);
     }
 
 }

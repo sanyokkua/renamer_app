@@ -216,7 +216,7 @@ class ModeUseImageDimensionsControllerTest {
                 ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                 ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                 ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                "");
+                "", "x");
     }
 
     // -----------------------------------------------------------------------
@@ -345,7 +345,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -363,7 +363,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -383,7 +383,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ImageDimensionOptions.HEIGHT,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -401,7 +401,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -421,7 +421,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            " - "));
+                            " - ", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -439,7 +439,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            null));
+                            null, "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -457,7 +457,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -477,7 +477,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -495,7 +495,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.END,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -513,7 +513,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.REPLACE,
-                            ""));
+                            "", "x"));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -533,7 +533,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -560,7 +560,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -589,7 +589,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -616,7 +616,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -645,7 +645,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -671,7 +671,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            "old"));
+                            "old", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -699,7 +699,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -734,7 +734,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -769,7 +769,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.END,
-                            ""));
+                            "", "x"));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -804,35 +804,35 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            "_"));
+                            "_", "x"));
 
             // Act + Assert
             assertThatCode(() -> runOnFxThreadAndWait(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
         }
 
-        // ── dimensionsSeparatorTextField isolation — NOT wired in V2 ─────────
+        // ── dimensionsSeparatorTextField — wired to withSeparator ─────────────
 
         @Test
-        void bind_doesNotBindDimensionsSeparatorTextField_toModeApi() throws Exception {
+        void bind_wiresDimensionsSeparatorTextField_toModeApi() throws Exception {
             // Arrange
             when(modeApi.currentParameters()).thenReturn(
                     new ImageDimensionsParams(
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
 
             // Clear any interactions from bind() init phase
             clearInvocations(modeApi);
 
-            // Act — change the V1-only dimensionsSeparatorTextField
-            runOnFxThreadAndWait(() -> readDimensionsSepUnchecked(controller).setText("CHANGED"));
+            // Act — change the dimensionsSeparatorTextField
+            runOnFxThreadAndWait(() -> readDimensionsSepUnchecked(controller).setText("-"));
 
-            // Assert — modeApi must NOT be touched by this field change
-            verifyNoInteractions(modeApi);
+            // Assert — modeApi.updateParameters must be called (separator change wired)
+            verify(modeApi, atLeastOnce()).updateParameters(any());
         }
 
         // ── Enum bridge — parameterized, pure (no FX) ───────────────────────
@@ -871,7 +871,7 @@ class ModeUseImageDimensionsControllerTest {
                             ua.renamer.app.api.enums.ImageDimensionOptions.WIDTH,
                             ua.renamer.app.api.enums.ImageDimensionOptions.DO_NOT_USE,
                             ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                            ""));
+                            "", "x"));
 
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();

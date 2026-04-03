@@ -82,12 +82,35 @@ public class RenameSessionService implements SessionApi {
             case USE_DATETIME -> new DateTimeParams(
                     DateTimeSource.FILE_CREATION_DATE, DateFormat.YYYY_MM_DD_DASHED,
                     TimeFormat.DO_NOT_USE_TIME, ItemPositionWithReplacement.BEGIN,
-                    true, false, false, false, false, null, true);
+                    true, false, false, true, false, null, true,
+                    DateTimeFormat.DATE_TIME_TOGETHER, "");
             case USE_IMAGE_DIMENSIONS -> new ImageDimensionsParams(
                     ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
-                    ItemPositionWithReplacement.BEGIN, " ");
+                    ItemPositionWithReplacement.BEGIN, " ", "x");
             case USE_PARENT_FOLDER_NAME -> new ParentFolderParams(1, ItemPosition.BEGIN, " ");
         };
+    }
+
+    /**
+     * Builds the preview DTOs to publish via {@link StatePublisher}.
+     * Returns the real preview when available; falls back to placeholder DTOs (original name,
+     * no new name) so the table always shows the file list when a mode is selected.
+     *
+     * @param preview real preview from the orchestrator; may be empty
+     * @param files   current session files
+     * @param mode    current active mode; {@code null} when no mode is selected
+     * @return list of preview DTOs; empty only when no mode is selected or no files are present
+     */
+    private static List<RenamePreview> buildPreviewDtos(
+            List<PreparedFileModel> preview, List<FileModel> files, TransformationMode mode) {
+        if (!preview.isEmpty()) {
+            return preview.stream().map(RenameSessionConverter::toPreview).toList();
+        }
+        // Mode selected but params invalid — show placeholders so the table is not blank
+        if (mode != null && !files.isEmpty()) {
+            return files.stream().map(RenameSessionConverter::toPlaceholderPreview).toList();
+        }
+        return List.of();
     }
 
     @Override
@@ -104,8 +127,8 @@ public class RenameSessionService implements SessionApi {
                     List<PreparedFileModel> preview = computePreviewIfPossible();
                     session.setLastPreview(preview);
 
-                    List<RenamePreview> previewDtos = preview.stream()
-                            .map(RenameSessionConverter::toPreview).toList();
+                    List<RenamePreview> previewDtos = buildPreviewDtos(
+                            preview, session.getFiles(), session.getActiveMode());
                     List<ua.renamer.app.api.session.RenameCandidate> candidates = session.getFiles().stream()
                             .map(RenameSessionConverter::toCandidate).toList();
 
@@ -131,8 +154,8 @@ public class RenameSessionService implements SessionApi {
             List<PreparedFileModel> preview = computePreviewIfPossible();
             session.setLastPreview(preview);
 
-            List<RenamePreview> previewDtos = preview.stream()
-                    .map(RenameSessionConverter::toPreview).toList();
+            List<RenamePreview> previewDtos = buildPreviewDtos(
+                    preview, session.getFiles(), session.getActiveMode());
             List<ua.renamer.app.api.session.RenameCandidate> candidates = session.getFiles().stream()
                     .map(RenameSessionConverter::toCandidate).toList();
 
@@ -163,8 +186,7 @@ public class RenameSessionService implements SessionApi {
             List<PreparedFileModel> preview = computePreviewIfPossible();
             session.setLastPreview(preview);
 
-            List<RenamePreview> previewDtos = preview.stream()
-                    .map(RenameSessionConverter::toPreview).toList();
+            List<RenamePreview> previewDtos = buildPreviewDtos(preview, session.getFiles(), mode);
 
             publisher.publishModeChanged(mode, defaults);
             if (!previewDtos.isEmpty()) {
@@ -239,6 +261,8 @@ public class RenameSessionService implements SessionApi {
         return session.getStatus() == SessionStatus.MODE_CONFIGURED;
     }
 
+    // ==================== PRIVATE HELPERS ====================
+
     @Override
     public List<AvailableAction> availableActions() {
         return switch (session.getStatus()) {
@@ -249,8 +273,6 @@ public class RenameSessionService implements SessionApi {
             case COMPLETE, ERROR -> List.of(ADD_FILES, CLEAR, SELECT_MODE);
         };
     }
-
-    // ==================== PRIVATE HELPERS ====================
 
     @Override
     public SessionSnapshot snapshot() {
@@ -295,6 +317,9 @@ public class RenameSessionService implements SessionApi {
         ModeParameters params = session.getCurrentParams();
         List<FileModel> files = session.getFiles();
         if (mode == null || params == null || files.isEmpty()) {
+            return List.of();
+        }
+        if (params.validate().isError()) {
             return List.of();
         }
         return orchestrator.computePreview(files, mode, ModeParametersConverter.toConfig(params), null);

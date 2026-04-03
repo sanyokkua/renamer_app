@@ -64,13 +64,13 @@ public class RenameSession {
     }
 
     /**
-     * Clears all files, mode, params, and preview. Full reset to {@link SessionStatus#EMPTY}.
+     * Clears all files and preview. Resets status to {@link SessionStatus#EMPTY}.
+     * Mode and parameters are preserved so that the next {@link #addFiles} call
+     * can immediately compute a preview without requiring the user to re-select a mode.
      */
     public void clearFiles() {
         files.clear();
         lastPreview = List.of();
-        activeMode = null;
-        currentParams = null;
         status = SessionStatus.EMPTY;
     }
 

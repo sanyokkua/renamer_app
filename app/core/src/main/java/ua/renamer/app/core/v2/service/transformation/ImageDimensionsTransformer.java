@@ -100,7 +100,7 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
 
         // Add separator if we have left side value
         if (!sb.isEmpty() && config.getRightSide() != ImageDimensionOptions.DO_NOT_USE) {
-            sb.append(config.getSeparator());
+            sb.append(config.getSeparator() != null ? config.getSeparator() : "x");
         }
 
         // Right side
@@ -120,7 +120,7 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
                 .withConfig(Map.of(
                         "leftSide", config.getLeftSide().name(),
                         "rightSide", config.getRightSide().name(),
-                        "separator", config.getSeparator(),
+                        "separator", config.getSeparator() != null ? config.getSeparator() : "x",
                         "position", config.getPosition().name(),
                         "nameSeparator", config.getNameSeparator()
                 ))

@@ -76,6 +76,7 @@ public class ApplicationMainViewController implements Initializable {
     private boolean areFilesRenamed = false;
     private ModeApi<?> currentModeApi;
     private Map<String, RenameCandidate> candidatesByFileId = new HashMap<>();
+    private Map<String, RenameSessionResult> renameResultsByFileId = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     private static <P extends ModeParameters> void callBind(ModeControllerV2Api<?> ctrl, ModeApi<?> api) {
@@ -158,6 +159,17 @@ public class ApplicationMainViewController implements Initializable {
                 return new SimpleStringProperty(
                         languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_OF_ERROR));
             }
+            var result = renameResultsByFileId.get(p.fileId());
+            if (result != null) {
+                return switch (result.status()) {
+                    case SUCCESS -> new SimpleStringProperty(
+                            languageTextRetriever.getString(TextKeys.RENAMED_WITHOUT_ERRORS));
+                    case SKIPPED -> new SimpleStringProperty(
+                            languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_NOT_NEEDED));
+                    default -> new SimpleStringProperty(
+                            languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_OF_ERROR));
+                };
+            }
             if (p.newName() != null && !p.newName().equals(p.originalName())) {
                 return new SimpleStringProperty(
                         languageTextRetriever.getString(TextKeys.NO_ACTIONS_HAPPEN));
@@ -212,8 +224,11 @@ public class ApplicationMainViewController implements Initializable {
         });
         fxStateMirror.renameResults().addListener((ListChangeListener<RenameSessionResult>) change -> {
             if (!fxStateMirror.renameResults().isEmpty()) {
+                renameResultsByFileId = fxStateMirror.renameResults().stream()
+                        .collect(Collectors.toMap(RenameSessionResult::fileId, r -> r));
                 areFilesRenamed = true;
                 configureControlWidgetsState();
+                filesTableView.refresh();
             }
         });
     }
@@ -348,9 +363,6 @@ public class ApplicationMainViewController implements Initializable {
 
     private void handleBtnClickedPreview() {
         log.debug("handlePreviewBtnClicked");
-        if (currentModeApi != null) {
-            currentModeApi.resetParameters();
-        }
         configureControlWidgetsState();
     }
 
@@ -371,6 +383,7 @@ public class ApplicationMainViewController implements Initializable {
                 })
         );
         handle.result().thenRunAsync(() -> {
+            appProgressBar.setProgress(0);
             areFilesRenamed = true;
             configureControlWidgetsState();
         }, Platform::runLater);
@@ -401,6 +414,10 @@ public class ApplicationMainViewController implements Initializable {
 
     private void handleBtnClickedReload() {
         log.debug("handleBtnClickedReload");
+        areFilesRenamed = false;
+        renameResultsByFileId = new HashMap<>();
+        filesTableView.refresh();
+
         var files = List.copyOf(fxStateMirror.files());
         var resultsByFileId = fxStateMirror.renameResults().stream()
                 .collect(Collectors.toMap(RenameSessionResult::fileId, r -> r));
@@ -417,10 +434,7 @@ public class ApplicationMainViewController implements Initializable {
 
         sessionApi.clearFiles()
                 .thenCompose(ignored -> sessionApi.addFiles(reloadPaths))
-                .thenRunAsync(() -> {
-                    areFilesRenamed = false;
-                    configureControlWidgetsState();
-                }, Platform::runLater);
+                .thenRunAsync(() -> configureControlWidgetsState(), Platform::runLater);
     }
 
     private void setTextToTheFileDetailsView(String text) {

@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
@@ -36,6 +37,11 @@ public class ModeAddSequenceController
     private Spinner<Integer> minDigitAmountSpinner;
     @FXML
     private ChoiceBox<SortSource> sortingSourceChoiceBox;
+
+    private ChangeListener<Integer> startListener;
+    private ChangeListener<Integer> stepListener;
+    private ChangeListener<Integer> paddingListener;
+    private ChangeListener<SortSource> sortSourceListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -85,57 +91,56 @@ public class ModeAddSequenceController
     public void bind(ModeApi<SequenceParams> modeApi) {
         var params = modeApi.currentParameters();
 
-        // ── Init: startNumber ─────────────────────────────────────────────────
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (startListener != null) startSeqNumberSpinner.valueProperty().removeListener(startListener);
+        if (stepListener != null) stepValueSpinner.valueProperty().removeListener(stepListener);
+        if (paddingListener != null) minDigitAmountSpinner.valueProperty().removeListener(paddingListener);
+        if (sortSourceListener != null)
+            sortingSourceChoiceBox.getSelectionModel().selectedItemProperty().removeListener(sortSourceListener);
+
+        // ── Init ──────────────────────────────────────────────────────────────
         startSeqNumberSpinner.getValueFactory().setValue(params.startNumber());
-
-        // ── Init: stepValue ───────────────────────────────────────────────────
         stepValueSpinner.getValueFactory().setValue(params.stepValue());
-
-        // ── Init: paddingDigits ───────────────────────────────────────────────
         minDigitAmountSpinner.getValueFactory().setValue(params.paddingDigits());
 
-        // ── Init: sortSource (API → core enum) ────────────────────────────────
         if (params.sortSource() != null) {
             var coreSort = ua.renamer.app.core.enums.SortSource.valueOf(params.sortSource().name());
             sortingSourceChoiceBox.setValue(coreSort);
         }
 
-        // ── Wire: startSeqNumberSpinner → modeApi ─────────────────────────────
-        startSeqNumberSpinner.valueProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        log.debug("bind: startNumber changed → {}", newVal);
-                        modeApi.updateParameters(p -> p.withStartNumber(newVal));
-                    }
-                });
+        // ── Wire ──────────────────────────────────────────────────────────────
+        startListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                log.debug("bind: startNumber changed → {}", newVal);
+                modeApi.updateParameters(p -> p.withStartNumber(newVal));
+            }
+        };
+        startSeqNumberSpinner.valueProperty().addListener(startListener);
 
-        // ── Wire: stepValueSpinner → modeApi ──────────────────────────────────
-        stepValueSpinner.valueProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        log.debug("bind: stepValue changed → {}", newVal);
-                        modeApi.updateParameters(p -> p.withStepValue(newVal));
-                    }
-                });
+        stepListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                log.debug("bind: stepValue changed → {}", newVal);
+                modeApi.updateParameters(p -> p.withStepValue(newVal));
+            }
+        };
+        stepValueSpinner.valueProperty().addListener(stepListener);
 
-        // ── Wire: minDigitAmountSpinner → modeApi ─────────────────────────────
-        minDigitAmountSpinner.valueProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        log.debug("bind: paddingDigits changed → {}", newVal);
-                        modeApi.updateParameters(p -> p.withPaddingDigits(newVal));
-                    }
-                });
+        paddingListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                log.debug("bind: paddingDigits changed → {}", newVal);
+                modeApi.updateParameters(p -> p.withPaddingDigits(newVal));
+            }
+        };
+        minDigitAmountSpinner.valueProperty().addListener(paddingListener);
 
-        // ── Wire: sortingSourceChoiceBox → modeApi (core → API enum) ──────────
-        sortingSourceChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener((obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        var apiSort = ua.renamer.app.api.enums.SortSource.valueOf(newVal.name());
-                        log.debug("bind: sortSource changed → {}", apiSort);
-                        modeApi.updateParameters(p -> p.withSortSource(apiSort));
-                    }
-                });
+        sortSourceListener = (obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                var apiSort = ua.renamer.app.api.enums.SortSource.valueOf(newVal.name());
+                log.debug("bind: sortSource changed → {}", apiSort);
+                modeApi.updateParameters(p -> p.withSortSource(apiSort));
+            }
+        };
+        sortingSourceChoiceBox.getSelectionModel().selectedItemProperty().addListener(sortSourceListener);
     }
 
 }

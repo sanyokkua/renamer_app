@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -31,6 +32,8 @@ public class ModeTruncateFileNameController implements ModeControllerV2Api<Trunc
     private ItemPositionTruncateRadioSelector itemPositionRadioSelector;
     @FXML
     private Spinner<Integer> amountOfSymbolsSpinner;
+
+    private ChangeListener<Integer> symbolsListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -67,6 +70,10 @@ public class ModeTruncateFileNameController implements ModeControllerV2Api<Trunc
     public void bind(ModeApi<TruncateParams> modeApi) {
         var params = modeApi.currentParameters();
 
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (symbolsListener != null) amountOfSymbolsSpinner.valueProperty().removeListener(symbolsListener);
+
+        // ── Init ──────────────────────────────────────────────────────────────
         amountOfSymbolsSpinner.getValueFactory().setValue(params.numberOfSymbols());
 
         if (params.truncateOption() != null) {
@@ -80,12 +87,14 @@ public class ModeTruncateFileNameController implements ModeControllerV2Api<Trunc
 
         updateDisplayedItems();
 
-        amountOfSymbolsSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
+        // ── Wire ──────────────────────────────────────────────────────────────
+        symbolsListener = (obs, oldVal, newVal) -> {
             log.debug("bind: numberOfSymbols changed → {}", newVal);
             modeApi.updateParameters(p -> p.withNumberOfSymbols(newVal != null ? newVal : 0));
-        });
+        };
+        amountOfSymbolsSpinner.valueProperty().addListener(symbolsListener);
 
-        itemPositionRadioSelector.addValueSelectedHandler(coreOpt -> {
+        itemPositionRadioSelector.setValueSelectedHandler(coreOpt -> {
             var apiOpt = ua.renamer.app.api.enums.TruncateOptions.valueOf(coreOpt.name());
             log.debug("bind: truncateOption changed → {}", apiOpt);
             modeApi.updateParameters(p -> p.withTruncateOption(apiOpt));

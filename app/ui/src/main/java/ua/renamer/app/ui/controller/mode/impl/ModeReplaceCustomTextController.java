@@ -2,6 +2,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -30,6 +31,9 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
     @FXML
     private TextField textToAddTextField;
 
+    private ChangeListener<String> textToReplaceListener;
+    private ChangeListener<String> replacementTextListener;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.info("initialize()");
@@ -44,6 +48,11 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
     public void bind(ModeApi<ReplaceTextParams> modeApi) {
         var params = modeApi.currentParameters();
 
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (textToReplaceListener != null) textToReplaceTextField.textProperty().removeListener(textToReplaceListener);
+        if (replacementTextListener != null) textToAddTextField.textProperty().removeListener(replacementTextListener);
+
+        // ── Init ──────────────────────────────────────────────────────────────
         textToReplaceTextField.setText(params.textToReplace() != null ? params.textToReplace() : "");
         textToAddTextField.setText(params.replacementText() != null ? params.replacementText() : "");
 
@@ -56,7 +65,8 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
                     .ifPresent(btn -> itemPositionRadioSelector.getToggleGroup().selectToggle(btn));
         }
 
-        textToReplaceTextField.textProperty().addListener((obs, oldVal, newVal) -> {
+        // ── Wire ──────────────────────────────────────────────────────────────
+        textToReplaceListener = (obs, oldVal, newVal) -> {
             log.debug("bind: textToReplace changed → {}", newVal);
             modeApi.updateParameters(p -> p.withTextToReplace(newVal))
                     .thenAccept(result -> {
@@ -66,9 +76,10 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
                             Platform.runLater(() -> textToReplaceTextField.setStyle(""));
                         }
                     });
-        });
+        };
+        textToReplaceTextField.textProperty().addListener(textToReplaceListener);
 
-        textToAddTextField.textProperty().addListener((obs, oldVal, newVal) -> {
+        replacementTextListener = (obs, oldVal, newVal) -> {
             log.debug("bind: replacementText changed → {}", newVal);
             modeApi.updateParameters(p -> p.withReplacementText(newVal))
                     .thenAccept(result -> {
@@ -78,9 +89,10 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
                             Platform.runLater(() -> textToAddTextField.setStyle(""));
                         }
                     });
-        });
+        };
+        textToAddTextField.textProperty().addListener(replacementTextListener);
 
-        itemPositionRadioSelector.addValueSelectedHandler(corePos -> {
+        itemPositionRadioSelector.setValueSelectedHandler(corePos -> {
             var apiPos = ua.renamer.app.api.enums.ItemPositionExtended.valueOf(corePos.name());
             log.debug("bind: position changed → {}", apiPos);
             modeApi.updateParameters(p -> p.withPosition(apiPos));

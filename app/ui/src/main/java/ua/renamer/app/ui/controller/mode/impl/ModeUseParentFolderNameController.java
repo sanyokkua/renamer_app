@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
@@ -34,6 +35,9 @@ public class ModeUseParentFolderNameController implements ModeControllerV2Api<Pa
     @FXML
     private TextField fileNameSeparatorTextField;
 
+    private ChangeListener<Integer> parentsListener;
+    private ChangeListener<String> separatorListener;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configParentNumberSpinner();
@@ -56,13 +60,14 @@ public class ModeUseParentFolderNameController implements ModeControllerV2Api<Pa
     public void bind(ModeApi<ParentFolderParams> modeApi) {
         var params = modeApi.currentParameters();
 
-        // Initialize spinner
-        parentsNumberSpinner.getValueFactory().setValue(params.numberOfParentFolders());
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (parentsListener != null) parentsNumberSpinner.valueProperty().removeListener(parentsListener);
+        if (separatorListener != null) fileNameSeparatorTextField.textProperty().removeListener(separatorListener);
 
-        // Initialize separator text field
+        // ── Init ──────────────────────────────────────────────────────────────
+        parentsNumberSpinner.getValueFactory().setValue(params.numberOfParentFolders());
         fileNameSeparatorTextField.setText(params.separator() != null ? params.separator() : "");
 
-        // Initialize position selector — API enum → core enum
         if (params.position() != null) {
             var corePos = ua.renamer.app.core.enums.ItemPosition.valueOf(params.position().name());
             itemPositionRadioSelector.getButtons()
@@ -72,20 +77,20 @@ public class ModeUseParentFolderNameController implements ModeControllerV2Api<Pa
                     .ifPresent(btn -> itemPositionRadioSelector.getToggleGroup().selectToggle(btn));
         }
 
-        // Wire spinner → API
-        parentsNumberSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
+        // ── Wire ──────────────────────────────────────────────────────────────
+        parentsListener = (obs, oldVal, newVal) -> {
             log.debug("bind: numberOfParentFolders changed → {}", newVal);
             modeApi.updateParameters(p -> p.withNumberOfParentFolders(newVal != null ? newVal : 1));
-        });
+        };
+        parentsNumberSpinner.valueProperty().addListener(parentsListener);
 
-        // Wire separator text field → API
-        fileNameSeparatorTextField.textProperty().addListener((obs, oldVal, newVal) -> {
+        separatorListener = (obs, oldVal, newVal) -> {
             log.debug("bind: separator changed → {}", newVal);
             modeApi.updateParameters(p -> p.withSeparator(newVal != null ? newVal : ""));
-        });
+        };
+        fileNameSeparatorTextField.textProperty().addListener(separatorListener);
 
-        // Wire position selector → API (core enum → API enum)
-        itemPositionRadioSelector.addValueSelectedHandler(corePos -> {
+        itemPositionRadioSelector.setValueSelectedHandler(corePos -> {
             var apiPos = ua.renamer.app.api.enums.ItemPosition.valueOf(corePos.name());
             log.debug("bind: position changed → {}", apiPos);
             modeApi.updateParameters(p -> p.withPosition(apiPos));

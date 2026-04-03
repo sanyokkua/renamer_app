@@ -2,6 +2,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -32,6 +33,8 @@ public class ModeChangeCaseController implements ModeControllerV2Api<ChangeCaseP
     @FXML
     private CheckBox capitalizeCheckBox;
 
+    private ChangeListener<Boolean> capitalizeListener;
+
     @Override
     public TransformationMode supportedMode() {
         return TransformationMode.CHANGE_CASE;
@@ -39,9 +42,14 @@ public class ModeChangeCaseController implements ModeControllerV2Api<ChangeCaseP
 
     @Override
     public void bind(ModeApi<ChangeCaseParams> modeApi) {
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (capitalizeListener != null) capitalizeCheckBox.selectedProperty().removeListener(capitalizeListener);
+
+        // ── Init ──────────────────────────────────────────────────────────────
         caseChoiceBox.setValue(modeApi.currentParameters().caseOption());
         capitalizeCheckBox.setSelected(modeApi.currentParameters().capitalizeFirstLetter());
 
+        // ── Wire (ChoiceBox uses setOnAction — replace semantics, no field needed) ──
         caseChoiceBox.setOnAction(event -> {
             TextCaseOptions selected = caseChoiceBox.getValue();
             log.debug("bind: caseOption changed → {}", selected);
@@ -55,10 +63,11 @@ public class ModeChangeCaseController implements ModeControllerV2Api<ChangeCaseP
                     });
         });
 
-        capitalizeCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+        capitalizeListener = (obs, oldVal, newVal) -> {
             log.debug("bind: capitalizeFirstLetter changed → {}", newVal);
             modeApi.updateParameters(p -> p.withCapitalizeFirstLetter(newVal));
-        });
+        };
+        capitalizeCheckBox.selectedProperty().addListener(capitalizeListener);
     }
 
     @Override

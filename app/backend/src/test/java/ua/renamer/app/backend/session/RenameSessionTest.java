@@ -239,7 +239,7 @@ class RenameSessionTest {
     class ClearFilesTests {
 
         @Test
-        void givenModeConfigured_whenClearFiles_thenStatusIsEmptyAndModeIsNull() {
+        void givenModeConfigured_whenClearFiles_thenStatusIsEmptyAndModeIsPreserved() {
             // Arrange
             session.addFiles(List.of(FILE_A));
             session.setActiveMode(TransformationMode.ADD_TEXT, DEFAULT_PARAMS);
@@ -248,10 +248,10 @@ class RenameSessionTest {
             // Act
             session.clearFiles();
 
-            // Assert
+            // Assert — mode and params survive clearFiles so the next addFiles auto-previews
             assertThat(session.getStatus()).isEqualTo(SessionStatus.EMPTY);
-            assertThat(session.getActiveMode()).isNull();
-            assertThat(session.getCurrentParams()).isNull();
+            assertThat(session.getActiveMode()).isEqualTo(TransformationMode.ADD_TEXT);
+            assertThat(session.getCurrentParams()).isEqualTo(DEFAULT_PARAMS);
         }
 
         @Test

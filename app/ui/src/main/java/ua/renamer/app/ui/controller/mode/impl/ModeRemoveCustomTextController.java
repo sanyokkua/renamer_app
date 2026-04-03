@@ -2,6 +2,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -29,6 +30,8 @@ public class ModeRemoveCustomTextController implements ModeControllerV2Api<Remov
     @FXML
     private TextField removeTextField;
 
+    private ChangeListener<String> textToRemoveListener;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.info("initialize()");
@@ -43,6 +46,10 @@ public class ModeRemoveCustomTextController implements ModeControllerV2Api<Remov
     public void bind(ModeApi<RemoveTextParams> modeApi) {
         var params = modeApi.currentParameters();
 
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (textToRemoveListener != null) removeTextField.textProperty().removeListener(textToRemoveListener);
+
+        // ── Init ──────────────────────────────────────────────────────────────
         removeTextField.setText(params.textToRemove() != null ? params.textToRemove() : "");
 
         if (params.position() != null) {
@@ -54,7 +61,8 @@ public class ModeRemoveCustomTextController implements ModeControllerV2Api<Remov
                     .ifPresent(btn -> itemPositionRadioSelector.getToggleGroup().selectToggle(btn));
         }
 
-        removeTextField.textProperty().addListener((obs, oldVal, newVal) -> {
+        // ── Wire ──────────────────────────────────────────────────────────────
+        textToRemoveListener = (obs, oldVal, newVal) -> {
             log.debug("bind: textToRemove changed → {}", newVal);
             modeApi.updateParameters(p -> p.withTextToRemove(newVal))
                     .thenAccept(result -> {
@@ -64,9 +72,10 @@ public class ModeRemoveCustomTextController implements ModeControllerV2Api<Remov
                             Platform.runLater(() -> removeTextField.setStyle(""));
                         }
                     });
-        });
+        };
+        removeTextField.textProperty().addListener(textToRemoveListener);
 
-        itemPositionRadioSelector.addValueSelectedHandler(corePos -> {
+        itemPositionRadioSelector.setValueSelectedHandler(corePos -> {
             var apiPos = ua.renamer.app.api.enums.ItemPosition.valueOf(corePos.name());
             log.debug("bind: position changed → {}", apiPos);
             modeApi.updateParameters(p -> p.withPosition(apiPos));

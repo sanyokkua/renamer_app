@@ -2,6 +2,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -25,6 +26,8 @@ public class ModeChangeExtensionController implements ModeControllerV2Api<Extens
     @FXML
     private TextField extensionTextField;
 
+    private ChangeListener<String> extensionListener;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.info("initialize()");
@@ -37,8 +40,14 @@ public class ModeChangeExtensionController implements ModeControllerV2Api<Extens
 
     @Override
     public void bind(ModeApi<ExtensionChangeParams> modeApi) {
+        // ── Remove old listener ───────────────────────────────────────────────
+        if (extensionListener != null) extensionTextField.textProperty().removeListener(extensionListener);
+
+        // ── Init ──────────────────────────────────────────────────────────────
         extensionTextField.setText(modeApi.currentParameters().newExtension());
-        extensionTextField.textProperty().addListener((obs, oldVal, newVal) ->
+
+        // ── Wire ──────────────────────────────────────────────────────────────
+        extensionListener = (obs, oldVal, newVal) ->
                 modeApi.updateParameters(p -> p.withNewExtension(newVal))
                         .thenAccept(result -> {
                             if (result.isError()) {
@@ -46,8 +55,8 @@ public class ModeChangeExtensionController implements ModeControllerV2Api<Extens
                             } else {
                                 Platform.runLater(() -> extensionTextField.setStyle(""));
                             }
-                        })
-        );
+                        });
+        extensionTextField.textProperty().addListener(extensionListener);
     }
 
 }

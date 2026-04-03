@@ -2,6 +2,7 @@ package ua.renamer.app.ui.widget;
 
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -32,6 +33,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
     private final List<ValueRadioBtn<T>> buttons;
     private final ToggleGroup toggleGroup;
     private String labelValue;
+    private EventHandler<RadioSelectorEvent<?>> valueSelectedHandler;
 
     /**
      * Constructs a RadioSelector object with the specified label value, enum class, and converter.
@@ -123,6 +125,22 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
             T selectedValue = (T) event.getSelectedValue();
             callback.accept(selectedValue);
         });
+    }
+
+    /**
+     * Sets (replaces) the callback for selection-change events.
+     * Any previously registered callback is removed before the new one is registered,
+     * so repeated calls never accumulate handlers.
+     *
+     * @param callback the new callback; must not be null
+     */
+    @SuppressWarnings("unchecked")
+    public void setValueSelectedHandler(Consumer<T> callback) {
+        if (valueSelectedHandler != null) {
+            this.removeEventHandler(RadioSelectorEvent.RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE, valueSelectedHandler);
+        }
+        valueSelectedHandler = event -> callback.accept((T) event.getSelectedValue());
+        this.addEventHandler(RadioSelectorEvent.RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE, valueSelectedHandler);
     }
 
     /**

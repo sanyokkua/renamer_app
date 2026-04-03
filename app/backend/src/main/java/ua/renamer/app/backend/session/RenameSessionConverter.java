@@ -51,6 +51,27 @@ public final class RenameSessionConverter {
     }
 
     /**
+     * Creates a placeholder {@link RenamePreview} from a {@link FileModel} when no actual
+     * transformation preview is available (e.g. params are invalid).
+     * Shows the original filename with {@code newName = null} — table displays an empty
+     * "New Name" cell.
+     *
+     * @param model the file model; must not be null
+     * @return a placeholder preview; never null
+     */
+    public static RenamePreview toPlaceholderPreview(FileModel model) {
+        String ext = model.getExtension();
+        String fullName = model.getName() + (ext == null || ext.isEmpty() ? "" : "." + ext);
+        return new RenamePreview(
+                model.getAbsolutePath(),   // fileId — matches toCandidate
+                fullName,                  // originalName
+                null,                      // newName — no preview available
+                false,
+                null
+        );
+    }
+
+    /**
      * Converts a {@link RenameResult} to a {@link RenameSessionResult}.
      * {@code finalName} reflects actual disk state: new name on success, original name otherwise.
      *

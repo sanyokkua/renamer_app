@@ -1,9 +1,6 @@
 package ua.renamer.app.api.session;
 
-import ua.renamer.app.api.enums.DateFormat;
-import ua.renamer.app.api.enums.DateTimeSource;
-import ua.renamer.app.api.enums.ItemPositionWithReplacement;
-import ua.renamer.app.api.enums.TimeFormat;
+import ua.renamer.app.api.enums.*;
 import ua.renamer.app.api.model.TransformationMode;
 
 import java.time.LocalDateTime;
@@ -24,6 +21,10 @@ import java.time.LocalDateTime;
  * @param customDateTime              the custom date/time to use when {@code source} is {@link DateTimeSource#CUSTOM_DATE}
  *                                    or as fallback; required when source is {@code CUSTOM_DATE}
  * @param useUppercaseForAmPm         {@code true} to render AM/PM markers in uppercase
+ * @param dateTimeFormat              how the date and time parts are combined when both are used; may be null
+ *                                    if only one of date/time is included
+ * @param separator                   string inserted between the formatted datetime and the original name;
+ *                                    use empty string for no separator
  */
 public record DateTimeParams(
         DateTimeSource source,
@@ -36,7 +37,9 @@ public record DateTimeParams(
         boolean useFallbackDateTime,
         boolean useCustomDateTimeAsFallback,
         LocalDateTime customDateTime,
-        boolean useUppercaseForAmPm
+        boolean useUppercaseForAmPm,
+        DateTimeFormat dateTimeFormat,
+        String separator
 ) implements ModeParameters {
 
     @Override
@@ -77,7 +80,8 @@ public record DateTimeParams(
     public DateTimeParams withSource(DateTimeSource source) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -89,7 +93,8 @@ public record DateTimeParams(
     public DateTimeParams withDateFormat(DateFormat dateFormat) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -101,7 +106,8 @@ public record DateTimeParams(
     public DateTimeParams withTimeFormat(TimeFormat timeFormat) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -113,7 +119,8 @@ public record DateTimeParams(
     public DateTimeParams withPosition(ItemPositionWithReplacement position) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -125,7 +132,8 @@ public record DateTimeParams(
     public DateTimeParams withUseDatePart(boolean useDatePart) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -137,7 +145,8 @@ public record DateTimeParams(
     public DateTimeParams withUseTimePart(boolean useTimePart) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -149,7 +158,8 @@ public record DateTimeParams(
     public DateTimeParams withApplyToExtension(boolean applyToExtension) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -161,7 +171,8 @@ public record DateTimeParams(
     public DateTimeParams withUseFallbackDateTime(boolean useFallbackDateTime) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -173,7 +184,8 @@ public record DateTimeParams(
     public DateTimeParams withUseCustomDateTimeAsFallback(boolean useCustomDateTimeAsFallback) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -185,7 +197,8 @@ public record DateTimeParams(
     public DateTimeParams withCustomDateTime(LocalDateTime customDateTime) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 
     /**
@@ -197,6 +210,33 @@ public record DateTimeParams(
     public DateTimeParams withUseUppercaseForAmPm(boolean useUppercaseForAmPm) {
         return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
                 useTimePart, applyToExtension, useFallbackDateTime,
-                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm);
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
+    }
+
+    /**
+     * Returns a copy of this record with the given dateTimeFormat.
+     *
+     * @param dateTimeFormat how the date and time parts are combined; may be null when only one part is used
+     * @return a new {@link DateTimeParams} with the updated field
+     */
+    public DateTimeParams withDateTimeFormat(DateTimeFormat dateTimeFormat) {
+        return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
+                useTimePart, applyToExtension, useFallbackDateTime,
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
+    }
+
+    /**
+     * Returns a copy of this record with the given separator.
+     *
+     * @param separator string inserted between the datetime and the original filename; use empty string for none
+     * @return a new {@link DateTimeParams} with the updated field
+     */
+    public DateTimeParams withSeparator(String separator) {
+        return new DateTimeParams(source, dateFormat, timeFormat, position, useDatePart,
+                useTimePart, applyToExtension, useFallbackDateTime,
+                useCustomDateTimeAsFallback, customDateTime, useUppercaseForAmPm,
+                dateTimeFormat, separator);
     }
 }
