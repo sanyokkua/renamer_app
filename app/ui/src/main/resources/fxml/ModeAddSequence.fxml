@@ -39,7 +39,7 @@
         </Spinner>
 
         <Label text="%mode_use_digital_sequence_label_sorting_source" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <ChoiceBox fx:id="sortingSourceChoiceBox" onAction="#handleSortingSourceChanged" GridPane.columnIndex="1"
+        <ChoiceBox fx:id="sortingSourceChoiceBox" GridPane.columnIndex="1"
                    GridPane.rowIndex="3" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
