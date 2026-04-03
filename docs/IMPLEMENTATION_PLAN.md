@@ -2002,7 +2002,7 @@ app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeChangeExtensionC
 
 ---
 
-### TASK-4.8 — Migrate `ModeReplaceCustomTextController` to V2
+### TASK-4.8 — Migrate `ModeReplaceCustomTextController` to V2 ✅ done
 
 **Mode:** Replace Text (`REPLACE_TEXT`)
 **ModeParameters:**
