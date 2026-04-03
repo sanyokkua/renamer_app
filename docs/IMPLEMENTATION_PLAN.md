@@ -2077,6 +2077,8 @@ match)
 
 **This mode requires the fix from TASK-1.4 (BUG-1) to be complete before migration.**
 
+**Status:** ✅ DONE
+
 ---
 
 ### TASK-4.12 — Migrate `ModeAddSequenceController` to V2
