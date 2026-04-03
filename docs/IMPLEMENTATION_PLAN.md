@@ -2023,7 +2023,7 @@ match)
 
 ---
 
-### TASK-4.9 — Migrate `ModeTruncateFileNameController` to V2
+### TASK-4.9 — Migrate `ModeTruncateFileNameController` to V2 ✅ done
 
 **Mode:** Truncate File Name (`TRUNCATE_FILE_NAME`)
 **ModeParameters:** `TruncateParams(int numberOfSymbols, TruncateOptions truncateOption)`
