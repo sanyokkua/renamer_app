@@ -250,25 +250,25 @@ public class ApplicationMainViewController implements Initializable {
 
         modeViewRegistry.getController(transformationMode).ifPresent(v2ctrl ->
                 sessionApi.selectMode(v2ctrl.supportedMode())
-                          .thenAcceptAsync(modeApi -> {
-                              currentModeApi = modeApi;
-                              callBind(v2ctrl, modeApi);
-                          }, Platform::runLater)
+                        .thenAcceptAsync(modeApi -> {
+                            currentModeApi = modeApi;
+                            callBind(v2ctrl, modeApi);
+                        }, Platform::runLater)
         );
     }
 
     private TransformationMode toTransformationMode(AppModes mode) {
         return switch (mode) {
-            case ADD_CUSTOM_TEXT       -> TransformationMode.ADD_TEXT;
-            case CHANGE_CASE          -> TransformationMode.CHANGE_CASE;
-            case USE_DATETIME         -> TransformationMode.USE_DATETIME;
+            case ADD_CUSTOM_TEXT -> TransformationMode.ADD_TEXT;
+            case CHANGE_CASE -> TransformationMode.CHANGE_CASE;
+            case USE_DATETIME -> TransformationMode.USE_DATETIME;
             case USE_IMAGE_DIMENSIONS -> TransformationMode.USE_IMAGE_DIMENSIONS;
             case USE_PARENT_FOLDER_NAME -> TransformationMode.USE_PARENT_FOLDER_NAME;
-            case REMOVE_CUSTOM_TEXT   -> TransformationMode.REMOVE_TEXT;
-            case REPLACE_CUSTOM_TEXT  -> TransformationMode.REPLACE_TEXT;
-            case ADD_SEQUENCE         -> TransformationMode.ADD_SEQUENCE;
-            case TRUNCATE_FILE_NAME   -> TransformationMode.TRUNCATE_FILE_NAME;
-            case CHANGE_EXTENSION     -> TransformationMode.CHANGE_EXTENSION;
+            case REMOVE_CUSTOM_TEXT -> TransformationMode.REMOVE_TEXT;
+            case REPLACE_CUSTOM_TEXT -> TransformationMode.REPLACE_TEXT;
+            case ADD_SEQUENCE -> TransformationMode.ADD_SEQUENCE;
+            case TRUNCATE_FILE_NAME -> TransformationMode.TRUNCATE_FILE_NAME;
+            case CHANGE_EXTENSION -> TransformationMode.CHANGE_EXTENSION;
         };
     }
 
@@ -321,21 +321,21 @@ public class ApplicationMainViewController implements Initializable {
     private String buildPreviewHtml(RenamePreview preview, RenameCandidate candidate) {
         var sb = new StringBuilder("<html><body style='font-family:sans-serif;font-size:12px;padding:4px'>");
         sb.append("<b>").append(languageTextRetriever.getString(TextKeys.FILE_NAME))
-          .append(":</b> ").append(preview.originalName()).append("<br>");
+                .append(":</b> ").append(preview.originalName()).append("<br>");
         if (preview.newName() != null && !preview.newName().equals(preview.originalName())) {
             sb.append("<b>New name:</b> ").append(preview.newName()).append("<br>");
         }
         if (candidate != null) {
             sb.append("<b>").append(languageTextRetriever.getString(TextKeys.ABSOLUTE_PATH))
-              .append(":</b> ").append(candidate.path().getParent()).append("<br>");
+                    .append(":</b> ").append(candidate.path().getParent()).append("<br>");
             boolean isFile = !java.nio.file.Files.isDirectory(candidate.path());
             var typeKey = isFile ? TextKeys.IS_FILE : TextKeys.IS_FOLDER;
             sb.append("<b>").append(languageTextRetriever.getString(TextKeys.FILE_TYPE))
-              .append(":</b> ").append(languageTextRetriever.getString(typeKey)).append("<br>");
+                    .append(":</b> ").append(languageTextRetriever.getString(typeKey)).append("<br>");
         }
         if (preview.hasError()) {
             sb.append("<span style='color:red'><b>Error:</b> ")
-              .append(preview.errorMessage()).append("</span><br>");
+                    .append(preview.errorMessage()).append("</span><br>");
         }
         sb.append("</body></html>");
         return sb.toString();

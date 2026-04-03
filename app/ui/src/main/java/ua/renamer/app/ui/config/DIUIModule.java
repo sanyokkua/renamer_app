@@ -99,17 +99,17 @@ public class DIUIModule extends AbstractModule {
      * Provides a fully populated {@link ModeViewRegistry} by loading each mode's FXML
      * and pairing its loaded {@link Parent} view with its injected controller.
      *
-     * @param viewLoaderApi      the service that resolves FXML files by view name
-     * @param addCustomText      controller for ADD_TEXT mode
-     * @param changeCase         controller for CHANGE_CASE mode
-     * @param useDatetime        controller for USE_DATETIME mode
-     * @param useImageDimensions controller for USE_IMAGE_DIMENSIONS mode
+     * @param viewLoaderApi       the service that resolves FXML files by view name
+     * @param addCustomText       controller for ADD_TEXT mode
+     * @param changeCase          controller for CHANGE_CASE mode
+     * @param useDatetime         controller for USE_DATETIME mode
+     * @param useImageDimensions  controller for USE_IMAGE_DIMENSIONS mode
      * @param useParentFolderName controller for USE_PARENT_FOLDER_NAME mode
-     * @param removeCustomText   controller for REMOVE_TEXT mode
-     * @param replaceCustomText  controller for REPLACE_TEXT mode
-     * @param addSequence        controller for ADD_SEQUENCE mode
-     * @param truncateFileName   controller for TRUNCATE_FILE_NAME mode
-     * @param changeExtension    controller for CHANGE_EXTENSION mode
+     * @param removeCustomText    controller for REMOVE_TEXT mode
+     * @param replaceCustomText   controller for REPLACE_TEXT mode
+     * @param addSequence         controller for ADD_SEQUENCE mode
+     * @param truncateFileName    controller for TRUNCATE_FILE_NAME mode
+     * @param changeExtension     controller for CHANGE_EXTENSION mode
      * @return a populated registry; never null
      * @throws IOException if any FXML file cannot be loaded
      */

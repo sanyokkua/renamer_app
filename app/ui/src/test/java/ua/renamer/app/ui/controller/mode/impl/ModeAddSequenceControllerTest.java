@@ -32,11 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link ModeAddSequenceController}.
@@ -81,41 +77,6 @@ class ModeAddSequenceControllerTest {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
-    @BeforeEach
-    void setUp() throws Exception {
-        SortSourceConverter converter = new SortSourceConverter(languageTextRetriever);
-        controller = new ModeAddSequenceController(converter);
-
-        // @FXML field 1: startSeqNumberSpinner — range [0, MAX_VALUE], initial = 0
-        Spinner<Integer> startSpinner = new Spinner<>(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
-        injectStartSeqNumberSpinner(controller, startSpinner);
-
-        // @FXML field 2: stepValueSpinner — range [1, MAX_VALUE], initial = 1
-        Spinner<Integer> stepSpinner = new Spinner<>(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
-        injectStepValueSpinner(controller, stepSpinner);
-
-        // @FXML field 3: minDigitAmountSpinner — range [0, MAX_VALUE], initial = 0
-        Spinner<Integer> paddingSpinner = new Spinner<>(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
-        injectMinDigitAmountSpinner(controller, paddingSpinner);
-
-        // @FXML field 4: sortingSourceChoiceBox — seeded with all core enum values, initial = FILE_NAME
-        ChoiceBox<ua.renamer.app.core.enums.SortSource> choiceBox =
-                new ChoiceBox<>(FXCollections.observableArrayList(
-                        Arrays.asList(ua.renamer.app.core.enums.SortSource.values())));
-        choiceBox.setValue(ua.renamer.app.core.enums.SortSource.FILE_NAME);
-        injectSortingSourceChoiceBox(controller, choiceBox);
-
-        // Run initialize on the FX thread (mirrors FXML-loader lifecycle)
-        runOnFxThreadAndWait(() -> controller.initialize(null, null));
-    }
-
-    // -----------------------------------------------------------------------
-    // Reflection helpers — inject @FXML fields
-    // -----------------------------------------------------------------------
-
     private static void injectStartSeqNumberSpinner(
             ModeAddSequenceController target,
             Spinner<Integer> spinner) throws Exception {
@@ -123,6 +84,10 @@ class ModeAddSequenceControllerTest {
         f.setAccessible(true);
         f.set(target, spinner);
     }
+
+    // -----------------------------------------------------------------------
+    // Reflection helpers — inject @FXML fields
+    // -----------------------------------------------------------------------
 
     private static void injectStepValueSpinner(
             ModeAddSequenceController target,
@@ -148,10 +113,6 @@ class ModeAddSequenceControllerTest {
         f.set(target, box);
     }
 
-    // -----------------------------------------------------------------------
-    // Reflection helpers — read @FXML fields (unchecked, for use inside lambdas)
-    // -----------------------------------------------------------------------
-
     @SuppressWarnings("unchecked")
     private static Spinner<Integer> readStartSpinnerUnchecked(ModeAddSequenceController target) {
         try {
@@ -162,6 +123,10 @@ class ModeAddSequenceControllerTest {
             throw new RuntimeException(e);
         }
     }
+
+    // -----------------------------------------------------------------------
+    // Reflection helpers — read @FXML fields (unchecked, for use inside lambdas)
+    // -----------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
     private static Spinner<Integer> readStepSpinnerUnchecked(ModeAddSequenceController target) {
@@ -197,16 +162,102 @@ class ModeAddSequenceControllerTest {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // Baseline params — for applying captured mutators
-    // -----------------------------------------------------------------------
-
     private static SequenceParams defaultParams() {
         return new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME);
     }
 
     // -----------------------------------------------------------------------
+    // Baseline params — for applying captured mutators
+    // -----------------------------------------------------------------------
+
+    /**
+     * Runs the given task on the FX Application Thread and blocks the calling
+     * thread until the task completes or the timeout elapses.
+     */
+    private static void runOnFxThreadAndWait(RunnableEx task) throws Exception {
+        AtomicReference<Throwable> thrown = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Platform.runLater(() -> {
+            try {
+                task.run();
+            } catch (Throwable t) {
+                thrown.set(t);
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
+                .as("FX task must complete within timeout").isTrue();
+
+        if (thrown.get() != null) {
+            throw new RuntimeException("Exception on FX thread", thrown.get());
+        }
+    }
+
+    // -----------------------------------------------------------------------
     // Pure (no-FX) tests
+    // -----------------------------------------------------------------------
+
+    /**
+     * Convenience overload that rethrows as {@link RuntimeException}.
+     * Use only when the calling site cannot propagate a checked exception.
+     */
+    private static void runOnFxThreadAndWaitUnchecked(RunnableEx task) {
+        try {
+            runOnFxThreadAndWait(task);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // bind() — FX thread required for JavaFX control interaction
+    // -----------------------------------------------------------------------
+
+    @BeforeEach
+    void setUp() throws Exception {
+        SortSourceConverter converter = new SortSourceConverter(languageTextRetriever);
+        controller = new ModeAddSequenceController(converter);
+
+        // @FXML field 1: startSeqNumberSpinner — range [0, MAX_VALUE], initial = 0
+        Spinner<Integer> startSpinner = new Spinner<>(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+        injectStartSeqNumberSpinner(controller, startSpinner);
+
+        // @FXML field 2: stepValueSpinner — range [1, MAX_VALUE], initial = 1
+        Spinner<Integer> stepSpinner = new Spinner<>(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
+        injectStepValueSpinner(controller, stepSpinner);
+
+        // @FXML field 3: minDigitAmountSpinner — range [0, MAX_VALUE], initial = 0
+        Spinner<Integer> paddingSpinner = new Spinner<>(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+        injectMinDigitAmountSpinner(controller, paddingSpinner);
+
+        // @FXML field 4: sortingSourceChoiceBox — seeded with all core enum values, initial = FILE_NAME
+        ChoiceBox<ua.renamer.app.core.enums.SortSource> choiceBox =
+                new ChoiceBox<>(FXCollections.observableArrayList(
+                        Arrays.asList(ua.renamer.app.core.enums.SortSource.values())));
+        choiceBox.setValue(ua.renamer.app.core.enums.SortSource.FILE_NAME);
+        injectSortingSourceChoiceBox(controller, choiceBox);
+
+        // Run initialize on the FX thread (mirrors FXML-loader lifecycle)
+        runOnFxThreadAndWait(() -> controller.initialize(null, null));
+    }
+
+    // -----------------------------------------------------------------------
+    // No-throw contract — V2 pipeline must never propagate exceptions
+    // -----------------------------------------------------------------------
+
+    @FunctionalInterface
+    private interface RunnableEx {
+        void run() throws Exception;
+    }
+
+    // -----------------------------------------------------------------------
+    // FX threading utilities
     // -----------------------------------------------------------------------
 
     @Nested
@@ -229,10 +280,6 @@ class ModeAddSequenceControllerTest {
             assertThatCode(() -> controller.supportedMode()).doesNotThrowAnyException();
         }
     }
-
-    // -----------------------------------------------------------------------
-    // bind() — FX thread required for JavaFX control interaction
-    // -----------------------------------------------------------------------
 
     @Nested
     class BindTests {
@@ -474,10 +521,6 @@ class ModeAddSequenceControllerTest {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // No-throw contract — V2 pipeline must never propagate exceptions
-    // -----------------------------------------------------------------------
-
     @Nested
     class NoThrowContractTests {
 
@@ -507,52 +550,5 @@ class ModeAddSequenceControllerTest {
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
         }
-    }
-
-    // -----------------------------------------------------------------------
-    // FX threading utilities
-    // -----------------------------------------------------------------------
-
-    /**
-     * Runs the given task on the FX Application Thread and blocks the calling
-     * thread until the task completes or the timeout elapses.
-     */
-    private static void runOnFxThreadAndWait(RunnableEx task) throws Exception {
-        AtomicReference<Throwable> thrown = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Platform.runLater(() -> {
-            try {
-                task.run();
-            } catch (Throwable t) {
-                thrown.set(t);
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-                .as("FX task must complete within timeout").isTrue();
-
-        if (thrown.get() != null) {
-            throw new RuntimeException("Exception on FX thread", thrown.get());
-        }
-    }
-
-    /**
-     * Convenience overload that rethrows as {@link RuntimeException}.
-     * Use only when the calling site cannot propagate a checked exception.
-     */
-    private static void runOnFxThreadAndWaitUnchecked(RunnableEx task) {
-        try {
-            runOnFxThreadAndWait(task);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @FunctionalInterface
-    private interface RunnableEx {
-        void run() throws Exception;
     }
 }

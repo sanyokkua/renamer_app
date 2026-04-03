@@ -57,13 +57,13 @@ public class ModeRemoveCustomTextController implements ModeControllerV2Api<Remov
         removeTextField.textProperty().addListener((obs, oldVal, newVal) -> {
             log.debug("bind: textToRemove changed → {}", newVal);
             modeApi.updateParameters(p -> p.withTextToRemove(newVal))
-                   .thenAccept(result -> {
-                       if (result.isError()) {
-                           Platform.runLater(() -> removeTextField.setStyle("-fx-border-color: red;"));
-                       } else {
-                           Platform.runLater(() -> removeTextField.setStyle(""));
-                       }
-                   });
+                    .thenAccept(result -> {
+                        if (result.isError()) {
+                            Platform.runLater(() -> removeTextField.setStyle("-fx-border-color: red;"));
+                        } else {
+                            Platform.runLater(() -> removeTextField.setStyle(""));
+                        }
+                    });
         });
 
         itemPositionRadioSelector.addValueSelectedHandler(corePos -> {

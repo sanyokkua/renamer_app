@@ -46,13 +46,13 @@ public class ModeChangeCaseController implements ModeControllerV2Api<ChangeCaseP
             TextCaseOptions selected = caseChoiceBox.getValue();
             log.debug("bind: caseOption changed → {}", selected);
             modeApi.updateParameters(p -> p.withCaseOption(selected))
-                   .thenAccept(result -> {
-                       if (result.isError()) {
-                           Platform.runLater(() -> caseChoiceBox.setStyle("-fx-border-color: red;"));
-                       } else {
-                           Platform.runLater(() -> caseChoiceBox.setStyle(""));
-                       }
-                   });
+                    .thenAccept(result -> {
+                        if (result.isError()) {
+                            Platform.runLater(() -> caseChoiceBox.setStyle("-fx-border-color: red;"));
+                        } else {
+                            Platform.runLater(() -> caseChoiceBox.setStyle(""));
+                        }
+                    });
         });
 
         capitalizeCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {

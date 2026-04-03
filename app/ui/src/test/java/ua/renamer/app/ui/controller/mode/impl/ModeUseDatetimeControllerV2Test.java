@@ -76,6 +76,132 @@ class ModeUseDatetimeControllerV2Test {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> T readFieldUnchecked(ModeUseDatetimeController target, String fieldName) {
+        try {
+            Field f = ModeUseDatetimeController.class.getDeclaredField(fieldName);
+            f.setAccessible(true);
+            return (T) f.get(target);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Reflection helpers — inject and read @FXML fields
+    // -----------------------------------------------------------------------
+
+    private static ChoiceBox<ua.renamer.app.core.enums.DateTimeSource> readSourceBoxUnchecked(
+            ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "dateTimeSourceChoiceBox");
+    }
+
+    private static ChoiceBox<ua.renamer.app.core.enums.DateFormat> readDateFormatBoxUnchecked(
+            ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "dateFormatChoiceBox");
+    }
+
+    private static ChoiceBox<ua.renamer.app.core.enums.TimeFormat> readTimeFormatBoxUnchecked(
+            ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "timeFormatChoiceBox");
+    }
+
+    private static ItemPositionWithReplacementRadioSelector readRadioSelectorUnchecked(
+            ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "dateTimePositionInTheNameRadioSelector");
+    }
+
+    private static CheckBox readUseFallbackCheckBoxUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "useFallbackDateTimeCheckBox");
+    }
+
+    private static CheckBox readUseCustomFallbackCheckBoxUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "useCustomDateTimeAsFallbackCheckBox");
+    }
+
+    private static CheckBox readUseUppercaseCheckBoxUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "useUppercaseForAmPmCheckBox");
+    }
+
+    private static DatePicker readDatePickerUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "datePicker");
+    }
+
+    private static Spinner<Integer> readHourSpinnerUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "hourSpinner");
+    }
+
+    private static Spinner<Integer> readMinuteSpinnerUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "minuteSpinner");
+    }
+
+    private static Spinner<Integer> readSecondSpinnerUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "secondSpinner");
+    }
+
+    private static GridPane readDateTimePickerPanelUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "dateTimePicker");
+    }
+
+    private static Label readSeparatorLabelUnchecked(ModeUseDatetimeController target) {
+        return readFieldUnchecked(target, "datetimeAndNameSeparatorLabel");
+    }
+
+    private static DateTimeParams baseline() {
+        return new DateTimeParams(
+                ua.renamer.app.api.enums.DateTimeSource.FILE_CREATION_DATE,
+                ua.renamer.app.api.enums.DateFormat.DO_NOT_USE_DATE,
+                ua.renamer.app.api.enums.TimeFormat.DO_NOT_USE_TIME,
+                ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
+                false, false, false, false, false, null, false);
+    }
+
+    /**
+     * Runs the given task on the FX Application Thread and blocks the calling
+     * thread until the task completes or the timeout elapses.
+     */
+    private static void runOnFxThreadAndWait(RunnableEx task) throws Exception {
+        AtomicReference<Throwable> thrown = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Platform.runLater(() -> {
+            try {
+                task.run();
+            } catch (Throwable t) {
+                thrown.set(t);
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
+                .as("FX task must complete within timeout").isTrue();
+
+        if (thrown.get() != null) {
+            throw new RuntimeException("Exception on FX thread", thrown.get());
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Baseline params — for applying captured mutators
+    // -----------------------------------------------------------------------
+
+    /**
+     * Convenience overload that rethrows as {@link RuntimeException}.
+     * Use only when the calling site cannot propagate a checked exception.
+     */
+    private static void runOnFxThreadAndWaitUnchecked(RunnableEx task) {
+        try {
+            runOnFxThreadAndWait(task);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Pure (no-FX) tests
+    // -----------------------------------------------------------------------
+
     @BeforeEach
     void setUp() throws Exception {
         var dateFormatConverter = new DateFormatConverter(languageTextRetriever);
@@ -146,7 +272,7 @@ class ModeUseDatetimeControllerV2Test {
     }
 
     // -----------------------------------------------------------------------
-    // Reflection helpers — inject and read @FXML fields
+    // bind() — init: controls reflect params values after bind()
     // -----------------------------------------------------------------------
 
     private void injectField(String fieldName, Object value) throws Exception {
@@ -155,88 +281,17 @@ class ModeUseDatetimeControllerV2Test {
         f.set(controller, value);
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> T readFieldUnchecked(ModeUseDatetimeController target, String fieldName) {
-        try {
-            Field f = ModeUseDatetimeController.class.getDeclaredField(fieldName);
-            f.setAccessible(true);
-            return (T) f.get(target);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    // -----------------------------------------------------------------------
+    // bind() — wire: user interaction propagates to modeApi via mutator
+    // -----------------------------------------------------------------------
 
-    private static ChoiceBox<ua.renamer.app.core.enums.DateTimeSource> readSourceBoxUnchecked(
-            ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "dateTimeSourceChoiceBox");
-    }
-
-    private static ChoiceBox<ua.renamer.app.core.enums.DateFormat> readDateFormatBoxUnchecked(
-            ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "dateFormatChoiceBox");
-    }
-
-    private static ChoiceBox<ua.renamer.app.core.enums.TimeFormat> readTimeFormatBoxUnchecked(
-            ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "timeFormatChoiceBox");
-    }
-
-    private static ItemPositionWithReplacementRadioSelector readRadioSelectorUnchecked(
-            ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "dateTimePositionInTheNameRadioSelector");
-    }
-
-    private static CheckBox readUseFallbackCheckBoxUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "useFallbackDateTimeCheckBox");
-    }
-
-    private static CheckBox readUseCustomFallbackCheckBoxUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "useCustomDateTimeAsFallbackCheckBox");
-    }
-
-    private static CheckBox readUseUppercaseCheckBoxUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "useUppercaseForAmPmCheckBox");
-    }
-
-    private static DatePicker readDatePickerUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "datePicker");
-    }
-
-    private static Spinner<Integer> readHourSpinnerUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "hourSpinner");
-    }
-
-    private static Spinner<Integer> readMinuteSpinnerUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "minuteSpinner");
-    }
-
-    private static Spinner<Integer> readSecondSpinnerUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "secondSpinner");
-    }
-
-    private static GridPane readDateTimePickerPanelUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "dateTimePicker");
-    }
-
-    private static Label readSeparatorLabelUnchecked(ModeUseDatetimeController target) {
-        return readFieldUnchecked(target, "datetimeAndNameSeparatorLabel");
+    @FunctionalInterface
+    private interface RunnableEx {
+        void run() throws Exception;
     }
 
     // -----------------------------------------------------------------------
-    // Baseline params — for applying captured mutators
-    // -----------------------------------------------------------------------
-
-    private static DateTimeParams baseline() {
-        return new DateTimeParams(
-                ua.renamer.app.api.enums.DateTimeSource.FILE_CREATION_DATE,
-                ua.renamer.app.api.enums.DateFormat.DO_NOT_USE_DATE,
-                ua.renamer.app.api.enums.TimeFormat.DO_NOT_USE_TIME,
-                ua.renamer.app.api.enums.ItemPositionWithReplacement.BEGIN,
-                false, false, false, false, false, null, false);
-    }
-
-    // -----------------------------------------------------------------------
-    // Pure (no-FX) tests
+    // bind() — visibility: source and position drive panel/label visibility
     // -----------------------------------------------------------------------
 
     @Nested
@@ -261,7 +316,7 @@ class ModeUseDatetimeControllerV2Test {
     }
 
     // -----------------------------------------------------------------------
-    // bind() — init: controls reflect params values after bind()
+    // No-throw contract — V2 pipeline must never propagate exceptions
     // -----------------------------------------------------------------------
 
     @Nested
@@ -497,7 +552,7 @@ class ModeUseDatetimeControllerV2Test {
     }
 
     // -----------------------------------------------------------------------
-    // bind() — wire: user interaction propagates to modeApi via mutator
+    // FX threading utilities
     // -----------------------------------------------------------------------
 
     @Nested
@@ -974,10 +1029,6 @@ class ModeUseDatetimeControllerV2Test {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // bind() — visibility: source and position drive panel/label visibility
-    // -----------------------------------------------------------------------
-
     @Nested
     class BindVisibilityTests {
 
@@ -1077,10 +1128,6 @@ class ModeUseDatetimeControllerV2Test {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // No-throw contract — V2 pipeline must never propagate exceptions
-    // -----------------------------------------------------------------------
-
     @Nested
     class NoThrowContractTests {
 
@@ -1144,52 +1191,5 @@ class ModeUseDatetimeControllerV2Test {
                     .doesNotThrowAnyException();
         }
 
-    }
-
-    // -----------------------------------------------------------------------
-    // FX threading utilities
-    // -----------------------------------------------------------------------
-
-    /**
-     * Runs the given task on the FX Application Thread and blocks the calling
-     * thread until the task completes or the timeout elapses.
-     */
-    private static void runOnFxThreadAndWait(RunnableEx task) throws Exception {
-        AtomicReference<Throwable> thrown = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Platform.runLater(() -> {
-            try {
-                task.run();
-            } catch (Throwable t) {
-                thrown.set(t);
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-                .as("FX task must complete within timeout").isTrue();
-
-        if (thrown.get() != null) {
-            throw new RuntimeException("Exception on FX thread", thrown.get());
-        }
-    }
-
-    /**
-     * Convenience overload that rethrows as {@link RuntimeException}.
-     * Use only when the calling site cannot propagate a checked exception.
-     */
-    private static void runOnFxThreadAndWaitUnchecked(RunnableEx task) {
-        try {
-            runOnFxThreadAndWait(task);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @FunctionalInterface
-    private interface RunnableEx {
-        void run() throws Exception;
     }
 }

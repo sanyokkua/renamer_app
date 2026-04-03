@@ -39,14 +39,14 @@ public class ModeChangeExtensionController implements ModeControllerV2Api<Extens
     public void bind(ModeApi<ExtensionChangeParams> modeApi) {
         extensionTextField.setText(modeApi.currentParameters().newExtension());
         extensionTextField.textProperty().addListener((obs, oldVal, newVal) ->
-            modeApi.updateParameters(p -> p.withNewExtension(newVal))
-                   .thenAccept(result -> {
-                       if (result.isError()) {
-                           Platform.runLater(() -> extensionTextField.setStyle("-fx-border-color: red;"));
-                       } else {
-                           Platform.runLater(() -> extensionTextField.setStyle(""));
-                       }
-                   })
+                modeApi.updateParameters(p -> p.withNewExtension(newVal))
+                        .thenAccept(result -> {
+                            if (result.isError()) {
+                                Platform.runLater(() -> extensionTextField.setStyle("-fx-border-color: red;"));
+                            } else {
+                                Platform.runLater(() -> extensionTextField.setStyle(""));
+                            }
+                        })
         );
     }
 

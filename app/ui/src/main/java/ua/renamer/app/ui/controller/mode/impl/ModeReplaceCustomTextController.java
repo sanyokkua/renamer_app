@@ -59,25 +59,25 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
         textToReplaceTextField.textProperty().addListener((obs, oldVal, newVal) -> {
             log.debug("bind: textToReplace changed → {}", newVal);
             modeApi.updateParameters(p -> p.withTextToReplace(newVal))
-                   .thenAccept(result -> {
-                       if (result.isError()) {
-                           Platform.runLater(() -> textToReplaceTextField.setStyle("-fx-border-color: red;"));
-                       } else {
-                           Platform.runLater(() -> textToReplaceTextField.setStyle(""));
-                       }
-                   });
+                    .thenAccept(result -> {
+                        if (result.isError()) {
+                            Platform.runLater(() -> textToReplaceTextField.setStyle("-fx-border-color: red;"));
+                        } else {
+                            Platform.runLater(() -> textToReplaceTextField.setStyle(""));
+                        }
+                    });
         });
 
         textToAddTextField.textProperty().addListener((obs, oldVal, newVal) -> {
             log.debug("bind: replacementText changed → {}", newVal);
             modeApi.updateParameters(p -> p.withReplacementText(newVal))
-                   .thenAccept(result -> {
-                       if (result.isError()) {
-                           Platform.runLater(() -> textToAddTextField.setStyle("-fx-border-color: red;"));
-                       } else {
-                           Platform.runLater(() -> textToAddTextField.setStyle(""));
-                       }
-                   });
+                    .thenAccept(result -> {
+                        if (result.isError()) {
+                            Platform.runLater(() -> textToAddTextField.setStyle("-fx-border-color: red;"));
+                        } else {
+                            Platform.runLater(() -> textToAddTextField.setStyle(""));
+                        }
+                    });
         });
 
         itemPositionRadioSelector.addValueSelectedHandler(corePos -> {

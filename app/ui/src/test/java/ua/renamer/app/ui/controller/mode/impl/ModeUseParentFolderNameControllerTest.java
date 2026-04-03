@@ -33,9 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link ModeUseParentFolderNameController}.
@@ -84,35 +82,16 @@ class ModeUseParentFolderNameControllerTest {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
-    @BeforeEach
-    void setUp() throws Exception {
-        controller = new ModeUseParentFolderNameController(filesOperations);
-
-        var converter = new ItemPositionConverter(languageTextRetriever);
-
-        // @FXML field 1: Spinner<Integer> with value factory, editable
-        Spinner<Integer> spinner = new Spinner<>();
-        spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
-        spinner.setEditable(true);
-        injectSpinner(controller, spinner);
-
-        // @FXML field 2: TextField for separator
-        injectTextField(controller, new TextField());
-
-        // @FXML field 3: ItemPositionRadioSelector
-        injectRadioSelector(controller, new ItemPositionRadioSelector("", converter));
-    }
-
-    // -----------------------------------------------------------------------
-    // Reflection helpers — inject / read @FXML fields
-    // -----------------------------------------------------------------------
-
     private static void injectSpinner(ModeUseParentFolderNameController target, Spinner<Integer> spinner)
             throws Exception {
         Field f = ModeUseParentFolderNameController.class.getDeclaredField("parentsNumberSpinner");
         f.setAccessible(true);
         f.set(target, spinner);
     }
+
+    // -----------------------------------------------------------------------
+    // Reflection helpers — inject / read @FXML fields
+    // -----------------------------------------------------------------------
 
     private static void injectTextField(ModeUseParentFolderNameController target, TextField field)
             throws Exception {
@@ -174,8 +153,82 @@ class ModeUseParentFolderNameControllerTest {
         }
     }
 
+    /**
+     * Runs the given task on the FX Application Thread and blocks the calling
+     * thread until the task completes or the timeout elapses.
+     */
+    private static void runOnFxThreadAndWait(RunnableEx task) throws Exception {
+        AtomicReference<Throwable> thrown = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Platform.runLater(() -> {
+            try {
+                task.run();
+            } catch (Throwable t) {
+                thrown.set(t);
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
+                .as("FX task must complete within timeout").isTrue();
+
+        if (thrown.get() != null) {
+            throw new RuntimeException("Exception on FX thread", thrown.get());
+        }
+    }
+
     // -----------------------------------------------------------------------
     // Pure (no-FX) tests
+    // -----------------------------------------------------------------------
+
+    /**
+     * Convenience overload that rethrows as {@link RuntimeException}.
+     * Use only when the calling site cannot propagate a checked exception.
+     */
+    private static void runOnFxThreadAndWaitUnchecked(RunnableEx task) {
+        try {
+            runOnFxThreadAndWait(task);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // bind() — FX thread required for JavaFX control interaction
+    // -----------------------------------------------------------------------
+
+    @BeforeEach
+    void setUp() throws Exception {
+        controller = new ModeUseParentFolderNameController(filesOperations);
+
+        var converter = new ItemPositionConverter(languageTextRetriever);
+
+        // @FXML field 1: Spinner<Integer> with value factory, editable
+        Spinner<Integer> spinner = new Spinner<>();
+        spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
+        spinner.setEditable(true);
+        injectSpinner(controller, spinner);
+
+        // @FXML field 2: TextField for separator
+        injectTextField(controller, new TextField());
+
+        // @FXML field 3: ItemPositionRadioSelector
+        injectRadioSelector(controller, new ItemPositionRadioSelector("", converter));
+    }
+
+    // -----------------------------------------------------------------------
+    // No-throw contract — V2 pipeline must never propagate exceptions
+    // -----------------------------------------------------------------------
+
+    @FunctionalInterface
+    private interface RunnableEx {
+        void run() throws Exception;
+    }
+
+    // -----------------------------------------------------------------------
+    // FX threading utilities
     // -----------------------------------------------------------------------
 
     @Nested
@@ -198,10 +251,6 @@ class ModeUseParentFolderNameControllerTest {
             assertThatCode(() -> controller.supportedMode()).doesNotThrowAnyException();
         }
     }
-
-    // -----------------------------------------------------------------------
-    // bind() — FX thread required for JavaFX control interaction
-    // -----------------------------------------------------------------------
 
     @Nested
     class BindTests {
@@ -487,10 +536,6 @@ class ModeUseParentFolderNameControllerTest {
         }
     }
 
-    // -----------------------------------------------------------------------
-    // No-throw contract — V2 pipeline must never propagate exceptions
-    // -----------------------------------------------------------------------
-
     @Nested
     class NoThrowContractTests {
 
@@ -507,52 +552,5 @@ class ModeUseParentFolderNameControllerTest {
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
         }
-    }
-
-    // -----------------------------------------------------------------------
-    // FX threading utilities
-    // -----------------------------------------------------------------------
-
-    /**
-     * Runs the given task on the FX Application Thread and blocks the calling
-     * thread until the task completes or the timeout elapses.
-     */
-    private static void runOnFxThreadAndWait(RunnableEx task) throws Exception {
-        AtomicReference<Throwable> thrown = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Platform.runLater(() -> {
-            try {
-                task.run();
-            } catch (Throwable t) {
-                thrown.set(t);
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-                .as("FX task must complete within timeout").isTrue();
-
-        if (thrown.get() != null) {
-            throw new RuntimeException("Exception on FX thread", thrown.get());
-        }
-    }
-
-    /**
-     * Convenience overload that rethrows as {@link RuntimeException}.
-     * Use only when the calling site cannot propagate a checked exception.
-     */
-    private static void runOnFxThreadAndWaitUnchecked(RunnableEx task) {
-        try {
-            runOnFxThreadAndWait(task);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @FunctionalInterface
-    private interface RunnableEx {
-        void run() throws Exception;
     }
 }

@@ -10,7 +10,6 @@ import ua.renamer.app.core.service.file.BasicFileAttributesExtractor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

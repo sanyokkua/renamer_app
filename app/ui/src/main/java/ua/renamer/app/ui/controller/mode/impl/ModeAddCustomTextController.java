@@ -57,13 +57,13 @@ public class ModeAddCustomTextController implements ModeControllerV2Api<AddTextP
         textField.textProperty().addListener((obs, oldVal, newVal) -> {
             log.debug("bind: textToAdd changed → {}", newVal);
             modeApi.updateParameters(p -> p.withTextToAdd(newVal))
-                   .thenAccept(result -> {
-                       if (result.isError()) {
-                           Platform.runLater(() -> textField.setStyle("-fx-border-color: red;"));
-                       } else {
-                           Platform.runLater(() -> textField.setStyle(""));
-                       }
-                   });
+                    .thenAccept(result -> {
+                        if (result.isError()) {
+                            Platform.runLater(() -> textField.setStyle("-fx-border-color: red;"));
+                        } else {
+                            Platform.runLater(() -> textField.setStyle(""));
+                        }
+                    });
         });
 
         itemPositionRadioSelector.addValueSelectedHandler(corePos -> {
