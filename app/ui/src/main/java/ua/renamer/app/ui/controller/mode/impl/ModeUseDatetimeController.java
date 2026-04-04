@@ -12,7 +12,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.DateTimeParams;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.core.enums.*;
-import ua.renamer.app.core.service.helper.DateTimeOperations;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.DateFormatConverter;
 import ua.renamer.app.ui.converter.DateTimeFormatConverter;
@@ -39,7 +38,6 @@ public class ModeUseDatetimeController
     private final TimeFormatConverter timeFormatConverter;
     private final DateTimeFormatConverter dateTimeFormatConverter;
     private final DateTimeSourceConverter dateTimeSourceConverter;
-    private final DateTimeOperations dateTimeOperations;
 
     @FXML
     private ItemPositionWithReplacementRadioSelector dateTimePositionInTheNameRadioSelector;

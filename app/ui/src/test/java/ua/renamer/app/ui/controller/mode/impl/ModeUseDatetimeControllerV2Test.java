@@ -15,7 +15,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.DateTimeParams;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.helper.DateTimeOperations;
 import ua.renamer.app.ui.converter.*;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.widget.impl.ItemPositionWithReplacementRadioSelector;
@@ -209,14 +208,12 @@ class ModeUseDatetimeControllerV2Test {
         var timeFormatConverter = new TimeFormatConverter(languageTextRetriever);
         var dateTimeFormatConverter = new DateTimeFormatConverter(languageTextRetriever);
         var dateTimeSourceConverter = new DateTimeSourceConverter(languageTextRetriever);
-        var dateTimeOperations = new DateTimeOperations();
 
         controller = new ModeUseDatetimeController(
                 dateFormatConverter,
                 timeFormatConverter,
                 dateTimeFormatConverter,
-                dateTimeSourceConverter,
-                dateTimeOperations);
+                dateTimeSourceConverter);
 
         // @FXML field: dateTimePositionInTheNameRadioSelector
         var posConverter = new ItemPositionWithReplacementConverter(languageTextRetriever);

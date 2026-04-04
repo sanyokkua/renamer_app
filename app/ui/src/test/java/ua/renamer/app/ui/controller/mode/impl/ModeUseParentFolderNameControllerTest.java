@@ -19,7 +19,6 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ParentFolderParams;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.service.file.impl.FilesOperations;
 import ua.renamer.app.ui.converter.ItemPositionConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.widget.impl.ItemPositionRadioSelector;
@@ -53,9 +52,6 @@ import static org.mockito.Mockito.*;
 class ModeUseParentFolderNameControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
-
-    @Mock
-    private FilesOperations filesOperations;
 
     @Mock
     private LanguageTextRetrieverApi languageTextRetriever;
@@ -201,7 +197,7 @@ class ModeUseParentFolderNameControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        controller = new ModeUseParentFolderNameController(filesOperations);
+        controller = new ModeUseParentFolderNameController();
 
         var converter = new ItemPositionConverter(languageTextRetriever);
 

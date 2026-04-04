@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ParentFolderParams;
-import ua.renamer.app.core.service.file.impl.FilesOperations;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.widget.impl.ItemPositionRadioSelector;
 
@@ -25,8 +24,6 @@ import java.util.ResourceBundle;
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class ModeUseParentFolderNameController implements ModeControllerV2Api<ParentFolderParams>, Initializable {
-
-    private final FilesOperations filesOperations;
 
     @FXML
     private ItemPositionRadioSelector itemPositionRadioSelector;

@@ -279,48 +279,39 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
 
     @Test
     void testPerformance_ProgressCallback_NoSignificantOverhead() throws IOException {
-        List<File> files = createTestFiles("progress", "txt", 100);
-
         AddTextConfig config = AddTextConfig.builder()
                 .withTextToAdd("CB_")
                 .withPosition(ItemPosition.BEGIN)
                 .build();
 
-        // Test with callback
-        Instant start1 = Instant.now();
-        List<RenameResult> results1 = orchestrator.execute(
-                files,
-                TransformationMode.ADD_TEXT,
-                config,
-                createTrackingCallback()
-        );
-        Instant end1 = Instant.now();
-        long withCallbackNs = Duration.between(start1, end1).toNanos();
+        // Warm-up pass: execute once (no callback, discarded) so that JVM class-loading
+        // and JIT compilation do not inflate the first timed measurement.
+        List<File> warmupFiles = createTestFiles("warmup", "txt", 100);
+        List<RenameResult> warmupResults = orchestrator.execute(
+                warmupFiles, TransformationMode.ADD_TEXT, config, null);
+        warmupResults.forEach(r -> tempDir.resolve(r.getNewFileName()).toFile().delete());
 
-        // Clean up
-        results1.forEach(r -> {
-            File file = tempDir.resolve(r.getNewFileName()).toFile();
-            file.delete();
-        });
-
-        // Recreate files
-        files = createTestFiles("progress", "txt", 100);
-
-        // Test without callback
+        // BASELINE: timed run without callback on a warm JVM
+        List<File> filesBaseline = createTestFiles("progress_base", "txt", 100);
         Instant start2 = Instant.now();
-        List<RenameResult> results2 = orchestrator.execute(
-                files,
-                TransformationMode.ADD_TEXT,
-                config,
-                null
-        );
+        List<RenameResult> resultsBaseline = orchestrator.execute(
+                filesBaseline, TransformationMode.ADD_TEXT, config, null);
         Instant end2 = Instant.now();
         long withoutCallbackNs = Duration.between(start2, end2).toNanos();
+        resultsBaseline.forEach(r -> tempDir.resolve(r.getNewFileName()).toFile().delete());
+
+        // MEASURED: timed run with callback on the same warm JVM
+        List<File> filesWithCb = createTestFiles("progress_cb", "txt", 100);
+        Instant start1 = Instant.now();
+        orchestrator.execute(filesWithCb, TransformationMode.ADD_TEXT, config, createTrackingCallback());
+        Instant end1 = Instant.now();
+        long withCallbackNs = Duration.between(start1, end1).toNanos();
 
         log.info("With callback: {} ns, Without callback: {} ns",
                 withCallbackNs, withoutCallbackNs);
 
-        // Callback should not add significant overhead (< 50% relative to baseline)
+        // Overhead: how much MORE the callback run takes relative to the no-callback baseline.
+        // Both runs are on a warm JVM so JIT start-up bias is eliminated.
         double overhead;
         if (withoutCallbackNs == 0) {
             overhead = 0.0; // both effectively instant — no measurable overhead
