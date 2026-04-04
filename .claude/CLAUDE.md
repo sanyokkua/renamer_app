@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-JavaFX 25 desktop app for batch file renaming with metadata extraction. Multi-module Maven: `app/core` (business logic), `app/ui` (JavaFX frontend), `app/utils` (standalone — **not imported by core or ui**). Java 25 with JPMS (`module-info.java`) — always export new packages.
+JavaFX 25 desktop app for batch file renaming with metadata extraction. Multi-module Maven: `app/api` (interfaces/enums/models), `app/core` (business logic), `app/backend` (session/service layer), `app/metadata` (metadata extractors), `app/ui` (JavaFX frontend), `app/utils` (standalone — **not imported by other modules**). Java 25 with JPMS (`module-info.java`) — always export new packages.
 
 ## Build Commands
 
@@ -22,18 +22,23 @@ mvn clean install -q                                       # Build all modules
 cd app/ui && mvn javafx:run                                # Run the app
 ```
 
-## Architecture: Two Coexisting Generations
+## Architecture
 
-**V1 (Legacy)** — Command Pattern: `FileInformation → RenameModel`. Maintained for compatibility.
-**V2 (Production)** — Strategy + Pipeline: `FileModel → PreparedFileModel → RenameResult`. Use for all new features.
+Strategy + Pipeline: `FileModel → PreparedFileModel → RenameResult`.
 
-V2 pipeline phases (virtual threads via `Executors.newVirtualThreadPerTaskExecutor()`):
+Pipeline phases (virtual threads via `Executors.newVirtualThreadPerTaskExecutor()`):
 1. Metadata Extraction (parallel) — `File` → `FileModel`
 2. Transformation (parallel, sequential for ADD_SEQUENCE) — `FileModel` → `PreparedFileModel`
 3. Duplicate Resolution (sequential, appends `_1`, `_2`)
 4. Physical Rename (parallel) — `PreparedFileModel` → `RenameResult`
 
 Pipeline **never throws** — errors captured in `hasError`/`RenameStatus` fields.
+
+Module responsibilities:
+- `app/api` — Shared interfaces, enums (`ua.renamer.app.api.enums`), models (`ua.renamer.app.api.model`), session contracts
+- `app/core` — Transformers (`ua.renamer.app.core.service.transformation`), orchestrator (`ua.renamer.app.core.service.impl`), file mapper (`ua.renamer.app.core.mapper`), DI module (`DIV2ServiceModule`)
+- `app/backend` — Session implementations, DI module (`DIBackendModule`)
+- `app/metadata` — File metadata extractors, DI module (`DIMetadataModule`)
 
 ## Critical Patterns
 
@@ -42,7 +47,7 @@ Pipeline **never throws** — errors captured in `hasError`/`RenameStatus` field
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class MyService { private final Dep dep; }
 ```
-Modules: `DIAppModule`, `DICoreModule`, `DIUIModule` in `app/ui/.../config/`; `DIV2ServiceModule` in `app/core/.../config/`. `DICoreModule` installs `DIV2ServiceModule`.
+Modules: `DIAppModule`, `DICoreModule`, `DIUIModule` in `app/ui/.../config/`; `DIV2ServiceModule` in `app/core/.../config/`; `DIBackendModule` in `app/backend/.../config/`; `DIMetadataModule` in `app/metadata/.../config/`. `DICoreModule` installs `DIMetadataModule` and `DIV2ServiceModule`.
 
 **V2 model builders** — non-default prefix, critical:
 ```java
@@ -52,7 +57,7 @@ PreparedFileModel.builder().withOriginalFile(file).withNewName(name).withHasErro
 
 **UI disambiguation**: `InjectQualifiers` holds 30 `@jakarta.inject.Qualifier` annotations (10 each for FXMLLoader, Parent, ModeControllerApi). Required when adding new modes.
 
-**JPMS**: `ua.renamer.app.core.v2.interfaces` and `ua.renamer.app.core.v2.exception` are intentionally NOT exported.
+**JPMS**: Internal packages (interfaces, exceptions) that are implementation details are intentionally NOT exported from their respective modules. Always check the module's `module-info.java` before adding cross-module calls.
 
 ## Agents (invoke with `@"agent-name (agent)"`)
 

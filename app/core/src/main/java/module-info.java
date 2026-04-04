@@ -16,11 +16,10 @@ module ua.renamer.app.core {
     exports ua.renamer.app.core.service.validator.impl;
 
     // v2 packages
-    exports ua.renamer.app.core.v2.service;
-    exports ua.renamer.app.core.v2.service.impl;
-    exports ua.renamer.app.core.v2.service.transformation;
-    exports ua.renamer.app.core.v2.mapper;
-    exports ua.renamer.app.core.v2.util;
+    exports ua.renamer.app.core.service.impl;
+    exports ua.renamer.app.core.service.transformation;
+    exports ua.renamer.app.core.mapper;
+    exports ua.renamer.app.core.util;
 
     opens ua.renamer.app.core.config;
     opens ua.renamer.app.core.service;
@@ -28,9 +27,8 @@ module ua.renamer.app.core {
     opens ua.renamer.app.core.service.validator.impl;
 
     // v2 packages
-    opens ua.renamer.app.core.v2.service;
-    opens ua.renamer.app.core.v2.service.impl;
-    opens ua.renamer.app.core.v2.service.transformation;
-    opens ua.renamer.app.core.v2.mapper;
-    opens ua.renamer.app.core.v2.util;
+    opens ua.renamer.app.core.service.impl;
+    opens ua.renamer.app.core.service.transformation;
+    opens ua.renamer.app.core.mapper;
+    opens ua.renamer.app.core.util;
 }

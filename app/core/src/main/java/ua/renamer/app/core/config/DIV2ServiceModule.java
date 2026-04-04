@@ -4,13 +4,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import ua.renamer.app.api.interfaces.FileMapper;
 import ua.renamer.app.api.service.FileRenameOrchestrator;
-import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
-import ua.renamer.app.core.v2.service.DuplicateNameResolver;
-import ua.renamer.app.core.v2.service.RenameExecutionService;
-import ua.renamer.app.core.v2.service.impl.DuplicateNameResolverImpl;
-import ua.renamer.app.core.v2.service.impl.FileRenameOrchestratorImpl;
-import ua.renamer.app.core.v2.service.impl.RenameExecutionServiceImpl;
-import ua.renamer.app.core.v2.service.transformation.*;
+import ua.renamer.app.core.mapper.ThreadAwareFileMapper;
+import ua.renamer.app.core.service.DuplicateNameResolver;
+import ua.renamer.app.core.service.RenameExecutionService;
+import ua.renamer.app.core.service.impl.DuplicateNameResolverImpl;
+import ua.renamer.app.core.service.impl.FileRenameOrchestratorImpl;
+import ua.renamer.app.core.service.impl.RenameExecutionServiceImpl;
+import ua.renamer.app.core.service.transformation.*;
 
 /**
  * Dependency injection module for v2 services architecture.

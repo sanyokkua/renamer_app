@@ -12,7 +12,7 @@ import ua.renamer.app.api.interfaces.FileMetadataMapper;
 import ua.renamer.app.api.interfaces.FileUtils;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.meta.FileMeta;
-import ua.renamer.app.core.v2.mapper.ThreadAwareFileMapper;
+import ua.renamer.app.core.mapper.ThreadAwareFileMapper;
 import ua.renamer.app.core.v2.util.TestDateTimeUtils;
 import ua.renamer.app.core.v2.util.TestFileUtils;
 

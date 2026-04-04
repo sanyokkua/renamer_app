@@ -15,6 +15,7 @@ allowed-tools: Read, Grep, Glob
 - No Spring, no JPA, no JSON — this is a pure JavaFX desktop app
 
 Supporting files:
+
 - [examples.md](examples.md) — complete code templates
 - [logging.md](logging.md) — SLF4J log levels, placeholders, exception logging, hot path rules
 - [javadoc.md](javadoc.md) — Javadoc on all public/protected, tag ordering, {@link}, prohibited practices
@@ -27,11 +28,13 @@ Supporting files:
 **Be clear, not clever.** Code is read far more than written.
 
 **Immutability by default:**
+
 - V2 models: always `@Value @Builder(setterPrefix = "with")` — never mutate after construction
 - V1 models: `FileInformation` is intentionally mutable (preparation commands modify it)
 - Fields `final` unless mutation is explicitly required
 
 **Constructor injection only:**
+
 ```java
 // CORRECT for this project
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
@@ -45,6 +48,7 @@ public class MyService {
 ```
 
 **V2 model builder pattern (critical — non-default prefix):**
+
 ```java
 // CORRECT
 PreparedFileModel result = PreparedFileModel.builder()
@@ -86,14 +90,14 @@ PreparedFileModel.builder().originalFile(file).build(); // compile error
 
 Base: `ua.renamer.app`
 
-| Purpose | Package |
-|---------|---------|
-| V2 transformation configs | `ua.renamer.app.core.v2.model.config` |
-| V2 transformers | `ua.renamer.app.core.v2.service.transformation` |
-| V2 metadata extractors | `ua.renamer.app.core.v2.mapper.strategy.format` |
-| UI controllers | `ua.renamer.app.ui.controller.mode.impl` |
-| DI modules (core) | `ua.renamer.app.core.config` |
-| DI modules (UI) | `ua.renamer.app.ui.config` |
+| Purpose                   | Package                                         |
+|---------------------------|-------------------------------------------------|
+| V2 transformation configs | `ua.renamer.app.core.v2.model.config`           |
+| V2 transformers           | `ua.renamer.app.core.service.transformation`    |
+| V2 metadata extractors    | `ua.renamer.app.core.v2.mapper.strategy.format` |
+| UI controllers            | `ua.renamer.app.ui.controller.mode.impl`        |
+| DI modules (core)         | `ua.renamer.app.core.config`                    |
+| DI modules (UI)           | `ua.renamer.app.ui.config`                      |
 
 Test file naming: `*Test.java` = unit tests, `*IT.java` = integration tests (real files).
 
@@ -102,18 +106,22 @@ Test file naming: `*Test.java` = unit tests, `*IT.java` = integration tests (rea
 ## DI Patterns
 
 **Module locations:**
+
 - `app/ui/.../config/`: `DIAppModule`, `DICoreModule`, `DIUIModule`, `InjectQualifiers`
 - `app/core/.../config/`: `DIV2ServiceModule` only
 
 **DI startup chain:**
+
 ```
 Guice.createInjector(DIAppModule, DICoreModule, DIUIModule)
   DICoreModule installs DIV2ServiceModule
 ```
 
-**Adding a new UI mode requires a new qualifier in `InjectQualifiers.java`** — 10 FXMLLoaders, 10 Parents, 10 ModeControllerApis are registered with different `@jakarta.inject.Qualifier` annotations to disambiguate.
+**Adding a new UI mode requires a new qualifier in `InjectQualifiers.java`** — 10 FXMLLoaders, 10 Parents, 10
+ModeControllerApis are registered with different `@jakarta.inject.Qualifier` annotations to disambiguate.
 
 **Provider methods for complex wiring:**
+
 ```java
 @Provides
 @Singleton
@@ -170,7 +178,8 @@ MyTransformer provideMyTransformer(Dep1 dep1, Dep2 dep2) {
 
 ## Javadoc Standards
 
-Document public API: what it does (not how), parameters (with constraints), return (success + failure), exceptions (trigger conditions).
+Document public API: what it does (not how), parameters (with constraints), return (success + failure), exceptions (
+trigger conditions).
 
 ```java
 /**
