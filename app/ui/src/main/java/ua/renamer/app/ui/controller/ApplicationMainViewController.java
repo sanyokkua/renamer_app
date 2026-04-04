@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.model.RenameStatus;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.*;
-import ua.renamer.app.core.enums.AppModes;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.AppModesConverter;
 import ua.renamer.app.ui.enums.TableStyles;
@@ -45,7 +44,7 @@ public class ApplicationMainViewController implements Initializable {
     private final LanguageTextRetrieverApi languageTextRetriever;
 
     @FXML
-    private ChoiceBox<AppModes> appModeChoiceBox;
+    private ChoiceBox<TransformationMode> appModeChoiceBox;
     @FXML
     private StackPane appModeContainer;
     @FXML
@@ -102,8 +101,8 @@ public class ApplicationMainViewController implements Initializable {
 
     private void configureModeChoiceBox() {
         log.info("Configuring modeChoiceBox");
-        appModeChoiceBox.getItems().addAll(AppModes.values());
-        appModeChoiceBox.setValue(AppModes.ADD_CUSTOM_TEXT);
+        appModeChoiceBox.getItems().addAll(TransformationMode.values());
+        appModeChoiceBox.setValue(TransformationMode.ADD_TEXT);
         appModeChoiceBox.setConverter(appModesConverter);
         appModeChoiceBox.setOnAction((event -> handleModeChanged()));
     }
@@ -253,9 +252,8 @@ public class ApplicationMainViewController implements Initializable {
     private void handleModeChanged() {
         log.debug("handleModeChanged");
         var mode = appModeChoiceBox.getValue();
-        var transformationMode = toTransformationMode(mode);
 
-        modeViewRegistry.getView(transformationMode).ifPresent(view -> {
+        modeViewRegistry.getView(mode).ifPresent(view -> {
             StackPane.setMargin(view, new Insets(10, 10, 10, 10));
             appModeContainer.getChildren().clear();
             appModeContainer.getChildren().add(view);
@@ -263,28 +261,13 @@ public class ApplicationMainViewController implements Initializable {
 
         log.debug("handleModeChanged: {}", mode.name());
 
-        modeViewRegistry.getController(transformationMode).ifPresent(v2ctrl ->
+        modeViewRegistry.getController(mode).ifPresent(v2ctrl ->
                 sessionApi.selectMode(v2ctrl.supportedMode())
                         .thenAcceptAsync(modeApi -> {
                             currentModeApi = modeApi;
                             callBind(v2ctrl, modeApi);
                         }, Platform::runLater)
         );
-    }
-
-    private TransformationMode toTransformationMode(AppModes mode) {
-        return switch (mode) {
-            case ADD_CUSTOM_TEXT -> TransformationMode.ADD_TEXT;
-            case CHANGE_CASE -> TransformationMode.CHANGE_CASE;
-            case USE_DATETIME -> TransformationMode.USE_DATETIME;
-            case USE_IMAGE_DIMENSIONS -> TransformationMode.USE_IMAGE_DIMENSIONS;
-            case USE_PARENT_FOLDER_NAME -> TransformationMode.USE_PARENT_FOLDER_NAME;
-            case REMOVE_CUSTOM_TEXT -> TransformationMode.REMOVE_TEXT;
-            case REPLACE_CUSTOM_TEXT -> TransformationMode.REPLACE_TEXT;
-            case ADD_SEQUENCE -> TransformationMode.ADD_SEQUENCE;
-            case TRUNCATE_FILE_NAME -> TransformationMode.TRUNCATE_FILE_NAME;
-            case CHANGE_EXTENSION -> TransformationMode.CHANGE_EXTENSION;
-        };
     }
 
     private void handleFilesTableViewDragOverEvent(DragEvent event) {

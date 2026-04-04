@@ -107,7 +107,7 @@ class ModeAddSequenceControllerTest {
 
     private static void injectSortingSourceChoiceBox(
             ModeAddSequenceController target,
-            ChoiceBox<ua.renamer.app.core.enums.SortSource> box) throws Exception {
+            ChoiceBox<ua.renamer.app.api.enums.SortSource> box) throws Exception {
         Field f = ModeAddSequenceController.class.getDeclaredField("sortingSourceChoiceBox");
         f.setAccessible(true);
         f.set(target, box);
@@ -151,12 +151,12 @@ class ModeAddSequenceControllerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static ChoiceBox<ua.renamer.app.core.enums.SortSource> readSortBoxUnchecked(
+    private static ChoiceBox<ua.renamer.app.api.enums.SortSource> readSortBoxUnchecked(
             ModeAddSequenceController target) {
         try {
             Field f = ModeAddSequenceController.class.getDeclaredField("sortingSourceChoiceBox");
             f.setAccessible(true);
-            return (ChoiceBox<ua.renamer.app.core.enums.SortSource>) f.get(target);
+            return (ChoiceBox<ua.renamer.app.api.enums.SortSource>) f.get(target);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -237,10 +237,10 @@ class ModeAddSequenceControllerTest {
         injectMinDigitAmountSpinner(controller, paddingSpinner);
 
         // @FXML field 4: sortingSourceChoiceBox — seeded with all core enum values, initial = FILE_NAME
-        ChoiceBox<ua.renamer.app.core.enums.SortSource> choiceBox =
+        ChoiceBox<ua.renamer.app.api.enums.SortSource> choiceBox =
                 new ChoiceBox<>(FXCollections.observableArrayList(
-                        Arrays.asList(ua.renamer.app.core.enums.SortSource.values())));
-        choiceBox.setValue(ua.renamer.app.core.enums.SortSource.FILE_NAME);
+                        Arrays.asList(ua.renamer.app.api.enums.SortSource.values())));
+        choiceBox.setValue(ua.renamer.app.api.enums.SortSource.FILE_NAME);
         injectSortingSourceChoiceBox(controller, choiceBox);
 
         // Run initialize on the FX thread (mirrors FXML-loader lifecycle)
@@ -345,7 +345,7 @@ class ModeAddSequenceControllerTest {
             assertThat(readStepSpinnerUnchecked(controller).getValue()).isEqualTo(3);
             assertThat(readPaddingSpinnerUnchecked(controller).getValue()).isEqualTo(2);
             assertThat(readSortBoxUnchecked(controller).getValue())
-                    .isEqualTo(ua.renamer.app.core.enums.SortSource.FILE_SIZE);
+                    .isEqualTo(ua.renamer.app.api.enums.SortSource.FILE_SIZE);
         }
 
         @Test
@@ -359,7 +359,7 @@ class ModeAddSequenceControllerTest {
 
             // Assert — API enum FILE_SIZE maps to core FILE_SIZE
             assertThat(readSortBoxUnchecked(controller).getValue())
-                    .isEqualTo(ua.renamer.app.core.enums.SortSource.FILE_SIZE);
+                    .isEqualTo(ua.renamer.app.api.enums.SortSource.FILE_SIZE);
         }
 
         @Test
@@ -469,8 +469,8 @@ class ModeAddSequenceControllerTest {
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
             // Act — set the core enum that corresponds to the API enum under test
-            ua.renamer.app.core.enums.SortSource coreSort =
-                    ua.renamer.app.core.enums.SortSource.valueOf(apiSort.name());
+            ua.renamer.app.api.enums.SortSource coreSort =
+                    ua.renamer.app.api.enums.SortSource.valueOf(apiSort.name());
             runOnFxThreadAndWait(() -> readSortBoxUnchecked(controller).setValue(coreSort));
 
             // Assert — the mutator applied to defaultParams must carry the correct API enum
@@ -489,7 +489,7 @@ class ModeAddSequenceControllerTest {
         void bind_allApiSortSourceValues_mapToCoreEnumWithoutException(
                 ua.renamer.app.api.enums.SortSource apiSort) {
             assertThatCode(() ->
-                    ua.renamer.app.core.enums.SortSource.valueOf(apiSort.name())
+                    ua.renamer.app.api.enums.SortSource.valueOf(apiSort.name())
             ).doesNotThrowAnyException();
         }
 
@@ -514,7 +514,7 @@ class ModeAddSequenceControllerTest {
             // Act
             runOnFxThreadAndWait(() ->
                     readSortBoxUnchecked(controller).setValue(
-                            ua.renamer.app.core.enums.SortSource.FILE_SIZE));
+                            ua.renamer.app.api.enums.SortSource.FILE_SIZE));
 
             // Assert
             verifyNoInteractions(modeApi);

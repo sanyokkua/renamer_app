@@ -13,12 +13,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.renamer.app.api.enums.ImageDimensionOptions;
+import ua.renamer.app.api.enums.ItemPositionWithReplacement;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ImageDimensionsParams;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.core.enums.ImageDimensionOptions;
-import ua.renamer.app.core.enums.ItemPositionWithReplacement;
 import ua.renamer.app.ui.converter.ImageDimensionOptionsConverter;
 import ua.renamer.app.ui.converter.ItemPositionWithReplacementConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
@@ -842,7 +842,7 @@ class ModeUseImageDimensionsControllerTest {
         void bind_allApiImageDimensionOptions_mapToCoreEnumWithoutException(
                 ua.renamer.app.api.enums.ImageDimensionOptions apiOpt) {
             assertThatCode(() ->
-                    ua.renamer.app.core.enums.ImageDimensionOptions.valueOf(apiOpt.name())
+                    ua.renamer.app.api.enums.ImageDimensionOptions.valueOf(apiOpt.name())
             ).doesNotThrowAnyException();
         }
 
@@ -851,7 +851,7 @@ class ModeUseImageDimensionsControllerTest {
         void bind_allApiPositionValues_mapToCoreEnumWithoutException(
                 ua.renamer.app.api.enums.ItemPositionWithReplacement apiPos) {
             assertThatCode(() ->
-                    ua.renamer.app.core.enums.ItemPositionWithReplacement.valueOf(apiPos.name())
+                    ua.renamer.app.api.enums.ItemPositionWithReplacement.valueOf(apiPos.name())
             ).doesNotThrowAnyException();
         }
     }

@@ -9,10 +9,10 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.enums.SortSource;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.SequenceParams;
-import ua.renamer.app.core.enums.SortSource;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.SortSourceConverter;
 
@@ -104,7 +104,7 @@ public class ModeAddSequenceController
         minDigitAmountSpinner.getValueFactory().setValue(params.paddingDigits());
 
         if (params.sortSource() != null) {
-            var coreSort = ua.renamer.app.core.enums.SortSource.valueOf(params.sortSource().name());
+            var coreSort = ua.renamer.app.api.enums.SortSource.valueOf(params.sortSource().name());
             sortingSourceChoiceBox.setValue(coreSort);
         }
 

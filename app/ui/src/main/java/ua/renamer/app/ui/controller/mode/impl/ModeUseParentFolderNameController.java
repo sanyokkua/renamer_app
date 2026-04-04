@@ -66,7 +66,7 @@ public class ModeUseParentFolderNameController implements ModeControllerV2Api<Pa
         fileNameSeparatorTextField.setText(params.separator() != null ? params.separator() : "");
 
         if (params.position() != null) {
-            var corePos = ua.renamer.app.core.enums.ItemPosition.valueOf(params.position().name());
+            var corePos = ua.renamer.app.api.enums.ItemPosition.valueOf(params.position().name());
             itemPositionRadioSelector.getButtons()
                     .stream()
                     .filter(btn -> btn.getValue() == corePos)

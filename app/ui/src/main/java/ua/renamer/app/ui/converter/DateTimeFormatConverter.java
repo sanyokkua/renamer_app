@@ -3,7 +3,7 @@ package ua.renamer.app.ui.converter;
 import com.google.inject.Inject;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
-import ua.renamer.app.core.enums.DateTimeFormat;
+import ua.renamer.app.api.enums.DateTimeFormat;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 

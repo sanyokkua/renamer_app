@@ -11,7 +11,6 @@ module ua.renamer.app.core {
 
 
     exports ua.renamer.app.core.config;
-    exports ua.renamer.app.core.enums;
     exports ua.renamer.app.core.service;
     exports ua.renamer.app.core.service.validator;
     exports ua.renamer.app.core.service.validator.impl;
@@ -27,7 +26,6 @@ module ua.renamer.app.core {
     opens ua.renamer.app.core.service;
     opens ua.renamer.app.core.service.validator;
     opens ua.renamer.app.core.service.validator.impl;
-    opens ua.renamer.app.core.enums;
 
     // v2 packages
     opens ua.renamer.app.core.v2.service;

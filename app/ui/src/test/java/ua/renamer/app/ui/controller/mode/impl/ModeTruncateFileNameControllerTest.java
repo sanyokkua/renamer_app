@@ -296,7 +296,7 @@ class ModeTruncateFileNameControllerTest {
             // Assert
             ItemPositionTruncateRadioSelector selector = readRadioSelector(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN);
+                    .isEqualTo(ua.renamer.app.api.enums.TruncateOptions.REMOVE_SYMBOLS_IN_BEGIN);
         }
 
         @Test
@@ -311,7 +311,7 @@ class ModeTruncateFileNameControllerTest {
             // Assert
             ItemPositionTruncateRadioSelector selector = readRadioSelector(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.TruncateOptions.REMOVE_SYMBOLS_FROM_END);
+                    .isEqualTo(ua.renamer.app.api.enums.TruncateOptions.REMOVE_SYMBOLS_FROM_END);
         }
 
         @Test
@@ -396,8 +396,8 @@ class ModeTruncateFileNameControllerTest {
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
 
             // Act — select REMOVE_SYMBOLS_FROM_END button to trigger the addValueSelectedHandler in bind()
-            ua.renamer.app.core.enums.TruncateOptions coreTarget =
-                    ua.renamer.app.core.enums.TruncateOptions.REMOVE_SYMBOLS_FROM_END;
+            ua.renamer.app.api.enums.TruncateOptions coreTarget =
+                    ua.renamer.app.api.enums.TruncateOptions.REMOVE_SYMBOLS_FROM_END;
             runOnFxThreadAndWait(() -> {
                 ItemPositionTruncateRadioSelector selector = readRadioSelectorUnchecked(controller);
                 selector.getButtons().stream()

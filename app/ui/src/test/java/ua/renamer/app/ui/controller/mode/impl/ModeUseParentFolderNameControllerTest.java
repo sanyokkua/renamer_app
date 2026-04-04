@@ -333,7 +333,7 @@ class ModeUseParentFolderNameControllerTest {
             // Assert — core BEGIN radio button must be selected
             ItemPositionRadioSelector selector = readRadioSelector(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.ItemPosition.BEGIN);
+                    .isEqualTo(ua.renamer.app.api.enums.ItemPosition.BEGIN);
         }
 
         @Test
@@ -348,7 +348,7 @@ class ModeUseParentFolderNameControllerTest {
             // Assert — core END radio button must be selected
             ItemPositionRadioSelector selector = readRadioSelector(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.ItemPosition.END);
+                    .isEqualTo(ua.renamer.app.api.enums.ItemPosition.END);
         }
 
         @Test
@@ -458,7 +458,7 @@ class ModeUseParentFolderNameControllerTest {
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
 
             // Act — select the END radio button to trigger the addValueSelectedHandler added in bind()
-            ua.renamer.app.core.enums.ItemPosition coreEnd = ua.renamer.app.core.enums.ItemPosition.END;
+            ua.renamer.app.api.enums.ItemPosition coreEnd = ua.renamer.app.api.enums.ItemPosition.END;
             runOnFxThreadAndWait(() -> {
                 ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
                 selector.getButtons().stream()
@@ -488,7 +488,7 @@ class ModeUseParentFolderNameControllerTest {
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
 
             // Act — select BEGIN button
-            ua.renamer.app.core.enums.ItemPosition coreBegin = ua.renamer.app.core.enums.ItemPosition.BEGIN;
+            ua.renamer.app.api.enums.ItemPosition coreBegin = ua.renamer.app.api.enums.ItemPosition.BEGIN;
             runOnFxThreadAndWait(() -> {
                 ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
                 selector.getButtons().stream()
@@ -527,7 +527,7 @@ class ModeUseParentFolderNameControllerTest {
         void bind_allApiPositionValues_mapToCoreEnumWithoutException(ItemPosition apiPos) {
             // This validates the valueOf name-bridge used in bind()
             assertThatCode(() ->
-                    ua.renamer.app.core.enums.ItemPosition.valueOf(apiPos.name())
+                    ua.renamer.app.api.enums.ItemPosition.valueOf(apiPos.name())
             ).doesNotThrowAnyException();
         }
     }

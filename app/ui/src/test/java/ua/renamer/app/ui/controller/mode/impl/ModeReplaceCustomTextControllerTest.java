@@ -309,7 +309,7 @@ class ModeReplaceCustomTextControllerTest {
             // Assert
             ItemPositionExtendedRadioSelector selector = readRadioSelector(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.ItemPositionExtended.BEGIN);
+                    .isEqualTo(ua.renamer.app.api.enums.ItemPositionExtended.BEGIN);
         }
 
         @Test
@@ -324,7 +324,7 @@ class ModeReplaceCustomTextControllerTest {
             // Assert
             ItemPositionExtendedRadioSelector selector = readRadioSelector(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.ItemPositionExtended.EVERYWHERE);
+                    .isEqualTo(ua.renamer.app.api.enums.ItemPositionExtended.EVERYWHERE);
         }
 
         @Test

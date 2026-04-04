@@ -256,7 +256,7 @@ class ModeRemoveCustomTextControllerTest {
 
             // Assert
             ItemPositionRadioSelector selector = readRadioSelector(controller);
-            assertThat(selector.getSelectedValue()).isEqualTo(ua.renamer.app.core.enums.ItemPosition.BEGIN);
+            assertThat(selector.getSelectedValue()).isEqualTo(ua.renamer.app.api.enums.ItemPosition.BEGIN);
         }
 
         @Test
@@ -270,7 +270,7 @@ class ModeRemoveCustomTextControllerTest {
 
             // Assert
             ItemPositionRadioSelector selector = readRadioSelector(controller);
-            assertThat(selector.getSelectedValue()).isEqualTo(ua.renamer.app.core.enums.ItemPosition.END);
+            assertThat(selector.getSelectedValue()).isEqualTo(ua.renamer.app.api.enums.ItemPosition.END);
         }
 
         @Test
@@ -310,7 +310,7 @@ class ModeRemoveCustomTextControllerTest {
             runOnFxThreadAndWait(() -> {
                 ItemPositionRadioSelector selector = readRadioSelectorUnchecked(controller);
                 selector.getButtons().stream()
-                        .filter(btn -> btn.getValue() == ua.renamer.app.core.enums.ItemPosition.END)
+                        .filter(btn -> btn.getValue() == ua.renamer.app.api.enums.ItemPosition.END)
                         .findFirst()
                         .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
             });

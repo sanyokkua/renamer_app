@@ -3,7 +3,7 @@ package ua.renamer.app.ui.converter;
 import com.google.inject.Inject;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
-import ua.renamer.app.core.enums.ImageDimensionOptions;
+import ua.renamer.app.api.enums.ImageDimensionOptions;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 

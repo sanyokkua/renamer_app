@@ -57,7 +57,7 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
         textToAddTextField.setText(params.replacementText() != null ? params.replacementText() : "");
 
         if (params.position() != null) {
-            var corePos = ua.renamer.app.core.enums.ItemPositionExtended.valueOf(params.position().name());
+            var corePos = ua.renamer.app.api.enums.ItemPositionExtended.valueOf(params.position().name());
             itemPositionRadioSelector.getButtons()
                     .stream()
                     .filter(btn -> btn.getValue() == corePos)

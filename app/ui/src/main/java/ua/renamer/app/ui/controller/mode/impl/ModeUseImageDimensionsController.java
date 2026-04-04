@@ -8,10 +8,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.enums.ImageDimensionOptions;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.ImageDimensionsParams;
 import ua.renamer.app.api.session.ModeApi;
-import ua.renamer.app.core.enums.ImageDimensionOptions;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.ImageDimensionOptionsConverter;
 import ua.renamer.app.ui.widget.impl.ItemPositionWithReplacementRadioSelector;
@@ -86,13 +86,13 @@ public class ModeUseImageDimensionsController
 
         // ── Init ──────────────────────────────────────────────────────────────
         if (params.leftSide() != null) {
-            var coreLeft = ua.renamer.app.core.enums.ImageDimensionOptions
+            var coreLeft = ua.renamer.app.api.enums.ImageDimensionOptions
                     .valueOf(params.leftSide().name());
             leftDimensionChoiceBox.setValue(coreLeft);
         }
 
         if (params.rightSide() != null) {
-            var coreRight = ua.renamer.app.core.enums.ImageDimensionOptions
+            var coreRight = ua.renamer.app.api.enums.ImageDimensionOptions
                     .valueOf(params.rightSide().name());
             rightDimensionChoiceBox.setValue(coreRight);
         }
@@ -104,7 +104,7 @@ public class ModeUseImageDimensionsController
                 params.nameSeparator() != null ? params.nameSeparator() : "");
 
         if (params.position() != null) {
-            var corePos = ua.renamer.app.core.enums.ItemPositionWithReplacement
+            var corePos = ua.renamer.app.api.enums.ItemPositionWithReplacement
                     .valueOf(params.position().name());
             itemPositionRadioSelector.getButtons().stream()
                     .filter(btn -> btn.getValue() == corePos)

@@ -8,10 +8,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.enums.*;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.DateTimeParams;
 import ua.renamer.app.api.session.ModeApi;
-import ua.renamer.app.core.enums.*;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.DateFormatConverter;
 import ua.renamer.app.ui.converter.DateTimeFormatConverter;
@@ -256,30 +256,25 @@ public class ModeUseDatetimeController
         if (separatorListener != null)
             dateTimeAndNameSeparatorTextField.textProperty().removeListener(separatorListener);
 
-        // ── Init: source (API → core enum) ──────────────────────────────────────
+        // ── Init: source ────────────────────────────────────────────────────────
         if (params.source() != null) {
-            var coreSource = ua.renamer.app.core.enums.DateTimeSource.valueOf(params.source().name());
-            dateTimeSourceChoiceBox.setValue(coreSource);
+            dateTimeSourceChoiceBox.setValue(params.source());
         }
 
-        // ── Init: dateFormat (API → core enum) ──────────────────────────────────
+        // ── Init: dateFormat ─────────────────────────────────────────────────────
         if (params.dateFormat() != null) {
-            var coreDateFormat = ua.renamer.app.core.enums.DateFormat.valueOf(params.dateFormat().name());
-            dateFormatChoiceBox.setValue(coreDateFormat);
+            dateFormatChoiceBox.setValue(params.dateFormat());
         }
 
-        // ── Init: timeFormat (API → core enum) ──────────────────────────────────
+        // ── Init: timeFormat ─────────────────────────────────────────────────────
         if (params.timeFormat() != null) {
-            var coreTimeFormat = ua.renamer.app.core.enums.TimeFormat.valueOf(params.timeFormat().name());
-            timeFormatChoiceBox.setValue(coreTimeFormat);
+            timeFormatChoiceBox.setValue(params.timeFormat());
         }
 
-        // ── Init: position (API → core enum, radio selector) ────────────────────
+        // ── Init: position ───────────────────────────────────────────────────────
         if (params.position() != null) {
-            var corePos = ua.renamer.app.core.enums.ItemPositionWithReplacement
-                    .valueOf(params.position().name());
             dateTimePositionInTheNameRadioSelector.getButtons().stream()
-                    .filter(btn -> btn.getValue() == corePos)
+                    .filter(btn -> btn.getValue() == params.position())
                     .findFirst()
                     .ifPresent(btn -> dateTimePositionInTheNameRadioSelector
                             .getToggleGroup().selectToggle(btn));
@@ -290,10 +285,9 @@ public class ModeUseDatetimeController
         useCustomDateTimeAsFallbackCheckBox.setSelected(params.useCustomDateTimeAsFallback());
         useUppercaseForAmPmCheckBox.setSelected(params.useUppercaseForAmPm());
 
-        // ── Init: dateTimeFormat (API → core enum) ───────────────────────────────
+        // ── Init: dateTimeFormat ─────────────────────────────────────────────────
         if (params.dateTimeFormat() != null) {
-            var coreFmt = ua.renamer.app.core.enums.DateTimeFormat.valueOf(params.dateTimeFormat().name());
-            dateTimeFormatChoiceBox.setValue(coreFmt);
+            dateTimeFormatChoiceBox.setValue(params.dateTimeFormat());
         }
 
         // ── Init: separator ──────────────────────────────────────────────────────
@@ -315,9 +309,8 @@ public class ModeUseDatetimeController
         // ── Wire: source ─────────────────────────────────────────────────────────
         sourceListener = (obs, oldVal, newVal) -> {
             if (newVal != null) {
-                var apiSource = ua.renamer.app.api.enums.DateTimeSource.valueOf(newVal.name());
-                log.debug("bind: source changed → {}", apiSource);
-                modeApi.updateParameters(p -> p.withSource(apiSource));
+                log.debug("bind: source changed → {}", newVal);
+                modeApi.updateParameters(p -> p.withSource(newVal));
                 updateDisplayedItems();
             }
         };
@@ -326,10 +319,9 @@ public class ModeUseDatetimeController
         // ── Wire: dateFormat (atomic with useDatePart) ───────────────────────────
         dateFormatListener = (obs, oldVal, newVal) -> {
             if (newVal != null) {
-                var apiDateFormat = ua.renamer.app.api.enums.DateFormat.valueOf(newVal.name());
-                boolean useDatePart = newVal != ua.renamer.app.core.enums.DateFormat.DO_NOT_USE_DATE;
-                log.debug("bind: dateFormat changed → {}, useDatePart={}", apiDateFormat, useDatePart);
-                modeApi.updateParameters(p -> p.withDateFormat(apiDateFormat).withUseDatePart(useDatePart));
+                boolean useDatePart = newVal != DateFormat.DO_NOT_USE_DATE;
+                log.debug("bind: dateFormat changed → {}, useDatePart={}", newVal, useDatePart);
+                modeApi.updateParameters(p -> p.withDateFormat(newVal).withUseDatePart(useDatePart));
             }
         };
         dateFormatChoiceBox.getSelectionModel().selectedItemProperty().addListener(dateFormatListener);
@@ -337,19 +329,17 @@ public class ModeUseDatetimeController
         // ── Wire: timeFormat (atomic with useTimePart) ───────────────────────────
         timeFormatListener = (obs, oldVal, newVal) -> {
             if (newVal != null) {
-                var apiTimeFormat = ua.renamer.app.api.enums.TimeFormat.valueOf(newVal.name());
-                boolean useTimePart = newVal != ua.renamer.app.core.enums.TimeFormat.DO_NOT_USE_TIME;
-                log.debug("bind: timeFormat changed → {}, useTimePart={}", apiTimeFormat, useTimePart);
-                modeApi.updateParameters(p -> p.withTimeFormat(apiTimeFormat).withUseTimePart(useTimePart));
+                boolean useTimePart = newVal != TimeFormat.DO_NOT_USE_TIME;
+                log.debug("bind: timeFormat changed → {}, useTimePart={}", newVal, useTimePart);
+                modeApi.updateParameters(p -> p.withTimeFormat(newVal).withUseTimePart(useTimePart));
             }
         };
         timeFormatChoiceBox.getSelectionModel().selectedItemProperty().addListener(timeFormatListener);
 
         // ── Wire: position ───────────────────────────────────────────────────────
-        dateTimePositionInTheNameRadioSelector.setValueSelectedHandler(corePos -> {
-            var apiPos = ua.renamer.app.api.enums.ItemPositionWithReplacement.valueOf(corePos.name());
-            log.debug("bind: position changed → {}", apiPos);
-            modeApi.updateParameters(p -> p.withPosition(apiPos));
+        dateTimePositionInTheNameRadioSelector.setValueSelectedHandler(pos -> {
+            log.debug("bind: position changed → {}", pos);
+            modeApi.updateParameters(p -> p.withPosition(pos));
             updateDisplayedItems();
         });
 
@@ -414,9 +404,8 @@ public class ModeUseDatetimeController
         // ── Wire: dateTimeFormat ─────────────────────────────────────────────────
         dateTimeFormatListener = (obs, oldVal, newVal) -> {
             if (newVal != null) {
-                var apiFmt = ua.renamer.app.api.enums.DateTimeFormat.valueOf(newVal.name());
-                log.debug("bind: dateTimeFormat changed → {}", apiFmt);
-                modeApi.updateParameters(p -> p.withDateTimeFormat(apiFmt));
+                log.debug("bind: dateTimeFormat changed → {}", newVal);
+                modeApi.updateParameters(p -> p.withDateTimeFormat(newVal));
             }
         };
         dateTimeFormatChoiceBox.getSelectionModel().selectedItemProperty().addListener(dateTimeFormatListener);

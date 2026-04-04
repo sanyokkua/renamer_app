@@ -90,17 +90,17 @@ class ModeUseDatetimeControllerV2Test {
     // Reflection helpers — inject and read @FXML fields
     // -----------------------------------------------------------------------
 
-    private static ChoiceBox<ua.renamer.app.core.enums.DateTimeSource> readSourceBoxUnchecked(
+    private static ChoiceBox<ua.renamer.app.api.enums.DateTimeSource> readSourceBoxUnchecked(
             ModeUseDatetimeController target) {
         return readFieldUnchecked(target, "dateTimeSourceChoiceBox");
     }
 
-    private static ChoiceBox<ua.renamer.app.core.enums.DateFormat> readDateFormatBoxUnchecked(
+    private static ChoiceBox<ua.renamer.app.api.enums.DateFormat> readDateFormatBoxUnchecked(
             ModeUseDatetimeController target) {
         return readFieldUnchecked(target, "dateFormatChoiceBox");
     }
 
-    private static ChoiceBox<ua.renamer.app.core.enums.TimeFormat> readTimeFormatBoxUnchecked(
+    private static ChoiceBox<ua.renamer.app.api.enums.TimeFormat> readTimeFormatBoxUnchecked(
             ModeUseDatetimeController target) {
         return readFieldUnchecked(target, "timeFormatChoiceBox");
     }
@@ -227,16 +227,16 @@ class ModeUseDatetimeControllerV2Test {
         injectField("dateTimeAndNameSeparatorTextField", new TextField());
 
         // @FXML field: dateFormatChoiceBox
-        injectField("dateFormatChoiceBox", new ChoiceBox<ua.renamer.app.core.enums.DateFormat>());
+        injectField("dateFormatChoiceBox", new ChoiceBox<ua.renamer.app.api.enums.DateFormat>());
 
         // @FXML field: timeFormatChoiceBox
-        injectField("timeFormatChoiceBox", new ChoiceBox<ua.renamer.app.core.enums.TimeFormat>());
+        injectField("timeFormatChoiceBox", new ChoiceBox<ua.renamer.app.api.enums.TimeFormat>());
 
         // @FXML field: dateTimeFormatChoiceBox
-        injectField("dateTimeFormatChoiceBox", new ChoiceBox<ua.renamer.app.core.enums.DateTimeFormat>());
+        injectField("dateTimeFormatChoiceBox", new ChoiceBox<ua.renamer.app.api.enums.DateTimeFormat>());
 
         // @FXML field: dateTimeSourceChoiceBox
-        injectField("dateTimeSourceChoiceBox", new ChoiceBox<ua.renamer.app.core.enums.DateTimeSource>());
+        injectField("dateTimeSourceChoiceBox", new ChoiceBox<ua.renamer.app.api.enums.DateTimeSource>());
 
         // @FXML field: useFallbackDateTimeCheckBox
         injectField("useFallbackDateTimeCheckBox", new CheckBox());
@@ -334,7 +334,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Assert
             assertThat(readSourceBoxUnchecked(controller).getValue())
-                    .isEqualTo(ua.renamer.app.core.enums.DateTimeSource.FILE_MODIFICATION_DATE);
+                    .isEqualTo(ua.renamer.app.api.enums.DateTimeSource.FILE_MODIFICATION_DATE);
         }
 
         @Test
@@ -348,7 +348,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Assert
             assertThat(readDateFormatBoxUnchecked(controller).getValue())
-                    .isEqualTo(ua.renamer.app.core.enums.DateFormat.YYYY_MM_DD_DASHED);
+                    .isEqualTo(ua.renamer.app.api.enums.DateFormat.YYYY_MM_DD_DASHED);
         }
 
         @Test
@@ -362,7 +362,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Assert
             assertThat(readTimeFormatBoxUnchecked(controller).getValue())
-                    .isEqualTo(ua.renamer.app.core.enums.TimeFormat.HH_MM_SS_24_DASHED);
+                    .isEqualTo(ua.renamer.app.api.enums.TimeFormat.HH_MM_SS_24_DASHED);
         }
 
         @Test
@@ -377,7 +377,7 @@ class ModeUseDatetimeControllerV2Test {
             // Assert — radio selector should have END selected
             var selector = readRadioSelectorUnchecked(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.ItemPositionWithReplacement.END);
+                    .isEqualTo(ua.renamer.app.api.enums.ItemPositionWithReplacement.END);
         }
 
         @Test
@@ -392,7 +392,7 @@ class ModeUseDatetimeControllerV2Test {
             // Assert
             var selector = readRadioSelectorUnchecked(controller);
             assertThat(selector.getSelectedValue())
-                    .isEqualTo(ua.renamer.app.core.enums.ItemPositionWithReplacement.REPLACE);
+                    .isEqualTo(ua.renamer.app.api.enums.ItemPositionWithReplacement.REPLACE);
         }
 
         @Test
@@ -572,7 +572,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Act
             runOnFxThreadAndWait(() -> readSourceBoxUnchecked(controller)
-                    .setValue(ua.renamer.app.core.enums.DateTimeSource.FILE_MODIFICATION_DATE));
+                    .setValue(ua.renamer.app.api.enums.DateTimeSource.FILE_MODIFICATION_DATE));
 
             // Assert
             ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
@@ -596,7 +596,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Act
             runOnFxThreadAndWait(() -> readDateFormatBoxUnchecked(controller)
-                    .setValue(ua.renamer.app.core.enums.DateFormat.YYYY_MM_DD_DASHED));
+                    .setValue(ua.renamer.app.api.enums.DateFormat.YYYY_MM_DD_DASHED));
 
             // Assert
             ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
@@ -623,7 +623,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Act
             runOnFxThreadAndWait(() -> readDateFormatBoxUnchecked(controller)
-                    .setValue(ua.renamer.app.core.enums.DateFormat.DO_NOT_USE_DATE));
+                    .setValue(ua.renamer.app.api.enums.DateFormat.DO_NOT_USE_DATE));
 
             // Assert
             ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
@@ -648,7 +648,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Act
             runOnFxThreadAndWait(() -> readTimeFormatBoxUnchecked(controller)
-                    .setValue(ua.renamer.app.core.enums.TimeFormat.HH_MM_SS_24_DASHED));
+                    .setValue(ua.renamer.app.api.enums.TimeFormat.HH_MM_SS_24_DASHED));
 
             // Assert
             ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
@@ -675,7 +675,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Act
             runOnFxThreadAndWait(() -> readTimeFormatBoxUnchecked(controller)
-                    .setValue(ua.renamer.app.core.enums.TimeFormat.DO_NOT_USE_TIME));
+                    .setValue(ua.renamer.app.api.enums.TimeFormat.DO_NOT_USE_TIME));
 
             // Assert
             ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
@@ -703,7 +703,7 @@ class ModeUseDatetimeControllerV2Test {
                 var selector = readRadioSelectorUnchecked(controller);
                 selector.getButtons().stream()
                         .filter(btn -> btn.getValue()
-                                == ua.renamer.app.core.enums.ItemPositionWithReplacement.END)
+                                == ua.renamer.app.api.enums.ItemPositionWithReplacement.END)
                         .findFirst()
                         .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
             });
@@ -733,7 +733,7 @@ class ModeUseDatetimeControllerV2Test {
                 var selector = readRadioSelectorUnchecked(controller);
                 selector.getButtons().stream()
                         .filter(btn -> btn.getValue()
-                                == ua.renamer.app.core.enums.ItemPositionWithReplacement.REPLACE)
+                                == ua.renamer.app.api.enums.ItemPositionWithReplacement.REPLACE)
                         .findFirst()
                         .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
             });
@@ -1000,10 +1000,10 @@ class ModeUseDatetimeControllerV2Test {
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
             // Act — change dateTimeFormatChoiceBox
-            ChoiceBox<ua.renamer.app.core.enums.DateTimeFormat> dateTimeFormatBox =
+            ChoiceBox<ua.renamer.app.api.enums.DateTimeFormat> dateTimeFormatBox =
                     readFieldUnchecked(controller, "dateTimeFormatChoiceBox");
             runOnFxThreadAndWait(() -> dateTimeFormatBox.setValue(
-                    ua.renamer.app.core.enums.DateTimeFormat.DATE_TIME_DASHED));
+                    ua.renamer.app.api.enums.DateTimeFormat.DATE_TIME_DASHED));
 
             // Assert — updateParameters must have been called
             ArgumentCaptor<ModeApi.ParamMutator<DateTimeParams>> captor =
@@ -1084,7 +1084,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Act
             runOnFxThreadAndWait(() -> readSourceBoxUnchecked(controller)
-                    .setValue(ua.renamer.app.core.enums.DateTimeSource.CUSTOM_DATE));
+                    .setValue(ua.renamer.app.api.enums.DateTimeSource.CUSTOM_DATE));
 
             // Assert
             assertThat(readDateTimePickerPanelUnchecked(controller).isVisible()).isTrue();
@@ -1104,7 +1104,7 @@ class ModeUseDatetimeControllerV2Test {
 
             // Act
             runOnFxThreadAndWait(() -> readSourceBoxUnchecked(controller)
-                    .setValue(ua.renamer.app.core.enums.DateTimeSource.CURRENT_DATE));
+                    .setValue(ua.renamer.app.api.enums.DateTimeSource.CURRENT_DATE));
 
             // Assert
             assertThat(readDateTimePickerPanelUnchecked(controller).isVisible()).isFalse();
@@ -1127,7 +1127,7 @@ class ModeUseDatetimeControllerV2Test {
                 var selector = readRadioSelectorUnchecked(controller);
                 selector.getButtons().stream()
                         .filter(btn -> btn.getValue()
-                                == ua.renamer.app.core.enums.ItemPositionWithReplacement.REPLACE)
+                                == ua.renamer.app.api.enums.ItemPositionWithReplacement.REPLACE)
                         .findFirst()
                         .ifPresent(btn -> selector.getToggleGroup().selectToggle(btn));
             });
