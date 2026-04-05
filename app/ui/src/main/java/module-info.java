@@ -11,7 +11,6 @@ module ua.renamer.app.ui {
     requires javafx.web;
 
     requires ua.renamer.app.core;
-    requires ua.renamer.app.metadata;
     requires ua.renamer.app.backend;
     requires ua.renamer.app.api;
     requires jakarta.inject;

@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ua.renamer.app.api.service.FileRenameOrchestrator;
 import ua.renamer.app.api.session.SessionApi;
 import ua.renamer.app.api.session.StatePublisher;
 import ua.renamer.app.backend.service.BackendExecutor;
@@ -20,12 +19,11 @@ import static org.mockito.Mockito.mock;
  * <p>Verifies that all Guice bindings resolve at injector-creation time and
  * that singleton-scoped bindings return the same instance on repeated calls.
  *
- * <p>The test-local injector supplements {@link DIBackendModule} with stub
- * bindings for the two runtime dependencies that {@code DIBackendModule}
+ * <p>The test-local injector supplements {@link DIBackendModule} with a stub
+ * binding for the one runtime dependency that {@code DIBackendModule}
  * intentionally leaves unbound:
  * <ul>
  *   <li>{@link StatePublisher} — provided in production by {@code DIUIModule}</li>
- *   <li>{@link FileRenameOrchestrator} — provided in production by {@code DICoreModule}</li>
  * </ul>
  */
 class DIBackendModuleTest {
@@ -34,15 +32,9 @@ class DIBackendModuleTest {
 
     @BeforeEach
     void setUp() {
-        StatePublisher stubPublisher = mock(StatePublisher.class);
-        FileRenameOrchestrator stubOrchestrator = mock(FileRenameOrchestrator.class);
-
         injector = Guice.createInjector(
                 new DIBackendModule(),
-                binder -> {
-                    binder.bind(StatePublisher.class).toInstance(stubPublisher);
-                    binder.bind(FileRenameOrchestrator.class).toInstance(stubOrchestrator);
-                }
+                binder -> binder.bind(StatePublisher.class).toInstance(mock(StatePublisher.class))
         );
     }
 

@@ -185,7 +185,7 @@ because the lookup operates on the MIME string value `"video/x-msvideo"`, not th
 
 ---
 
-## Task 2 — Remove `StringUtilsV2`
+## Task 2 — Remove `StringUtilsV2` (Done)
 
 ### Objective
 
@@ -338,7 +338,7 @@ assert `utils` has no external module deps should be updated accordingly.
 
 ---
 
-## Task 3 — Fix UI Module Architecture Violations
+## Task 3 — Fix UI Module Architecture Violations (Done)
 
 ### Objective
 

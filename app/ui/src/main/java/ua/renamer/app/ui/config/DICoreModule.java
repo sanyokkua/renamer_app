@@ -5,10 +5,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.config.DIV2ServiceModule;
 import ua.renamer.app.core.service.TextExtractorByKey;
 import ua.renamer.app.core.service.validator.impl.NameValidator;
-import ua.renamer.app.metadata.config.DIMetadataModule;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 
 /**
@@ -21,10 +19,6 @@ public class DICoreModule extends AbstractModule {
     @Override
     protected void configure() {
         bindApplicationServices();
-
-        // Install v2 services and infrastructure modules
-        install(new DIMetadataModule());
-        install(new DIV2ServiceModule());
     }
 
     private void bindApplicationServices() {

@@ -16,7 +16,7 @@ import ua.renamer.app.core.service.transformation.*;
  * Dependency injection module for v2 services architecture.
  * Configures transformers, support services, and the main orchestrator.
  * Infrastructure bindings (FileUtils, DateTimeUtils, FileMetadataMapper, etc.)
- * are provided by DIMetadataModule installed in the composition root (ui).
+ * are provided by DIMetadataModule installed in the composition root (backend).
  */
 public class DIV2ServiceModule extends AbstractModule {
 

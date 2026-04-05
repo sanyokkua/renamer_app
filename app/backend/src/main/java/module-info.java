@@ -1,6 +1,7 @@
 module ua.renamer.app.backend {
     requires ua.renamer.app.api;
     requires ua.renamer.app.core;
+    requires ua.renamer.app.metadata;
     requires com.google.guice;
     requires jakarta.inject;
     requires jakarta.annotation;
