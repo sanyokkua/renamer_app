@@ -3,8 +3,8 @@ package ua.renamer.app.core.mapper;
 import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import ua.renamer.app.api.enums.AppMimeTypes;
 import ua.renamer.app.api.enums.Category;
-import ua.renamer.app.api.enums.MimeTypes;
 import ua.renamer.app.api.interfaces.FileMapper;
 import ua.renamer.app.api.interfaces.FileMetadataMapper;
 import ua.renamer.app.api.interfaces.FileUtils;
@@ -12,11 +12,9 @@ import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class ThreadAwareFileMapper implements FileMapper {
@@ -83,17 +81,13 @@ public class ThreadAwareFileMapper implements FileMapper {
 
     private Set<String> resolveDetectedExtensions(String mimeType) {
         if (StringUtils.isBlank(mimeType)) {
-            return Collections.emptySet();
+            return Set.of();
         }
 
         return MIME_EXTENSIONS_CACHE.computeIfAbsent(mimeType, this::findExtensions);
     }
 
     private Set<String> findExtensions(String mimeType) {
-        return Stream.of(MimeTypes.values())
-                .filter(mime -> mime.getMime().equalsIgnoreCase(mimeType))
-                .findFirst()
-                .map(MimeTypes::getExtensions)
-                .orElse(Collections.emptySet());
+        return AppMimeTypes.getExtensionsByMimeString(mimeType);
     }
 }

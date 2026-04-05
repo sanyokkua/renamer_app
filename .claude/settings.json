@@ -35,8 +35,8 @@
   },
   "permissions": {
     "allow": [
-      "WebFetch(**)",
-      "WebSearch(**)",
+      "WebFetch",
+      "WebSearch",
       "Read(**)",
       "Glob(**)",
       "Grep(**)",
