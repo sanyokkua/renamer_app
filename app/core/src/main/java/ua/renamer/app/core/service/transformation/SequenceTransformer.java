@@ -56,7 +56,7 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
                 }
             }
 
-            // Step 2: Sort valid files by criteria (just like v1)
+            // Step 2: Sort valid files by criteria
             List<FileModel> sorted = sortBySource(validFiles, config);
 
             // Step 3: Apply sequence numbers (must be sequential!)

@@ -512,7 +512,7 @@ being removed), those tests will break and need to be updated to install `DIBack
 
 ---
 
-## Task 4 — Remove Stale Comments and Migration-Era Docs
+## Task 4 — Remove Stale Comments and Migration-Era Docs (Done)
 
 ### Objective
 
