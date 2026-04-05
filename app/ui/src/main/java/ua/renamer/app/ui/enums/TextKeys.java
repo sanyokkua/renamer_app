@@ -112,7 +112,19 @@ public enum TextKeys {
     NO_ACTIONS_HAPPEN("no_actions_happen"),
     RENAMED_WITHOUT_ERRORS("renamed_without_errors"),
     NOT_RENAMED_BECAUSE_NOT_NEEDED("not_renamed_because_not_needed"),
-    NOT_RENAMED_BECAUSE_OF_ERROR("not_renamed_because_of_error");
+    NOT_RENAMED_BECAUSE_OF_ERROR("not_renamed_because_of_error"),
+    FILE_NEW_NAME("file_new_name"),
+    FILE_SIZE("file_size"),
+    FILE_INFO_ERROR("file_info_error"),
+    PROGRESS_LOADING("progress_loading"),
+    PROGRESS_RENAMING("progress_renaming"),
+    PROGRESS_RENAMING_N("progress_renaming_n"),
+    PROGRESS_DONE("progress_done"),
+    FILE_INFO_NO_SELECTION("file_info_no_selection"),
+    MENU_MODE("menu_mode"),
+    MENU_SETTINGS("menu_settings"),
+    MENU_HELP("menu_help"),
+    METADATA_NOT_AVAILABLE("metadata_not_available");
 
     private final String keyString;
 

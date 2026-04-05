@@ -4,6 +4,7 @@ import ua.renamer.app.api.model.TransformationMode;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -80,4 +81,14 @@ public interface SessionApi {
      * @return unmodifiable list of available actions; never null; may be empty
      */
     List<AvailableAction> availableActions();
+
+    /**
+     * Returns rich metadata for the file with the given ID, or empty if the ID is unknown.
+     * Safe to call from any thread.
+     *
+     * @param fileId the stable file identifier; must not be null
+     * @return an {@link Optional} containing the metadata, or empty if unavailable; never null
+     * @throws NullPointerException if {@code fileId} is null
+     */
+    Optional<FileMetadataDto> getFileMetadata(String fileId);
 }

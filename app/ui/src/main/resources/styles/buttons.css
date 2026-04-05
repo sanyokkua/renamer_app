@@ -1,0 +1,57 @@
+/* ── Primary button (Rename) ── */
+.btn-primary {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-text-on-primary;
+    -fx-background-radius: 6px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-primary:hover {
+    -fx-background-color: -color-primary-hover;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: -color-primary-press;
+}
+
+.btn-primary:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* ── Secondary button (Clear, Reload) ── */
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: -color-text-primary;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: -color-bg-header;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: derive(-color-bg-header, -10%);
+}
+
+.btn-secondary:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* ── Danger button (future use) ── */
+.btn-danger {
+    -fx-background-color: -color-danger;
+    -fx-text-fill: -color-text-on-primary;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-danger:hover {
+    -fx-background-color: -color-danger-hover;
+}

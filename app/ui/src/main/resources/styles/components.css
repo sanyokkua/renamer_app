@@ -1,0 +1,5 @@
+/* Progress bar — taller track for visual prominence */
+.progress-bar {
+    -fx-pref-height: 8px;
+    -fx-min-height: 8px;
+}

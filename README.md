@@ -31,13 +31,17 @@ Also, there can be different options of renaming as:
 - Removing empty symbols
 - etc.
 
-## Screenshots
+## UI Overview
 
-Some examples of the working app
+The app uses a four-zone layout:
 
-![File Renamer App - ex1](docs/app_screen_example_1.png)
-![File Renamer App - ex2](docs/app_screen_example_2.png)
-![File Renamer App - ex3](docs/app_screen_example_3.png)
+- **Menu bar** (macOS system bar): Mode selector with all renaming modes, Settings, Help
+- **Main panel** (resizable split): mode-specific settings on the left (scrollable), file table on the right
+- **Metadata panel**: shows file details in two columns when a file is selected; placeholder text when nothing is
+  selected
+- **Bottom bar**: progress bar (expands to fill available width) + file count + Clear / Reload / Rename buttons
+
+> Screenshots will be updated in a future release to reflect the current layout.
 
 ## Download Page
 

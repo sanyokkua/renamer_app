@@ -1,0 +1,64 @@
+/*
+ * base.css — Renamer App design token system.
+ * All tokens are defined as looked-up colours on .root so any node in the
+ * scene graph can reference them with: -fx-background-color: -color-bg-app;
+ */
+.root {
+    /* ── Palette ── */
+    -color-primary: #2196F3;
+    -color-primary-hover: derive(-color-primary, -15%);
+    -color-primary-press: derive(-color-primary, -25%);
+    -color-danger: #e53935;
+    -color-danger-hover: derive(-color-danger, -15%);
+    -color-success: #43a047;
+    -color-warning: #fb8c00;
+
+    /* ── Backgrounds ── */
+    -color-bg-app: #f5f5f5;
+    -color-bg-panel: #ffffff;
+    -color-bg-header: #eeeeee;
+
+    /* ── Table row states ── */
+    -color-row-ready: #e3f2fd;
+    -color-row-error: #ffebee;
+    -color-row-renamed: #e8f5e9;
+
+    /* ── Text ── */
+    -color-text-primary: #212121;
+    -color-text-secondary: #757575;
+    -color-text-on-primary: #ffffff;
+
+    /* ── Border ── */
+    -color-border: #e0e0e0;
+
+    /* ── Spacing scale (8 px base unit) ── */
+    -spacing-xs: 4px;
+    -spacing-sm: 8px;
+    -spacing-md: 12px;
+    -spacing-lg: 16px;
+    -spacing-xl: 24px;
+    -spacing-2xl: 32px;
+
+    /* ── Shape ── */
+    -radius-sm: 4px;
+    -radius-md: 6px;
+    -radius-lg: 8px;
+
+    /* ── Font-size scale (Major Third — 1.25×) ── */
+    -font-size-xs: 10px;
+    -font-size-sm: 11px;
+    -font-size-base: 13px;
+    -font-size-md: 14px;
+    -font-size-lg: 16px;
+    -font-size-xl: 20px;
+}
+
+/* SplitPane divider */
+.split-pane > .split-pane-divider {
+    -fx-background-color: -color-border;
+    -fx-padding: 0 2 0 2;
+}
+
+.split-pane > .split-pane-divider:hover {
+    -fx-background-color: -color-primary;
+}

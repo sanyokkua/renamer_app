@@ -67,6 +67,34 @@ public class RenamerApplication extends Application {
 
         // Create a scene with the root node and set it on the stage
         var scene = new Scene(root.get(), MINIMAL_WIDTH, MINIMAL_HEIGHT);
+        var baseCss = RenamerApplication.class.getResource("/styles/base.css");
+        if (baseCss != null) {
+            scene.getStylesheets().add(baseCss.toExternalForm());
+        }
+        var tableCss = RenamerApplication.class.getResource("/styles/table.css");
+        if (tableCss != null) {
+            scene.getStylesheets().add(tableCss.toExternalForm());
+        }
+        var buttonsCss = RenamerApplication.class.getResource("/styles/buttons.css");
+        if (buttonsCss != null) {
+            scene.getStylesheets().add(buttonsCss.toExternalForm());
+        }
+        var typoCss = RenamerApplication.class.getResource("/styles/typography.css");
+        if (typoCss != null) {
+            scene.getStylesheets().add(typoCss.toExternalForm());
+        }
+        var a11yCss = RenamerApplication.class.getResource("/styles/accessibility.css");
+        if (a11yCss != null) {
+            scene.getStylesheets().add(a11yCss.toExternalForm());
+        }
+        var fileInfoCss = RenamerApplication.class.getResource("/styles/file-info.css");
+        if (fileInfoCss != null) {
+            scene.getStylesheets().add(fileInfoCss.toExternalForm());
+        }
+        var componentsCss = RenamerApplication.class.getResource("/styles/components.css");
+        if (componentsCss != null) {
+            scene.getStylesheets().add(componentsCss.toExternalForm());
+        }
         stage.setScene(scene);
 
         // Show the stage

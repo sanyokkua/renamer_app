@@ -8,15 +8,22 @@ import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.RenameStatus;
 import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.AudioMeta;
+import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.api.model.meta.category.VideoMeta;
 import ua.renamer.app.api.service.FileRenameOrchestrator;
 import ua.renamer.app.api.session.*;
 import ua.renamer.app.backend.service.BackendExecutor;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static ua.renamer.app.api.session.AvailableAction.*;
@@ -53,6 +60,9 @@ public class RenameSessionService implements SessionApi {
     // Snapshot cache — updated at the end of every state mutation, read by snapshot() from any thread
     private final AtomicReference<SessionSnapshot> snapshotRef =
             new AtomicReference<>(emptySnapshot());
+
+    // Metadata cache — populated on the state thread, safe for concurrent reads from any thread
+    private final ConcurrentHashMap<String, FileMetadataDto> metadataCache = new ConcurrentHashMap<>();
 
     /**
      * Creates an empty snapshot for the initial (EMPTY) session state.
@@ -113,6 +123,56 @@ public class RenameSessionService implements SessionApi {
         return List.of();
     }
 
+    /**
+     * Converts a {@link FileModel} into an FX-safe {@link FileMetadataDto}.
+     * Extracts the first available specialised meta (image, video, or audio) in that order.
+     *
+     * @param fm the file model to convert; must not be null
+     * @return a populated DTO; never null
+     */
+    private static FileMetadataDto buildMetadataDto(FileModel fm) {
+        LocalDateTime contentDate = null;
+        Integer width = null;
+        Integer height = null;
+        String artist = null;
+        String album = null;
+        String title = null;
+        Integer audioYear = null;
+
+        Optional<FileMeta> metaOpt = fm.getMetadata();
+        if (metaOpt.isPresent()) {
+            FileMeta meta = metaOpt.get();
+            ImageMeta img = meta.getImageMeta().orElse(null);
+            VideoMeta vid = meta.getVideoMeta().orElse(null);
+            AudioMeta aud = meta.getAudioMeta().orElse(null);
+
+            if (img != null) {
+                contentDate = img.getContentCreationDate().orElse(null);
+                width = img.getWidth().orElse(null);
+                height = img.getHeight().orElse(null);
+            } else if (vid != null) {
+                contentDate = vid.getContentCreationDate().orElse(null);
+                width = vid.getWidth().orElse(null);
+                height = vid.getHeight().orElse(null);
+            } else if (aud != null) {
+                artist = aud.getArtistName().orElse(null);
+                album = aud.getAlbumName().orElse(null);
+                title = aud.getSongName().orElse(null);
+                audioYear = aud.getYear().orElse(null);
+            }
+        }
+
+        String categoryName = fm.getCategory() != null ? fm.getCategory().name() : "GENERIC";
+        return new FileMetadataDto(
+                fm.getDetectedMimeType(),
+                fm.getFileSize(),
+                categoryName,
+                contentDate,
+                width, height,
+                artist, album, title, audioYear
+        );
+    }
+
     @Override
     public CompletableFuture<CommandResult> addFiles(List<Path> paths) {
         Objects.requireNonNull(paths, "paths must not be null");
@@ -147,6 +207,7 @@ public class RenameSessionService implements SessionApi {
     public CompletableFuture<CommandResult> clearFiles() {
         return executor.submitStateChange(() -> {
             session.clearFiles();
+            metadataCache.clear();
             publisher.publishFilesChanged(List.of(), List.of());
             snapshotRef.set(emptySnapshot());
             return CommandResult.succeeded();
@@ -242,6 +303,12 @@ public class RenameSessionService implements SessionApi {
     // ==================== PRIVATE HELPERS ====================
 
     @Override
+    public Optional<FileMetadataDto> getFileMetadata(String fileId) {
+        Objects.requireNonNull(fileId, "fileId must not be null");
+        return Optional.ofNullable(metadataCache.get(fileId));
+    }
+
+    @Override
     public List<AvailableAction> availableActions() {
         return switch (session.getStatus()) {
             case EMPTY -> List.of(ADD_FILES);
@@ -314,6 +381,9 @@ public class RenameSessionService implements SessionApi {
                 preview, session.getFiles(), session.getActiveMode());
         List<ua.renamer.app.api.session.RenameCandidate> candidates = session.getFiles().stream()
                 .map(RenameSessionConverter::toCandidate).toList();
+        // Rebuild metadata cache — called on state thread; ConcurrentHashMap allows safe concurrent reads
+        metadataCache.clear();
+        session.getFiles().forEach(fm -> metadataCache.put(fm.getAbsolutePath(), buildMetadataDto(fm)));
         publisher.publishFilesChanged(candidates, previewDtos);
         updateSnapshotCache(previewDtos);
         return CommandResult.succeeded();

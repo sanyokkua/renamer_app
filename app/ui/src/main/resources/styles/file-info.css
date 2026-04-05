@@ -1,0 +1,62 @@
+/* ScrollPane wrapper — must colour both the node and its inner viewport */
+.file-info-scroll {
+    -fx-background-color: -color-bg-panel;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 0;
+}
+
+.file-info-scroll > .viewport {
+    -fx-background-color: -color-bg-panel;
+}
+
+.file-info-panel {
+    -fx-background-color: -color-bg-panel;
+    -fx-padding: 4;
+}
+
+.file-info-row {
+    -fx-spacing: 4;
+    -fx-padding: 2 6 2 6;
+}
+
+.file-info-label-key {
+    -fx-text-fill: -color-text-secondary;
+    -fx-font-size: 11px;
+    -fx-min-width: 140;
+    -fx-pref-width: 140;
+}
+
+.file-info-label-value {
+    -fx-text-fill: -color-text-primary;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
+}
+
+.file-info-error {
+    -fx-text-fill: -color-danger;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
+    -fx-padding: 2 6 2 6;
+}
+
+.file-info-separator {
+    -fx-background-color: -color-border;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+
+.file-info-placeholder {
+    -fx-text-fill: -color-text-secondary;
+    -fx-font-style: italic;
+    -fx-font-size: 11px;
+    -fx-padding: 8 8 8 8;
+}
+
+.file-info-columns {
+    -fx-fill-width: true;
+}
+
+.file-info-col {
+    -fx-padding: 0 4 0 4;
+}

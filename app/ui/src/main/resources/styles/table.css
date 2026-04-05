@@ -1,0 +1,41 @@
+/* Table row state classes — applied by ApplicationMainViewController row factory */
+
+.table-row-cell.row-ready {
+    -fx-control-inner-background: -color-row-ready;
+    -fx-accent: derive(-color-row-ready, -20%);
+    -fx-cell-hover-color: derive(-color-row-ready, -10%);
+}
+
+.table-row-cell.row-error {
+    -fx-control-inner-background: -color-row-error;
+    -fx-accent: derive(-color-row-error, -20%);
+    -fx-cell-hover-color: derive(-color-row-error, -10%);
+}
+
+.table-row-cell.row-renamed {
+    -fx-control-inner-background: -color-row-renamed;
+    -fx-accent: derive(-color-row-renamed, -20%);
+    -fx-cell-hover-color: derive(-color-row-renamed, -10%);
+}
+
+/* Column header styling */
+.table-view .column-header-background {
+    -fx-background-color: -color-bg-header;
+}
+
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-primary;
+    -fx-padding: 6 8 6 8;
+}
+
+/* Empty table placeholder */
+.table-view .placeholder .label {
+    -fx-text-fill: -color-text-secondary;
+    -fx-font-style: italic;
+}
+
+/* Monospace rendering for the Changed Name column */
+.changed-name-col .table-cell {
+    -fx-font-family: "Courier New", "Courier", monospace;
+}

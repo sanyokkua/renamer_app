@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.controller;
 
 import com.google.inject.Inject;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
@@ -10,8 +11,10 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.web.WebView;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.model.RenameStatus;
@@ -26,7 +29,12 @@ import ua.renamer.app.ui.state.FxStateMirror;
 import ua.renamer.app.ui.view.ModeViewRegistry;
 import ua.renamer.app.ui.widget.table.TableCustomContextMenu;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,13 +52,9 @@ public class ApplicationMainViewController implements Initializable {
     private final LanguageTextRetrieverApi languageTextRetriever;
 
     @FXML
-    private ChoiceBox<TransformationMode> appModeChoiceBox;
+    private Menu modeMenu;
     @FXML
     private StackPane appModeContainer;
-    @FXML
-    private CheckBox autoPreviewCheckBox;
-    @FXML
-    private Button previewBtn;
     @FXML
     private Button renameBtn;
     @FXML
@@ -68,9 +72,13 @@ public class ApplicationMainViewController implements Initializable {
     @FXML
     private TableColumn<RenamePreview, String> statusColumn;
     @FXML
-    private WebView fileInfoWebView;
+    private VBox fileInfoPanel;
     @FXML
     private ProgressBar appProgressBar;
+    @FXML
+    private Label progressLabel;
+    @FXML
+    private Label fileCountLabel;
 
     private boolean areFilesRenamed = false;
     private ModeApi<?> currentModeApi;
@@ -82,49 +90,75 @@ public class ApplicationMainViewController implements Initializable {
         ((ModeControllerV2Api<P>) ctrl).bind((ModeApi<P>) api);
     }
 
+    private static String formatFileSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+        if (bytes < 1024 * 1024) {
+            return String.format("%.1f KB", bytes / 1024.0);
+        }
+        if (bytes < 1024L * 1024 * 1024) {
+            return String.format("%.1f MB", bytes / (1024.0 * 1024));
+        }
+        return String.format("%.2f GB", bytes / (1024.0 * 1024 * 1024));
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         log.info("Initializing ApplicationMainViewController");
-        configureModeChoiceBox();
+        configureModeMenu();
         configureFilesTableView();
         configureFilesTableViewColumns();
-        configureAutoPreviewCheckbox();
-        configurePreviewBtn();
         configureRenameBtn();
         configureClearBtn();
         configureReloadBtn();
         configureProgressBar();
         configureFxStateMirrorListeners();
         configureControlWidgetsState();
-        handleModeChanged();
+        handleModeChanged(TransformationMode.ADD_TEXT);
+        updateFileCountLabel();
+        clearFileInfoPanel();
     }
 
-    private void configureModeChoiceBox() {
-        log.info("Configuring modeChoiceBox");
-        appModeChoiceBox.getItems().addAll(TransformationMode.values());
-        appModeChoiceBox.setValue(TransformationMode.ADD_TEXT);
-        appModeChoiceBox.setConverter(appModesConverter);
-        appModeChoiceBox.setOnAction((event -> handleModeChanged()));
+    private void configureModeMenu() {
+        log.info("Configuring modeMenu");
+        var group = new ToggleGroup();
+        for (var mode : TransformationMode.values()) {
+            var item = new RadioMenuItem(appModesConverter.toString(mode));
+            item.setToggleGroup(group);
+            item.setOnAction(e -> handleModeChanged(mode));
+            modeMenu.getItems().add(item);
+        }
+        ((RadioMenuItem) modeMenu.getItems().get(0)).setSelected(true);
     }
 
     private void configureFilesTableView() {
         log.info("Configuring filesTableView");
         filesTableView.setOnDragOver(this::handleFilesTableViewDragOverEvent);
         filesTableView.setOnDragDropped(this::handleFilesTableViewFilesDroppedEvent);
-        filesTableView.setItems(fxStateMirror.preview());
+        var sortedList = new javafx.collections.transformation.SortedList<>(fxStateMirror.preview());
+        sortedList.comparatorProperty().bind(filesTableView.comparatorProperty());
+        filesTableView.setItems(sortedList);
         filesTableView.setContextMenu(new TableCustomContextMenu(filesTableView));
         filesTableView.setRowFactory(tv -> new TableRow<>() {
             @Override
             protected void updateItem(RenamePreview preview, boolean empty) {
                 super.updateItem(preview, empty);
+                getStyleClass().removeAll("row-ready", "row-error", "row-renamed");
                 if (preview == null || empty) {
-                    setStyle("");
-                } else if (preview.hasError()) {
-                    setStyle(TableStyles.HAS_ERROR.getStyle());
-                } else if (preview.newName() != null && !preview.newName().equals(preview.originalName())) {
-                    setStyle(TableStyles.READY_FOR_RENAMING.getStyle());
-                } else {
-                    setStyle(TableStyles.BLANK.getStyle());
+                    return;
+                }
+                if (preview.hasError()) {
+                    getStyleClass().add(TableStyles.HAS_ERROR.getStyleClass());
+                    return;
+                }
+                var result = renameResultsByFileId.get(preview.fileId());
+                if (result != null && result.status() == RenameStatus.SUCCESS) {
+                    getStyleClass().add(TableStyles.RENAMED.getStyleClass());
+                    return;
+                }
+                if (preview.newName() != null && !preview.newName().equals(preview.originalName())) {
+                    getStyleClass().add(TableStyles.READY_FOR_RENAMING.getStyleClass());
                 }
             }
         });
@@ -176,19 +210,59 @@ public class ApplicationMainViewController implements Initializable {
             return new SimpleStringProperty(
                     languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_NOT_NEEDED));
         });
-    }
 
-    private void configureAutoPreviewCheckbox() {
-        log.info("Configuring autoPreviewCheckbox");
-        autoPreviewCheckBox.setDisable(true);
-        autoPreviewCheckBox.setTooltip(
-                new Tooltip(languageTextRetriever.getString(TextKeys.CHECK_BOX_AUTO_PREVIEW)));
-    }
-
-    private void configurePreviewBtn() {
-        log.info("Configuring previewBtn");
-        previewBtn.setOnAction(event -> handleBtnClickedPreview());
-        previewBtn.setTooltip(new Tooltip(languageTextRetriever.getString(TextKeys.BTN_PREVIEW)));
+        originalNameColumn.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    setTooltip(new Tooltip(item));
+                }
+            }
+        });
+        newNameColumn.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    setTooltip(new Tooltip(item));
+                }
+            }
+        });
+        statusColumn.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    setTooltip(new Tooltip(item));
+                }
+            }
+        });
+        itemTypeColumn.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    setTooltip(new Tooltip(item));
+                }
+            }
+        });
     }
 
     private void configureRenameBtn() {
@@ -212,6 +286,20 @@ public class ApplicationMainViewController implements Initializable {
     private void configureProgressBar() {
         log.info("Configuring progressBar");
         appProgressBar.setProgress(0);
+        progressLabel.setText("");
+    }
+
+    private void updateFileCountLabel() {
+        int total = fxStateMirror.files().size();
+        long renamed = renameResultsByFileId.values().stream()
+                .filter(r -> r.status() == RenameStatus.SUCCESS).count();
+        if (total == 0) {
+            fileCountLabel.setText("");
+        } else if (renamed > 0) {
+            fileCountLabel.setText(total + " files \u00b7 " + renamed + " renamed");
+        } else {
+            fileCountLabel.setText(total + " files");
+        }
     }
 
     private void configureFxStateMirrorListeners() {
@@ -220,6 +308,7 @@ public class ApplicationMainViewController implements Initializable {
             candidatesByFileId = fxStateMirror.files().stream()
                     .collect(Collectors.toMap(RenameCandidate::fileId, c -> c));
             configureControlWidgetsState();
+            updateFileCountLabel();
         });
         fxStateMirror.renameResults().addListener((ListChangeListener<RenameSessionResult>) change -> {
             if (!fxStateMirror.renameResults().isEmpty()) {
@@ -228,6 +317,7 @@ public class ApplicationMainViewController implements Initializable {
                 areFilesRenamed = true;
                 configureControlWidgetsState();
                 filesTableView.refresh();
+                updateFileCountLabel();
             }
         });
     }
@@ -237,26 +327,34 @@ public class ApplicationMainViewController implements Initializable {
         reloadBtn.setVisible(areFilesRenamed);
 
         if (fxStateMirror.files().isEmpty()) {
-            previewBtn.setDisable(true);
             renameBtn.setDisable(true);
             clearBtn.setDisable(true);
         } else {
-            previewBtn.setDisable(false);
             renameBtn.setDisable(false);
             clearBtn.setDisable(false);
             renameBtn.setDisable(reloadBtn.isVisible());
         }
     }
 
-    @FXML
-    private void handleModeChanged() {
+    private void handleModeChanged(TransformationMode mode) {
         log.debug("handleModeChanged");
-        var mode = appModeChoiceBox.getValue();
-
         modeViewRegistry.getView(mode).ifPresent(view -> {
-            StackPane.setMargin(view, new Insets(10, 10, 10, 10));
-            appModeContainer.getChildren().clear();
-            appModeContainer.getChildren().add(view);
+            StackPane.setMargin(view, Insets.EMPTY);
+            if (!appModeContainer.getChildren().isEmpty()) {
+                var current = appModeContainer.getChildren().get(0);
+                var fadeOut = new FadeTransition(Duration.millis(80), current);
+                fadeOut.setToValue(0.0);
+                fadeOut.setOnFinished(e -> {
+                    appModeContainer.getChildren().setAll(view);
+                    view.setOpacity(0.0);
+                    var fadeIn = new FadeTransition(Duration.millis(120), view);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
+                });
+                fadeOut.play();
+            } else {
+                appModeContainer.getChildren().add(view);
+            }
         });
 
         log.debug("handleModeChanged: {}", mode.name());
@@ -287,8 +385,10 @@ public class ApplicationMainViewController implements Initializable {
                     .map(java.io.File::toPath)
                     .toList();
             appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+            progressLabel.setText("Loading files\u2026");
             sessionApi.addFiles(paths).thenRunAsync(() -> {
                 appProgressBar.setProgress(0);
+                progressLabel.setText("");
                 configureControlWidgetsState();
             }, Platform::runLater);
             success = true;
@@ -309,44 +409,144 @@ public class ApplicationMainViewController implements Initializable {
     private void handleFileInTableSelectedEvent(RenamePreview preview) {
         log.debug("handleFileInTableSelectedEvent: {}", preview);
         if (preview == null) {
-            setTextToTheFileDetailsView("");
+            clearFileInfoPanel();
             return;
         }
         var candidate = candidatesByFileId.get(preview.fileId());
-        setTextToTheFileDetailsView(buildPreviewHtml(preview, candidate));
+        updateFileInfoPanel(preview, candidate);
     }
 
-    private String buildPreviewHtml(RenamePreview preview, RenameCandidate candidate) {
-        var sb = new StringBuilder("<html><body style='font-family:sans-serif;font-size:12px;padding:4px'>");
-        sb.append("<b>").append(languageTextRetriever.getString(TextKeys.FILE_NAME))
-                .append(":</b> ").append(preview.originalName()).append("<br>");
+    private void clearFileInfoPanel() {
+        fileInfoPanel.getChildren().clear();
+        var placeholder = new Label(
+                languageTextRetriever.getString(TextKeys.FILE_INFO_NO_SELECTION));
+        placeholder.getStyleClass().add("file-info-placeholder");
+        fileInfoPanel.getChildren().add(placeholder);
+    }
+
+    private void updateFileInfoPanel(RenamePreview preview, RenameCandidate candidate) {
+        fileInfoPanel.getChildren().clear();
+        if (preview == null) {
+            clearFileInfoPanel();
+            return;
+        }
+
+        var fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // Two column VBoxes
+        var leftCol = new VBox();
+        leftCol.getStyleClass().add("file-info-col");
+        HBox.setHgrow(leftCol, javafx.scene.layout.Priority.ALWAYS);
+
+        var rightCol = new VBox();
+        rightCol.getStyleClass().add("file-info-col");
+        HBox.setHgrow(rightCol, javafx.scene.layout.Priority.ALWAYS);
+
+        java.util.function.BiConsumer<VBox, String[]> addRow = (col, kv) -> {
+            var row = new HBox();
+            row.getStyleClass().add("file-info-row");
+            var labelKey = new Label(kv[0] + ":");
+            labelKey.getStyleClass().add("file-info-label-key");
+            var labelVal = new Label(kv[1] != null ? kv[1] : "");
+            labelVal.getStyleClass().add("file-info-label-value");
+            row.getChildren().addAll(labelKey, labelVal);
+            col.getChildren().add(row);
+        };
+
+        // ── LEFT COLUMN: identity info ──
+        addRow.accept(leftCol, new String[]{
+                languageTextRetriever.getString(TextKeys.FILE_NAME), preview.originalName()});
+
         if (preview.newName() != null && !preview.newName().equals(preview.originalName())) {
-            sb.append("<b>New name:</b> ").append(preview.newName()).append("<br>");
+            addRow.accept(leftCol, new String[]{
+                    languageTextRetriever.getString(TextKeys.FILE_NEW_NAME), preview.newName()});
         }
+
         if (candidate != null) {
-            sb.append("<b>").append(languageTextRetriever.getString(TextKeys.ABSOLUTE_PATH))
-                    .append(":</b> ").append(candidate.path().getParent()).append("<br>");
-            boolean isFile = !java.nio.file.Files.isDirectory(candidate.path());
-            var typeKey = isFile ? TextKeys.IS_FILE : TextKeys.IS_FOLDER;
-            sb.append("<b>").append(languageTextRetriever.getString(TextKeys.FILE_TYPE))
-                    .append(":</b> ").append(languageTextRetriever.getString(typeKey)).append("<br>");
+            if (candidate.path().getParent() != null) {
+                addRow.accept(leftCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.ABSOLUTE_PATH),
+                        candidate.path().getParent().toString()});
+            }
+            boolean isFile = !Files.isDirectory(candidate.path());
+            addRow.accept(leftCol, new String[]{
+                    languageTextRetriever.getString(TextKeys.FILE_TYPE),
+                    languageTextRetriever.getString(isFile ? TextKeys.IS_FILE : TextKeys.IS_FOLDER)});
+            if (!candidate.extension().isBlank()) {
+                addRow.accept(leftCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.FILE_EXTENSION),
+                        candidate.extension()});
+            }
+            try {
+                long bytes = Files.size(candidate.path());
+                addRow.accept(leftCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.FILE_SIZE), formatFileSize(bytes)});
+            } catch (IOException ignored) {
+            }
         }
-        if (preview.hasError()) {
-            sb.append("<span style='color:red'><b>Error:</b> ")
-                    .append(preview.errorMessage()).append("</span><br>");
+
+        // ── RIGHT COLUMN: temporal + media info ──
+        if (candidate != null) {
+            try {
+                var attrs = Files.readAttributes(candidate.path(), BasicFileAttributes.class);
+                var modTime = attrs.lastModifiedTime().toInstant()
+                        .atZone(ZoneId.systemDefault()).toLocalDateTime();
+                var creTime = attrs.creationTime().toInstant()
+                        .atZone(ZoneId.systemDefault()).toLocalDateTime();
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.FILE_MODIFICATION_TIME),
+                        modTime.format(fmt)});
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.FILE_CREATION_TIME),
+                        creTime.format(fmt)});
+            } catch (IOException ignored) {
+            }
         }
-        sb.append("</body></html>");
-        return sb.toString();
-    }
 
-    private void handleCheckboxAutoPreviewChanged(boolean isChecked) {
-        log.debug("handleAutoPreviewChanged: {}", isChecked);
-        configureControlWidgetsState();
-    }
+        var metaOpt = sessionApi.getFileMetadata(preview.fileId());
+        metaOpt.ifPresent(dto -> {
+            String na = languageTextRetriever.getString(TextKeys.METADATA_NOT_AVAILABLE);
+            if (dto.mimeType() != null && !dto.mimeType().isBlank()) {
+                addRow.accept(leftCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.FILE_MIME_TYPE), dto.mimeType()});
+            }
+            if ("IMAGE".equals(dto.category()) || "VIDEO".equals(dto.category())) {
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.FILE_CONTENT_CREATION_TIME),
+                        dto.contentCreationDate() != null ? dto.contentCreationDate().format(fmt) : na});
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.WIDTH),
+                        dto.widthPx() != null ? dto.widthPx() + " px" : na});
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.HEIGHT),
+                        dto.heightPx() != null ? dto.heightPx() + " px" : na});
+            }
+            if ("AUDIO".equals(dto.category())) {
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.SONG_AUTHOR),
+                        dto.audioArtist() != null ? dto.audioArtist() : na});
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.SONG_NAME),
+                        dto.audioTitle() != null ? dto.audioTitle() : na});
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.SONG_ALBUM),
+                        dto.audioAlbum() != null ? dto.audioAlbum() : na});
+                addRow.accept(rightCol, new String[]{
+                        languageTextRetriever.getString(TextKeys.SONG_YEAR),
+                        dto.audioYear() != null ? String.valueOf(dto.audioYear()) : na});
+            }
+        });
 
-    private void handleBtnClickedPreview() {
-        log.debug("handlePreviewBtnClicked");
-        configureControlWidgetsState();
+        if (preview.hasError() && preview.errorMessage() != null) {
+            var errLabel = new Label(
+                    languageTextRetriever.getString(TextKeys.FILE_INFO_ERROR) + ": " + preview.errorMessage());
+            errLabel.getStyleClass().add("file-info-error");
+            rightCol.getChildren().add(errLabel);
+        }
+
+        var columns = new HBox(leftCol, rightCol);
+        columns.getStyleClass().add("file-info-columns");
+        fileInfoPanel.getChildren().add(columns);
     }
 
     private void handleBtnClickedRename() {
@@ -360,13 +560,16 @@ public class ApplicationMainViewController implements Initializable {
                 Platform.runLater(() -> {
                     if (totalWork > 0) {
                         appProgressBar.setProgress(workDone / totalWork);
+                        progressLabel.setText(String.format("Renaming %.0f / %.0f\u2026", workDone, totalWork));
                     } else {
                         appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                        progressLabel.setText("Renaming\u2026");
                     }
                 })
         );
         handle.result().thenRunAsync(() -> {
             appProgressBar.setProgress(0);
+            progressLabel.setText("Done.");
             areFilesRenamed = true;
             configureControlWidgetsState();
         }, Platform::runLater);
@@ -390,8 +593,9 @@ public class ApplicationMainViewController implements Initializable {
         log.debug("handleClearBtnClicked");
         sessionApi.clearFiles().thenRunAsync(() -> {
             areFilesRenamed = false;
-            setTextToTheFileDetailsView("");
+            clearFileInfoPanel();
             configureControlWidgetsState();
+            updateFileCountLabel();
         }, Platform::runLater);
     }
 
@@ -417,13 +621,11 @@ public class ApplicationMainViewController implements Initializable {
 
         sessionApi.clearFiles()
                 .thenCompose(ignored -> sessionApi.addFiles(reloadPaths))
-                .thenRunAsync(this::configureControlWidgetsState, Platform::runLater);
+                .thenRunAsync(() -> {
+                    configureControlWidgetsState();
+                    updateFileCountLabel();
+                }, Platform::runLater);
     }
 
-    private void setTextToTheFileDetailsView(String text) {
-        var engine = fileInfoWebView.getEngine();
-        fileInfoWebView.setFontScale(0.7);
-        engine.loadContent(text);
-    }
 
 }

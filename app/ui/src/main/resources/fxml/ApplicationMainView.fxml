@@ -1,95 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.*?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.web.WebView?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.controller.ApplicationMainViewController"
-      prefHeight="400.0" prefWidth="900.0"
-      minHeight="400.0" minWidth="900.0">
+      prefHeight="600.0" prefWidth="900.0"
+      minHeight="450.0" minWidth="600.0">
 
-    <HBox VBox.vgrow="ALWAYS">
+    <!-- ── MenuBar: Mode / Settings / Help ── -->
+    <MenuBar VBox.vgrow="NEVER" useSystemMenuBar="true">
+        <Menu fx:id="modeMenu" text="%menu_mode"/>
+        <Menu text="%menu_settings"/>
+        <Menu text="%menu_help"/>
+    </MenuBar>
 
-        <VBox minWidth="400" prefWidth="400" maxWidth="400" HBox.hgrow="SOMETIMES">
+    <!-- ── Main panel: mode settings (left) + file table (right) ── -->
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.35">
 
-            <GridPane VBox.vgrow="NEVER">
-                <columnConstraints>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-                </rowConstraints>
-
-                <Label text="%app_mode_label" GridPane.columnIndex="0" maxWidth="100"/>
-                <ChoiceBox fx:id="appModeChoiceBox" GridPane.columnIndex="1" maxWidth="300">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </ChoiceBox>
-            </GridPane>
-
-            <StackPane fx:id="appModeContainer" VBox.vgrow="ALWAYS"/>
-
-            <GridPane VBox.vgrow="NEVER">
-                <columnConstraints>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="20"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-                </rowConstraints>
-
-                <CheckBox fx:id="autoPreviewCheckBox" GridPane.columnIndex="0" text="%check_box_auto_preview">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </CheckBox>
-                <Button fx:id="previewBtn" GridPane.columnIndex="1" text="%btn_preview">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <Button fx:id="renameBtn" GridPane.columnIndex="2" text="%btn_rename">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <Button fx:id="clearBtn" GridPane.columnIndex="3" text="%btn_clear">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <Button fx:id="reloadBtn" GridPane.columnIndex="4" text="%btn_reload">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-            </GridPane>
+        <VBox minWidth="220">
+            <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true"
+                        hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                <StackPane fx:id="appModeContainer"/>
+            </ScrollPane>
         </VBox>
 
-        <VBox minWidth="500" prefWidth="500" HBox.hgrow="ALWAYS">
+        <VBox minWidth="300">
             <TableView fx:id="filesTableView" minHeight="200" prefHeight="200" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="originalNameColumn" minWidth="100.0" text="%table_column_name"/>
                     <TableColumn fx:id="itemTypeColumn" minWidth="50.0" resizable="false" text="%table_column_type"/>
-                    <TableColumn fx:id="newNameColumn" minWidth="100.0" text="%table_column_new_name"/>
+                    <TableColumn fx:id="newNameColumn" minWidth="100.0" text="%table_column_new_name"
+                                 styleClass="changed-name-col"/>
                     <TableColumn fx:id="statusColumn" minWidth="100.0" text="%table_column_status"/>
                 </columns>
                 <placeholder>
                     <Label text="%empty_files_table_placeholder"/>
                 </placeholder>
             </TableView>
-            <WebView fx:id="fileInfoWebView" minHeight="20" prefHeight="20" VBox.vgrow="ALWAYS"/>
         </VBox>
 
-    </HBox>
+    </SplitPane>
 
-    <ProgressBar fx:id="appProgressBar" maxWidth="Infinity"/>
+    <!-- ── File metadata panel (below both panels) ── -->
+    <ScrollPane VBox.vgrow="NEVER" fitToWidth="true" hbarPolicy="NEVER"
+                prefHeight="130" minHeight="80" maxHeight="200"
+                styleClass="file-info-scroll">
+        <VBox fx:id="fileInfoPanel" styleClass="file-info-panel" fillWidth="true"/>
+    </ScrollPane>
+
+    <!-- ── Bottom bar: progress + file count + action buttons ── -->
+    <HBox spacing="8" alignment="CENTER_LEFT"
+          style="-fx-padding: 6 8 6 8; -fx-background-color: -color-bg-header; -fx-border-color: -color-border; -fx-border-width: 1 0 0 0;">
+        <ProgressBar fx:id="appProgressBar" minWidth="80" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+        <Label fx:id="progressLabel" styleClass="label-caption"/>
+        <Label fx:id="fileCountLabel" styleClass="label-caption"/>
+        <Separator orientation="VERTICAL" style="-fx-padding: 0 4 0 4;"/>
+        <Button fx:id="clearBtn" text="%btn_clear" styleClass="btn-secondary">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="reloadBtn" text="%btn_reload" styleClass="btn-secondary">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <Button fx:id="renameBtn" text="%btn_rename" styleClass="btn-primary">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+    </HBox>
 
 </VBox>
