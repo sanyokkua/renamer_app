@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renamer App — UX/UI Analysis & Recommendation Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #3d3d5c;
+    --ink-muted: #7272a0;
+    --paper: #f8f7f4;
+    --paper-warm: #f0ede6;
+    --accent: #e05c3a;
+    --accent-light: #f5c4b8;
+    --good: #2d7a5f;
+    --good-bg: #e8f5f0;
+    --bad: #b03030;
+    --bad-bg: #fbeaea;
+    --neutral: #4a5fa0;
+    --neutral-bg: #eaedfa;
+    --rule: #ddd9d0;
+    --code-bg: #eeecf8;
+    --shadow: 0 2px 18px rgba(26,26,46,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 64px 60px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(224,92,58,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    max-width: 700px;
+  }
+  header h1 em { color: var(--accent); font-style: italic; }
+  header .subtitle {
+    color: rgba(248,247,244,0.65);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 580px;
+  }
+  .header-meta {
+    margin-top: 36px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: rgba(248,247,244,0.45);
+    letter-spacing: 0.5px;
+  }
+  .header-meta span strong { color: rgba(248,247,244,0.85); font-weight: 500; }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: white;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin-bottom: 60px;
+    box-shadow: var(--shadow);
+  }
+  .toc h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .toc ol {
+    padding-left: 20px;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .toc li { margin-bottom: 6px; break-inside: avoid; }
+  .toc a {
+    color: var(--neutral);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  .toc a:hover { color: var(--accent); text-decoration: underline; }
+
+  /* ── SECTIONS ── */
+  section { margin-bottom: 72px; }
+  .section-number {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  section > h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    color: var(--ink);
+    margin-bottom: 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  section > .section-lead {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    margin-bottom: 32px;
+    font-weight: 300;
+    max-width: 720px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card h3 .icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .card p, .card li { font-size: 14.5px; color: var(--ink-soft); }
+  .card ul, .card ol { padding-left: 20px; }
+  .card li { margin-bottom: 5px; }
+
+  /* Card variants */
+  .card.good { border-left: 4px solid var(--good); }
+  .card.good h3 .icon { background: var(--good-bg); color: var(--good); }
+  .card.bad { border-left: 4px solid var(--bad); }
+  .card.bad h3 .icon { background: var(--bad-bg); color: var(--bad); }
+  .card.improve { border-left: 4px solid var(--neutral); }
+  .card.improve h3 .icon { background: var(--neutral-bg); color: var(--neutral); }
+  .card.neutral { border-left: 4px solid #bbb; }
+
+  /* ── JUDGMENT PILLS ── */
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border-radius: 20px;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .pill.good { background: var(--good-bg); color: var(--good); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad); }
+  .pill.improve { background: var(--neutral-bg); color: var(--neutral); }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 24px 0;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .compare-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 11px 16px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  .compare-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:nth-child(even) td { background: var(--paper-warm); }
+  .compare-table .area { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .compare-table .verdict-good { color: var(--good); }
+  .compare-table .verdict-bad { color: var(--bad); }
+
+  /* ── SPEC BOXES ── */
+  .spec-box {
+    background: var(--code-bg);
+    border-radius: 5px;
+    padding: 18px 22px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 16px 0;
+    font-family: 'DM Sans', monospace;
+    line-height: 1.6;
+  }
+  .spec-box strong { color: var(--neutral); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 5px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout.tip { background: #fdf6e3; border-left: 3px solid #e6a817; }
+  .callout.warn { background: var(--bad-bg); border-left: 3px solid var(--bad); }
+  .callout.info { background: var(--neutral-bg); border-left: 3px solid var(--neutral); }
+  .callout .icon2 { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .callout p { color: var(--ink-soft); margin: 0; }
+
+  /* ── PRIORITY MATRIX ── */
+  .priority-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .priority-cell {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .priority-cell h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid;
+  }
+  .priority-cell.high-impact h4 { color: var(--bad); border-color: var(--bad); }
+  .priority-cell.medium-impact h4 { color: #b08020; border-color: #e0a820; }
+  .priority-cell.low-impact h4 { color: var(--good); border-color: var(--good); }
+  .priority-cell.design h4 { color: var(--neutral); border-color: var(--neutral); }
+  .priority-cell li { font-size: 13px; color: var(--ink-soft); margin-bottom: 5px; padding-left: 4px; }
+  .priority-cell ul { padding-left: 16px; }
+
+  /* ── SCORE CARD ── */
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-label { width: 200px; font-size: 14px; font-weight: 500; flex-shrink: 0; }
+  .score-bar-wrap { flex: 1; background: var(--rule); border-radius: 20px; height: 8px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 20px; }
+  .score-bar.red { background: var(--bad); }
+  .score-bar.orange { background: #d47f20; }
+  .score-bar.yellow { background: #c8b020; }
+  .score-bar.green { background: var(--good); }
+  .score-value { width: 36px; text-align: right; font-size: 13px; font-weight: 600; color: var(--ink-muted); }
+
+  /* ── WIREFRAME ── */
+  .wireframe {
+    background: white;
+    border: 1.5px dashed #b8b4ac;
+    border-radius: 6px;
+    padding: 24px;
+    margin: 24px 0;
+    font-size: 13px;
+  }
+  .wireframe h4 { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 14px; }
+  .wf-row { display: flex; gap: 12px; margin-bottom: 10px; align-items: stretch; }
+  .wf-block {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .wf-block.accent-block { background: rgba(224,92,58,0.08); border-color: rgba(224,92,58,0.3); color: var(--accent); }
+  .wf-block.dark-block { background: var(--ink); color: rgba(248,247,244,0.7); font-size: 11px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(248,247,244,0.4);
+    text-align: center;
+    padding: 32px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  footer strong { color: rgba(248,247,244,0.75); }
+
+  /* ── UTILS ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .mt-sm { margin-top: 12px; }
+  .mt { margin-top: 24px; }
+  .highlight { background: rgba(224,92,58,0.1); padding: 1px 5px; border-radius: 3px; color: var(--accent); font-weight: 500; }
+
+  @media (max-width: 680px) {
+    .container { padding: 40px 20px; }
+    header { padding: 40px 24px; }
+    .toc ol { columns: 1; }
+    .two-col { grid-template-columns: 1fr; }
+    .priority-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">UX/UI Audit · JavaFX</div>
+  <h1>Renamer App —<br><em>Design Analysis</em> & Recommendation Guide</h1>
+  <p class="subtitle">A comprehensive evaluation of the current interface covering usability, visual design, layout architecture, component patterns, and actionable JavaFX-native improvement strategies.</p>
+  <div class="header-meta">
+    <span><strong>Platform:</strong> JavaFX / macOS</span>
+    <span><strong>App Type:</strong> Batch File Renaming Utility</span>
+    <span><strong>Screens Analyzed:</strong> 3 (Add Custom Text, Add DateTime, Post-Rename State)</span>
+    <span><strong>Audience:</strong> Power users, photographers, archivists, developers</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#overview">Executive Overview & Scores</a></li>
+      <li><a href="#layout">Overall Layout Architecture</a></li>
+      <li><a href="#color">Color System & Visual Feedback</a></li>
+      <li><a href="#typography">Typography & Readability</a></li>
+      <li><a href="#mode-panel">Mode Configuration Panel (Left)</a></li>
+      <li><a href="#file-list">File List & Table Design</a></li>
+      <li><a href="#metadata">Metadata Panel (Bottom)</a></li>
+      <li><a href="#controls">Controls, Buttons & Actions</a></li>
+      <li><a href="#modes">Analysis of Application Modes</a></li>
+      <li><a href="#ux-flows">UX Flows & Interaction Patterns</a></li>
+      <li><a href="#modernization">Modernization Roadmap (JavaFX)</a></li>
+      <li><a href="#priority">Implementation Priority Matrix</a></li>
+    </ol>
+  </div>
+
+
+  <!-- 1. EXECUTIVE OVERVIEW -->
+  <section id="overview">
+    <div class="section-number">Section 01</div>
+    <h2>Executive Overview & Current Scores</h2>
+    <p class="section-lead">Before diving into specifics, here is a high-level scorecard of the current application evaluated across key design dimensions. Scores are out of 10.</p>
+
+    <div class="card neutral">
+      <div class="score-row">
+        <span class="score-label">Functional Clarity</span>
+        <div class="score-bar-wrap"><div class="score-bar yellow" style="width:60%"></div></div>
+        <span class="score-value">6/10</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Visual Modernity</span>
+        <div class="score-bar-wrap"><div class="score-bar red" style="width:25%"></div></div>
+        <span class="score-value">2.5/10</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Feedback & Status</span>
+        <div class="score-bar-wrap"><div class="score-bar orange" style="width:45%"></div></div>
+        <span class="score-value">4.5/10</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Layout Efficiency</span>
+        <div class="score-bar-wrap"><div class="score-bar orange" style="width:50%"></div></div>
+        <span class="score-value">5/10</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Discoverability</span>
+        <div class="score-bar-wrap"><div class="score-bar red" style="width:35%"></div></div>
+        <span class="score-value">3.5/10</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Accessibility</span>
+        <div class="score-bar-wrap"><div class="score-bar red" style="width:20%"></div></div>
+        <span class="score-value">2/10</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Consistency</span>
+        <div class="score-bar-wrap"><div class="score-bar orange" style="width:40%"></div></div>
+        <span class="score-value">4/10</span>
+      </div>
+      <div class="score-row">
+        <span class="score-label">Error Prevention</span>
+        <div class="score-bar-wrap"><div class="score-bar orange" style="width:45%"></div></div>
+        <span class="score-value">4.5/10</span>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="icon2">⚠️</span>
+      <p><strong>Critical Finding:</strong> The application demonstrates solid functional completeness but is severely limited by a visual design language that feels like a default JavaFX 2.x-era application from 2012. The color choices, in particular the aggressive full-row cyan highlight, is the single most damaging decision in the entire UI. The good news: these problems are entirely correctable within JavaFX without changing any application logic.</p>
+    </div>
+  </section>
+
+
+  <!-- 2. LAYOUT -->
+  <section id="layout">
+    <div class="section-number">Section 02</div>
+    <h2>Overall Layout Architecture</h2>
+    <p class="section-lead">The app uses a three-zone split layout: a left configuration panel, a central file table, and a bottom metadata strip. This is a reasonable structural decision for a utility app — but the execution has significant issues.</p>
+
+    <div class="card good">
+      <h3><span class="icon">✓</span> Logical Three-Zone Structure <span class="pill good">Good</span></h3>
+      <p>Separating "how to rename" (left) from "what will be renamed" (center/right) is fundamentally sound. This mirrors the mental model of the task: first configure, then review, then act. Power users who work with this app daily will appreciate the persistent side panel that stays visible without needing to open dialogs.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Wasted Vertical Space on Left Panel <span class="pill bad">Bad</span></h3>
+      <p>In Image 1, the left panel has significant empty space below the "Text to add" field. In Image 2, the datetime mode uses the space better but still leaves half the panel empty. This creates an unbalanced composition. JavaFX's VBox with a Spacer or a ScrollPane would allow the space to be used, for example for live format previews, tips, or a mini changelog of recent operations.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Drag-to-Resize Between Panels <span class="pill bad">Bad</span></h3>
+      <p>The left panel appears to have a fixed width, and there is no visible SplitPane divider between the configuration panel and the file table. Users with many files benefit from collapsing the config panel to maximize the table, or expanding it to see long format strings. JavaFX's <span class="highlight">SplitPane</span> natively solves this with zero custom code.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Collapsible Left Panel or Compact Mode <span class="pill bad">Bad</span></h3>
+      <p>Once the user has configured the renaming mode, the left panel is purely visual clutter during the review phase. There should be a collapse toggle (arrow icon on the divider) to temporarily hide it. This is a common productivity app pattern (VS Code, Finder's sidebar, etc.) and JavaFX supports it cleanly with a SplitPane and animated width transition.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Proposed Layout Architecture <span class="pill improve">Improve</span></h3>
+      <div class="wireframe">
+        <h4>Recommended Layout (Conceptual)</h4>
+        <div class="wf-row">
+          <div class="wf-block dark-block" style="width:100%; height:32px; border-radius:4px;">Toolbar: Mode Selector Dropdown · [Drop Files] Zone · [Settings icon] · [Help icon]</div>
+        </div>
+        <div class="wf-row" style="min-height: 320px;">
+          <div class="wf-block accent-block" style="width:280px; flex-shrink:0; flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:6px; padding:14px;">
+            <span style="font-weight:700; margin-bottom:6px;">⚙ Mode Options</span>
+            <span style="font-size:11px;">[ Dynamic fields for mode ]</span>
+            <span style="font-size:11px; margin-top:12px; opacity:.7;">Live Preview Example:</span>
+            <span style="font-size:11px; background:white; padding:4px 8px; border-radius:3px; width:100%;">photo.jpg → 20240411_photo.jpg</span>
+          </div>
+          <div style="width:4px; background:var(--rule); cursor:ew-resize; border-radius:2px; flex-shrink:0;"></div>
+          <div class="wf-block" style="flex:1; flex-direction:column; justify-content:flex-start; align-items:stretch; gap:0; padding:0; overflow:hidden;">
+            <div style="background:var(--ink); color:var(--paper); padding:8px 16px; font-size:11px; display:flex; gap:32px;">
+              <span>Name</span><span style="margin-left:auto;">Type</span><span style="margin-left:32px;">Changed Name</span><span style="margin-left:auto;">Status</span>
+            </div>
+            <div style="padding:8px 16px; border-bottom:1px solid var(--rule); font-size:11px; color:var(--ink-soft);">20240411_083653.HEIC · File · 20240411_083653.HEIC · ✓ Ready</div>
+            <div style="padding:8px 16px; border-bottom:1px solid var(--rule); font-size:11px; color:var(--ink-soft); background:var(--paper-warm);">20200317_143105.HEIC · File · 20200317_143105.HEIC · ✓ Ready</div>
+            <div style="padding:8px 16px; font-size:11px; color:var(--ink-muted); font-style:italic;">⋮ more rows…</div>
+          </div>
+        </div>
+        <div class="wf-row">
+          <div class="wf-block" style="flex:1; height:80px; flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:4px; padding:10px 14px;">
+            <span style="font-size:11px; font-weight:600;">Selected file metadata</span>
+            <span style="font-size:10px; color:var(--ink-muted);">Path · Extension · MIME · Dimensions · Dates (collapsible)</span>
+          </div>
+        </div>
+        <div class="wf-row">
+          <div class="wf-block" style="flex:1; height:40px; justify-content:flex-end; gap:10px; padding:0 10px;">
+            <span style="font-size:11px; color:var(--ink-muted);">16 files loaded · 0 renamed</span>
+            <span style="background:var(--ink); color:white; padding:5px 16px; border-radius:4px; font-size:12px;">Preview</span>
+            <span style="background:var(--accent); color:white; padding:5px 16px; border-radius:4px; font-size:12px;">Rename Files →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 3. COLOR -->
+  <section id="color">
+    <div class="section-number">Section 03</div>
+    <h2>Color System & Visual Feedback</h2>
+    <p class="section-lead">Color is the most immediately striking aspect of this application — and it is the most problematic. The current choices create visual strain and undermine the app's credibility as a professional tool.</p>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Aggressive Full-Row Cyan Selection Color <span class="pill bad">Critical</span></h3>
+      <p>Every row in the file table is painted with a vivid <strong>#00BCD4-style cyan</strong> fill. This is not a selection state — it appears to be the default row style. This has multiple severe consequences:</p>
+      <ul class="mt-sm">
+        <li><strong>Eye fatigue:</strong> High-saturation cyan on large table areas causes rapid visual fatigue, especially in a utility where users stare at file lists for extended periods.</li>
+        <li><strong>Loss of selection signal:</strong> If every row looks "selected," the user cannot tell what is actually selected. The visual affordance of selection is destroyed.</li>
+        <li><strong>Loss of status differentiation:</strong> When everything is the same cyan, there is no remaining color space for meaningful status states without clashing horribly.</li>
+        <li><strong>Professionalism damage:</strong> This color palette is reminiscent of JavaFX 2 default themes from 2012. It immediately signals to users that the app is outdated.</li>
+      </ul>
+      <div class="callout warn">
+        <span class="icon2">🔴</span>
+        <p><strong>Recommendation:</strong> Remove the cyan row background entirely. Use neutral alternating row backgrounds (white / #f8f8f8). Reserve color exclusively for status states: subtle gray for "not processed," blue-tinted for "previewed," green for "success," red for "error."</p>
+      </div>
+    </div>
+
+    <div class="card good">
+      <h3><span class="icon">✓</span> Green Success Rows Are Semantically Correct <span class="pill good">Good</span></h3>
+      <p>In Image 3, after renaming, all rows turn green to signal success. This is the right instinct — using color to convey operation status. The semantic choice (green = success) is universally understood. This pattern should be preserved and extended to a proper status system.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Neutral / Default State Differentiation <span class="pill bad">Bad</span></h3>
+      <p>The current palette only shows two states: cyan (default/loaded) and green (renamed). A real-world batch renaming workflow needs at minimum five visual states: Default (unprocessed), Previewed (will rename), Conflict (name already exists), Warning (skipped), Success (renamed), and Error (failed). The current two-tone system cannot express these without adding a sixth state that visually clashes.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Recommended Status Color System <span class="pill improve">Improve</span></h3>
+      <table class="compare-table">
+        <tr>
+          <th>Status</th><th>Row Background</th><th>Text Color</th><th>Status Column Icon</th>
+        </tr>
+        <tr><td class="area">Loaded / Pending</td><td>White / #f9f9f9 alternating</td><td>Default ink</td><td>— (dash, neutral)</td></tr>
+        <tr><td class="area">Preview Ready</td><td>#EFF4FF (very light blue)</td><td>Default ink</td><td>🔵 Preview dot</td></tr>
+        <tr><td class="area">Success</td><td>#F0FAF4 (very light green)</td><td>Dark green</td><td>✅ Check</td></tr>
+        <tr><td class="area">Warning / Skipped</td><td>#FFF9EC (very light amber)</td><td>Amber text</td><td>⚠️ Warning</td></tr>
+        <tr><td class="area">Error / Conflict</td><td>#FEF2F2 (very light red)</td><td>Dark red</td><td>❌ Error</td></tr>
+      </table>
+      <p>All background tints should be <strong>very subtle</strong> — the goal is a gentle hint, not a full paint. The Status column icon carries the primary semantic load; color is a secondary reinforcement only.</p>
+    </div>
+  </section>
+
+
+  <!-- 4. TYPOGRAPHY -->
+  <section id="typography">
+    <div class="section-number">Section 04</div>
+    <h2>Typography & Readability</h2>
+    <p class="section-lead">The application appears to use the system default font with no custom sizing hierarchy. This is functional but loses the opportunity to create clear information hierarchy.</p>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Visual Hierarchy in Text <span class="pill bad">Bad</span></h3>
+      <p>All labels in the left panel (field names, radio button labels, dropdown labels) appear at identical size and weight. Without typographic variation, the eye cannot quickly navigate the configuration options. A user switching between modes must re-read everything to understand context. Applying <span class="highlight">font-weight: 600</span> to field labels and keeping values at regular weight creates instant scanability.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Filename Truncation is Invisible <span class="pill bad">Bad</span></h3>
+      <p>Long filenames or paths will be silently clipped by column widths. There is no indication of truncation (no ellipsis, no tooltip-on-hover defined). In a file renaming app, the exact filename is the most critical piece of data. Truncating it silently is a significant UX failure. JavaFX TableColumn supports <span class="highlight">setResizable(true)</span> and cell tooltips via <span class="highlight">Tooltip</span> on cell factory — these should be enabled for every column.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Typography Improvements <span class="pill improve">Improve</span></h3>
+      <ul>
+        <li>Use <strong>13–14px</strong> for table content (current appears fine), <strong>12px</strong> for metadata labels, <strong>11px</strong> for secondary metadata values.</li>
+        <li>Apply <strong>font-weight: 700</strong> to section labels in the left panel ("Add text to:", "Date format:") so they read as field labels, not content.</li>
+        <li>The "Changed Name" column should use a <strong>monospace font</strong> (e.g., system monospace) so users can easily spot character-level differences from the original filename.</li>
+        <li>The "File Status" text ("No any actions occurred") has a grammatical error. It should read "No actions performed" or "Awaiting rename." Fix copy during the redesign pass.</li>
+        <li>Use <strong>CSS styling via JavaFX CSS</strong> to define font scales rather than inline sizes, keeping them consistent across modes.</li>
+      </ul>
+    </div>
+
+    <div class="callout tip">
+      <span class="icon2">💡</span>
+      <p><strong>JavaFX Tip:</strong> Apply a custom stylesheet with <code>scene.getStylesheets().add(...)</code> and define <code>.table-cell</code>, <code>.label-field</code>, and <code>.metadata-value</code> CSS classes for consistent typography control across the entire app.</p>
+    </div>
+  </section>
+
+
+  <!-- 5. MODE PANEL -->
+  <section id="mode-panel">
+    <div class="section-number">Section 05</div>
+    <h2>Mode Configuration Panel (Left)</h2>
+    <p class="section-lead">The configuration panel on the left side is the primary interaction area. Its design directly affects how quickly users can configure and execute renames.</p>
+
+    <div class="card good">
+      <h3><span class="icon">✓</span> Mode Dropdown Is Logically Placed at Top <span class="pill good">Good</span></h3>
+      <p>Placing the mode selector as the top element is correct. It's the primary choice that changes everything below it. This follows a top-down cognitive flow: "What mode am I in?" → "Configure it" → "See the result." The top position ensures it's the first thing users interact with.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Visual Separation Between Mode Selector and Mode Options <span class="pill bad">Bad</span></h3>
+      <p>In Image 2, the "Renaming mode:" label appears again directly below the dropdown — which is also labeled "Renaming mode:" in the dropdown itself. This creates immediate confusion: is this a sub-mode, a related setting, or just repetition? The left panel radio group ("Begin / End / Replace") is actually a property of the datetime mode, but it's presented ambiguously under a repeated "Renaming mode:" label. A clear visual separator (a horizontal rule or a section header with a different background) between the global mode selector and its specific options is essential.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Live Preview of the Format in the Panel <span class="pill bad">Bad</span></h3>
+      <p>When configuring "Date format: YYYYMMDD" and "Time format: HHMMSS", the user must mentally calculate what the output will look like. There is no example output shown in the panel. A simple static example like <span class="highlight">Example: photo.jpg → 20240411_083653_photo.jpg</span> displayed as a live-updating preview would eliminate confusion and dramatically reduce configuration errors. This is a single <code>Label</code> bound to the form fields — minimal implementation effort, massive UX gain.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Options Feel Crammed Without Breathing Room <span class="pill bad">Bad</span></h3>
+      <p>The spacing between elements in the left panel is inconsistent and generally too tight, particularly in the datetime mode (Image 2) where 7 different fields are stacked vertically with minimal padding between them. This makes scanning the options feel overwhelming. Each logical group (position, date options, time options, source options) should have visible separation — either via a light separator line, a subtle background tint, or simply more vertical padding.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Recommended Left Panel Structure <span class="pill improve">Improve</span></h3>
+      <div class="spec-box">
+        <strong>ZONE 1 — Mode Selector</strong><br>
+        [ Dropdown: "Add datetime…" ] ← full width, prominent<br><br>
+
+        <strong>ZONE 2 — Mode-Specific Options</strong> (dynamically loaded)<br>
+        ┌ Section: "Position"<br>
+        │  ○ Add to beginning  ○ Add to end  ● Replace name<br>
+        └──────────────────<br>
+        ┌ Section: "Date & Time Format"<br>
+        │  Date format:   [ YYYYMMDD ▾ ]<br>
+        │  Time format:   [ HHMMSS ▾ ]<br>
+        │  Separator:     [ _ ▾ ]<br>
+        └──────────────────<br>
+        ┌ Section: "Source"<br>
+        │  Time source:  [ File Creation Datetime ▾ ]<br>
+        │  ☐ Use fallback datetime if source unavailable<br>
+        └──────────────────<br><br>
+
+        <strong>ZONE 3 — Live Preview</strong> (always visible)<br>
+        Current file: 00010.HEIC<br>
+        Will become:  <strong>20240411_083653.HEIC</strong> ✓
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 6. FILE LIST -->
+  <section id="file-list">
+    <div class="section-number">Section 06</div>
+    <h2>File List & Table Design</h2>
+    <p class="section-lead">The file table is the centerpiece of the application. It is where users spend most of their time during review. Every detail matters here.</p>
+
+    <div class="card good">
+      <h3><span class="icon">✓</span> Four-Column Structure Is Logical <span class="pill good">Good</span></h3>
+      <p>Name → Type → Changed Name → File Status is a correct and logical column progression. It maps directly to the "before → category → after → outcome" mental model. This should be preserved.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> "Type" Column Has Low Value, Wastes Space <span class="pill bad">Bad</span></h3>
+      <p>The "Type" column shows only "File" for every row in all three screenshots. If the app only handles files (not directories), this column is completely useless — it provides zero information. If it can show "Directory" or other types, it should still be a very narrow column with an icon instead of text ("📄" vs "📁"). Text-based "File" repeated 16 times occupies significant horizontal space and adds zero value. Replace with a small file-type icon column (HEIC → image icon, JPG → image icon) that is immediately recognizable and takes 40px instead of 80px.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Row Numbering or File Count Context <span class="pill bad">Bad</span></h3>
+      <p>The user loads 16+ files but has no quick way to know how many total files are in the list without scrolling through. A row number column (#) and a status bar showing "16 files loaded, 0 renamed" provides essential orientation context, especially for large batches of hundreds of files.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Sortable Columns <span class="pill bad">Bad</span></h3>
+      <p>JavaFX's <code>TableView</code> supports column sorting natively via <code>column.setSortable(true)</code>. If this is not enabled, users cannot sort files alphabetically, by type, by changed name, or by status — all highly useful operations when reviewing a large batch. When renaming 200 photos, sorting by status to see all errors at the top is a critical workflow step.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Filtering or Search <span class="pill bad">Bad</span></h3>
+      <p>For batches of hundreds of files, there is no way to filter the list (e.g., "show only errors," "show only .HEIC files," "search for filename"). JavaFX's <code>FilteredList</code> wrapping an <code>ObservableList</code> makes this trivial to implement. A search bar above the table that filters by name would be a high-impact addition.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Visual Diff Between Original and Changed Name <span class="pill bad">Bad</span></h3>
+      <p>When the original filename is "20240411_083653.HEIC" and the changed name is "Text_20240411_083653.HEIC", the only way to spot the difference is to read both carefully. For longer filenames or replacement operations, this becomes very error-prone. The "Changed Name" cell should visually highlight the changed portion — for example, showing the added prefix in a <span class="highlight">colored/bold</span> span. This requires a custom cell factory with a <code>TextFlow</code> inside the cell, which is fully supported in JavaFX.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Recommended File List Improvements <span class="pill improve">Improve</span></h3>
+      <table class="compare-table">
+        <tr><th>Aspect</th><th>Current</th><th>Recommended</th></tr>
+        <tr><td class="area">Row background</td><td class="verdict-bad">Saturated cyan for all rows</td><td class="verdict-good">White / #f8f8f8 alternating; tinted only for status</td></tr>
+        <tr><td class="area">Column: Type</td><td class="verdict-bad">Text "File" repeated</td><td class="verdict-good">16px icon (image/video/document) + tooltip with MIME</td></tr>
+        <tr><td class="area">Column: Changed Name</td><td class="verdict-bad">Plain text, identical color to original</td><td class="verdict-good">Inline diff highlight; monospace font; color-accented changes</td></tr>
+        <tr><td class="area">Column: Status</td><td class="verdict-bad">Long text string, no icon</td><td class="verdict-good">Icon + short label; color-coded row background</td></tr>
+        <tr><td class="area">Sorting</td><td class="verdict-bad">None visible</td><td class="verdict-good">All columns sortable via JavaFX native sort</td></tr>
+        <tr><td class="area">Filtering</td><td class="verdict-bad">None</td><td class="verdict-good">Search bar + status filter dropdown above table</td></tr>
+        <tr><td class="area">Row number</td><td class="verdict-bad">None</td><td class="verdict-good"># column (30px wide, right-aligned, muted color)</td></tr>
+        <tr><td class="area">Context menu</td><td class="verdict-bad">Not visible</td><td class="verdict-good">Right-click: Copy name, Reveal in Finder, Exclude from batch</td></tr>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- 7. METADATA -->
+  <section id="metadata">
+    <div class="section-number">Section 07</div>
+    <h2>Metadata Panel (Bottom)</h2>
+    <p class="section-lead">The bottom metadata strip (visible in Image 1) shows per-file information for the selected row. This is a genuinely useful feature, but its current implementation misses several opportunities.</p>
+
+    <div class="card good">
+      <h3><span class="icon">✓</span> Showing Per-File Metadata is Excellent <span class="pill good">Good</span></h3>
+      <p>Displaying Absolute Path, Name, Extension, Type, MIME, File Creation Date, Modification Date, Content Creation Date, Width, and Height in a panel below the selection is a genuinely strong feature. This information is essential when troubleshooting why a file was renamed a certain way (e.g., "why did it use this date? — oh, the content creation date was different from the file creation date"). No competing batch renaming apps show this level of metadata inline. <strong>This should be a selling point and should be designed to look excellent, not like an afterthought.</strong></p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Metadata Disappears When datetime Mode Is Selected <span class="pill bad">Bad</span></h3>
+      <p>In Images 2 and 3, the metadata panel is completely absent. This is likely because the left panel's configuration options take up the left-bottom space. But the metadata panel was in the right-center area in Image 1, not the left. Its disappearance in the datetime mode appears to be a layout bug or an inconsistency. The metadata panel should always be present when a file is selected, regardless of which mode is active.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Two-Column Key-Value Layout Wastes Space and Looks Primitive <span class="pill bad">Bad</span></h3>
+      <p>The current metadata display is a simple two-column label list ("Absolute Path" → long value). This wastes horizontal space (the label column is very wide while values could span further) and has no visual grouping. A more sophisticated design would group fields into categories (Identity, Dates, Media Properties), use a more compact grid, and distinguish label text from value text clearly through weight and color.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Resizable / Collapsible Metadata Panel <span class="pill bad">Bad</span></h3>
+      <p>The metadata panel appears to take up approximately 35% of the total application height when visible. This is excessive when reviewing a large list of files. The panel should be resizable (SplitPane horizontally with the table) and collapsible via a toggle, so users can maximize the file table when they don't need metadata and expand it when they do.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Recommended Metadata Panel Redesign <span class="pill improve">Improve</span></h3>
+      <div class="spec-box">
+        <strong>Layout:</strong> Horizontal grid (3 columns, not 2) with grouped sections<br><br>
+
+        <strong>Group 1 — Identity</strong><br>
+        Path:    /Users/ok/Downloads/Test Photos/20240411_083653.HEIC  [Copy icon]<br>
+        Name:    20240411_083653<br>
+        Ext:     .HEIC  ·  MIME: image/heic<br><br>
+
+        <strong>Group 2 — Dates</strong><br>
+        Created:      2024-04-11 08:36:53<br>
+        Modified:     2024-04-11 09:49:59<br>
+        Content Date: 2024-04-11 08:36:53<br><br>
+
+        <strong>Group 3 — Media</strong><br>
+        Dimensions:   4032 × 3024 px<br>
+        Type:         File / image/heic<br><br>
+
+        <strong>UX additions:</strong><br>
+        • Click any date → copies it in currently selected format to clipboard<br>
+        • "Open file" button to preview in system viewer<br>
+        • "Reveal in Finder/Explorer" link<br>
+        • Panel height: collapsible via drag handle (min 0px, default ~130px)
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 8. CONTROLS -->
+  <section id="controls">
+    <div class="section-number">Section 08</div>
+    <h2>Controls, Buttons & Actions</h2>
+    <p class="section-lead">The action buttons at the bottom of the screen control the core renaming workflow. Their design has several issues that create unnecessary risk and confusion.</p>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Truncated Button Labels Are Unacceptable <span class="pill bad">Critical</span></h3>
+      <p>The buttons "Auto Pr…", "Preview r…", and "Rename f…" have their labels truncated. This means the user cannot read what these buttons do. In a utility where one button renames files permanently, truncating the "Rename files" button is a serious UX failure. <strong>It creates genuine risk: a new user might click "Rename f…" without understanding it's an irreversible action.</strong> Fix: either make the buttons wider, use shorter labels ("Auto Preview", "Preview", "Rename"), or use icon+tooltip buttons.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Visual Hierarchy Between Primary and Secondary Actions <span class="pill bad">Bad</span></h3>
+      <p>All four buttons ("Auto Pr…", "Preview r…", "Rename f…", "Clear") appear at the same visual weight. The rename action is the primary action — it should be a filled primary-color button. The preview action is secondary — outlined. Clear is destructive — it should be a text button or have warning styling. In JavaFX, this is achieved purely through CSS classes: <code>.button-primary</code>, <code>.button-secondary</code>, <code>.button-danger</code>.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Confirmation Dialog Before Renaming <span class="pill bad">Bad</span></h3>
+      <p>Renaming 16+ files is a significant irreversible operation. The app appears to execute immediately on clicking "Rename f…" without any confirmation. A brief confirmation dialog — or even better, a progress indicator with a Cancel button — is essential for a batch operation tool. JavaFX's <code>Alert</code> with <code>AlertType.CONFIRMATION</code> handles this in five lines of code.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> "Auto Preview" Checkbox is Ambiguous <span class="pill bad">Bad</span></h3>
+      <p>The checkbox labeled "Auto Pr…" (likely "Auto Preview") in the bottom-left suggests that preview is computed automatically as settings change. But it's not clear: does this mean the preview updates in real-time? Does it run on every keystroke? Does it disable the "Preview r…" button? The checkbox placement (bottom-left, next to action buttons) is unusual — checkbox-type settings belong in the configuration panel, not next to action buttons. Move it to the left panel under the mode options.</p>
+    </div>
+
+    <div class="card good">
+      <h3><span class="icon">✓</span> "Reload File" Appears After Renaming <span class="pill good">Good</span></h3>
+      <p>In Image 3, after renaming, a "Reload File" button appears. This is a good contextual action — it appears exactly when needed (after a rename operation, to refresh the view). This pattern of contextual button appearance should be applied more broadly.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Recommended Button Hierarchy & Layout <span class="pill improve">Improve</span></h3>
+      <div class="spec-box">
+        <strong>Bottom action bar (left to right):</strong><br><br>
+        [File count badge: "16 files · 0 renamed"]  ←——————————————→  [Clear list]  [Preview ↻]  [▶ Rename 16 Files]<br><br>
+
+        <strong>Visual weights:</strong><br>
+        • "Clear list"    → text-only, muted color, requires no emphasis<br>
+        • "Preview ↻"    → outlined secondary button, medium emphasis<br>
+        • "Rename N Files" → filled primary button (app accent color), large, rightmost<br><br>
+
+        <strong>After rename:</strong><br>
+        [16 renamed · 0 errors]  ←————————————→  [Undo Last Rename]  [Open Folder]  [Rename Again]<br><br>
+
+        <strong>State changes:</strong><br>
+        • Rename button disabled until at least one file is loaded and preview is valid<br>
+        • Preview button disabled if "Auto Preview" is on (since preview is always current)
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 9. MODES -->
+  <section id="modes">
+    <div class="section-number">Section 09</div>
+    <h2>Analysis of Application Modes</h2>
+    <p class="section-lead">The app has multiple renaming modes. Only two are visible in the screenshots, but we can analyze the structural patterns these modes reveal, and what any mode configuration screen should do well.</p>
+
+    <div class="two-col">
+      <div class="card good">
+        <h3><span class="icon">✓</span> Dynamic Left Panel Per Mode</h3>
+        <p>The left panel changes its content based on the selected mode. This is the correct approach — don't show all options at once, show only what's relevant. The implementation is sound; the visual design needs improvement.</p>
+      </div>
+      <div class="card bad">
+        <h3><span class="icon">✗</span> Mode Switching Has No Transition</h3>
+        <p>When switching modes, the left panel content changes instantly with no visual transition. A subtle fade or slide animation (150ms) would make the context switch feel polished and intentional, not jarring.</p>
+      </div>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Likely Modes Not Yet Analyzed — Structural Risk <span class="pill bad">Important</span></h3>
+      <p>Based on the visible screens, the app likely has modes such as: "Sequential numbering," "Replace text in name," "Change case," "Remove characters," "Insert at position," and possibly more. Each of these modes faces the same structural risk: if the left panel design isn't systematic, each mode will look slightly different from the others, creating inconsistency. A proper mode system should define a <strong>template</strong> for every mode panel:</p>
+      <ul class="mt-sm">
+        <li><strong>Zone A:</strong> Mode header (name + one-line description)</li>
+        <li><strong>Zone B:</strong> Position option (Begin / End / Replace) — if applicable to the mode</li>
+        <li><strong>Zone C:</strong> Mode-specific options (grouped, labeled clearly)</li>
+        <li><strong>Zone D:</strong> Live example preview (always visible)</li>
+      </ul>
+      <p class="mt-sm">This template ensures every mode looks and behaves consistently even if its specific fields differ.</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Recommendations Per Mode Type</h3>
+      <table class="compare-table">
+        <tr><th>Mode Type</th><th>Key UX Requirement</th><th>Risk Without It</th></tr>
+        <tr><td class="area">Add Custom Text</td><td>Live text preview as user types in the field</td><td>Users type and must guess formatting</td></tr>
+        <tr><td class="area">Add DateTime</td><td>Show actual formatted date example using real file metadata</td><td>Users pick wrong format and rename before noticing</td></tr>
+        <tr><td class="area">Sequential Numbering</td><td>Show padding example (001, 0001), start number, step size preview</td><td>Off-by-one errors in sequence numbering</td></tr>
+        <tr><td class="area">Replace Text</td><td>Regex toggle, case-sensitivity toggle, match count shown live</td><td>Users don't know if pattern matched</td></tr>
+        <tr><td class="area">Change Case</td><td>Radio group with live example for each option</td><td>Users confuse "Title Case" vs "camelCase"</td></tr>
+        <tr><td class="area">Remove Characters</td><td>Highlight which characters will be removed in preview</td><td>Users accidentally delete wrong characters</td></tr>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- 10. UX FLOWS -->
+  <section id="ux-flows">
+    <div class="section-number">Section 10</div>
+    <h2>UX Flows & Interaction Patterns</h2>
+    <p class="section-lead">Beyond individual components, the overall interaction flow — how a user goes from opening the app to successfully renaming files — has systemic gaps.</p>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Visible Drop Target for File Import <span class="pill bad">Bad</span></h3>
+      <p>Looking at all three screenshots, there is no obvious way to add files to the list. There's no "Add Files" button, no "Open Folder" button, no drag-and-drop zone visible. The files appear already loaded. For a new user, the very first step — "how do I load files?" — is completely opaque. A prominent drop zone (either a top toolbar area or an empty-state illustration when the table is empty) is essential for discoverability.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> Empty State is Presumably Invisible <span class="pill bad">Bad</span></h3>
+      <p>When no files are loaded, the table is presumably just empty rows or completely blank. JavaFX's <code>TableView.setPlaceholder(Node)</code> allows setting a custom empty state: an illustration, "Drop files here to begin" message, and an "Open Files…" button. This is the most powerful onboarding moment and should not be wasted on a blank table.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Undo Capability <span class="pill bad">Critical</span></h3>
+      <p>Batch renaming is an inherently risky operation. After executing a rename, there is no visible way to undo the changes (restore original filenames). The "Reload File" button reloads the view but doesn't reverse the rename. An "Undo Last Rename" button that restores all files to their pre-rename names (by keeping a rename log in memory) is a critical safety feature. Many professional renaming tools (A-Rename, Bulk Rename Utility, Retcon) offer this. JavaFX's <code>UndoManager</code> pattern or a simple reverse-rename list is the implementation path.</p>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> No Keyboard Shortcuts Visible <span class="pill bad">Bad</span></h3>
+      <p>Power users who do batch renaming regularly will heavily rely on keyboard navigation. There are no visible keyboard shortcuts for Preview (⌘R?), Rename (⌘↵?), or Clear (⌘⌫?). JavaFX's <code>KeyCombination</code> and <code>Accelerator</code> on <code>MenuItem</code> support this. At minimum, the primary destructive action (Rename) should be guarded with a key combination that prevents accidental trigger (not just Enter — something like ⌘⇧R).</p>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Recommended Full User Flow</h3>
+      <div class="spec-box">
+        <strong>Step 1 — Load Files</strong><br>
+        Empty state shows drop zone + "Open Files…" + "Open Folder…" button<br>
+        Drag-and-drop from Finder/Explorer directly onto table<br><br>
+
+        <strong>Step 2 — Configure Mode</strong><br>
+        Select mode from top dropdown → left panel updates with relevant options<br>
+        Live preview updates in panel (Zone D) and in the table "Changed Name" column automatically<br><br>
+
+        <strong>Step 3 — Review</strong><br>
+        User scans the "Changed Name" column (with inline diff highlighting)<br>
+        Can sort by "Status" to see any conflicts or warnings<br>
+        Can click any row to see its metadata and preview in bottom panel<br>
+        Can right-click a row to exclude it from the batch<br><br>
+
+        <strong>Step 4 — Rename</strong><br>
+        Click "▶ Rename N Files" → brief confirmation if N > 10<br>
+        Progress indicator (JavaFX Task + ProgressBar) during rename<br>
+        Rows update to green/red in real-time as each file is renamed<br><br>
+
+        <strong>Step 5 — Post-Rename</strong><br>
+        Summary: "16 renamed, 0 errors"<br>
+        Buttons: "Undo All Renames" · "Open Folder" · "Load New Files" · "Run Again"
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 11. MODERNIZATION -->
+  <section id="modernization">
+    <div class="section-number">Section 11</div>
+    <h2>Modernization Roadmap (JavaFX-Native)</h2>
+    <p class="section-lead">Every recommendation in this document can be implemented entirely within JavaFX without third-party UI libraries. Here is a concrete technical roadmap.</p>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> CSS Theming — Replace Everything Visual</h3>
+      <p>Create a <code>styles.css</code> applied to the root Scene. Define:</p>
+      <ul class="mt-sm">
+        <li><strong>.root:</strong> Background #F8F7F4, font-family system-ui or a bundled font</li>
+        <li><strong>.table-row-cell:</strong> Remove default alternating colors, set transparent background, add hover state (#F0EDE6), add selected state (#E8F0FF with border)</li>
+        <li><strong>.table-row-cell.status-success:</strong> Background #F0FAF4</li>
+        <li><strong>.table-row-cell.status-error:</strong> Background #FEF2F2</li>
+        <li><strong>.button-primary:</strong> Background accent color, white text, no border, 8px border-radius</li>
+        <li><strong>.button-secondary:</strong> Transparent background, 1px border, accent color text</li>
+        <li><strong>.split-pane-divider:</strong> 1px solid #DDD9D0, no default JavaFX arrow</li>
+      </ul>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> TableView Enhancements</h3>
+      <ul>
+        <li>Use <strong>custom cell factories</strong> with <code>TextFlow</code> for diff-highlighted "Changed Name" column</li>
+        <li>Use <strong>GraphicTableCell</strong> for the Type column (icon instead of text)</li>
+        <li>Wrap the <code>ObservableList</code> in <code>FilteredList</code> and <code>SortedList</code> for free filtering+sorting</li>
+        <li>Add a <code>TableColumn</code> for row number using a custom cell factory with <code>getIndex()</code></li>
+        <li>Set <code>setPlaceholder()</code> with a proper empty-state node</li>
+        <li>Enable column reordering via <code>setReorderable(true)</code></li>
+        <li>Persist column widths to user preferences (<code>Preferences.userNodeForPackage()</code>)</li>
+      </ul>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Layout & Panels</h3>
+      <ul>
+        <li>Wrap left panel and main table in a <code>SplitPane</code> with horizontal orientation</li>
+        <li>Add a collapse toggle button on the divider (programmatically hide/show left panel)</li>
+        <li>Wrap table and metadata panel in a <code>SplitPane</code> with vertical orientation</li>
+        <li>Use <code>TitledPane</code> for collapsible option groups within the left panel</li>
+        <li>Use <code>VBox</code> with <code>Separator</code> nodes to group sections visually</li>
+      </ul>
+    </div>
+
+    <div class="card improve">
+      <h3><span class="icon">→</span> Transitions & Polish</h3>
+      <ul>
+        <li>Use <code>FadeTransition</code> (150ms) when switching mode panels in the left side</li>
+        <li>Use <code>Task&lt;Void&gt;</code> with a <code>ProgressBar</code> popup during file renaming operations</li>
+        <li>Use <code>Tooltip</code> on all truncated cells and abbreviated buttons</li>
+        <li>Use <code>Alert</code> with <code>AlertType.CONFIRMATION</code> before large batch renames</li>
+        <li>Bind button disabled state to file list size (JavaFX property binding)</li>
+        <li>Support drag-and-drop file loading via <code>setOnDragOver</code> / <code>setOnDragDropped</code> on the TableView</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- 12. PRIORITY MATRIX -->
+  <section id="priority">
+    <div class="section-number">Section 12</div>
+    <h2>Implementation Priority Matrix</h2>
+    <p class="section-lead">Not all improvements are equal in effort or impact. Below is a prioritized action plan grouped by urgency.</p>
+
+    <div class="priority-grid">
+      <div class="priority-cell high-impact">
+        <h4>🔴 Fix Immediately (Critical)</h4>
+        <ul>
+          <li>Remove cyan row background from table</li>
+          <li>Fix truncated button labels</li>
+          <li>Add confirmation before batch rename</li>
+          <li>Add "Undo Last Rename" capability</li>
+          <li>Fix "Renaming mode:" label duplication</li>
+          <li>Grammatical fix: "No any actions occurred"</li>
+        </ul>
+      </div>
+      <div class="priority-cell medium-impact">
+        <h4>🟡 High Value, Medium Effort</h4>
+        <ul>
+          <li>Live preview example in left panel</li>
+          <li>Status color system (5 states)</li>
+          <li>SplitPane for resizable panels</li>
+          <li>Empty state with drag-and-drop UI</li>
+          <li>Sortable / filterable table columns</li>
+          <li>Status icon column (replace text)</li>
+          <li>Inline diff in "Changed Name" column</li>
+        </ul>
+      </div>
+      <div class="priority-cell low-impact">
+        <h4>🟢 Polish & Power Features</h4>
+        <ul>
+          <li>Collapsible metadata panel</li>
+          <li>Metadata panel redesign (grouped grid)</li>
+          <li>Mode transition animations</li>
+          <li>Keyboard shortcuts</li>
+          <li>Right-click context menu on rows</li>
+          <li>Progress bar during rename task</li>
+          <li>Column width persistence</li>
+        </ul>
+      </div>
+      <div class="priority-cell design">
+        <h4>🔵 Design System</h4>
+        <ul>
+          <li>Custom CSS stylesheet for entire app</li>
+          <li>Button hierarchy (primary/secondary)</li>
+          <li>Typography scale definition</li>
+          <li>Consistent spacing system (8px grid)</li>
+          <li>Mode panel template (all modes)</li>
+          <li>Light/dark theme support via CSS</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="icon2">📋</span>
+      <p><strong>Estimated Effort:</strong> The "Fix Immediately" category can be completed in 1–2 development days and would transform the perceived quality of the application dramatically. The full implementation of all recommendations would take approximately 2–3 weeks for an experienced JavaFX developer. The highest ROI changes are the CSS theming overhaul and the live preview feature in the left panel.</p>
+    </div>
+  </section>
+
+
+  <!-- SUMMARY -->
+  <section>
+    <div class="section-number">Closing</div>
+    <h2>Summary</h2>
+    <p class="section-lead">This application has solid functional bones. The renaming capabilities, metadata display, and multi-mode architecture demonstrate real engineering investment. However, the visual design is stuck a decade in the past, and several UX patterns actively work against the user's trust and efficiency.</p>
+
+    <div class="card good">
+      <h3><span class="icon">✓</span> What Is Genuinely Good</h3>
+      <ul>
+        <li>The three-zone layout concept (configure → review → act) is architecturally sound</li>
+        <li>The per-file metadata panel is a differentiating feature competitors lack</li>
+        <li>Multi-mode architecture with dynamic left panel is the right approach</li>
+        <li>The semantic shift to green after successful rename is correct</li>
+        <li>Contextual "Reload File" button after rename shows good reactive thinking</li>
+        <li>The datetime mode with format customization is powerful and flexible</li>
+      </ul>
+    </div>
+
+    <div class="card bad">
+      <h3><span class="icon">✗</span> What Must Change</h3>
+      <ul>
+        <li>The cyan table row background — the single most damaging visual decision</li>
+        <li>Truncated button labels — creates genuine ambiguity around a destructive action</li>
+        <li>Absence of Undo — unacceptable for a batch file operation tool</li>
+        <li>No live preview in the configuration panel — forces users to guess</li>
+        <li>No empty state or drag-and-drop — first-time user experience is opaque</li>
+        <li>No confirmation before rename — puts user data at risk</li>
+        <li>Duplicate "Renaming mode:" labels — actively confuses the interface hierarchy</li>
+      </ul>
+    </div>
+
+    <div class="callout tip">
+      <span class="icon2">🎯</span>
+      <p><strong>The Core Principle:</strong> A batch file renaming tool handles irreplaceable files. Every design decision should be measured against the question: "Does this help the user feel confident and in control before they commit to renaming?" The current design does not inspire confidence. The recommended changes, particularly live preview, proper status feedback, undo capability, and visual calm (removing the cyan), would collectively transform this from a technically functional tool into one that feels genuinely trustworthy and professional.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <strong>Renamer App — UX/UI Analysis & Recommendation Guide</strong><br>
+  Prepared as a comprehensive design audit · JavaFX Platform · All recommendations are implementable with native JavaFX APIs
+</footer>
+
+</body>
+</html>

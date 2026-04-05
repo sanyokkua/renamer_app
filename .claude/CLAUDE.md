@@ -114,6 +114,7 @@ Documentation drift      → docs-writer
 | `/java-developer` | Writing any Java code — auto-loads logging, Javadoc, and dependency rules |
 | `/write-junit5-tests` | Writing unit or integration tests |
 | `/javafx` | Writing JavaFX controllers, FXML, or CSS in `app/ui/` |
+| `/javafx-ui-designer` | Designing, styling, or theming JavaFX UI — colors, CSS tokens, layout, typography, accessibility |
 | `/add-transformation-mode` | Adding a new V2 transformation mode end-to-end |
 | `/project-docs` | Writing or updating README, ADRs, or architecture docs |
 | `/use-exiftool-metadata` | Embedding datetime/GPS into test files |
