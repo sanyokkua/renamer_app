@@ -70,6 +70,7 @@ public class ModeUseDatetimeController
     @FXML
     private CheckBox useUppercaseForAmPmCheckBox;
 
+
     private ChangeListener<DateTimeSource> sourceListener;
     private ChangeListener<DateFormat> dateFormatListener;
     private ChangeListener<TimeFormat> timeFormatListener;

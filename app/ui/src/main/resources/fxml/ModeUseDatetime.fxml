@@ -30,24 +30,27 @@
         </rowConstraints>
 
         <Label fx:id="datetimeAndNameSeparatorLabel" text="%mode_datetime_label_datetime_name_separator"
-               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+               styleClass="label-section" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <TextField fx:id="dateTimeAndNameSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="%mode_datetime_label_date_format" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label text="%mode_datetime_label_date_format" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="1"/>
         <ChoiceBox fx:id="dateFormatChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <Label text="%mode_datetime_label_time_format" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label text="%mode_datetime_label_time_format" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="2"/>
         <ChoiceBox fx:id="timeFormatChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <Label text="%mode_datetime_label_date_time_format" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label text="%mode_datetime_label_date_time_format" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="3"/>
         <ChoiceBox fx:id="dateTimeFormatChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
@@ -62,7 +65,8 @@
             </cursor>
         </CheckBox>
 
-        <Label text="%mode_datetime_label_time_source" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <Label text="%mode_datetime_label_time_source" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="5"/>
         <ChoiceBox fx:id="dateTimeSourceChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="5" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>

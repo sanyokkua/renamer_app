@@ -113,6 +113,7 @@ class ModeAddSequenceControllerTest {
         f.set(target, box);
     }
 
+
     @SuppressWarnings("unchecked")
     private static Spinner<Integer> readStartSpinnerUnchecked(ModeAddSequenceController target) {
         try {
@@ -242,6 +243,8 @@ class ModeAddSequenceControllerTest {
                         Arrays.asList(ua.renamer.app.api.enums.SortSource.values())));
         choiceBox.setValue(ua.renamer.app.api.enums.SortSource.FILE_NAME);
         injectSortingSourceChoiceBox(controller, choiceBox);
+
+        // @FXML field 5: preview label
 
         // Run initialize on the FX thread (mirrors FXML-loader lifecycle)
         runOnFxThreadAndWait(() -> controller.initialize(null, null));

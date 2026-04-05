@@ -28,7 +28,8 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_remove_text_label_text_to_remove" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%mode_remove_text_label_text_to_remove" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="0"/>
         <TextField fx:id="removeTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
     </GridPane>
 

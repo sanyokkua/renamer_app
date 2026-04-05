@@ -5,6 +5,7 @@ import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ModeParameters;
 import ua.renamer.app.api.session.ValidationResult;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
@@ -71,6 +72,11 @@ class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
             }
             return result;
         });
+    }
+
+    @Override
+    public Optional<String> previewSingleFile(String exampleName, String exampleExtension) {
+        return service.previewSingleFile(mode, currentParams.get(), exampleName, exampleExtension);
     }
 
     @Override

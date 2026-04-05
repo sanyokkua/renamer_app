@@ -123,6 +123,7 @@ class ModeUseImageDimensionsControllerTest {
         f.set(target, selector);
     }
 
+
     @SuppressWarnings("unchecked")
     private static ChoiceBox<ImageDimensionOptions> readLeftDimensionChoiceBox(
             ModeUseImageDimensionsController target) throws Exception {
@@ -296,6 +297,8 @@ class ModeUseImageDimensionsControllerTest {
         var posConverter = new ItemPositionWithReplacementConverter(languageTextRetriever);
         injectItemPositionRadioSelector(controller,
                 new ItemPositionWithReplacementRadioSelector("", posConverter));
+
+        // @FXML field 6: preview label
     }
 
     // -----------------------------------------------------------------------

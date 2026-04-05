@@ -103,6 +103,7 @@ class ModeUseParentFolderNameControllerTest {
         f.set(target, selector);
     }
 
+
     @SuppressWarnings("unchecked")
     private static Spinner<Integer> readSpinner(ModeUseParentFolderNameController target) throws Exception {
         Field f = ModeUseParentFolderNameController.class.getDeclaredField("parentsNumberSpinner");
@@ -212,6 +213,8 @@ class ModeUseParentFolderNameControllerTest {
 
         // @FXML field 3: ItemPositionRadioSelector
         injectRadioSelector(controller, new ItemPositionRadioSelector("", converter));
+
+        // @FXML field 4: preview label
     }
 
     // -----------------------------------------------------------------------

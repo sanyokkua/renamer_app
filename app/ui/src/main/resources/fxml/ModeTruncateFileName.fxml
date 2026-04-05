@@ -29,7 +29,8 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label fx:id="amountOfSymbolsLabel" text="%mode_truncate_label_amount_of_symbols" GridPane.columnIndex="0"
+        <Label fx:id="amountOfSymbolsLabel" text="%mode_truncate_label_amount_of_symbols" styleClass="label-section"
+               GridPane.columnIndex="0"
                GridPane.rowIndex="0"/>
         <Spinner fx:id="amountOfSymbolsSpinner" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0">
             <cursor>

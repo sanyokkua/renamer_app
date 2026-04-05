@@ -326,6 +326,34 @@ public class RenameSessionService implements SessionApi {
 
     /**
      * Package-private — only {@link ModeApiImpl} may call this (same package).
+     * Synchronously transforms a synthetic example file using the given mode and parameters.
+     * Returns empty if transformation fails or produces an error.
+     */
+    Optional<String> previewSingleFile(TransformationMode mode, ModeParameters params,
+                                       String exampleName, String exampleExtension) {
+        if (params.validate().isError()) {
+            return Optional.empty();
+        }
+        var mock = FileModel.builder()
+                .withFile(new File("/preview/" + exampleName + "." + exampleExtension))
+                .withIsFile(true)
+                .withName(exampleName)
+                .withExtension(exampleExtension)
+                .withAbsolutePath("/preview/" + exampleName + "." + exampleExtension)
+                .withFileSize(0L)
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.now())
+                .build();
+        List<PreparedFileModel> results =
+                orchestrator.computePreview(List.of(mock), mode, ModeParametersConverter.toConfig(params), null);
+        if (results.isEmpty() || results.get(0).isHasError()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(results.get(0).getNewFullName());
+    }
+
+    /**
+     * Package-private — only {@link ModeApiImpl} may call this (same package).
      * Validates the parameters, stores them if valid, recomputes the preview, and notifies the UI.
      *
      * @param params the updated parameters to store; must not be null

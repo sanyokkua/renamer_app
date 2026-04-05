@@ -141,6 +141,7 @@ public class ModeAddSequenceController
             }
         };
         sortingSourceChoiceBox.getSelectionModel().selectedItemProperty().addListener(sortSourceListener);
+
     }
 
 }

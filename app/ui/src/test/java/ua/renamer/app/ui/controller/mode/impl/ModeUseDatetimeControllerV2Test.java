@@ -265,6 +265,8 @@ class ModeUseDatetimeControllerV2Test {
         // @FXML field: useUppercaseForAmPmCheckBox
         injectField("useUppercaseForAmPmCheckBox", new CheckBox());
 
+        // @FXML field: previewLabel
+
         // Run initialize() on the FX thread (mirrors FXML-loader lifecycle)
         runOnFxThreadAndWait(() -> controller.initialize(null, null));
     }

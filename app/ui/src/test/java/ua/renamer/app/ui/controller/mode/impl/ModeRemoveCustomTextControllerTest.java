@@ -92,6 +92,7 @@ class ModeRemoveCustomTextControllerTest {
         f.set(target, sel);
     }
 
+
     private static TextField readTextField(ModeRemoveCustomTextController target) throws Exception {
         Field f = ModeRemoveCustomTextController.class.getDeclaredField("removeTextField");
         f.setAccessible(true);
@@ -326,7 +327,7 @@ class ModeRemoveCustomTextControllerTest {
         }
 
         @Test
-        void bind_onValidationError_textFieldStyleSetToRed() throws Exception {
+        void bind_onValidationError_textFieldValidationErrorClassAdded() throws Exception {
             // Arrange
             when(modeApi.currentParameters())
                     .thenReturn(new RemoveTextParams("", ItemPosition.BEGIN));
@@ -344,7 +345,7 @@ class ModeRemoveCustomTextControllerTest {
 
             // Assert
             TextField tf = readTextField(controller);
-            assertThat(tf.getStyle()).contains("-fx-border-color: red;");
+            assertThat(tf.getStyleClass()).contains("validation-error");
         }
 
         @Test

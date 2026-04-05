@@ -31,14 +31,16 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_parent_folders_label_number" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%mode_parent_folders_label_number" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="0"/>
         <Spinner fx:id="parentsNumberSpinner" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Spinner>
 
-        <Label text="%mode_parent_folders_label_separator" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label text="%mode_parent_folders_label_separator" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="1"/>
         <TextField fx:id="fileNameSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
     </GridPane>
 

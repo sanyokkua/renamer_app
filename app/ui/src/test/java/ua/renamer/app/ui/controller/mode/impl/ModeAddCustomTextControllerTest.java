@@ -92,6 +92,7 @@ class ModeAddCustomTextControllerTest {
         f.set(target, sel);
     }
 
+
     private static TextField readTextField(ModeAddCustomTextController target) throws Exception {
         Field f = ModeAddCustomTextController.class.getDeclaredField("textField");
         f.setAccessible(true);
@@ -326,7 +327,7 @@ class ModeAddCustomTextControllerTest {
         }
 
         @Test
-        void bind_onValidationError_textFieldStyleSetToRed() throws Exception {
+        void bind_onValidationError_textFieldValidationErrorClassAdded() throws Exception {
             // Arrange
             when(modeApi.currentParameters())
                     .thenReturn(new AddTextParams("", ItemPosition.BEGIN));
@@ -344,7 +345,7 @@ class ModeAddCustomTextControllerTest {
 
             // Assert
             TextField tf = readTextField(controller);
-            assertThat(tf.getStyle()).contains("-fx-border-color: red;");
+            assertThat(tf.getStyleClass()).contains("validation-error");
         }
 
         @Test

@@ -51,12 +51,11 @@ public class ModeChangeExtensionController implements ModeControllerV2Api<Extens
                 modeApi.updateParameters(p -> p.withNewExtension(newVal))
                         .thenAccept(result -> {
                             if (result.isError()) {
-                                Platform.runLater(() -> extensionTextField.setStyle("-fx-border-color: red;"));
+                                Platform.runLater(() -> extensionTextField.getStyleClass().add("validation-error"));
                             } else {
-                                Platform.runLater(() -> extensionTextField.setStyle(""));
+                                Platform.runLater(() -> extensionTextField.getStyleClass().remove("validation-error"));
                             }
                         });
         extensionTextField.textProperty().addListener(extensionListener);
     }
-
 }

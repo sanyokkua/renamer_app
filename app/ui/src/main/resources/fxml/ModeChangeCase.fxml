@@ -23,7 +23,8 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_change_case_label_text_case" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%mode_change_case_label_text_case" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="0"/>
         <ChoiceBox fx:id="caseChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
@@ -37,6 +38,5 @@
             </cursor>
         </CheckBox>
     </GridPane>
-
 
 </VBox>

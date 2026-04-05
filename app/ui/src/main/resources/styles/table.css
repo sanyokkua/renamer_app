@@ -1,21 +1,63 @@
 /* Table row state classes — applied by ApplicationMainViewController row factory */
 
+/* Default row */
+.table-row-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent -color-row-grid transparent;
+    -fx-border-width: 0 0 0.5 0;
+    -fx-cell-size: 30px;
+}
+
+/* Alternating rows */
+.table-row-cell:odd {
+    -fx-background-color: #F4F8FD;
+}
+
+/* Hover */
+.table-row-cell:hover {
+    -fx-background-color: -color-row-hover;
+}
+
+/* Selected row */
+.table-row-cell:selected {
+    -fx-background-color: -color-row-selected;
+}
+
+.table-view:focused .table-row-cell:selected {
+    -fx-background-color: -color-row-selected;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #162030;
+}
+
+/* Empty rows below data */
+.table-row-cell:empty {
+    -fx-background-color: #FFFFFF;
+}
+
+.table-row-cell:empty:odd {
+    -fx-background-color: #F4F8FD;
+}
+
+/* Status row states */
 .table-row-cell.row-ready {
-    -fx-control-inner-background: -color-row-ready;
-    -fx-accent: derive(-color-row-ready, -20%);
-    -fx-cell-hover-color: derive(-color-row-ready, -10%);
+    -fx-background-color: -color-row-ready;
 }
 
 .table-row-cell.row-error {
-    -fx-control-inner-background: -color-row-error;
-    -fx-accent: derive(-color-row-error, -20%);
-    -fx-cell-hover-color: derive(-color-row-error, -10%);
+    -fx-background-color: -color-row-error;
 }
 
 .table-row-cell.row-renamed {
-    -fx-control-inner-background: -color-row-renamed;
-    -fx-accent: derive(-color-row-renamed, -20%);
-    -fx-cell-hover-color: derive(-color-row-renamed, -10%);
+    -fx-background-color: -color-row-renamed;
+}
+
+/* Table cell default text */
+.table-cell {
+    -fx-text-fill: #35506A;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 8 0 8;
 }
 
 /* Column header styling */
@@ -23,15 +65,22 @@
     -fx-background-color: -color-bg-header;
 }
 
+.table-view .column-header {
+    -fx-background-color: #1F3C5C;
+    -fx-border-color: #2C4E72;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 34px;
+}
+
 .table-view .column-header .label {
     -fx-font-weight: bold;
-    -fx-text-fill: -color-text-primary;
+    -fx-text-fill: -color-header-text;
     -fx-padding: 6 8 6 8;
 }
 
 /* Empty table placeholder */
 .table-view .placeholder .label {
-    -fx-text-fill: -color-text-secondary;
+    -fx-text-fill: -color-text-muted;
     -fx-font-style: italic;
 }
 

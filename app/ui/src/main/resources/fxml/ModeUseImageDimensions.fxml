@@ -32,24 +32,28 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_img_vid_dimensions_label_left_side" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%mode_img_vid_dimensions_label_left_side" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="0"/>
         <ChoiceBox fx:id="leftDimensionChoiceBox" GridPane.columnIndex="0" GridPane.rowIndex="1">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <Label text="%mode_img_vid_dimensions_label_separator_between" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="%mode_img_vid_dimensions_label_separator_between" styleClass="label-section"
+               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
         <TextField fx:id="dimensionsSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <Label text="%mode_img_vid_dimensions_label_right_side" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <Label text="%mode_img_vid_dimensions_label_right_side" styleClass="label-section" GridPane.columnIndex="2"
+               GridPane.rowIndex="0"/>
         <ChoiceBox fx:id="rightDimensionChoiceBox" GridPane.columnIndex="2" GridPane.rowIndex="1">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <Label text="%mode_img_vid_dimensions_label_name_separator" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label text="%mode_img_vid_dimensions_label_name_separator" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="2"/>
         <TextField fx:id="dimensionsAndFileSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"
                    GridPane.columnSpan="2" maxWidth="Infinity"/>
     </GridPane>

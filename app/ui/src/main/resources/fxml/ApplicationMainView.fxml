@@ -19,11 +19,17 @@
     <!-- ── Main panel: mode settings (left) + file table (right) ── -->
     <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.35">
 
-        <VBox minWidth="220">
+        <VBox minWidth="220" styleClass="config-panel">
             <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true"
                         hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
                 <StackPane fx:id="appModeContainer"/>
             </ScrollPane>
+            <!-- Fixed preview strip — always visible, never scrolls -->
+            <VBox styleClass="config-preview-panel" VBox.vgrow="NEVER">
+                <Label text="Live preview" styleClass="preview-box-title"/>
+                <Label fx:id="mainPreviewLabel" text="—"
+                       styleClass="preview-box-value" wrapText="true"/>
+            </VBox>
         </VBox>
 
         <VBox minWidth="300">
@@ -51,8 +57,8 @@
     </ScrollPane>
 
     <!-- ── Bottom bar: progress + file count + action buttons ── -->
-    <HBox spacing="8" alignment="CENTER_LEFT"
-          style="-fx-padding: 6 8 6 8; -fx-background-color: -color-bg-header; -fx-border-color: -color-border; -fx-border-width: 1 0 0 0;">
+    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="action-bar"
+          style="-fx-padding: 6 8 6 8;">
         <ProgressBar fx:id="appProgressBar" minWidth="80" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
         <Label fx:id="progressLabel" styleClass="label-caption"/>
         <Label fx:id="fileCountLabel" styleClass="label-caption"/>

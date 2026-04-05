@@ -73,6 +73,7 @@ class ModeChangeExtensionControllerTest {
         field.set(target, tf);
     }
 
+
     // -----------------------------------------------------------------------
     // Helper: inject @FXML TextField via reflection
     // -----------------------------------------------------------------------
@@ -246,7 +247,7 @@ class ModeChangeExtensionControllerTest {
         }
 
         @Test
-        void bind_onErrorResult_setsRedBorderOnTextField() throws Exception {
+        void bind_onErrorResult_addsValidationErrorClassToTextField() throws Exception {
             // Arrange
             when(modeApi.currentParameters()).thenReturn(new ExtensionChangeParams("pdf"));
             CompletableFuture<ValidationResult> errorFuture =
@@ -263,7 +264,7 @@ class ModeChangeExtensionControllerTest {
 
             // Assert
             TextField tf = readTextField(controller);
-            assertThat(tf.getStyle()).contains("-fx-border-color: red;");
+            assertThat(tf.getStyleClass()).contains("validation-error");
         }
 
         @Test

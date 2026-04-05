@@ -28,10 +28,12 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_replace_text_label_text_to_replace" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%mode_replace_text_label_text_to_replace" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="0"/>
         <TextField fx:id="textToReplaceTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="%mode_replace_text_label_text_to_add" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label text="%mode_replace_text_label_text_to_add" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="1"/>
         <TextField fx:id="textToAddTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
     </GridPane>
 

@@ -56,9 +56,9 @@ public class ModeChangeCaseController implements ModeControllerV2Api<ChangeCaseP
             modeApi.updateParameters(p -> p.withCaseOption(selected))
                     .thenAccept(result -> {
                         if (result.isError()) {
-                            Platform.runLater(() -> caseChoiceBox.setStyle("-fx-border-color: red;"));
+                            Platform.runLater(() -> caseChoiceBox.getStyleClass().add("validation-error"));
                         } else {
-                            Platform.runLater(() -> caseChoiceBox.setStyle(""));
+                            Platform.runLater(() -> caseChoiceBox.getStyleClass().remove("validation-error"));
                         }
                     });
         });

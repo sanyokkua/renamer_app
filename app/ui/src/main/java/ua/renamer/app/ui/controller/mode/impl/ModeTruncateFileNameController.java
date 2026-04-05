@@ -101,5 +101,4 @@ public class ModeTruncateFileNameController implements ModeControllerV2Api<Trunc
             updateDisplayedItems();
         });
     }
-
 }

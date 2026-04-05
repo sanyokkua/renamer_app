@@ -99,6 +99,7 @@ class ModeTruncateFileNameControllerTest {
         f.set(target, label);
     }
 
+
     @SuppressWarnings("unchecked")
     private static Spinner<Integer> readSpinner(ModeTruncateFileNameController target) throws Exception {
         Field f = ModeTruncateFileNameController.class.getDeclaredField("amountOfSymbolsSpinner");

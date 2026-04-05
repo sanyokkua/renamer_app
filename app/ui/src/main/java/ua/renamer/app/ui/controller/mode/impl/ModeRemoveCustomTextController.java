@@ -67,9 +67,9 @@ public class ModeRemoveCustomTextController implements ModeControllerV2Api<Remov
             modeApi.updateParameters(p -> p.withTextToRemove(newVal))
                     .thenAccept(result -> {
                         if (result.isError()) {
-                            Platform.runLater(() -> removeTextField.setStyle("-fx-border-color: red;"));
+                            Platform.runLater(() -> removeTextField.getStyleClass().add("validation-error"));
                         } else {
-                            Platform.runLater(() -> removeTextField.setStyle(""));
+                            Platform.runLater(() -> removeTextField.getStyleClass().remove("validation-error"));
                         }
                     });
         };
@@ -81,5 +81,4 @@ public class ModeRemoveCustomTextController implements ModeControllerV2Api<Remov
             modeApi.updateParameters(p -> p.withPosition(apiPos));
         });
     }
-
 }

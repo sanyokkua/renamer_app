@@ -20,7 +20,8 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_change_extension_label_new_extension" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%mode_change_extension_label_new_extension" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="0"/>
         <TextField fx:id="extensionTextField" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity"/>
     </GridPane>
 

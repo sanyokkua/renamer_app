@@ -2,6 +2,7 @@ package ua.renamer.app.api.session;
 
 import ua.renamer.app.api.model.TransformationMode;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -50,6 +51,13 @@ public interface ModeApi<P extends ModeParameters> {
      * @return future completing with {@code null} when the reset is done; never null
      */
     CompletableFuture<Void> resetParameters();
+
+    /**
+     * Synchronously transforms a synthetic example filename using the current parameters.
+     * Returns empty if parameters are invalid or transformation fails.
+     * Used by mode controllers to populate the live-preview label.
+     */
+    Optional<String> previewSingleFile(String exampleName, String exampleExtension);
 
     /**
      * Notified whenever parameters managed by a {@link ModeApi} change.

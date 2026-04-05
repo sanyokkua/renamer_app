@@ -71,9 +71,9 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
             modeApi.updateParameters(p -> p.withTextToReplace(newVal))
                     .thenAccept(result -> {
                         if (result.isError()) {
-                            Platform.runLater(() -> textToReplaceTextField.setStyle("-fx-border-color: red;"));
+                            Platform.runLater(() -> textToReplaceTextField.getStyleClass().add("validation-error"));
                         } else {
-                            Platform.runLater(() -> textToReplaceTextField.setStyle(""));
+                            Platform.runLater(() -> textToReplaceTextField.getStyleClass().remove("validation-error"));
                         }
                     });
         };
@@ -84,9 +84,9 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
             modeApi.updateParameters(p -> p.withReplacementText(newVal))
                     .thenAccept(result -> {
                         if (result.isError()) {
-                            Platform.runLater(() -> textToAddTextField.setStyle("-fx-border-color: red;"));
+                            Platform.runLater(() -> textToAddTextField.getStyleClass().add("validation-error"));
                         } else {
-                            Platform.runLater(() -> textToAddTextField.setStyle(""));
+                            Platform.runLater(() -> textToAddTextField.getStyleClass().remove("validation-error"));
                         }
                     });
         };
@@ -98,5 +98,4 @@ public class ModeReplaceCustomTextController implements ModeControllerV2Api<Repl
             modeApi.updateParameters(p -> p.withPosition(apiPos));
         });
     }
-
 }

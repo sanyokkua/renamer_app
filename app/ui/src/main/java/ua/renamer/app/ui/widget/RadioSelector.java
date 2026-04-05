@@ -74,6 +74,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
 
         buttons.stream().findFirst().ifPresent(toggleGroup::selectToggle);
 
+        labelWidget.setStyle("-fx-text-fill: #35506A; -fx-font-size: 11px; -fx-font-weight: bold;");
         getChildren().add(labelWidget);
         HBox.setMargin(labelWidget, new Insets(0, 5, 0, 0));
         getChildren().addAll(buttons);
@@ -100,6 +101,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
         this.labelValue = labelValue;
         labelWidget.setText(labelValue);
         labelWidget.setTooltip(new Tooltip(labelValue));
+        labelWidget.setStyle("-fx-text-fill: #35506A; -fx-font-size: 11px; -fx-font-weight: bold;");
     }
 
     /**

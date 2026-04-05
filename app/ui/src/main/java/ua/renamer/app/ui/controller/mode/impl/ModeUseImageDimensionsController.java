@@ -152,5 +152,4 @@ public class ModeUseImageDimensionsController
             modeApi.updateParameters(p -> p.withPosition(apiPos));
         });
     }
-
 }

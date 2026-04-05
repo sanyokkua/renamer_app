@@ -67,9 +67,9 @@ public class ModeAddCustomTextController implements ModeControllerV2Api<AddTextP
             modeApi.updateParameters(p -> p.withTextToAdd(newVal))
                     .thenAccept(result -> {
                         if (result.isError()) {
-                            Platform.runLater(() -> textField.setStyle("-fx-border-color: red;"));
+                            Platform.runLater(() -> textField.getStyleClass().add("validation-error"));
                         } else {
-                            Platform.runLater(() -> textField.setStyle(""));
+                            Platform.runLater(() -> textField.getStyleClass().remove("validation-error"));
                         }
                     });
         };
@@ -80,6 +80,7 @@ public class ModeAddCustomTextController implements ModeControllerV2Api<AddTextP
             log.debug("bind: position changed → {}", apiPos);
             modeApi.updateParameters(p -> p.withPosition(apiPos));
         });
+
     }
 
 }

@@ -99,6 +99,7 @@ class ModeReplaceCustomTextControllerTest {
         f.set(target, sel);
     }
 
+
     private static TextField readTextToReplaceField(ModeReplaceCustomTextController target) throws Exception {
         Field f = ModeReplaceCustomTextController.class.getDeclaredField("textToReplaceTextField");
         f.setAccessible(true);
@@ -374,7 +375,7 @@ class ModeReplaceCustomTextControllerTest {
         }
 
         @Test
-        void bind_onValidationError_textToReplaceFieldStyleSetToRed() throws Exception {
+        void bind_onValidationError_textToReplaceFieldValidationErrorClassAdded() throws Exception {
             // Arrange
             when(modeApi.currentParameters())
                     .thenReturn(new ReplaceTextParams("", "rep", ItemPositionExtended.EVERYWHERE));
@@ -392,11 +393,11 @@ class ModeReplaceCustomTextControllerTest {
 
             // Assert
             TextField tf = readTextToReplaceField(controller);
-            assertThat(tf.getStyle()).contains("-fx-border-color: red;");
+            assertThat(tf.getStyleClass()).contains("validation-error");
         }
 
         @Test
-        void bind_onValidationError_replacementTextFieldStyleSetToRed() throws Exception {
+        void bind_onValidationError_replacementTextFieldValidationErrorClassAdded() throws Exception {
             // Arrange
             when(modeApi.currentParameters())
                     .thenReturn(new ReplaceTextParams("txt", "", ItemPositionExtended.EVERYWHERE));
@@ -414,7 +415,7 @@ class ModeReplaceCustomTextControllerTest {
 
             // Assert
             TextField tf = readTextToAddField(controller);
-            assertThat(tf.getStyle()).contains("-fx-border-color: red;");
+            assertThat(tf.getStyleClass()).contains("validation-error");
         }
 
         @Test

@@ -93,6 +93,7 @@ class ModeChangeCaseControllerTest {
         field.set(target, box);
     }
 
+
     @SuppressWarnings("unchecked")
     private static ChoiceBox<TextCaseOptions> readChoiceBox(ModeChangeCaseController target) throws Exception {
         Field field = ModeChangeCaseController.class.getDeclaredField("caseChoiceBox");
@@ -310,7 +311,7 @@ class ModeChangeCaseControllerTest {
         }
 
         @Test
-        void bind_onValidationError_choiceBoxStyleSetToRed() throws Exception {
+        void bind_onValidationError_choiceBoxValidationErrorClassAdded() throws Exception {
             // Arrange
             when(modeApi.currentParameters())
                     .thenReturn(new ChangeCaseParams(TextCaseOptions.CAMEL_CASE, false));
@@ -328,7 +329,7 @@ class ModeChangeCaseControllerTest {
 
             // Assert
             ChoiceBox<TextCaseOptions> box = readChoiceBox(controller);
-            assertThat(box.getStyle()).contains("-fx-border-color: red;");
+            assertThat(box.getStyleClass()).contains("validation-error");
         }
 
         @Test

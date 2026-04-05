@@ -79,6 +79,8 @@ public class ApplicationMainViewController implements Initializable {
     private Label progressLabel;
     @FXML
     private Label fileCountLabel;
+    @FXML
+    private Label mainPreviewLabel;
 
     private boolean areFilesRenamed = false;
     private ModeApi<?> currentModeApi;
@@ -241,26 +243,73 @@ public class ApplicationMainViewController implements Initializable {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setTooltip(null);
-                } else {
-                    setText(item);
-                    setTooltip(new Tooltip(item));
+                if (empty) {
+                    setGraphic(null);
+                    return;
                 }
+                var preview = getTableRow() != null ? getTableRow().getItem() : null;
+                if (preview == null) {
+                    setGraphic(null);
+                    return;
+                }
+                String badgeClass;
+                String badgeText;
+                if (preview.hasError()) {
+                    badgeClass = "badge-error";
+                    badgeText = "\u2715 Error";
+                } else {
+                    var result = renameResultsByFileId.get(preview.fileId());
+                    if (result != null) {
+                        badgeClass = switch (result.status()) {
+                            case SUCCESS -> "badge-success";
+                            case SKIPPED -> "badge-warning";
+                            default -> "badge-error";
+                        };
+                        badgeText = switch (result.status()) {
+                            case SUCCESS -> "\u2713 Renamed";
+                            case SKIPPED -> "\u26A0 Skipped";
+                            default -> "\u2715 Error";
+                        };
+                    } else if (preview.newName() != null && !preview.newName().equals(preview.originalName())) {
+                        badgeClass = "badge-pending";
+                        badgeText = "\u25CF Pending";
+                    } else {
+                        setGraphic(null);
+                        return;
+                    }
+                }
+                var badge = new javafx.scene.control.Label(badgeText);
+                badge.getStyleClass().add(badgeClass);
+                setGraphic(badge);
             }
         });
         itemTypeColumn.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setTooltip(null);
-                } else {
-                    setText(item);
-                    setTooltip(new Tooltip(item));
+                if (empty) {
+                    setGraphic(null);
+                    return;
                 }
+                var preview = getTableRow() != null ? getTableRow().getItem() : null;
+                if (preview == null) {
+                    setGraphic(null);
+                    return;
+                }
+                var candidate = candidatesByFileId.get(preview.fileId());
+                boolean isFile = candidate == null || !java.nio.file.Files.isDirectory(candidate.path());
+                if (isFile) {
+                    String name = preview.originalName() != null ? preview.originalName() : "";
+                    int dot = name.lastIndexOf('.');
+                    String ext = (dot >= 0 && dot < name.length() - 1) ? name.substring(dot + 1) : "";
+                    if (!ext.isEmpty()) {
+                        var chip = new javafx.scene.control.Label(ext.toLowerCase());
+                        chip.getStyleClass().add("type-chip");
+                        setGraphic(chip);
+                        return;
+                    }
+                }
+                setGraphic(null);
             }
         });
     }
@@ -364,8 +413,18 @@ public class ApplicationMainViewController implements Initializable {
                         .thenAcceptAsync(modeApi -> {
                             currentModeApi = modeApi;
                             callBind(v2ctrl, modeApi);
+                            updatePreview(modeApi);
+                            modeApi.addParameterListener(p -> Platform.runLater(() -> updatePreview(modeApi)));
                         }, Platform::runLater)
         );
+    }
+
+    private void updatePreview(ModeApi<?> modeApi) {
+        modeApi.previewSingleFile("photo", "jpg")
+                .ifPresentOrElse(
+                        newName -> mainPreviewLabel.setText("photo.jpg  \u2192  " + newName),
+                        () -> mainPreviewLabel.setText("\u2014")
+                );
     }
 
     private void handleFilesTableViewDragOverEvent(DragEvent event) {

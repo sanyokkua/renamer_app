@@ -29,7 +29,8 @@
             <RowConstraints valignment="CENTER" vgrow="NEVER"/>
         </rowConstraints>
 
-        <Label text="%mode_add_custom_text_label_text" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="%mode_add_custom_text_label_text" styleClass="label-section" GridPane.columnIndex="0"
+               GridPane.rowIndex="0"/>
         <TextField fx:id="textField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
     </GridPane>
 
