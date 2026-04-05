@@ -1,5 +1,6 @@
 module ua.renamer.app.core {
     requires ua.renamer.app.api;
+    requires ua.renamer.app.utils;
     requires static lombok;
     requires org.slf4j; // Required by lombok
     requires com.google.guice;
@@ -19,8 +20,6 @@ module ua.renamer.app.core {
     exports ua.renamer.app.core.service.impl;
     exports ua.renamer.app.core.service.transformation;
     exports ua.renamer.app.core.mapper;
-    exports ua.renamer.app.core.util;
-
     opens ua.renamer.app.core.config;
     opens ua.renamer.app.core.service;
     opens ua.renamer.app.core.service.validator;
@@ -30,5 +29,4 @@ module ua.renamer.app.core {
     opens ua.renamer.app.core.service.impl;
     opens ua.renamer.app.core.service.transformation;
     opens ua.renamer.app.core.mapper;
-    opens ua.renamer.app.core.util;
 }

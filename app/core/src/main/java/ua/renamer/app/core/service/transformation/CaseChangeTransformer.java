@@ -7,7 +7,7 @@ import ua.renamer.app.api.model.TransformationMetadata;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.CaseChangeConfig;
 import ua.renamer.app.core.service.FileTransformationService;
-import ua.renamer.app.core.util.StringUtilsV2;
+import ua.renamer.app.utils.text.CaseUtils;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class CaseChangeTransformer implements FileTransformationService<CaseChan
         }
 
         try {
-            String newName = StringUtilsV2.toProvidedCase(input.getName(), config.getCaseOption());
+            String newName = CaseUtils.toProvidedCase(input.getName(), config.getCaseOption());
 
             if (config.isCapitalizeFirstLetter() && !newName.isEmpty()) {
                 newName = Character.toUpperCase(newName.charAt(0)) + newName.substring(1);

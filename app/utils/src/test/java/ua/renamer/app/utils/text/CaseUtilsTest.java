@@ -3,9 +3,11 @@ package ua.renamer.app.utils.text;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ua.renamer.app.api.enums.TextCaseOptions;
 
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -162,6 +164,20 @@ class CaseUtilsTest {
         );
     }
 
+    static Stream<Arguments> provideToProvidedCaseCases() {
+        return Stream.of(
+                Arguments.of("hello world", TextCaseOptions.CAMEL_CASE, "helloWorld"),
+                Arguments.of("hello world", TextCaseOptions.PASCAL_CASE, "HelloWorld"),
+                Arguments.of("hello world", TextCaseOptions.SNAKE_CASE, "hello_world"),
+                Arguments.of("hello world", TextCaseOptions.SNAKE_CASE_SCREAMING, "HELLO_WORLD"),
+                Arguments.of("hello world", TextCaseOptions.KEBAB_CASE, "hello-world"),
+                Arguments.of("hello world", TextCaseOptions.UPPERCASE, "HELLO WORLD"),
+                Arguments.of("hello world", TextCaseOptions.LOWERCASE, "hello world"),
+                Arguments.of("hello world", TextCaseOptions.TITLE_CASE, "Hello World"),
+                Arguments.of("hello world", null, "hello world")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("toCamelCaseArguments")
     void testToCamelCase(String actualValue, String expectedValue) {
@@ -242,6 +258,12 @@ class CaseUtilsTest {
 
         assertNotNull(result);
         assertEquals(amountOfWords, result.size());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideToProvidedCaseCases")
+    void toProvidedCase_shouldDispatchToCorrectConverter(String input, TextCaseOptions option, String expected) {
+        assertThat(CaseUtils.toProvidedCase(input, option)).isEqualTo(expected);
     }
 
 }

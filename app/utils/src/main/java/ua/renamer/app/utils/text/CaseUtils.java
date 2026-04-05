@@ -2,6 +2,8 @@ package ua.renamer.app.utils.text;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.enums.TextCaseOptions;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -12,6 +14,7 @@ import java.util.stream.Stream;
  * Utility class providing various case conversion methods for strings.
  * All methods are static, pure functions without side effects.
  */
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CaseUtils {
 
@@ -202,6 +205,30 @@ public class CaseUtils {
         var separateWords = getSeparateWordsFromInputString(inputString);
 
         return separateWords.stream().map(TextUtils::capitalize).collect(Collectors.joining(SPACE_SYMBOL));
+    }
+
+    /**
+     * Dispatches a string to the appropriate case-conversion method based on the provided {@link TextCaseOptions}.
+     *
+     * @param input      the string to convert; returned unchanged if empty or null
+     * @param caseOption the target case format; must not be null — returns {@code input} unchanged and logs a warning if null
+     * @return the converted string, or the original {@code input} if {@code input} is empty, null, or {@code caseOption} is null
+     */
+    public static String toProvidedCase(String input, TextCaseOptions caseOption) {
+        if (caseOption == null) {
+            log.warn("Case option is null, returning original input");
+            return input;
+        }
+        return switch (caseOption) {
+            case CAMEL_CASE -> toCamelCase(input);
+            case PASCAL_CASE -> toPascalCase(input);
+            case SNAKE_CASE -> toSnakeCase(input);
+            case SNAKE_CASE_SCREAMING -> toScreamingSnakeCase(input);
+            case KEBAB_CASE -> toKebabCase(input);
+            case UPPERCASE -> toUppercase(input);
+            case LOWERCASE -> toLowercase(input);
+            case TITLE_CASE -> toTitleCase(input);
+        };
     }
 
 }

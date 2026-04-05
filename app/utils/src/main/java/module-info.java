@@ -3,6 +3,7 @@ module ua.renamer.app.utils {
     requires org.slf4j;
     requires org.jspecify;
     requires org.apache.commons.io;
+    requires ua.renamer.app.api;
 
     exports ua.renamer.app.utils;
     exports ua.renamer.app.utils.text;
