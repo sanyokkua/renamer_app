@@ -1,6 +1,7 @@
 package ua.renamer.app.backend.session;
 
 import lombok.Getter;
+import lombok.Setter;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.TransformationMode;
@@ -25,6 +26,7 @@ public class RenameSession {
     private TransformationMode activeMode = null;
     private ModeParameters currentParams = null;
     private List<PreparedFileModel> lastPreview = List.of();
+    @Setter
     private SessionStatus status = SessionStatus.EMPTY;
 
     /**
@@ -108,16 +110,6 @@ public class RenameSession {
      */
     public void setLastPreview(List<PreparedFileModel> preview) {
         lastPreview = List.copyOf(preview);
-    }
-
-    /**
-     * Direct status override. Used by BackendExecutor to set
-     * {@link SessionStatus#EXECUTING}, {@link SessionStatus#COMPLETE}, or {@link SessionStatus#ERROR}.
-     *
-     * @param status the new status; must not be null
-     */
-    public void setStatus(SessionStatus status) {
-        this.status = status;
     }
 
     /**

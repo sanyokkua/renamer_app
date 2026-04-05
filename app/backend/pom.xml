@@ -11,10 +11,6 @@
 
     <artifactId>ua.renamer.app.backend</artifactId>
 
-    <properties>
-        <assertj-core.version>3.27.6</assertj-core.version>
-    </properties>
-
     <dependencies>
         <!-- Internal -->
         <dependency>
@@ -80,7 +76,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

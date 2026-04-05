@@ -25,7 +25,6 @@ public class RadioSelectorFactory implements BuilderFactory {
 
     @Override
     public Builder<?> getBuilder(Class<?> type) {
-        //noinspection IfCanBeSwitch
         if (type.equals(ItemPositionExtendedRadioSelector.class)) {
             return injector.getInstance(ItemPositionExtendedRadioSelectorBuilder.class);
         } else if (type.equals(ItemPositionRadioSelector.class)) {

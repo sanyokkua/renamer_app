@@ -22,7 +22,7 @@
 
         <lombok.version>1.18.42</lombok.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <logback.version>1.5.21</logback.version>
+        <logback.version>1.5.32</logback.version>
         <metadata-extractor.version>2.19.0</metadata-extractor.version>
         <junit-bom.version>6.0.1</junit-bom.version>
         <mockito-core.version>5.20.0</mockito-core.version>
@@ -39,6 +39,9 @@
         <guava.version>33.5.0-jre</guava.version>
         <jspecify.version>1.0.0</jspecify.version>
         <jaudiotagger.version>2.0.10</jaudiotagger.version>
+        <jackson.version>2.21.2</jackson.version>
+        <junrar.version>7.5.8</junrar.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
 
         <!-- Code quality tool versions -->
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
@@ -155,6 +158,24 @@
                 <version>${guava.version}</version>
             </dependency>
 
+
+            <!-- CVE overrides for transitive deps -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.junrar</groupId>
+                <artifactId>junrar</artifactId>
+                <version>${junrar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit</groupId>

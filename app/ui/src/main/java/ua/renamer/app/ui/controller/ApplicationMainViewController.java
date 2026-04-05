@@ -417,7 +417,7 @@ public class ApplicationMainViewController implements Initializable {
 
         sessionApi.clearFiles()
                 .thenCompose(ignored -> sessionApi.addFiles(reloadPaths))
-                .thenRunAsync(() -> configureControlWidgetsState(), Platform::runLater);
+                .thenRunAsync(this::configureControlWidgetsState, Platform::runLater);
     }
 
     private void setTextToTheFileDetailsView(String text) {

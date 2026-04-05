@@ -10,10 +10,6 @@
     </parent>
 
     <artifactId>ua.renamer.app.core</artifactId>
-    <properties>
-        <assertj-core.version>3.27.6</assertj-core.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>ua.renamer.app</groupId>
@@ -88,7 +84,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

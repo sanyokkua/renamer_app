@@ -32,7 +32,7 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
 
             if (group.size() == 1) {
                 // No collision
-                result.add(group.get(0));
+                result.add(group.getFirst());
                 continue;
             }
 
@@ -113,7 +113,7 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
             return 1;
         }
 
-        PreparedFileModel firstModel = group.get(0);
+        PreparedFileModel firstModel = group.getFirst();
         String baseName = firstModel.getNewName();
 
         // Calculate natural padding based on group size (total number of files)

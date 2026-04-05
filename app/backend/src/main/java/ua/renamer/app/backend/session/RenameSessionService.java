@@ -123,18 +123,7 @@ public class RenameSessionService implements SessionApi {
         ).thenCompose(fileModels ->
                 executor.submitStateChange(() -> {
                     session.addFiles(fileModels);
-
-                    List<PreparedFileModel> preview = computePreviewIfPossible();
-                    session.setLastPreview(preview);
-
-                    List<RenamePreview> previewDtos = buildPreviewDtos(
-                            preview, session.getFiles(), session.getActiveMode());
-                    List<ua.renamer.app.api.session.RenameCandidate> candidates = session.getFiles().stream()
-                            .map(RenameSessionConverter::toCandidate).toList();
-
-                    publisher.publishFilesChanged(candidates, previewDtos);
-                    updateSnapshotCache(previewDtos);
-                    return CommandResult.succeeded();
+                    return refreshAndPublish();
                 })
         ).exceptionally(ex -> {
             log.error("addFiles failed", ex);
@@ -150,18 +139,7 @@ public class RenameSessionService implements SessionApi {
                 return CommandResult.failure("Cannot remove files during execution");
             }
             session.removeFiles(fileIds);
-
-            List<PreparedFileModel> preview = computePreviewIfPossible();
-            session.setLastPreview(preview);
-
-            List<RenamePreview> previewDtos = buildPreviewDtos(
-                    preview, session.getFiles(), session.getActiveMode());
-            List<ua.renamer.app.api.session.RenameCandidate> candidates = session.getFiles().stream()
-                    .map(RenameSessionConverter::toCandidate).toList();
-
-            publisher.publishFilesChanged(candidates, previewDtos);
-            updateSnapshotCache(previewDtos);
-            return CommandResult.succeeded();
+            return refreshAndPublish();
         });
     }
 
@@ -194,7 +172,7 @@ public class RenameSessionService implements SessionApi {
             }
             updateSnapshotCache(previewDtos);
 
-            return (ModeApi<P>) new ModeApiImpl<>((P) defaults, mode, this);
+            return new ModeApiImpl<>((P) defaults, mode, this);
         });
     }
 
@@ -323,6 +301,22 @@ public class RenameSessionService implements SessionApi {
             return List.of();
         }
         return orchestrator.computePreview(files, mode, ModeParametersConverter.toConfig(params), null);
+    }
+
+    /**
+     * Recomputes the preview, publishes the updated file list, and returns a succeeded result.
+     * Must only be called from within a {@code submitStateChange} lambda.
+     */
+    private CommandResult refreshAndPublish() {
+        List<PreparedFileModel> preview = computePreviewIfPossible();
+        session.setLastPreview(preview);
+        List<RenamePreview> previewDtos = buildPreviewDtos(
+                preview, session.getFiles(), session.getActiveMode());
+        List<ua.renamer.app.api.session.RenameCandidate> candidates = session.getFiles().stream()
+                .map(RenameSessionConverter::toCandidate).toList();
+        publisher.publishFilesChanged(candidates, previewDtos);
+        updateSnapshotCache(previewDtos);
+        return CommandResult.succeeded();
     }
 
     /**

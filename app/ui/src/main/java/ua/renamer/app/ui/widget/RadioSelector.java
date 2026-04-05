@@ -81,6 +81,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
         toggleGroup.selectedToggleProperty().addListener(this::toggleChangeListener);
     }
 
+    @SuppressWarnings("unchecked")
     private void toggleChangeListener(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         if (Objects.nonNull(newValue)) {
             ValueRadioBtn<T> selectedRadio = (ValueRadioBtn<T>) newValue;
@@ -120,6 +121,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
      *
      * @param callback The callback function to be added.
      */
+    @SuppressWarnings("unchecked")
     public void addValueSelectedHandler(Consumer<T> callback) {
         this.addEventHandler(RadioSelector.RadioSelectorEvent.RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE, event -> {
             T selectedValue = (T) event.getSelectedValue();
@@ -148,6 +150,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
      *
      * @param <T> The type of enum value associated with the radio button.
      */
+    @Getter
     public static class ValueRadioBtn<T> extends RadioButton {
 
         private final T value;
@@ -161,15 +164,6 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
             this.value = value;
         }
 
-        /**
-         * Gets the enum value associated with the radio button.
-         *
-         * @return The enum value associated with the radio button.
-         */
-        public T getValue() {
-            return value;
-        }
-
     }
 
     /**
@@ -177,6 +171,7 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
      *
      * @param <T> The type of enum value associated with the event.
      */
+    @Getter
     public static class RadioSelectorEvent<T> extends Event {
 
         /**
@@ -196,15 +191,6 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
         public RadioSelectorEvent(T selectedValue) {
             super(RADIO_BUTTON_SELECTED_EVENT_EVENT_TYPE);
             this.selectedValue = selectedValue;
-        }
-
-        /**
-         * Gets the selected enum value associated with the event.
-         *
-         * @return The selected enum value associated with the event.
-         */
-        public T getSelectedValue() {
-            return selectedValue;
         }
 
     }
