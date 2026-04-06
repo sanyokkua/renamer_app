@@ -115,6 +115,7 @@ public enum TextKeys {
     NOT_RENAMED_BECAUSE_OF_ERROR("not_renamed_because_of_error"),
     FILE_NEW_NAME("file_new_name"),
     FILE_SIZE("file_size"),
+    FILE_ITEM_COUNT("file_item_count"),
     FILE_INFO_ERROR("file_info_error"),
     PROGRESS_LOADING("progress_loading"),
     PROGRESS_RENAMING("progress_renaming"),

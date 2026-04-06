@@ -308,7 +308,7 @@ setGraphic(null);
 
 ---
 
-## Task 3 — File Info Preview Panel for Folders
+## Task 3 — File Info Preview Panel for Folders (Done)
 
 ### Why
 The file info panel (`updateFileInfoPanel`, lines 497–629 of `ApplicationMainViewController.java`)

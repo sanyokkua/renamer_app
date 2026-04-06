@@ -553,11 +553,21 @@ public class ApplicationMainViewController implements Initializable {
                         languageTextRetriever.getString(TextKeys.FILE_EXTENSION),
                         candidate.extension()});
             }
-            try {
-                long bytes = Files.size(candidate.path());
-                addRow.accept(leftCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.FILE_SIZE), formatFileSize(bytes)});
-            } catch (IOException ignored) {
+            if (!isFile) {
+                try (var stream = Files.list(candidate.path())) {
+                    long itemCount = stream.count();
+                    addRow.accept(leftCol, new String[]{
+                            languageTextRetriever.getString(TextKeys.FILE_ITEM_COUNT),
+                            itemCount + " items"});
+                } catch (IOException ignored) {
+                }
+            } else {
+                try {
+                    long bytes = Files.size(candidate.path());
+                    addRow.accept(leftCol, new String[]{
+                            languageTextRetriever.getString(TextKeys.FILE_SIZE), formatFileSize(bytes)});
+                } catch (IOException ignored) {
+                }
             }
         }
 
@@ -582,11 +592,12 @@ public class ApplicationMainViewController implements Initializable {
         var metaOpt = sessionApi.getFileMetadata(preview.fileId());
         metaOpt.ifPresent(dto -> {
             String na = languageTextRetriever.getString(TextKeys.METADATA_NOT_AVAILABLE);
+            boolean isDir = candidate != null && Files.isDirectory(candidate.path());
             if (dto.mimeType() != null && !dto.mimeType().isBlank()) {
                 addRow.accept(leftCol, new String[]{
                         languageTextRetriever.getString(TextKeys.FILE_MIME_TYPE), dto.mimeType()});
             }
-            if ("IMAGE".equals(dto.category()) || "VIDEO".equals(dto.category())) {
+            if (!isDir && ("IMAGE".equals(dto.category()) || "VIDEO".equals(dto.category()))) {
                 addRow.accept(rightCol, new String[]{
                         languageTextRetriever.getString(TextKeys.FILE_CONTENT_CREATION_TIME),
                         dto.contentCreationDate() != null ? dto.contentCreationDate().format(fmt) : na});
@@ -597,7 +608,7 @@ public class ApplicationMainViewController implements Initializable {
                         languageTextRetriever.getString(TextKeys.HEIGHT),
                         dto.heightPx() != null ? dto.heightPx() + " px" : na});
             }
-            if ("AUDIO".equals(dto.category())) {
+            if (!isDir && "AUDIO".equals(dto.category())) {
                 addRow.accept(rightCol, new String[]{
                         languageTextRetriever.getString(TextKeys.SONG_AUTHOR),
                         dto.audioArtist() != null ? dto.audioArtist() : na});
