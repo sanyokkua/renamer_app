@@ -669,7 +669,7 @@ import ua.renamer.app.backend.service.impl.FolderExpansionServiceImpl;
 
 ---
 
-## Task 7 — Folder Drop Dialog (FXML + Controller)
+## Task 7 — Folder Drop Dialog (FXML + Controller) (Done)
 
 ### Why
 When folders are detected in a drop event, the user must choose how to handle them before
