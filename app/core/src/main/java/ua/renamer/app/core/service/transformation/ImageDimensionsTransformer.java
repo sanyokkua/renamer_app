@@ -25,10 +25,12 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
         if (config == null) {
             return buildErrorResult(input, "Transformer configuration must not be null");
         }
-        // Check if file extraction failed - propagate as extraction error
         if (!input.isFile()) {
-            log.debug("Propagating extraction error for: {}", input.getAbsolutePath());
-            return buildErrorResult(input, "File extraction failed");
+            if (!"application/x-directory".equals(input.getDetectedMimeType())) {
+                return buildErrorResult(input, "File extraction failed");
+            }
+            log.debug("Skipping image dimensions for directory: {}", input.getAbsolutePath());
+            return buildPassThroughResult(input);
         }
 
         try {
@@ -124,6 +126,17 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
                         "position", config.getPosition().name(),
                         "nameSeparator", config.getNameSeparator()
                 ))
+                .build();
+    }
+
+    private PreparedFileModel buildPassThroughResult(FileModel input) {
+        return PreparedFileModel.builder()
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(false)
+                .withErrorMessage(null)
+                .withTransformationMeta(null)
                 .build();
     }
 

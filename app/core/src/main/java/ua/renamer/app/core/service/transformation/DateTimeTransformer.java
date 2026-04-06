@@ -49,9 +49,7 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
         if (config == null) {
             return buildErrorResult(input, "Transformer configuration must not be null");
         }
-        // Check if file extraction failed - propagate as extraction error
-        if (!input.isFile()) {
-            log.debug("Propagating extraction error for: {}", input.getAbsolutePath());
+        if (!input.isFile() && !"application/x-directory".equals(input.getDetectedMimeType())) {
             return buildErrorResult(input, "File extraction failed");
         }
 
@@ -60,8 +58,11 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
             LocalDateTime dateTime = extractDateTime(input, config);
 
             if (dateTime == null) {
-                return buildErrorResult(input,
-                        "No datetime available for source: " + config.getSource());
+                if (!input.isFile()) {
+                    log.debug("Skipping datetime for directory (source unavailable): {}", input.getAbsolutePath());
+                    return buildPassThroughResult(input);
+                }
+                return buildErrorResult(input, "No datetime available for source: " + config.getSource());
             }
 
             // Format datetime using DateTimeConverter
@@ -165,6 +166,17 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
                         "position", config.getPosition().name(),
                         "separator", config.getSeparator() != null ? config.getSeparator() : ""
                 ))
+                .build();
+    }
+
+    private PreparedFileModel buildPassThroughResult(FileModel input) {
+        return PreparedFileModel.builder()
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(false)
+                .withErrorMessage(null)
+                .withTransformationMeta(null)
                 .build();
     }
 

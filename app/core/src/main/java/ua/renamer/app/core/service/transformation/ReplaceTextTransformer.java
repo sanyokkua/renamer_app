@@ -22,9 +22,7 @@ public class ReplaceTextTransformer implements FileTransformationService<Replace
         if (config == null) {
             return buildErrorResult(input, "Transformer configuration must not be null");
         }
-        // Check if file extraction failed - propagate as extraction error
-        if (!input.isFile()) {
-            log.debug("Propagating extraction error for: {}", input.getAbsolutePath());
+        if (!input.isFile() && !"application/x-directory".equals(input.getDetectedMimeType())) {
             return buildErrorResult(input, "File extraction failed");
         }
 

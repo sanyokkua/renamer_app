@@ -48,8 +48,7 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
             List<FileModel> validFiles = new ArrayList<>();
 
             for (FileModel input : inputs) {
-                if (!input.isFile()) {
-                    log.debug("Propagating extraction error for: {}", input.getAbsolutePath());
+                if (!input.isFile() && !"application/x-directory".equals(input.getDetectedMimeType())) {
                     results.add(buildErrorResult(input, "File extraction failed"));
                 } else {
                     validFiles.add(input);
