@@ -31,7 +31,7 @@ public final class FolderDropDialogController {
      */
     public static FolderDropOptions show(int folderCount, Function<TextKeys, String> resolver) {
         var btnCancel = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_CANCEL), ButtonBar.ButtonData.CANCEL_CLOSE);
-        var btnAsItem = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_AS_ITEM), ButtonBar.ButtonData.LEFT);
+        var btnAsItem = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_AS_ITEM), ButtonBar.ButtonData.OTHER);
         var btnContents = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_CONTENTS), ButtonBar.ButtonData.OK_DONE);
 
         var dialog = new Dialog<FolderDropOptions>();
@@ -48,7 +48,24 @@ public final class FolderDropDialogController {
                 new Label(resolver.apply(TextKeys.DIALOG_FOLDER_OPTIONS_LABEL)),
                 cbRecursive,
                 cbIncludeFolders);
-        content.setPadding(new Insets(10, 0, 0, 0));
+        content.setPadding(new Insets(10, 16, 8, 16));
+
+        dialog.setOnShowing(e -> {
+            // Disable platform-specific button reordering; buttons render in insertion order:
+            // Cancel | Use as item | Use folder contents
+            var bar = dialog.getDialogPane().lookup(".button-bar");
+            if (bar instanceof ButtonBar buttonBar) {
+                buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
+            }
+            // Visual hierarchy: primary (accent fill) > secondary (outline) > ghost (muted)
+            var nodeContents = dialog.getDialogPane().lookupButton(btnContents);
+            var nodeAsItem = dialog.getDialogPane().lookupButton(btnAsItem);
+            var nodeCancel = dialog.getDialogPane().lookupButton(btnCancel);
+            if (nodeContents != null) nodeContents.getStyleClass().add("btn-primary");
+            if (nodeAsItem != null) nodeAsItem.getStyleClass().add("btn-secondary");
+            if (nodeCancel != null) nodeCancel.getStyleClass().add("btn-ghost");
+        });
+
         dialog.getDialogPane().setContent(content);
 
         dialog.setResultConverter(buttonType -> {
@@ -62,6 +79,7 @@ public final class FolderDropDialogController {
 
         dialog.getDialogPane().getStylesheets().addAll(
                 FolderDropDialogController.class.getResource("/styles/base.css").toExternalForm(),
+                FolderDropDialogController.class.getResource("/styles/buttons.css").toExternalForm(),
                 FolderDropDialogController.class.getResource("/styles/components.css").toExternalForm()
         );
 

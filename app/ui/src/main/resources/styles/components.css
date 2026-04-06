@@ -248,3 +248,21 @@
     -fx-padding: 8 12 8 12;
     -fx-spacing: 4;
 }
+
+/* ── Dialog pane ── */
+.dialog-pane > .header-panel {
+    -fx-padding: 16 20 14 20;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-primary;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+}
+
+.dialog-pane > .button-bar {
+    -fx-padding: 20 16 12 16;
+}
