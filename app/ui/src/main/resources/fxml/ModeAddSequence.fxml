@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeAddSequenceController"
@@ -12,47 +12,34 @@
         <Insets top="12" right="12" bottom="12" left="12"/>
     </padding>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
-            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
-
-        <Label text="%mode_use_digital_sequence_label_start_value" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="0"/>
-        <Spinner fx:id="startSeqNumberSpinner" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label text="%mode_use_digital_sequence_label_start_value" styleClass="label-section"/>
+        <Spinner fx:id="startSeqNumberSpinner" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Spinner>
 
-        <Label text="%mode_use_digital_sequence_label_step_value" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="1"/>
-        <Spinner fx:id="stepValueSpinner" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <Label text="%mode_use_digital_sequence_label_step_value" styleClass="label-section"/>
+        <Spinner fx:id="stepValueSpinner" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Spinner>
 
-        <Label text="%mode_use_digital_sequence_label_amount_of_digits" styleClass="label-section"
-               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Spinner fx:id="minDigitAmountSpinner" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <Label text="%mode_use_digital_sequence_label_amount_of_digits" styleClass="label-section"/>
+        <Spinner fx:id="minDigitAmountSpinner" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Spinner>
 
-        <Label text="%mode_use_digital_sequence_label_sorting_source" styleClass="label-section"
-               GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <ChoiceBox fx:id="sortingSourceChoiceBox" GridPane.columnIndex="1"
-                   GridPane.rowIndex="3" maxWidth="Infinity">
+        <Label text="%mode_use_digital_sequence_label_sorting_source" styleClass="label-section"/>
+        <ChoiceBox fx:id="sortingSourceChoiceBox" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
-    </GridPane>
+    </VBox>
 
 </VBox>

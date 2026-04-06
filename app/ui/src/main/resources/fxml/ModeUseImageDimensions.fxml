@@ -20,42 +20,32 @@
         </VBox.margin>
     </ItemPositionWithReplacementRadioSelector>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="BOTTOM" vgrow="NEVER"/>
-            <RowConstraints valignment="TOP" vgrow="NEVER"/>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <HBox spacing="8">
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="%mode_img_vid_dimensions_label_left_side" styleClass="label-section"/>
+                <ChoiceBox fx:id="leftDimensionChoiceBox" maxWidth="Infinity">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </ChoiceBox>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="%mode_img_vid_dimensions_label_separator_between" styleClass="label-section"/>
+                <TextField fx:id="dimensionsSeparatorTextField" maxWidth="Infinity"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="%mode_img_vid_dimensions_label_right_side" styleClass="label-section"/>
+                <ChoiceBox fx:id="rightDimensionChoiceBox" maxWidth="Infinity">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </ChoiceBox>
+            </VBox>
+        </HBox>
 
-        <Label text="%mode_img_vid_dimensions_label_left_side" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="0"/>
-        <ChoiceBox fx:id="leftDimensionChoiceBox" GridPane.columnIndex="0" GridPane.rowIndex="1">
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </ChoiceBox>
-
-        <Label text="%mode_img_vid_dimensions_label_separator_between" styleClass="label-section"
-               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        <TextField fx:id="dimensionsSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-        <Label text="%mode_img_vid_dimensions_label_right_side" styleClass="label-section" GridPane.columnIndex="2"
-               GridPane.rowIndex="0"/>
-        <ChoiceBox fx:id="rightDimensionChoiceBox" GridPane.columnIndex="2" GridPane.rowIndex="1">
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </ChoiceBox>
-
-        <Label text="%mode_img_vid_dimensions_label_name_separator" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="2"/>
-        <TextField fx:id="dimensionsAndFileSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"
-                   GridPane.columnSpan="2" maxWidth="Infinity"/>
-    </GridPane>
+        <Label text="%mode_img_vid_dimensions_label_name_separator" styleClass="label-section"/>
+        <TextField fx:id="dimensionsAndFileSeparatorTextField" maxWidth="Infinity"/>
+    </VBox>
 
 </VBox>

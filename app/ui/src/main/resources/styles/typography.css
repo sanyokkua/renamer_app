@@ -1,7 +1,7 @@
 /* Typography utility classes */
 
 .label-section {
-    -fx-font-size: 11px;
+    -fx-font-size: 10px;
     -fx-font-weight: bold;
     -fx-text-fill: -color-text-muted;
 }

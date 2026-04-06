@@ -3,7 +3,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
 <?import ua.renamer.app.ui.widget.impl.ItemPositionTruncateRadioSelector?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
@@ -20,23 +20,13 @@
         </VBox.margin>
     </ItemPositionTruncateRadioSelector>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
-            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
-
-        <Label fx:id="amountOfSymbolsLabel" text="%mode_truncate_label_amount_of_symbols" styleClass="label-section"
-               GridPane.columnIndex="0"
-               GridPane.rowIndex="0"/>
-        <Spinner fx:id="amountOfSymbolsSpinner" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label fx:id="amountOfSymbolsLabel" text="%mode_truncate_label_amount_of_symbols" styleClass="label-section"/>
+        <Spinner fx:id="amountOfSymbolsSpinner" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Spinner>
-    </GridPane>
+    </VBox>
 
 </VBox>

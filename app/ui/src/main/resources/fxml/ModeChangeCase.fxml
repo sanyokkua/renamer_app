@@ -5,7 +5,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeChangeCaseController"
@@ -14,29 +14,19 @@
         <Insets top="12" right="12" bottom="12" left="12"/>
     </padding>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
-            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
-
-        <Label text="%mode_change_case_label_text_case" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="0"/>
-        <ChoiceBox fx:id="caseChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity">
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label text="%mode_change_case_label_text_case" styleClass="label-section"/>
+        <ChoiceBox fx:id="caseChoiceBox" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <CheckBox fx:id="capitalizeCheckBox" text="%mode_change_case_label_capitalize" maxWidth="Infinity"
-                  GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+        <CheckBox fx:id="capitalizeCheckBox" text="%mode_change_case_label_capitalize" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </CheckBox>
-    </GridPane>
+    </VBox>
 
 </VBox>

@@ -58,6 +58,8 @@
     -fx-text-fill: #35506A;
     -fx-alignment: CENTER-LEFT;
     -fx-padding: 0 8 0 8;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
 }
 
 /* Column header styling */

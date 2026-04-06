@@ -2,7 +2,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
 <?import ua.renamer.app.ui.widget.impl.ItemPositionExtendedRadioSelector?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
@@ -19,22 +19,12 @@
         </VBox.margin>
     </ItemPositionExtendedRadioSelector>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
-            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label text="%mode_replace_text_label_text_to_replace" styleClass="label-section"/>
+        <TextField fx:id="textToReplaceTextField" maxWidth="Infinity"/>
 
-        <Label text="%mode_replace_text_label_text_to_replace" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="0"/>
-        <TextField fx:id="textToReplaceTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-        <Label text="%mode_replace_text_label_text_to_add" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="1"/>
-        <TextField fx:id="textToAddTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-    </GridPane>
+        <Label text="%mode_replace_text_label_text_to_add" styleClass="label-section"/>
+        <TextField fx:id="textToAddTextField" maxWidth="Infinity"/>
+    </VBox>
 
 </VBox>

@@ -86,6 +86,8 @@ public class ApplicationMainViewController implements Initializable {
     private ModeApi<?> currentModeApi;
     private Map<String, RenameCandidate> candidatesByFileId = new HashMap<>();
     private Map<String, RenameSessionResult> renameResultsByFileId = new HashMap<>();
+    private RenamePreview lastFileInfoPreview;
+    private RenameCandidate lastFileInfoCandidate;
 
     @SuppressWarnings("unchecked")
     private static <P extends ModeParameters> void callBind(ModeControllerV2Api<?> ctrl, ModeApi<?> api) {
@@ -120,6 +122,11 @@ public class ApplicationMainViewController implements Initializable {
         handleModeChanged(TransformationMode.ADD_TEXT);
         updateFileCountLabel();
         clearFileInfoPanel();
+        fileInfoPanel.widthProperty().addListener((obs, oldW, newW) -> {
+            if (newW.doubleValue() > 0 && lastFileInfoPreview != null) {
+                updateFileInfoPanel(lastFileInfoPreview, lastFileInfoCandidate);
+            }
+        });
     }
 
     private void configureModeMenu() {
@@ -243,6 +250,7 @@ public class ApplicationMainViewController implements Initializable {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
+                setStyle("-fx-alignment: CENTER;");
                 if (empty) {
                     setGraphic(null);
                     return;
@@ -287,6 +295,7 @@ public class ApplicationMainViewController implements Initializable {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
+                setStyle("-fx-alignment: CENTER;");
                 if (empty) {
                     setGraphic(null);
                     return;
@@ -476,6 +485,8 @@ public class ApplicationMainViewController implements Initializable {
     }
 
     private void clearFileInfoPanel() {
+        lastFileInfoPreview = null;
+        lastFileInfoCandidate = null;
         fileInfoPanel.getChildren().clear();
         var placeholder = new Label(
                 languageTextRetriever.getString(TextKeys.FILE_INFO_NO_SELECTION));
@@ -484,6 +495,8 @@ public class ApplicationMainViewController implements Initializable {
     }
 
     private void updateFileInfoPanel(RenamePreview preview, RenameCandidate candidate) {
+        lastFileInfoPreview = preview;
+        lastFileInfoCandidate = candidate;
         fileInfoPanel.getChildren().clear();
         if (preview == null) {
             clearFileInfoPanel();
@@ -603,9 +616,16 @@ public class ApplicationMainViewController implements Initializable {
             rightCol.getChildren().add(errLabel);
         }
 
-        var columns = new HBox(leftCol, rightCol);
-        columns.getStyleClass().add("file-info-columns");
-        fileInfoPanel.getChildren().add(columns);
+        if (fileInfoPanel.getWidth() >= 430) {
+            var columns = new HBox(leftCol, rightCol);
+            columns.getStyleClass().add("file-info-columns");
+            leftCol.prefWidthProperty().bind(columns.widthProperty().multiply(0.5));
+            rightCol.prefWidthProperty().bind(columns.widthProperty().multiply(0.5));
+            fileInfoPanel.getChildren().add(columns);
+        } else {
+            var singleCol = new VBox(leftCol, rightCol);
+            fileInfoPanel.getChildren().add(singleCol);
+        }
     }
 
     private void handleBtnClickedRename() {

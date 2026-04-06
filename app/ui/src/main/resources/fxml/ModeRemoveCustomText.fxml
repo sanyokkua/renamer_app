@@ -2,7 +2,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
 <?import ua.renamer.app.ui.widget.impl.ItemPositionRadioSelector?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
@@ -19,18 +19,9 @@
         </VBox.margin>
     </ItemPositionRadioSelector>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
-            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
-
-        <Label text="%mode_remove_text_label_text_to_remove" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="0"/>
-        <TextField fx:id="removeTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-    </GridPane>
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label text="%mode_remove_text_label_text_to_remove" styleClass="label-section"/>
+        <TextField fx:id="removeTextField" maxWidth="Infinity"/>
+    </VBox>
 
 </VBox>

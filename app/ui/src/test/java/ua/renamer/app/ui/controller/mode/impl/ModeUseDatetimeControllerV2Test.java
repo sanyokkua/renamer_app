@@ -2,7 +2,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 
 import javafx.application.Platform;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -138,7 +138,7 @@ class ModeUseDatetimeControllerV2Test {
         return readFieldUnchecked(target, "secondSpinner");
     }
 
-    private static GridPane readDateTimePickerPanelUnchecked(ModeUseDatetimeController target) {
+    private static VBox readDateTimePickerPanelUnchecked(ModeUseDatetimeController target) {
         return readFieldUnchecked(target, "dateTimePicker");
     }
 
@@ -244,8 +244,8 @@ class ModeUseDatetimeControllerV2Test {
         // @FXML field: useCustomDateTimeAsFallbackCheckBox
         injectField("useCustomDateTimeAsFallbackCheckBox", new CheckBox());
 
-        // @FXML field: dateTimePicker (GridPane container)
-        injectField("dateTimePicker", new GridPane());
+        // @FXML field: dateTimePicker (VBox container)
+        injectField("dateTimePicker", new VBox());
 
         // @FXML field: datePicker
         injectField("datePicker", new DatePicker());

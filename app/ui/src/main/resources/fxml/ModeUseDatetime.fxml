@@ -20,98 +20,77 @@
         </VBox.margin>
     </ItemPositionWithReplacementRadioSelector>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
-            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
-
+    <VBox VBox.vgrow="NEVER" spacing="8">
         <Label fx:id="datetimeAndNameSeparatorLabel" text="%mode_datetime_label_datetime_name_separator"
-               styleClass="label-section" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="dateTimeAndNameSeparatorTextField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+               styleClass="label-section"/>
+        <TextField fx:id="dateTimeAndNameSeparatorTextField" maxWidth="Infinity"/>
 
-        <Label text="%mode_datetime_label_date_format" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="1"/>
-        <ChoiceBox fx:id="dateFormatChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity">
+        <Label text="%mode_datetime_label_date_format" styleClass="label-section"/>
+        <ChoiceBox fx:id="dateFormatChoiceBox" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <Label text="%mode_datetime_label_time_format" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="2"/>
-        <ChoiceBox fx:id="timeFormatChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="2" maxWidth="Infinity">
+        <Label text="%mode_datetime_label_time_format" styleClass="label-section"/>
+        <ChoiceBox fx:id="timeFormatChoiceBox" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <Label text="%mode_datetime_label_date_time_format" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="3"/>
-        <ChoiceBox fx:id="dateTimeFormatChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="3" maxWidth="Infinity">
+        <Label text="%mode_datetime_label_date_time_format" styleClass="label-section"/>
+        <ChoiceBox fx:id="dateTimeFormatChoiceBox" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
         <CheckBox fx:id="useUppercaseForAmPmCheckBox" text="%mode_datetime_label_use_am_pm_in_uppercase"
-                  maxWidth="Infinity"
-                  GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2">
+                  maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </CheckBox>
 
-        <Label text="%mode_datetime_label_time_source" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="5"/>
-        <ChoiceBox fx:id="dateTimeSourceChoiceBox" GridPane.columnIndex="1" GridPane.rowIndex="5" maxWidth="Infinity">
+        <Label text="%mode_datetime_label_time_source" styleClass="label-section"/>
+        <ChoiceBox fx:id="dateTimeSourceChoiceBox" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
 
-        <CheckBox fx:id="useFallbackDateTimeCheckBox" text="%mode_datetime_label_use_fallback" maxWidth="Infinity"
-                  GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2">
+        <CheckBox fx:id="useFallbackDateTimeCheckBox" text="%mode_datetime_label_use_fallback" maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </CheckBox>
 
         <CheckBox fx:id="useCustomDateTimeAsFallbackCheckBox" text="%mode_datetime_label_use_fallback_custom_date"
-                  maxWidth="Infinity"
-                  GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2">
+                  maxWidth="Infinity">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </CheckBox>
+    </VBox>
 
-    </GridPane>
-
-    <GridPane fx:id="dateTimePicker" VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
-
-        <Label text="%date_picker_date" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <DatePicker fx:id="datePicker" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-
-        <Label text="%date_picker_hour" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        <Spinner fx:id="hourSpinner" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-        <Label text="%date_picker_minute" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-        <Spinner fx:id="minuteSpinner" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-
-        <Label text="%date_picker_second" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
-        <Spinner fx:id="secondSpinner" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-    </GridPane>
+    <VBox fx:id="dateTimePicker" VBox.vgrow="NEVER" spacing="4">
+        <Label text="%date_picker_date" styleClass="label-section"/>
+        <DatePicker fx:id="datePicker" maxWidth="Infinity"/>
+        <HBox spacing="8">
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="%date_picker_hour" styleClass="label-section"/>
+                <Spinner fx:id="hourSpinner" maxWidth="Infinity"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="%date_picker_minute" styleClass="label-section"/>
+                <Spinner fx:id="minuteSpinner" maxWidth="Infinity"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="%date_picker_second" styleClass="label-section"/>
+                <Spinner fx:id="secondSpinner" maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+    </VBox>
 
 </VBox>

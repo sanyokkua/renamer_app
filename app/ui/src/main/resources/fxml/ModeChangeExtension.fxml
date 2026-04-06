@@ -2,7 +2,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeChangeExtensionController"
@@ -11,18 +11,9 @@
         <Insets top="12" right="12" bottom="12" left="12"/>
     </padding>
 
-    <GridPane VBox.vgrow="NEVER" hgap="8" vgap="8">
-        <columnConstraints>
-            <ColumnConstraints halignment="LEFT" hgrow="NEVER"/>
-            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints valignment="CENTER" vgrow="NEVER"/>
-        </rowConstraints>
-
-        <Label text="%mode_change_extension_label_new_extension" styleClass="label-section" GridPane.columnIndex="0"
-               GridPane.rowIndex="0"/>
-        <TextField fx:id="extensionTextField" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity"/>
-    </GridPane>
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label text="%mode_change_extension_label_new_extension" styleClass="label-section"/>
+        <TextField fx:id="extensionTextField" maxWidth="Infinity"/>
+    </VBox>
 
 </VBox>

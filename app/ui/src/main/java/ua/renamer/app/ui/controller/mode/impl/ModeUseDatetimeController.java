@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.*;
@@ -58,7 +58,7 @@ public class ModeUseDatetimeController
     @FXML
     private CheckBox useCustomDateTimeAsFallbackCheckBox;
     @FXML
-    private GridPane dateTimePicker;
+    private VBox dateTimePicker;
     @FXML
     private DatePicker datePicker;
     @FXML

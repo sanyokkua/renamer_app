@@ -73,17 +73,34 @@
 }
 
 /* ── Radio button & Checkbox ── */
+.radio-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: #35506A;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
 .radio-button .radio {
-    -fx-border-color: #BDD0E8;
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #E8EFF7, #BDD0E8, #FFFFFF;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 1.0e+200, 1.0e+200, 1.0e+200;
+    -fx-padding: 3;
 }
 
 .radio-button:selected .radio {
-    -fx-border-color: #2C6FBF;
-    -fx-background-color: #2C6FBF;
+    -fx-background-color: #2C6FBF, #2C6FBF, #2C6FBF;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 1.0e+200, 1.0e+200, 1.0e+200;
+    -fx-padding: 3;
 }
 
-.radio-button,
+.radio-button:selected .radio > .dot {
+    -fx-background-color: white;
+    -fx-background-radius: 1.0e+200;
+}
+
 .check-box {
     -fx-text-fill: #35506A;
 }
@@ -97,10 +114,6 @@
 .check-box:selected .box {
     -fx-border-color: #2C6FBF;
     -fx-background-color: #2C6FBF;
-}
-
-.radio-button:selected .radio > .dot {
-    -fx-background-color: white;
 }
 
 .check-box:selected .box > .mark {

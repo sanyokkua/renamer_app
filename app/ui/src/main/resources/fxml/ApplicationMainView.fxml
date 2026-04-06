@@ -45,16 +45,15 @@
                     <Label text="%empty_files_table_placeholder"/>
                 </placeholder>
             </TableView>
+            <!-- ── File metadata panel — pinned below the file table ── -->
+            <ScrollPane VBox.vgrow="NEVER" fitToWidth="true" hbarPolicy="NEVER"
+                        prefHeight="130" minHeight="80" maxHeight="200"
+                        styleClass="file-info-scroll">
+                <VBox fx:id="fileInfoPanel" styleClass="file-info-panel" fillWidth="true"/>
+            </ScrollPane>
         </VBox>
 
     </SplitPane>
-
-    <!-- ── File metadata panel (below both panels) ── -->
-    <ScrollPane VBox.vgrow="NEVER" fitToWidth="true" hbarPolicy="NEVER"
-                prefHeight="130" minHeight="80" maxHeight="200"
-                styleClass="file-info-scroll">
-        <VBox fx:id="fileInfoPanel" styleClass="file-info-panel" fillWidth="true"/>
-    </ScrollPane>
 
     <!-- ── Bottom bar: progress + file count + action buttons ── -->
     <HBox spacing="8" alignment="CENTER_LEFT" styleClass="action-bar"
