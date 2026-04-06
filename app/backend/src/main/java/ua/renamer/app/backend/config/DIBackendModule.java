@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import ua.renamer.app.api.session.SessionApi;
 import ua.renamer.app.backend.service.BackendExecutor;
+import ua.renamer.app.backend.service.FolderExpansionService;
+import ua.renamer.app.backend.service.impl.FolderExpansionServiceImpl;
 import ua.renamer.app.backend.session.RenameSessionService;
 import ua.renamer.app.core.config.DIV2ServiceModule;
 import ua.renamer.app.metadata.config.DIMetadataModule;
@@ -26,6 +28,7 @@ public class DIBackendModule extends AbstractModule {
 
         bind(BackendExecutor.class).in(Scopes.SINGLETON);
         bind(SessionApi.class).to(RenameSessionService.class).in(Scopes.SINGLETON);
+        bind(FolderExpansionService.class).to(FolderExpansionServiceImpl.class).in(Scopes.SINGLETON);
         // StatePublisher is NOT bound here — app/ui's DIUIModule provides it
     }
 }

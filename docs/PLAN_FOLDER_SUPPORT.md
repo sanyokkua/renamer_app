@@ -643,7 +643,7 @@ opens ua.renamer.app.backend.service.impl;
 
 ---
 
-## Task 6 — Wire FolderExpansionService into DI
+## Task 6 — Wire FolderExpansionService into DI (Done)
 
 ### Why
 Guice needs to know that `FolderExpansionService` interface should be resolved to
