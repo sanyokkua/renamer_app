@@ -49,7 +49,10 @@ public class PreparedFileModel {
      * @return the original full filename; never null
      */
     public String getOldFullName() {
-        return originalFile.getName() + "." + originalFile.getExtension();
+        String ext = originalFile.getExtension();
+        return (ext == null || ext.isEmpty())
+                ? originalFile.getName()
+                : originalFile.getName() + "." + ext;
     }
 
     /**

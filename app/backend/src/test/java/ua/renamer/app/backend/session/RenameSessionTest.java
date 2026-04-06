@@ -133,6 +133,43 @@ class RenameSessionTest {
         }
 
         @Test
+        void addFiles_withDuplicatePaths_doesNotAddDuplicates() {
+            session.addFiles(List.of(FILE_A));
+            session.addFiles(List.of(FILE_A));
+
+            assertThat(session.getFiles()).hasSize(1);
+        }
+
+        @Test
+        void addFiles_withDuplicateWithinBatch_addsOnlyOne() {
+            session.addFiles(List.of(FILE_A, FILE_A));
+
+            assertThat(session.getFiles()).hasSize(1);
+        }
+
+        @Test
+        void addFiles_withOverlappingBatches_deduplicatesAcrossCalls() {
+            // First batch: A + B, second batch: B + C → final size should be 3
+            session.addFiles(List.of(FILE_A, FILE_B));
+            FileModel fileC = fileModel("/tmp/c.txt", "c", "txt");
+            session.addFiles(List.of(FILE_B, fileC));
+
+            assertThat(session.getFiles()).hasSize(3);
+        }
+
+        @Test
+        void addFiles_allDuplicates_doesNotChangeSizeButClearsPreview() {
+            session.addFiles(List.of(FILE_A));
+            session.setLastPreview(List.of(preparedModel(FILE_A)));
+            assertThat(session.getLastPreview()).hasSize(1);
+
+            session.addFiles(List.of(FILE_A));
+
+            assertThat(session.getFiles()).hasSize(1);
+            assertThat(session.getLastPreview()).isEmpty();
+        }
+
+        @Test
         void givenEmptyList_whenAddFiles_thenStatusIsFilesLoaded() {
             // The implementation always transitions to FILES_LOADED (or MODE_CONFIGURED)
             // even when an empty list is added. With no mode set and no files added,

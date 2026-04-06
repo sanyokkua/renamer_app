@@ -15,6 +15,7 @@ import ua.renamer.app.core.service.transformation.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -65,8 +66,8 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
             prepared = duplicateResolver.resolve(prepared);
             log.debug("Phase 2.5 complete: {} files after deduplication", prepared.size());
 
-            // PHASE 3: Execute renames (Always Parallel)
-            List<RenameResult> results = executeRenamesParallel(prepared, virtualExecutor, progressCallback);
+            // PHASE 3: Execute renames (depth-ordered to avoid parent-before-child race)
+            List<RenameResult> results = executeRenamesOrdered(prepared, progressCallback);
             log.info("Pipeline complete: {} results", results.size());
 
             // Log summary
@@ -254,18 +255,27 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
 
     // ==================== PHASE 3: PHYSICAL RENAME ====================
 
-    private List<RenameResult> executeRenamesParallel(List<PreparedFileModel> prepared, ExecutorService executor, ProgressCallback progressCallback) {
+    private List<RenameResult> executeRenamesOrdered(List<PreparedFileModel> prepared, ProgressCallback progressCallback) {
         int total = prepared.size();
         AtomicInteger completed = new AtomicInteger(0);
 
         updateProgress(0, total, progressCallback);
 
-        return prepared.parallelStream().map(preparedFile -> CompletableFuture.supplyAsync(() -> {
+        // Sort deepest paths first so children are renamed before their parent folders.
+        // This prevents NoSuchFileException when a parent is renamed before its children.
+        List<PreparedFileModel> ordered = prepared.stream()
+                .sorted(Comparator.comparingInt(
+                        (PreparedFileModel p) -> p.getOldPath().getNameCount()
+                ).reversed())
+                .toList();
+
+        // Sequential stream respects the sort order; parallelStream() would not.
+        return ordered.stream().map(preparedFile -> {
             RenameResult result = renameExecutor.execute(preparedFile);
             int current = completed.incrementAndGet();
             updateProgress(current, total, progressCallback);
             return result;
-        }, executor)).map(CompletableFuture::join).toList();
+        }).toList();
     }
 
     // ==================== UTILITIES ====================

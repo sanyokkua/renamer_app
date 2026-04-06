@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.enums.ItemPosition;
 import ua.renamer.app.api.model.*;
@@ -25,9 +26,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
 
 /**
  * Comprehensive unit tests for FileRenameOrchestratorImpl.
@@ -515,16 +516,38 @@ class FileRenameOrchestratorImplTest {
         when(fileMapper.mapFrom(file1)).thenThrow(new RuntimeException("Extraction error"));
         when(fileMapper.mapFrom(file2)).thenReturn(model2);
 
+        // When Phase 1 fails, the orchestrator creates an error FileModel (isFile=false) for file1.
+        // Stub Phase 2 + 3 for that error model so the pipeline doesn't NPE in the depth-sort.
+        when(addTextTransformer.transform(argThat(fm -> fm != null && !fm.isFile()), eq(config)))
+                .thenAnswer(inv -> {
+                    FileModel errFm = inv.getArgument(0);
+                    return PreparedFileModel.builder()
+                            .withOriginalFile(errFm)
+                            .withNewName(errFm.getName())
+                            .withNewExtension(errFm.getExtension())
+                            .withHasError(true)
+                            .withErrorMessage("Extraction error")
+                            .build();
+                });
         when(addTextTransformer.transform(model2, config)).thenReturn(prepared2);
         when(addTextTransformer.requiresSequentialExecution()).thenReturn(false);
         when(duplicateResolver.resolve(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(renameExecutor.execute(argThat(p -> p != null && p.isHasError()))).thenAnswer(inv -> {
+            PreparedFileModel p = inv.getArgument(0);
+            return RenameResult.builder()
+                    .withPreparedFile(p)
+                    .withStatus(RenameStatus.ERROR_EXTRACTION)
+                    .withErrorMessage(p.getErrorMessage().orElse(null))
+                    .withExecutedAt(java.time.LocalDateTime.now())
+                    .build();
+        });
         when(renameExecutor.execute(prepared2)).thenReturn(result2);
 
         // When
         List<RenameResult> results = orchestrator.execute(List.of(file1, file2),
                 TransformationMode.ADD_TEXT, config, null);
 
-        // Then - file2 should still succeed
+        // Then - file2 should still succeed (file1 error at index 0, file2 success at index 1)
         assertEquals(2, results.size());
         assertEquals(RenameStatus.SUCCESS, results.get(1).getStatus());
     }
@@ -969,5 +992,129 @@ class FileRenameOrchestratorImplTest {
                 "Error message should indicate expected config type");
         assertTrue(result.getErrorMessage().get().contains("SequenceConfig"),
                 "Error message should mention wrong config type");
+    }
+
+    // ============================================================================
+    // J. Ordering Tests — Phase 3 Depth-Sort
+    // ============================================================================
+
+    @Test
+    void execute_withParentAndChildInList_childRenamedBeforeParent() {
+        // Parent dir and its child file both appear in the rename list.
+        // Child has deeper path (more name components) → must be executed first.
+        File parentFile = new File("/projects/myfolder");
+        File childFile = new File("/projects/myfolder/notes.txt");
+
+        FileModel parentModel = buildDirModel(parentFile, "myfolder");
+        FileModel childModel = FileModel.builder()
+                .withFile(childFile)
+                .withIsFile(true)
+                .withFileSize(100L)
+                .withName("notes")
+                .withExtension("txt")
+                .withAbsolutePath(childFile.getAbsolutePath())
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("text/plain")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
+
+        PreparedFileModel preparedParent = createPreparedFile(parentModel, "renamed_folder", false, null);
+        PreparedFileModel preparedChild = createPreparedFile(childModel, "renamed_notes", false, null);
+
+        RenameResult resultParent = createRenameResult(preparedParent, RenameStatus.SUCCESS);
+        RenameResult resultChild = createRenameResult(preparedChild, RenameStatus.SUCCESS);
+
+        AddTextConfig config = AddTextConfig.builder()
+                .withTextToAdd("renamed_").withPosition(ItemPosition.BEGIN).build();
+
+        when(fileMapper.mapFrom(parentFile)).thenReturn(parentModel);
+        when(fileMapper.mapFrom(childFile)).thenReturn(childModel);
+        when(addTextTransformer.transform(parentModel, config)).thenReturn(preparedParent);
+        when(addTextTransformer.transform(childModel, config)).thenReturn(preparedChild);
+        when(addTextTransformer.requiresSequentialExecution()).thenReturn(false);
+        when(duplicateResolver.resolve(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(renameExecutor.execute(preparedParent)).thenReturn(resultParent);
+        when(renameExecutor.execute(preparedChild)).thenReturn(resultChild);
+
+        // Pass parent first — sort must reorder to child-before-parent
+        List<RenameResult> results = orchestrator.execute(
+                List.of(parentFile, childFile), TransformationMode.ADD_TEXT, config, null);
+
+        assertEquals(2, results.size());
+        assertTrue(results.stream().allMatch(r -> r.getStatus() == RenameStatus.SUCCESS));
+
+        // Verify child was renamed before parent
+        InOrder order = inOrder(renameExecutor);
+        order.verify(renameExecutor).execute(preparedChild);
+        order.verify(renameExecutor).execute(preparedParent);
+    }
+
+    @Test
+    void execute_withDeeplyNestedFolders_allRenameSucceed() {
+        // Three levels: /a  →  /a/b  →  /a/b/c
+        // Sort must produce: c first, then b, then a
+        File aFile = new File("/a");
+        File bFile = new File("/a/b");
+        File cFile = new File("/a/b/c");
+
+        FileModel aModel = buildDirModel(aFile, "a");
+        FileModel bModel = buildDirModel(bFile, "b");
+        FileModel cModel = buildDirModel(cFile, "c");
+
+        PreparedFileModel prepA = createPreparedFile(aModel, "A", false, null);
+        PreparedFileModel prepB = createPreparedFile(bModel, "B", false, null);
+        PreparedFileModel prepC = createPreparedFile(cModel, "C", false, null);
+
+        RenameResult resA = createRenameResult(prepA, RenameStatus.SUCCESS);
+        RenameResult resB = createRenameResult(prepB, RenameStatus.SUCCESS);
+        RenameResult resC = createRenameResult(prepC, RenameStatus.SUCCESS);
+
+        AddTextConfig config = AddTextConfig.builder()
+                .withTextToAdd("X").withPosition(ItemPosition.BEGIN).build();
+
+        when(fileMapper.mapFrom(aFile)).thenReturn(aModel);
+        when(fileMapper.mapFrom(bFile)).thenReturn(bModel);
+        when(fileMapper.mapFrom(cFile)).thenReturn(cModel);
+        when(addTextTransformer.transform(aModel, config)).thenReturn(prepA);
+        when(addTextTransformer.transform(bModel, config)).thenReturn(prepB);
+        when(addTextTransformer.transform(cModel, config)).thenReturn(prepC);
+        when(addTextTransformer.requiresSequentialExecution()).thenReturn(false);
+        when(duplicateResolver.resolve(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(renameExecutor.execute(prepA)).thenReturn(resA);
+        when(renameExecutor.execute(prepB)).thenReturn(resB);
+        when(renameExecutor.execute(prepC)).thenReturn(resC);
+
+        // Pass in shallow-first order to ensure sort does the reordering
+        List<RenameResult> results = orchestrator.execute(
+                List.of(aFile, bFile, cFile), TransformationMode.ADD_TEXT, config, null);
+
+        assertEquals(3, results.size());
+        assertTrue(results.stream().allMatch(r -> r.getStatus() == RenameStatus.SUCCESS));
+
+        // Deepest (c) first, then b, then a
+        InOrder order = inOrder(renameExecutor);
+        order.verify(renameExecutor).execute(prepC);
+        order.verify(renameExecutor).execute(prepB);
+        order.verify(renameExecutor).execute(prepA);
+    }
+
+    private FileModel buildDirModel(File f, String name) {
+        return FileModel.builder()
+                .withFile(f)
+                .withIsFile(false)
+                .withFileSize(0L)
+                .withName(name)
+                .withExtension("")
+                .withAbsolutePath(f.getAbsolutePath())
+                .withCreationDate(LocalDateTime.now())
+                .withModificationDate(LocalDateTime.now())
+                .withDetectedMimeType("")
+                .withDetectedExtensions(Collections.emptySet())
+                .withCategory(Category.GENERIC)
+                .withMetadata(null)
+                .build();
     }
 }

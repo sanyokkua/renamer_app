@@ -644,6 +644,74 @@ class DuplicateNameResolverImplTest {
     }
 
     // ============================================================================
+    // J. Directory-Scoped Duplicate Tests
+    // ============================================================================
+
+    @Test
+    void resolve_filesInDifferentDirectories_noSuffixAdded() {
+        // Given - two files in different directories with the same target name
+        PreparedFileModel fileA = createPreparedFile("photo", "jpg", "photo", "jpg", "/dir1/photo.jpg");
+        PreparedFileModel fileB = createPreparedFile("photo", "jpg", "photo", "jpg", "/dir2/photo.jpg");
+
+        // When
+        List<PreparedFileModel> result = resolver.resolve(List.of(fileA, fileB));
+
+        // Then - neither file should have a suffix appended
+        assertEquals(2, result.size());
+        assertTrue(result.stream().allMatch(m -> m.getNewFullName().equals("photo.jpg")),
+                "Files in different directories must not have a suffix appended");
+    }
+
+    @Test
+    void resolve_filesInSameDirectory_suffixAddedToSecond() {
+        // Given - two files in the same directory mapping to the same target name
+        PreparedFileModel fileA = createPreparedFile("file1", "jpg", "photo", "jpg", "/dir1/file1.jpg");
+        PreparedFileModel fileB = createPreparedFile("file2", "jpg", "photo", "jpg", "/dir1/file2.jpg");
+
+        // When
+        List<PreparedFileModel> result = resolver.resolve(List.of(fileA, fileB));
+
+        // Then - one keeps "photo.jpg", the other gets a suffix
+        assertEquals(2, result.size());
+        long withoutSuffix = result.stream().filter(m -> m.getNewFullName().equals("photo.jpg")).count();
+        long withSuffix = result.stream().filter(m -> m.getNewFullName().equals("photo (1).jpg")).count();
+        assertEquals(1, withoutSuffix, "Exactly one file should keep the original name");
+        assertEquals(1, withSuffix, "Exactly one file should receive the (1) suffix");
+    }
+
+    @Test
+    void resolve_mixedDirectories_onlySameDirConflictsResolved() {
+        // Given - A and B conflict in dir1; C is in dir2 with same name (no conflict)
+        PreparedFileModel fileA = createPreparedFile("a", "jpg", "photo", "jpg", "/dir1/a.jpg");
+        PreparedFileModel fileB = createPreparedFile("b", "jpg", "photo", "jpg", "/dir1/b.jpg");
+        PreparedFileModel fileC = createPreparedFile("c", "jpg", "photo", "jpg", "/dir2/c.jpg");
+
+        // When
+        List<PreparedFileModel> result = resolver.resolve(List.of(fileA, fileB, fileC));
+
+        // Then - exactly one of A/B gets a suffix; C must remain "photo.jpg"
+        assertEquals(3, result.size());
+        PreparedFileModel resultC = findByPath(result, "/dir2/c.jpg");
+        assertEquals("photo.jpg", resultC.getNewFullName(), "File in different directory must not get a suffix");
+
+        long suffixedInDir1 = result.stream()
+                .filter(m -> m.getOriginalFile().getAbsolutePath().startsWith("/dir1/"))
+                .filter(m -> !m.getNewFullName().equals("photo.jpg"))
+                .count();
+        assertEquals(1, suffixedInDir1, "Exactly one dir1 file should receive a suffix");
+    }
+
+    @Test
+    void resolve_nullParentDirectory_doesNotThrow() {
+        // Given - a file with a relative path that has no parent component
+        PreparedFileModel fileA = createPreparedFile("file", "jpg", "file", "jpg", "file.jpg");
+
+        // When / Then - must not throw
+        List<PreparedFileModel> result = assertDoesNotThrow(() -> resolver.resolve(List.of(fileA)));
+        assertEquals(1, result.size());
+    }
+
+    // ============================================================================
     // Utility Methods
     // ============================================================================
 

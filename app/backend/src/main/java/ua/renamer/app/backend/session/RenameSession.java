@@ -11,7 +11,10 @@ import ua.renamer.app.api.session.SessionSnapshot;
 import ua.renamer.app.api.session.SessionStatus;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Mutable session state holder.
@@ -37,7 +40,15 @@ public class RenameSession {
      * @param newFiles files to add; must not be null; elements must not be null
      */
     public void addFiles(List<FileModel> newFiles) {
-        files.addAll(newFiles);
+        Set<String> existingPaths = files.stream()
+                .map(FileModel::getAbsolutePath)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        List<FileModel> deduped = newFiles.stream()
+                .filter(fm -> existingPaths.add(fm.getAbsolutePath()))
+                .toList();
+
+        files.addAll(deduped);
         lastPreview = List.of();
         if (activeMode != null && currentParams != null) {
             status = SessionStatus.MODE_CONFIGURED;

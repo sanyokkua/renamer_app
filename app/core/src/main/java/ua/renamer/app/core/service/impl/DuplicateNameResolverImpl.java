@@ -14,20 +14,26 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DuplicateNameResolverImpl implements DuplicateNameResolver {
 
+    private static java.nio.file.Path parentOf(PreparedFileModel model) {
+        java.nio.file.Path raw = model.getOriginalFile().getFile().toPath().getParent();
+        // null parent means filesystem root; use empty path as sentinel
+        return (raw != null) ? raw : java.nio.file.Path.of("");
+    }
+
     @Override
     public List<PreparedFileModel> resolve(List<PreparedFileModel> models) {
-        // Group by target name (full name with extension)
-        Map<String, List<PreparedFileModel>> nameGroups = models.stream()
-                .collect(Collectors.groupingBy(PreparedFileModel::getNewFullName));
+        // Group by (parentDir, targetName) — files in different directories are never duplicates
+        Map<NameKey, List<PreparedFileModel>> nameGroups = models.stream()
+                .collect(Collectors.groupingBy(model ->
+                        new NameKey(parentOf(model), model.getNewFullName())));
 
         // Track used names to prevent re-collision
-        Set<String> usedNames = new HashSet<>(nameGroups.keySet());
+        Set<NameKey> usedNames = new HashSet<>(nameGroups.keySet());
 
         // Process each group
         List<PreparedFileModel> result = new ArrayList<>();
 
-        for (Map.Entry<String, List<PreparedFileModel>> entry : nameGroups.entrySet()) {
-            String targetName = entry.getKey();
+        for (Map.Entry<NameKey, List<PreparedFileModel>> entry : nameGroups.entrySet()) {
             List<PreparedFileModel> group = entry.getValue();
 
             if (group.size() == 1) {
@@ -36,8 +42,9 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
                 continue;
             }
 
-            // Multiple files with same target name - keep first, append suffixes to rest
-            log.debug("Found {} files with duplicate target name: {}", group.size(), targetName);
+            // Multiple files with same target name in the same directory - keep first, append suffixes to rest
+            log.debug("Found {} files with duplicate target name '{}' in '{}'",
+                    group.size(), entry.getKey().newFullName(), entry.getKey().parentDir());
 
             // Calculate padding for duplicate suffixes
             // Strategy: infer padding from the base name if it's numeric, otherwise use group size
@@ -61,6 +68,7 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
                 }
 
                 // Generate unique name for subsequent duplicates
+                java.nio.file.Path parentDir = parentOf(model);
                 String uniqueName;
                 String uniqueFullName;
                 do {
@@ -69,9 +77,9 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
                     uniqueFullName = model.getNewExtension().isEmpty()
                             ? uniqueName
                             : uniqueName + "." + model.getNewExtension();
-                } while (usedNames.contains(uniqueFullName));
+                } while (usedNames.contains(new NameKey(parentDir, uniqueFullName)));
 
-                usedNames.add(uniqueFullName);
+                usedNames.add(new NameKey(parentDir, uniqueFullName));
 
                 // Create updated model using toBuilder
                 PreparedFileModel updated = model.toBuilder()
@@ -128,5 +136,8 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
 
         // For non-zero-padded names, use group size padding
         return groupSizePadding;
+    }
+
+    private record NameKey(java.nio.file.Path parentDir, String newFullName) {
     }
 }

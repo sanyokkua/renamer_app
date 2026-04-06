@@ -389,7 +389,7 @@ public class ApplicationMainViewController implements Initializable {
 
     private void configureControlWidgetsState() {
         log.info("Configuring controlWidgetsState");
-        reloadBtn.setVisible(areFilesRenamed);
+        reloadBtn.setDisable(!areFilesRenamed);
 
         if (fxStateMirror.files().isEmpty()) {
             renameBtn.setDisable(true);
@@ -397,7 +397,7 @@ public class ApplicationMainViewController implements Initializable {
         } else {
             renameBtn.setDisable(false);
             clearBtn.setDisable(false);
-            renameBtn.setDisable(reloadBtn.isVisible());
+            renameBtn.setDisable(areFilesRenamed);
         }
     }
 
@@ -714,7 +714,23 @@ public class ApplicationMainViewController implements Initializable {
                 languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_OK));
         var cancelButton = new ButtonType(
                 languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_CANCEL));
-        alert.getButtonTypes().setAll(confirmButton, cancelButton);
+        alert.getButtonTypes().setAll(cancelButton, confirmButton);
+        alert.setOnShowing(e -> {
+            var bar = alert.getDialogPane().lookup(".button-bar");
+            if (bar instanceof ButtonBar buttonBar) {
+                buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
+            }
+            var btnOk = alert.getDialogPane().lookupButton(confirmButton);
+            var btnCancel = alert.getDialogPane().lookupButton(cancelButton);
+            if (btnOk != null) btnOk.getStyleClass().add("btn-primary");
+            if (btnCancel != null) btnCancel.getStyleClass().add("btn-ghost");
+        });
+        alert.getDialogPane().getStylesheets().addAll(
+                ApplicationMainViewController.class.getResource("/styles/base.css").toExternalForm(),
+                ApplicationMainViewController.class.getResource("/styles/buttons.css").toExternalForm(),
+                ApplicationMainViewController.class.getResource("/styles/components.css").toExternalForm()
+        );
+        alert.setGraphic(null);
         alert.showAndWait();
         return alert.getResult() == confirmButton;
     }
