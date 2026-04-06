@@ -406,7 +406,7 @@ file_item_count=Кількість елементів
 
 ---
 
-## Task 4 — FolderDropOptions Model
+## Task 4 — FolderDropOptions Model (Done)
 
 ### Why
 The folder drop dialog (Task 7) needs to communicate the user's choice back to the drop
