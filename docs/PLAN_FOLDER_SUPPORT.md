@@ -229,7 +229,7 @@ for directories (no image metadata), so they'll sort to the front, which is acce
 
 ---
 
-## Task 2 — Type Column: Folder Badge
+## Task 2 — Type Column: Folder Badge (Done)
 
 ### Why
 Currently (lines 294–323 of `ApplicationMainViewController.java`), the `itemTypeColumn`

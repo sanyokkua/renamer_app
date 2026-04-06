@@ -317,8 +317,12 @@ public class ApplicationMainViewController implements Initializable {
                         setGraphic(chip);
                         return;
                     }
+                    setGraphic(null);
+                    return;
                 }
-                setGraphic(null);
+                var folderChip = new javafx.scene.control.Label("folder");
+                folderChip.getStyleClass().add("type-chip-folder");
+                setGraphic(folderChip);
             }
         });
     }
