@@ -467,7 +467,7 @@ new record is in that package and will be exported automatically.
 
 ---
 
-## Task 5 — FolderExpansionService: Interface + Implementation
+## Task 5 — FolderExpansionService: Interface + Implementation (Done)
 
 ### Why
 When the user chooses "Use folder contents" in the drop dialog, the app needs to traverse a

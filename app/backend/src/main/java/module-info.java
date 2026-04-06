@@ -10,10 +10,12 @@ module ua.renamer.app.backend {
     // IMPORTANT: NO require javafx.* — JPMS enforces FX-free backend
 
     exports ua.renamer.app.backend.service;
+    exports ua.renamer.app.backend.service.impl;
     exports ua.renamer.app.backend.session;
     exports ua.renamer.app.backend.config;
 
     opens ua.renamer.app.backend.service;
+    opens ua.renamer.app.backend.service.impl;
     opens ua.renamer.app.backend.session;
     opens ua.renamer.app.backend.config;
 }
