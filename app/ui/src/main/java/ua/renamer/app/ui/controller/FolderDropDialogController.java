@@ -4,6 +4,9 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import ua.renamer.app.api.model.FolderDropOptions;
+import ua.renamer.app.ui.enums.TextKeys;
+
+import java.util.function.Function;
 
 /**
  * Builds and shows the modal dialog displayed when one or more folders are
@@ -14,39 +17,42 @@ import ua.renamer.app.api.model.FolderDropOptions;
  */
 public final class FolderDropDialogController {
 
-    private FolderDropDialogController() {}
+    private FolderDropDialogController() {
+    }
 
     /**
      * Shows the folder drop dialog and blocks until the user dismisses it.
      *
      * @param folderCount number of folders dropped (used to customise the header)
+     * @param resolver    function that converts a {@link TextKeys} constant to a localized string;
+     *                    must not be null
      * @return the user's choice; never null; returns {@link FolderDropOptions#cancel()}
-     *         if the user closes the dialog without choosing
+     * if the user closes the dialog without choosing
      */
-    public static FolderDropOptions show(int folderCount) {
-        var btnCancel   = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        var btnAsItem   = new ButtonType("Use as item", ButtonBar.ButtonData.LEFT);
-        var btnContents = new ButtonType("Use folder contents", ButtonBar.ButtonData.OK_DONE);
+    public static FolderDropOptions show(int folderCount, Function<TextKeys, String> resolver) {
+        var btnCancel = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_CANCEL), ButtonBar.ButtonData.CANCEL_CLOSE);
+        var btnAsItem = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_AS_ITEM), ButtonBar.ButtonData.LEFT);
+        var btnContents = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_CONTENTS), ButtonBar.ButtonData.OK_DONE);
 
         var dialog = new Dialog<FolderDropOptions>();
-        dialog.setTitle("Folder dropped");
+        dialog.setTitle(resolver.apply(TextKeys.DIALOG_FOLDER_TITLE));
         dialog.setHeaderText(folderCount == 1
-                ? "A folder was dropped. How should it be handled?"
-                : folderCount + " folders were dropped. How should they be handled?");
+                ? resolver.apply(TextKeys.DIALOG_FOLDER_HEADER_SINGLE)
+                : resolver.apply(TextKeys.DIALOG_FOLDER_HEADER_MULTIPLE).replace("{0}", String.valueOf(folderCount)));
         dialog.getDialogPane().getButtonTypes().addAll(btnCancel, btnAsItem, btnContents);
 
-        var cbRecursive      = new CheckBox("Include files from subfolders (recursive)");
-        var cbIncludeFolders = new CheckBox("Include subfolders as items");
+        var cbRecursive = new CheckBox(resolver.apply(TextKeys.DIALOG_FOLDER_CB_RECURSIVE));
+        var cbIncludeFolders = new CheckBox(resolver.apply(TextKeys.DIALOG_FOLDER_CB_INCLUDE_FOLDERS));
 
         var content = new VBox(10,
-                new Label("Options for \"Use folder contents\":"),
+                new Label(resolver.apply(TextKeys.DIALOG_FOLDER_OPTIONS_LABEL)),
                 cbRecursive,
                 cbIncludeFolders);
         content.setPadding(new Insets(10, 0, 0, 0));
         dialog.getDialogPane().setContent(content);
 
         dialog.setResultConverter(buttonType -> {
-            if (buttonType == btnAsItem)   return FolderDropOptions.useAsItem();
+            if (buttonType == btnAsItem) return FolderDropOptions.useAsItem();
             if (buttonType == btnContents) return new FolderDropOptions(
                     FolderDropOptions.Action.USE_CONTENTS,
                     cbRecursive.isSelected(),

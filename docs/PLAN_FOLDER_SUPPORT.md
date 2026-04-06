@@ -941,7 +941,7 @@ the constructor.
 
 ---
 
-## Task 9 — i18n Strings for Dialog Text
+## Task 9 — i18n Strings for Dialog Text (Done)
 
 ### Why
 The dialog in Task 7 currently uses hard-coded English strings. For consistency with the rest

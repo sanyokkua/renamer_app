@@ -18,10 +18,10 @@
     <logger name="ua.renamer.app" level="DEBUG"/>
 
     <logger name="org.apache.tika" level="WARN"/>
-    <logger name="com.google"      level="WARN"/>
-    <logger name="ch.qos.logback"  level="WARN"/>
-    <logger name="org.slf4j"       level="WARN"/>
-    <logger name="com.drew"        level="WARN"/>
+    <logger name="com.google" level="WARN"/>
+    <logger name="ch.qos.logback" level="WARN"/>
+    <logger name="org.slf4j" level="WARN"/>
+    <logger name="com.drew" level="WARN"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>

@@ -8,29 +8,33 @@ package ua.renamer.app.api.model;
  * <p>{@link Action#USE_CONTENTS} — expand the folder; options control depth and
  * whether sub-folders are added as items.
  *
- * @param action             the chosen action; never null
- * @param recursive          only meaningful when action == USE_CONTENTS; true means
- *                           traverse all descendant directories, false means immediate
- *                           children only
+ * @param action                the chosen action; never null
+ * @param recursive             only meaningful when action == USE_CONTENTS; true means
+ *                              traverse all descendant directories, false means immediate
+ *                              children only
  * @param includeFoldersAsItems only meaningful when action == USE_CONTENTS; true means
- *                           sub-directories encountered during traversal are added as
- *                           renamable items as well as their file contents
+ *                              sub-directories encountered during traversal are added as
+ *                              renamable items as well as their file contents
  */
 public record FolderDropOptions(Action action, boolean recursive, boolean includeFoldersAsItems) {
+
+    /**
+     * Convenience factory — cancel with no options.
+     */
+    public static FolderDropOptions cancel() {
+        return new FolderDropOptions(Action.CANCEL, false, false);
+    }
+
+    /**
+     * Convenience factory — use folder itself as a single item.
+     */
+    public static FolderDropOptions useAsItem() {
+        return new FolderDropOptions(Action.USE_AS_ITEM, false, false);
+    }
 
     public enum Action {
         CANCEL,
         USE_AS_ITEM,
         USE_CONTENTS
-    }
-
-    /** Convenience factory — cancel with no options. */
-    public static FolderDropOptions cancel() {
-        return new FolderDropOptions(Action.CANCEL, false, false);
-    }
-
-    /** Convenience factory — use folder itself as a single item. */
-    public static FolderDropOptions useAsItem() {
-        return new FolderDropOptions(Action.USE_AS_ITEM, false, false);
     }
 }

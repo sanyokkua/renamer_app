@@ -17,9 +17,11 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.model.FolderDropOptions;
 import ua.renamer.app.api.model.RenameStatus;
 import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.*;
+import ua.renamer.app.backend.service.FolderExpansionService;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.AppModesConverter;
 import ua.renamer.app.ui.enums.TableStyles;
@@ -50,6 +52,7 @@ public class ApplicationMainViewController implements Initializable {
     private final FxStateMirror fxStateMirror;
     private final ModeViewRegistry modeViewRegistry;
     private final LanguageTextRetrieverApi languageTextRetriever;
+    private final FolderExpansionService folderExpansionService;
 
     @FXML
     private Menu modeMenu;
@@ -453,12 +456,45 @@ public class ApplicationMainViewController implements Initializable {
         var dragboard = event.getDragboard();
         var success = false;
         if (dragboard.hasFiles()) {
-            var paths = dragboard.getFiles().stream()
+            var allPaths = dragboard.getFiles().stream()
                     .map(java.io.File::toPath)
                     .toList();
+
+            var dirs = allPaths.stream().filter(Files::isDirectory).toList();
+            var files = allPaths.stream().filter(p -> !Files.isDirectory(p)).toList();
+
+            var toAdd = new java.util.ArrayList<java.nio.file.Path>(files);
+
+            if (!dirs.isEmpty()) {
+                var opts = FolderDropDialogController.show(dirs.size(), languageTextRetriever::getString);
+
+                if (opts.action() == FolderDropOptions.Action.CANCEL) {
+                    event.setDropCompleted(false);
+                    event.consume();
+                    return;
+                } else if (opts.action() == FolderDropOptions.Action.USE_AS_ITEM) {
+                    toAdd.addAll(dirs);
+                } else { // USE_CONTENTS
+                    for (var dir : dirs) {
+                        var expanded = folderExpansionService.expand(dir, opts);
+                        if (expanded.isEmpty()) {
+                            log.info("Folder '{}' is empty or yielded no files — skipping", dir);
+                        }
+                        toAdd.addAll(expanded);
+                    }
+                }
+            }
+
+            if (toAdd.isEmpty()) {
+                event.setDropCompleted(false);
+                event.consume();
+                return;
+            }
+
+            var pathsToAdd = java.util.List.copyOf(toAdd);
             appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             progressLabel.setText("Loading files\u2026");
-            sessionApi.addFiles(paths).thenRunAsync(() -> {
+            sessionApi.addFiles(pathsToAdd).thenRunAsync(() -> {
                 appProgressBar.setProgress(0);
                 progressLabel.setText("");
                 configureControlWidgetsState();
