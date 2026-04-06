@@ -343,7 +343,7 @@ class ModeParametersValidationTest {
     class SequenceParamsTest {
 
         private SequenceParams valid() {
-            return new SequenceParams(1, 1, 3, SortSource.FILE_NAME);
+            return new SequenceParams(1, 1, 3, SortSource.FILE_NAME, true);
         }
 
         @Test
@@ -363,7 +363,7 @@ class ModeParametersValidationTest {
 
         @Test
         void validate_whenSortSourceIsNull_thenReturnsFieldError() {
-            SequenceParams params = new SequenceParams(1, 1, 0, null);
+            SequenceParams params = new SequenceParams(1, 1, 0, null, true);
 
             ValidationResult result = params.validate();
 
@@ -373,7 +373,7 @@ class ModeParametersValidationTest {
 
         @Test
         void validate_whenStepValueIsZero_thenReturnsFieldError() {
-            SequenceParams params = new SequenceParams(1, 0, 0, SortSource.FILE_NAME);
+            SequenceParams params = new SequenceParams(1, 0, 0, SortSource.FILE_NAME, true);
 
             ValidationResult result = params.validate();
 
@@ -383,7 +383,7 @@ class ModeParametersValidationTest {
 
         @Test
         void validate_whenStepValueIsNegative_thenReturnsFieldError() {
-            SequenceParams params = new SequenceParams(1, -1, 0, SortSource.FILE_NAME);
+            SequenceParams params = new SequenceParams(1, -1, 0, SortSource.FILE_NAME, true);
 
             ValidationResult result = params.validate();
 
@@ -393,7 +393,7 @@ class ModeParametersValidationTest {
 
         @Test
         void validate_whenPaddingDigitsIsNegative_thenReturnsFieldError() {
-            SequenceParams params = new SequenceParams(1, 1, -1, SortSource.FILE_NAME);
+            SequenceParams params = new SequenceParams(1, 1, -1, SortSource.FILE_NAME, true);
 
             ValidationResult result = params.validate();
 
@@ -403,7 +403,7 @@ class ModeParametersValidationTest {
 
         @Test
         void validate_whenPaddingDigitsIsZero_thenValid() {
-            SequenceParams params = new SequenceParams(1, 1, 0, SortSource.FILE_NAME);
+            SequenceParams params = new SequenceParams(1, 1, 0, SortSource.FILE_NAME, true);
 
             assertThat(params.validate().ok()).isTrue();
         }
@@ -411,14 +411,14 @@ class ModeParametersValidationTest {
         @Test
         void validate_whenStartNumberIsNegative_thenValid() {
             // startNumber has no lower bound constraint
-            SequenceParams params = new SequenceParams(-100, 1, 0, SortSource.FILE_NAME);
+            SequenceParams params = new SequenceParams(-100, 1, 0, SortSource.FILE_NAME, true);
 
             assertThat(params.validate().ok()).isTrue();
         }
 
         @Test
         void validate_whenStepValueIsIntegerMaxValue_thenValid() {
-            SequenceParams params = new SequenceParams(0, Integer.MAX_VALUE, 0, SortSource.FILE_NAME);
+            SequenceParams params = new SequenceParams(0, Integer.MAX_VALUE, 0, SortSource.FILE_NAME, true);
 
             assertThat(params.validate().ok()).isTrue();
         }
@@ -1240,7 +1240,7 @@ class ModeParametersValidationTest {
 
         @Test
         void sequenceParams_implementsModeParameters() {
-            ModeParameters params = new SequenceParams(1, 1, 0, SortSource.FILE_NAME);
+            ModeParameters params = new SequenceParams(1, 1, 0, SortSource.FILE_NAME, true);
             assertThat(params).isInstanceOf(ModeParameters.class);
         }
 
@@ -1309,7 +1309,7 @@ class ModeParametersValidationTest {
 
         @Test
         void sequenceParams_isTheOnlyTypeRequiringSequentialExecution() {
-            SequenceParams params = new SequenceParams(0, 1, 0, SortSource.FILE_NAME);
+            SequenceParams params = new SequenceParams(0, 1, 0, SortSource.FILE_NAME, true);
             assertThat(params.requiresSequentialExecution()).isTrue();
         }
 
@@ -1361,7 +1361,7 @@ class ModeParametersValidationTest {
 
         @Test
         void sequenceParams_validateNeverReturnsNull() {
-            assertThat(new SequenceParams(0, 0, -1, null).validate()).isNotNull();
+            assertThat(new SequenceParams(0, 0, -1, null, true).validate()).isNotNull();
         }
 
         @Test

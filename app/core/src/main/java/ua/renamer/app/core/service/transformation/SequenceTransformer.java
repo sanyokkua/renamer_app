@@ -11,10 +11,7 @@ import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.core.service.FileTransformationService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -55,44 +52,59 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
                 }
             }
 
-            // Step 2: Sort valid files by criteria
-            List<FileModel> sorted = sortBySource(validFiles, config);
+            // Step 2: Apply sequence numbers, either per-folder or globally
+            List<PreparedFileModel> sequencedResults = new ArrayList<>();
+            if (config.isPerFolderCounting()) {
+                // Group by parent directory, preserving the order in which folders first appear
+                Map<String, List<FileModel>> grouped = new LinkedHashMap<>();
+                for (FileModel fm : validFiles) {
+                    String parent = fm.getFile().getParent() != null ? fm.getFile().getParent() : "";
+                    grouped.computeIfAbsent(parent, k -> new ArrayList<>()).add(fm);
+                }
+                // Apply an independent counter to each folder group
+                for (List<FileModel> group : grouped.values()) {
+                    List<FileModel> groupSorted = sortBySource(group, config);
+                    AtomicInteger counter = new AtomicInteger(config.getStartNumber());
+                    groupSorted.stream()
+                            .map(fm -> applySequence(fm, counter, config))
+                            .forEach(sequencedResults::add);
+                }
+            } else {
+                // Flat counting: one global counter across all files
+                List<FileModel> sorted = sortBySource(validFiles, config);
+                AtomicInteger counter = new AtomicInteger(config.getStartNumber());
+                sorted.stream()
+                        .map(fm -> applySequence(fm, counter, config))
+                        .forEach(sequencedResults::add);
+            }
 
-            // Step 3: Apply sequence numbers (must be sequential!)
-            AtomicInteger counter = new AtomicInteger(config.getStartNumber());
-
-            // Use sequential stream to ensure counter increments in order
-            List<PreparedFileModel> sequencedResults = sorted.stream()  // Sequential stream!
-                    .map(input -> {
-                        try {
-                            int num = counter.getAndAdd(config.getStepValue());
-                            String newName = formatSequenceNumber(num, config.getPadding());
-
-                            return PreparedFileModel.builder()
-                                    .withOriginalFile(input)
-                                    .withNewName(newName)
-                                    .withNewExtension(input.getExtension())
-                                    .withHasError(false)
-                                    .withErrorMessage(null)
-                                    .withTransformationMeta(buildMetadata(config))
-                                    .build();
-                        } catch (Exception e) {
-                            log.error("Failed to apply sequence to file: {}", input.getName(), e);
-                            return buildErrorResult(input, "Failed to apply sequence: " + e.getMessage());
-                        }
-                    })
-                    .toList();
-
-            // Step 4: Combine error results and sequenced results
+            // Step 3: Combine error results and sequenced results
             results.addAll(sequencedResults);
             return results;
 
         } catch (Exception e) {
-            log.error("Failed to sort files for sequence", e);
-            // If sorting fails, return all as errors
+            log.error("Failed to process files for sequence", e);
             return inputs.stream()
-                    .map(input -> buildErrorResult(input, "Failed to sort: " + e.getMessage()))
+                    .map(input -> buildErrorResult(input, "Failed to process: " + e.getMessage()))
                     .toList();
+        }
+    }
+
+    private PreparedFileModel applySequence(FileModel input, AtomicInteger counter, SequenceConfig config) {
+        try {
+            int num = counter.getAndAdd(config.getStepValue());
+            String newName = formatSequenceNumber(num, config.getPadding());
+            return PreparedFileModel.builder()
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
+        } catch (Exception e) {
+            log.error("Failed to apply sequence to file: {}", input.getName(), e);
+            return buildErrorResult(input, "Failed to apply sequence: " + e.getMessage());
         }
     }
 
@@ -140,7 +152,8 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
                         "startNumber", config.getStartNumber(),
                         "stepValue", config.getStepValue(),
                         "padding", config.getPadding(),
-                        "sortSource", config.getSortSource().name()
+                        "sortSource", config.getSortSource().name(),
+                        "perFolderCounting", config.isPerFolderCounting()
                 ))
                 .build();
     }

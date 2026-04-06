@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -37,11 +38,14 @@ public class ModeAddSequenceController
     private Spinner<Integer> minDigitAmountSpinner;
     @FXML
     private ChoiceBox<SortSource> sortingSourceChoiceBox;
+    @FXML
+    private CheckBox perFolderCountingCheckBox;
 
     private ChangeListener<Integer> startListener;
     private ChangeListener<Integer> stepListener;
     private ChangeListener<Integer> paddingListener;
     private ChangeListener<SortSource> sortSourceListener;
+    private ChangeListener<Boolean> perFolderListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -97,11 +101,14 @@ public class ModeAddSequenceController
         if (paddingListener != null) minDigitAmountSpinner.valueProperty().removeListener(paddingListener);
         if (sortSourceListener != null)
             sortingSourceChoiceBox.getSelectionModel().selectedItemProperty().removeListener(sortSourceListener);
+        if (perFolderListener != null)
+            perFolderCountingCheckBox.selectedProperty().removeListener(perFolderListener);
 
         // ── Init ──────────────────────────────────────────────────────────────
         startSeqNumberSpinner.getValueFactory().setValue(params.startNumber());
         stepValueSpinner.getValueFactory().setValue(params.stepValue());
         minDigitAmountSpinner.getValueFactory().setValue(params.paddingDigits());
+        perFolderCountingCheckBox.setSelected(params.perFolderCounting());
 
         if (params.sortSource() != null) {
             var coreSort = ua.renamer.app.api.enums.SortSource.valueOf(params.sortSource().name());
@@ -142,6 +149,11 @@ public class ModeAddSequenceController
         };
         sortingSourceChoiceBox.getSelectionModel().selectedItemProperty().addListener(sortSourceListener);
 
+        perFolderListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: perFolderCounting changed → {}", newVal);
+            modeApi.updateParameters(p -> p.withPerFolderCounting(newVal));
+        };
+        perFolderCountingCheckBox.selectedProperty().addListener(perFolderListener);
     }
 
 }

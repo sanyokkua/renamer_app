@@ -2,6 +2,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -113,6 +114,24 @@ class ModeAddSequenceControllerTest {
         f.set(target, box);
     }
 
+    private static void injectPerFolderCountingCheckBox(
+            ModeAddSequenceController target,
+            CheckBox checkBox) throws Exception {
+        Field f = ModeAddSequenceController.class.getDeclaredField("perFolderCountingCheckBox");
+        f.setAccessible(true);
+        f.set(target, checkBox);
+    }
+
+    private static CheckBox readPerFolderCheckBoxUnchecked(ModeAddSequenceController target) {
+        try {
+            Field f = ModeAddSequenceController.class.getDeclaredField("perFolderCountingCheckBox");
+            f.setAccessible(true);
+            return (CheckBox) f.get(target);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     private static Spinner<Integer> readStartSpinnerUnchecked(ModeAddSequenceController target) {
@@ -164,7 +183,7 @@ class ModeAddSequenceControllerTest {
     }
 
     private static SequenceParams defaultParams() {
-        return new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME);
+        return new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME, true);
     }
 
     // -----------------------------------------------------------------------
@@ -244,7 +263,8 @@ class ModeAddSequenceControllerTest {
         choiceBox.setValue(ua.renamer.app.api.enums.SortSource.FILE_NAME);
         injectSortingSourceChoiceBox(controller, choiceBox);
 
-        // @FXML field 5: preview label
+        // @FXML field 5: perFolderCountingCheckBox — unchecked by default
+        injectPerFolderCountingCheckBox(controller, new CheckBox());
 
         // Run initialize on the FX thread (mirrors FXML-loader lifecycle)
         runOnFxThreadAndWait(() -> controller.initialize(null, null));
@@ -296,7 +316,7 @@ class ModeAddSequenceControllerTest {
         void bind_initializesStartNumberSpinnerFromParams() throws Exception {
             // Arrange — non-default start number to verify it was actually applied
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(5, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME));
+                    new SequenceParams(5, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME, true));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -310,7 +330,7 @@ class ModeAddSequenceControllerTest {
         void bind_initializesStepValueSpinnerFromParams() throws Exception {
             // Arrange — non-default step value
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(0, 3, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME));
+                    new SequenceParams(0, 3, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME, true));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -324,7 +344,7 @@ class ModeAddSequenceControllerTest {
         void bind_initializesPaddingDigitsSpinnerFromParams() throws Exception {
             // Arrange — non-default padding
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(0, 1, 4, ua.renamer.app.api.enums.SortSource.FILE_NAME));
+                    new SequenceParams(0, 1, 4, ua.renamer.app.api.enums.SortSource.FILE_NAME, true));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -338,7 +358,7 @@ class ModeAddSequenceControllerTest {
         void bind_initializesAllFieldsFromNonDefaultParams() throws Exception {
             // Arrange — every param is non-default to prove all fields are initialised
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(5, 3, 2, ua.renamer.app.api.enums.SortSource.FILE_SIZE));
+                    new SequenceParams(5, 3, 2, ua.renamer.app.api.enums.SortSource.FILE_SIZE, true));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -355,7 +375,7 @@ class ModeAddSequenceControllerTest {
         void bind_initializesSortSourceChoiceBoxFromParams() throws Exception {
             // Arrange — non-default sort source
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_SIZE));
+                    new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_SIZE, true));
 
             // Act
             runOnFxThreadAndWait(() -> controller.bind(modeApi));
@@ -369,7 +389,7 @@ class ModeAddSequenceControllerTest {
         void bind_doesNotThrowWithValidParams() {
             // Arrange
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME));
+                    new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME, true));
 
             // Act + Assert
             assertThatCode(() -> runOnFxThreadAndWait(() -> controller.bind(modeApi)))
@@ -462,7 +482,7 @@ class ModeAddSequenceControllerTest {
                     apiValues[(apiSort.ordinal() + 1) % apiValues.length];
 
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(0, 1, 0, seedApiSort));
+                    new SequenceParams(0, 1, 0, seedApiSort, true));
             when(modeApi.updateParameters(any()))
                     .thenReturn(CompletableFuture.completedFuture(ValidationResult.valid()));
 
@@ -538,7 +558,7 @@ class ModeAddSequenceControllerTest {
         @Test
         void bind_neverThrows_withMinimalValidParams() {
             when(modeApi.currentParameters()).thenReturn(
-                    new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME));
+                    new SequenceParams(0, 1, 0, ua.renamer.app.api.enums.SortSource.FILE_NAME, true));
 
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();
@@ -548,7 +568,7 @@ class ModeAddSequenceControllerTest {
         void bind_neverThrows_withLargeValues() {
             when(modeApi.currentParameters()).thenReturn(
                     new SequenceParams(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE,
-                            ua.renamer.app.api.enums.SortSource.IMAGE_HEIGHT));
+                            ua.renamer.app.api.enums.SortSource.IMAGE_HEIGHT, true));
 
             assertThatCode(() -> runOnFxThreadAndWaitUnchecked(() -> controller.bind(modeApi)))
                     .doesNotThrowAnyException();

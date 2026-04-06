@@ -2,7 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.Cursor?>
+<?import javafx.scene.*?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
@@ -40,6 +40,14 @@
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ChoiceBox>
+
+        <CheckBox fx:id="perFolderCountingCheckBox"
+                  text="%mode_use_digital_sequence_label_per_folder_counting"
+                  maxWidth="Infinity">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </CheckBox>
     </VBox>
 
 </VBox>

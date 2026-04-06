@@ -112,7 +112,7 @@ class ModeParametersConverterTest {
         @Test
         void givenSequenceParams_whenConvert_thenSequenceConfigFieldsMatch() {
             // Arrange
-            var params = new SequenceParams(1, 2, 3, SortSource.FILE_NAME);
+            var params = new SequenceParams(1, 2, 3, SortSource.FILE_NAME, true);
 
             // Act
             var config = (SequenceConfig) ModeParametersConverter.toConfig(params);
@@ -122,12 +122,13 @@ class ModeParametersConverterTest {
             assertThat(config.getStepValue()).isEqualTo(2);
             assertThat(config.getPadding()).isEqualTo(3);
             assertThat(config.getSortSource()).isEqualTo(SortSource.FILE_NAME);
+            assertThat(config.isPerFolderCounting()).isTrue();
         }
 
         @Test
         void givenSequenceParamsWithNegativePadding_whenConvert_thenIllegalArgumentExceptionFromConfig() {
             // Arrange — padding = -1 passes through converter into SequenceConfig.build() validation
-            var params = new SequenceParams(1, 1, -1, SortSource.FILE_NAME);
+            var params = new SequenceParams(1, 1, -1, SortSource.FILE_NAME, true);
 
             // Act & Assert
             assertThatThrownBy(() -> ModeParametersConverter.toConfig(params))

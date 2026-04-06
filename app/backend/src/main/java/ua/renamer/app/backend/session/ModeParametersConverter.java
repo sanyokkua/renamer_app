@@ -49,6 +49,7 @@ public final class ModeParametersConverter {
                     .withStepValue(p.stepValue())
                     .withPadding(p.paddingDigits())
                     .withSortSource(p.sortSource())
+                    .withPerFolderCounting(p.perFolderCounting())
                     .build();
             case TruncateParams p -> TruncateConfig.builder()
                     .withNumberOfSymbols(p.numberOfSymbols())

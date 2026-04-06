@@ -86,7 +86,7 @@ public class RenameSessionService implements SessionApi {
             case REMOVE_TEXT -> new RemoveTextParams("", ItemPosition.BEGIN);
             case REPLACE_TEXT -> new ReplaceTextParams("", "", ItemPositionExtended.BEGIN);
             case CHANGE_CASE -> new ChangeCaseParams(TextCaseOptions.UPPERCASE, false);
-            case ADD_SEQUENCE -> new SequenceParams(1, 1, 2, SortSource.FILE_NAME);
+            case ADD_SEQUENCE -> new SequenceParams(1, 1, 2, SortSource.FILE_NAME, true);
             case TRUNCATE_FILE_NAME -> new TruncateParams(0, TruncateOptions.REMOVE_SYMBOLS_FROM_END);
             case CHANGE_EXTENSION -> new ExtensionChangeParams("");
             case USE_DATETIME -> new DateTimeParams(

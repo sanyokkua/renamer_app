@@ -923,4 +923,162 @@ class SequenceTransformerTest {
         assertTrue(results.get(0).needsRename());
         assertNotEquals(results.get(0).getOldFullName(), results.get(0).getNewFullName());
     }
+
+    // ============================================================================
+    // J. Per-Folder Counting Tests
+    // ============================================================================
+
+    private FileModel createTestFileModelInDir(String dir, String name, String extension) {
+        return FileModel.builder()
+                .withFile(new File(dir + "/" + name + "." + extension))
+                .withIsFile(true)
+                .withFileSize(1024L)
+                .withName(name)
+                .withExtension(extension)
+                .withAbsolutePath(dir + "/" + name + "." + extension)
+                .withCategory(Category.IMAGE)
+                .build();
+    }
+
+    @Test
+    void givenPerFolderCountingTrue_whenFilesInDifferentFolders_thenEachFolderHasIndependentCounter() {
+        // Given — 2 files in /folder1, 2 files in /folder2
+        List<FileModel> files = List.of(
+                createTestFileModelInDir("/folder1", "a", "jpg"),
+                createTestFileModelInDir("/folder1", "b", "jpg"),
+                createTestFileModelInDir("/folder2", "c", "jpg"),
+                createTestFileModelInDir("/folder2", "d", "jpg")
+        );
+
+        SequenceConfig config = SequenceConfig.builder()
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .withPerFolderCounting(true)
+                .build();
+
+        // When
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        // Then — each folder restarts at 001; global order: folder1/a→001, folder1/b→002, folder2/c→001, folder2/d→002
+        assertEquals(4, results.size());
+        assertFalse(results.get(0).isHasError());
+        assertFalse(results.get(1).isHasError());
+        assertFalse(results.get(2).isHasError());
+        assertFalse(results.get(3).isHasError());
+
+        // folder1 group gets 001, 002
+        assertEquals("001", results.get(0).getNewName());
+        assertEquals("002", results.get(1).getNewName());
+        // folder2 group restarts at 001, 002
+        assertEquals("001", results.get(2).getNewName());
+        assertEquals("002", results.get(3).getNewName());
+    }
+
+    @Test
+    void givenPerFolderCountingFalse_whenFilesInDifferentFolders_thenGlobalCounter() {
+        // Given — 2 files in /folder1, 2 files in /folder2, flat counting
+        List<FileModel> files = List.of(
+                createTestFileModelInDir("/folder1", "a", "jpg"),
+                createTestFileModelInDir("/folder1", "b", "jpg"),
+                createTestFileModelInDir("/folder2", "c", "jpg"),
+                createTestFileModelInDir("/folder2", "d", "jpg")
+        );
+
+        SequenceConfig config = SequenceConfig.builder()
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(3)
+                .withSortSource(SortSource.FILE_NAME)
+                .withPerFolderCounting(false)
+                .build();
+
+        // When
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        // Then — global counter: 001, 002, 003, 004 (sorted by FILE_NAME across all)
+        assertEquals(4, results.size());
+        assertEquals("001", results.get(0).getNewName());
+        assertEquals("002", results.get(1).getNewName());
+        assertEquals("003", results.get(2).getNewName());
+        assertEquals("004", results.get(3).getNewName());
+    }
+
+    @Test
+    void givenPerFolderCountingTrue_whenAllFilesInSameFolder_thenBehavesIdenticalToFlat() {
+        // Given — all files in the same directory
+        List<FileModel> files = List.of(
+                createTestFileModelInDir("/folder1", "a", "jpg"),
+                createTestFileModelInDir("/folder1", "b", "jpg"),
+                createTestFileModelInDir("/folder1", "c", "jpg")
+        );
+
+        SequenceConfig config = SequenceConfig.builder()
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .withPerFolderCounting(true)
+                .build();
+
+        // When
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        // Then — single group: 1, 2, 3
+        assertEquals(3, results.size());
+        assertEquals("1", results.get(0).getNewName());
+        assertEquals("2", results.get(1).getNewName());
+        assertEquals("3", results.get(2).getNewName());
+    }
+
+    @Test
+    void givenPerFolderCountingTrue_whenSingleFileInEachFolder_thenEachGetsStartNumber() {
+        // Given — one file per folder
+        List<FileModel> files = List.of(
+                createTestFileModelInDir("/alpha", "file", "jpg"),
+                createTestFileModelInDir("/beta", "file", "jpg"),
+                createTestFileModelInDir("/gamma", "file", "jpg")
+        );
+
+        SequenceConfig config = SequenceConfig.builder()
+                .withStartNumber(5)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .withPerFolderCounting(true)
+                .build();
+
+        // When
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        // Then — each single-file folder gets startNumber
+        assertEquals(3, results.size());
+        assertEquals("5", results.get(0).getNewName());
+        assertEquals("5", results.get(1).getNewName());
+        assertEquals("5", results.get(2).getNewName());
+    }
+
+    @Test
+    void givenPerFolderCountingTrue_metadataContainsPerFolderCountingFlag() {
+        // Given
+        List<FileModel> files = List.of(
+                createTestFileModelInDir("/folder1", "a", "jpg")
+        );
+
+        SequenceConfig config = SequenceConfig.builder()
+                .withStartNumber(1)
+                .withStepValue(1)
+                .withPadding(0)
+                .withSortSource(SortSource.FILE_NAME)
+                .withPerFolderCounting(true)
+                .build();
+
+        // When
+        List<PreparedFileModel> results = transformer.transformBatch(files, config);
+
+        // Then — metadata should reflect the perFolderCounting flag
+        Map<String, Object> configMap = results.get(0).getTransformationMeta().getConfig();
+        assertEquals(true, configMap.get("perFolderCounting"));
+    }
 }

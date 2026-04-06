@@ -30,6 +30,13 @@ public class SequenceConfig implements TransformationConfig {
      */
     SortSource sortSource;
 
+    /**
+     * When {@code true} (default), files are grouped by parent directory and each group receives
+     * its own independent counter starting from {@link #startNumber}.
+     * When {@code false}, all files share a single global counter regardless of directory.
+     */
+    boolean perFolderCounting;
+
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
     public static class SequenceConfigBuilder {
         /**
@@ -42,7 +49,7 @@ public class SequenceConfig implements TransformationConfig {
             if (padding < 0) {
                 throw new IllegalArgumentException("padding must be >= 0, got: " + padding);
             }
-            return new SequenceConfig(startNumber, stepValue, padding, sortSource);
+            return new SequenceConfig(startNumber, stepValue, padding, sortSource, perFolderCounting);
         }
     }
 }
