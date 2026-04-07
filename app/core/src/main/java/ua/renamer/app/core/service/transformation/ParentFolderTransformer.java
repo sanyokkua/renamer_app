@@ -1,6 +1,7 @@
 package ua.renamer.app.core.service.transformation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.TransformationMetadata;
@@ -31,18 +32,7 @@ public class ParentFolderTransformer implements FileTransformationService<Parent
         }
 
         try {
-            Path filePath = input.getFile().toPath();
-            List<String> parentNames = new ArrayList<>();
-
-            // Collect parent folder names
-            Path parent = filePath.getParent();
-            for (int i = 0; i < config.getNumberOfParentFolders() && parent != null; i++) {
-                Path fileNamePath = parent.getFileName();
-                if (fileNamePath != null) {
-                    parentNames.add(fileNamePath.toString());
-                }
-                parent = parent.getParent();
-            }
+            List<String> parentNames = getParentNames(input, config);
 
             if (parentNames.isEmpty()) {
                 return buildErrorResult(input, "No parent folders available");
@@ -71,6 +61,22 @@ public class ParentFolderTransformer implements FileTransformationService<Parent
             log.error("Failed to add parent folder to file: {}", input.getName(), e);
             return buildErrorResult(input, "Failed to add parent folder: " + e.getMessage());
         }
+    }
+
+    private static @NonNull List<String> getParentNames(FileModel input, ParentFolderConfig config) {
+        Path filePath = input.getFile().toPath();
+        List<String> parentNames = new ArrayList<>();
+
+        // Collect parent folder names
+        Path parent = filePath.getParent();
+        for (int i = 0; i < config.getNumberOfParentFolders() && parent != null; i++) {
+            Path fileNamePath = parent.getFileName();
+            if (fileNamePath != null) {
+                parentNames.add(fileNamePath.toString());
+            }
+            parent = parent.getParent();
+        }
+        return parentNames;
     }
 
     private TransformationMetadata buildMetadata(ParentFolderConfig config) {

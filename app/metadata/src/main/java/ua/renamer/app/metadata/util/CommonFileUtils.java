@@ -25,10 +25,11 @@ public class CommonFileUtils implements FileUtils {
     private static final ThreadLocal<Tika> TIKA_INSTANCE = ThreadLocal.withInitial(Tika::new);
     private final DateTimeUtils dateTimeUtils;
 
-    @Inject
+
     /**
      * @param dateTimeUtils used to convert file timestamps to {@link java.time.LocalDateTime}
      */
+    @Inject
     public CommonFileUtils(DateTimeUtils dateTimeUtils) {
         this.dateTimeUtils = dateTimeUtils;
     }

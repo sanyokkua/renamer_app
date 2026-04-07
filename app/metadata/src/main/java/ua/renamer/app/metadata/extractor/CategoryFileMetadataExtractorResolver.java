@@ -21,13 +21,14 @@ public class CategoryFileMetadataExtractorResolver implements FileMetadataExtrac
     private final AudioFileMetadataExtractor audioFileMetadataExtractor;
     private final VideoFileMetadataExtractor videoFileMetadataExtractor;
 
-    @Inject
+
     /**
      * @param genericFileMetadataExtractor fallback extractor for unknown categories
      * @param imageFileMetadataExtractor   extractor for image files
      * @param audioFileMetadataExtractor   extractor for audio files
      * @param videoFileMetadataExtractor   extractor for video files
      */
+    @Inject
     public CategoryFileMetadataExtractorResolver(GenericFileMetadataExtractor genericFileMetadataExtractor,
                                                  ImageFileMetadataExtractionExtractor imageFileMetadataExtractor,
                                                  AudioFileMetadataExtractor audioFileMetadataExtractor,

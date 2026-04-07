@@ -1,6 +1,7 @@
 package ua.renamer.app.core.service.transformation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.TransformationMetadata;
@@ -27,23 +28,7 @@ public class TruncateTransformer implements FileTransformationService<TruncateCo
         }
 
         try {
-            final boolean isNameWithinLimit = input.getName().length() <= config.getNumberOfSymbols();
-            String newName = switch (config.getTruncateOption()) {
-                case REMOVE_SYMBOLS_IN_BEGIN -> {
-                    if (isNameWithinLimit) {
-                        yield "";  // Entire name removed
-                    }
-                    yield input.getName().substring(config.getNumberOfSymbols());
-                }
-                case REMOVE_SYMBOLS_FROM_END -> {
-                    if (isNameWithinLimit) {
-                        yield "";  // Entire name removed
-                    }
-                    yield input.getName().substring(0,
-                            input.getName().length() - config.getNumberOfSymbols());
-                }
-                case TRUNCATE_EMPTY_SYMBOLS -> input.getName().trim();
-            };
+            String newName = getNewName(input, config);
 
             if (newName.isEmpty()) {
                 return buildErrorResult(input, "Truncation resulted in empty filename");
@@ -62,6 +47,26 @@ public class TruncateTransformer implements FileTransformationService<TruncateCo
             log.error("Failed to truncate file: {}", input.getName(), e);
             return buildErrorResult(input, "Failed to truncate: " + e.getMessage());
         }
+    }
+
+    private static @NonNull String getNewName(FileModel input, TruncateConfig config) {
+        final boolean isNameWithinLimit = input.getName().length() <= config.getNumberOfSymbols();
+        return switch (config.getTruncateOption()) {
+            case REMOVE_SYMBOLS_IN_BEGIN -> {
+                if (isNameWithinLimit) {
+                    yield "";  // Entire name removed
+                }
+                yield input.getName().substring(config.getNumberOfSymbols());
+            }
+            case REMOVE_SYMBOLS_FROM_END -> {
+                if (isNameWithinLimit) {
+                    yield "";  // Entire name removed
+                }
+                yield input.getName().substring(0,
+                        input.getName().length() - config.getNumberOfSymbols());
+            }
+            case TRUNCATE_EMPTY_SYMBOLS -> input.getName().trim();
+        };
     }
 
     private TransformationMetadata buildMetadata(TruncateConfig config) {

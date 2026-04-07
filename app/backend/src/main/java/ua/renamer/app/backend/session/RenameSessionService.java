@@ -132,7 +132,8 @@ public class RenameSessionService implements SessionApi {
                     TimeFormat.DO_NOT_USE_TIME, ItemPositionWithReplacement.BEGIN,
                     true, false, false, true, false, null, true,
                     DateTimeFormat.DATE_TIME_TOGETHER, "");
-            case ADD_DIMENSIONS -> new ImageDimensionsParams(
+            case ADD_DIMENSIONS -> //noinspection SuspiciousNameCombination
+                    new ImageDimensionsParams(
                     ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
                     ItemPositionWithReplacement.BEGIN, " ", "x");
             case ADD_FOLDER_NAME -> new ParentFolderParams(1, ItemPosition.BEGIN, " ");

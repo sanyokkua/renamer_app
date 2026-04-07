@@ -52,7 +52,7 @@ public class AppResourceRegistryService implements AppResourceRegistryApi {
         sceneStylesheets = List.of(base, table, buttons, typography, accessibility, fileInfo, components);
         dialogStylesheets = List.of(base, buttons, components);
         settingsDialogStylesheets = List.of(base, buttons, components, settingsDialog);
-        appIcon = loadIcon(IMAGE_ICON);
+        appIcon = loadIcon();
 
         log.debug("All application resources loaded successfully");
     }
@@ -66,10 +66,10 @@ public class AppResourceRegistryService implements AppResourceRegistryApi {
         return url.toExternalForm();
     }
 
-    private static Image loadIcon(String path) {
-        InputStream stream = AppResourceRegistryService.class.getClassLoader().getResourceAsStream(path);
-        Objects.requireNonNull(stream, "Required icon resource not found: " + path);
-        log.debug("Loaded icon: {}", path);
+    private static Image loadIcon() {
+        InputStream stream = AppResourceRegistryService.class.getClassLoader().getResourceAsStream(AppResourceRegistryService.IMAGE_ICON);
+        Objects.requireNonNull(stream, "Required icon resource not found: " + AppResourceRegistryService.IMAGE_ICON);
+        log.debug("Loaded icon: {}", AppResourceRegistryService.IMAGE_ICON);
         return new Image(stream);
     }
 

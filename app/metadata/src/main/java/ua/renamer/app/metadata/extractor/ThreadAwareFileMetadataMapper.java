@@ -18,10 +18,11 @@ import java.io.File;
 public class ThreadAwareFileMetadataMapper implements FileMetadataMapper {
     private final FileMetadataExtractorResolver fileMetadataExtractorResolver;
 
-    @Inject
+
     /**
      * @param fileMetadataExtractorResolver resolves the per-category extraction strategy
      */
+    @Inject
     public ThreadAwareFileMetadataMapper(FileMetadataExtractorResolver fileMetadataExtractorResolver) {
         this.fileMetadataExtractorResolver = fileMetadataExtractorResolver;
     }

@@ -163,8 +163,7 @@ public class ApplicationMainViewController implements Initializable {
                 updateFileInfoPanel(lastFileInfoPreview, lastFileInfoCandidate);
             }
         });
-        settingsMenuItem.setAccelerator(
-                new KeyCodeCombination(KeyCode.COMMA, KeyCombination.SHORTCUT_DOWN));
+        settingsMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.COMMA, KeyCombination.SHORTCUT_DOWN));
     }
 
     private void configureModeMenu() {
@@ -220,8 +219,7 @@ public class ApplicationMainViewController implements Initializable {
 
     private void configureFilesTableViewColumns() {
         log.info("Configuring filesTableViewColumns");
-        originalNameColumn.setCellValueFactory(
-                cd -> new SimpleStringProperty(cd.getValue().originalName()));
+        originalNameColumn.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().originalName()));
         itemTypeColumn.setCellValueFactory(cd -> {
             var candidate = candidatesByFileId.get(cd.getValue().fileId());
             if (candidate == null) {
@@ -238,29 +236,26 @@ public class ApplicationMainViewController implements Initializable {
         statusColumn.setCellValueFactory(cd -> {
             var p = cd.getValue();
             if (p.hasError()) {
-                return new SimpleStringProperty(
-                        languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_OF_ERROR));
+                return new SimpleStringProperty(languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_OF_ERROR));
             }
             var result = renameResultsByFileId.get(p.fileId());
             if (result != null) {
                 return switch (result.status()) {
-                    case SUCCESS -> new SimpleStringProperty(
-                            languageTextRetriever.getString(TextKeys.RENAMED_WITHOUT_ERRORS));
-                    case SKIPPED -> new SimpleStringProperty(
-                            languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_NOT_NEEDED));
-                    default -> new SimpleStringProperty(
-                            languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_OF_ERROR));
+                    case SUCCESS ->
+                            new SimpleStringProperty(languageTextRetriever.getString(TextKeys.RENAMED_WITHOUT_ERRORS));
+                    case SKIPPED ->
+                            new SimpleStringProperty(languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_NOT_NEEDED));
+                    default ->
+                            new SimpleStringProperty(languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_OF_ERROR));
                 };
             }
             if (p.newName() != null && !p.newName().equals(p.originalName())) {
-                return new SimpleStringProperty(
-                        languageTextRetriever.getString(TextKeys.NO_ACTIONS_HAPPEN));
+                return new SimpleStringProperty(languageTextRetriever.getString(TextKeys.NO_ACTIONS_HAPPEN));
             }
-            return new SimpleStringProperty(
-                    languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_NOT_NEEDED));
+            return new SimpleStringProperty(languageTextRetriever.getString(TextKeys.NOT_RENAMED_BECAUSE_NOT_NEEDED));
         });
 
-        originalNameColumn.setCellFactory(col -> new TableCell<>() {
+        originalNameColumn.setCellFactory(_ -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -273,7 +268,7 @@ public class ApplicationMainViewController implements Initializable {
                 }
             }
         });
-        newNameColumn.setCellFactory(col -> new TableCell<>() {
+        newNameColumn.setCellFactory(_ -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -286,7 +281,7 @@ public class ApplicationMainViewController implements Initializable {
                 }
             }
         });
-        statusColumn.setCellFactory(col -> new TableCell<>() {
+        statusColumn.setCellFactory(_ -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -331,7 +326,7 @@ public class ApplicationMainViewController implements Initializable {
                 setGraphic(badge);
             }
         });
-        itemTypeColumn.setCellFactory(col -> new TableCell<>() {
+        itemTypeColumn.setCellFactory(_ -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -393,31 +388,26 @@ public class ApplicationMainViewController implements Initializable {
 
     private void updateFileCountLabel() {
         int total = fxStateMirror.files().size();
-        long renamed = renameResultsByFileId.values().stream()
-                .filter(r -> r.status() == RenameStatus.SUCCESS).count();
+        long renamed = renameResultsByFileId.values().stream().filter(r -> r.status() == RenameStatus.SUCCESS).count();
         if (total == 0) {
             fileCountLabel.setText("");
         } else if (renamed > 0) {
-            fileCountLabel.setText(MessageFormat.format(
-                    languageTextRetriever.getString(TextKeys.FILE_COUNT_RENAMED), total, renamed));
+            fileCountLabel.setText(MessageFormat.format(languageTextRetriever.getString(TextKeys.FILE_COUNT_RENAMED), total, renamed));
         } else {
-            fileCountLabel.setText(MessageFormat.format(
-                    languageTextRetriever.getString(TextKeys.FILE_COUNT_SUMMARY), total));
+            fileCountLabel.setText(MessageFormat.format(languageTextRetriever.getString(TextKeys.FILE_COUNT_SUMMARY), total));
         }
     }
 
     private void configureFxStateMirrorListeners() {
         log.info("Configuring FxStateMirror listeners (V2 path)");
         fxStateMirror.files().addListener((ListChangeListener<RenameCandidate>) change -> {
-            candidatesByFileId = fxStateMirror.files().stream()
-                    .collect(Collectors.toMap(RenameCandidate::fileId, c -> c));
+            candidatesByFileId = fxStateMirror.files().stream().collect(Collectors.toMap(RenameCandidate::fileId, c -> c));
             configureControlWidgetsState();
             updateFileCountLabel();
         });
         fxStateMirror.renameResults().addListener((ListChangeListener<RenameSessionResult>) change -> {
             if (!fxStateMirror.renameResults().isEmpty()) {
-                renameResultsByFileId = fxStateMirror.renameResults().stream()
-                        .collect(Collectors.toMap(RenameSessionResult::fileId, r -> r));
+                renameResultsByFileId = fxStateMirror.renameResults().stream().collect(Collectors.toMap(RenameSessionResult::fileId, r -> r));
                 areFilesRenamed = true;
                 configureControlWidgetsState();
                 filesTableView.refresh();
@@ -463,24 +453,16 @@ public class ApplicationMainViewController implements Initializable {
 
         log.debug("handleModeChanged: {}", mode.name());
 
-        modeViewRegistry.getController(mode).ifPresent(v2ctrl ->
-                sessionApi.selectMode(v2ctrl.supportedMode())
-                        .thenAcceptAsync(modeApi -> {
-                            currentModeApi = modeApi;
-                            callBind(v2ctrl, modeApi);
-                            updatePreview(modeApi);
-                            modeApi.addParameterListener(p -> Platform.runLater(() -> updatePreview(modeApi)));
-                        }, Platform::runLater)
-        );
+        modeViewRegistry.getController(mode).ifPresent(v2ctrl -> sessionApi.selectMode(v2ctrl.supportedMode()).thenAcceptAsync(modeApi -> {
+            currentModeApi = modeApi;
+            callBind(v2ctrl, modeApi);
+            updatePreview(modeApi);
+            modeApi.addParameterListener(p -> Platform.runLater(() -> updatePreview(modeApi)));
+        }, Platform::runLater));
     }
 
     private void updatePreview(ModeApi<?> modeApi) {
-        modeApi.previewSingleFile("photo", "jpg")
-                .ifPresentOrElse(
-                        newName -> mainPreviewLabel.setText(MessageFormat.format(
-                                languageTextRetriever.getString(TextKeys.PREVIEW_FORMAT), "photo.jpg", newName)),
-                        () -> mainPreviewLabel.setText("—")
-                );
+        modeApi.previewSingleFile("photo", "jpg").ifPresentOrElse(newName -> mainPreviewLabel.setText(MessageFormat.format(languageTextRetriever.getString(TextKeys.PREVIEW_FORMAT), "photo.jpg", newName)), () -> mainPreviewLabel.setText("—"));
     }
 
     private void handleFilesTableViewDragOverEvent(DragEvent event) {
@@ -496,9 +478,7 @@ public class ApplicationMainViewController implements Initializable {
         var dragboard = event.getDragboard();
         var success = false;
         if (dragboard.hasFiles()) {
-            var allPaths = dragboard.getFiles().stream()
-                    .map(java.io.File::toPath)
-                    .toList();
+            var allPaths = dragboard.getFiles().stream().map(java.io.File::toPath).toList();
 
             var dirs = allPaths.stream().filter(Files::isDirectory).toList();
             var files = allPaths.stream().filter(p -> !Files.isDirectory(p)).toList();
@@ -568,8 +548,7 @@ public class ApplicationMainViewController implements Initializable {
         lastFileInfoPreview = null;
         lastFileInfoCandidate = null;
         fileInfoPanel.getChildren().clear();
-        var placeholder = new Label(
-                languageTextRetriever.getString(TextKeys.FILE_INFO_NO_SELECTION));
+        var placeholder = new Label(languageTextRetriever.getString(TextKeys.FILE_INFO_NO_SELECTION));
         placeholder.getStyleClass().add("file-info-placeholder");
         fileInfoPanel.getChildren().add(placeholder);
     }
@@ -606,44 +585,33 @@ public class ApplicationMainViewController implements Initializable {
         };
 
         // ── LEFT COLUMN: identity info ──
-        addRow.accept(leftCol, new String[]{
-                languageTextRetriever.getString(TextKeys.FILE_NAME), preview.originalName()});
+        addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_NAME), preview.originalName()});
 
         if (preview.newName() != null && !preview.newName().equals(preview.originalName())) {
-            addRow.accept(leftCol, new String[]{
-                    languageTextRetriever.getString(TextKeys.FILE_NEW_NAME), preview.newName()});
+            addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_NEW_NAME), preview.newName()});
         }
 
         if (candidate != null) {
             Path candidateParent = candidate.path().getParent();
             if (candidateParent != null) {
-                addRow.accept(leftCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.ABSOLUTE_PATH),
-                        candidateParent.toString()});
+                addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.ABSOLUTE_PATH), candidateParent.toString()});
             }
             boolean isFile = !Files.isDirectory(candidate.path());
-            addRow.accept(leftCol, new String[]{
-                    languageTextRetriever.getString(TextKeys.FILE_TYPE),
-                    languageTextRetriever.getString(isFile ? TextKeys.IS_FILE : TextKeys.IS_FOLDER)});
+            addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_TYPE), languageTextRetriever.getString(isFile ? TextKeys.IS_FILE : TextKeys.IS_FOLDER)});
             if (!candidate.extension().isBlank()) {
-                addRow.accept(leftCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.FILE_EXTENSION),
-                        candidate.extension()});
+                addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_EXTENSION), candidate.extension()});
             }
             if (!isFile) {
                 try (var stream = Files.list(candidate.path())) {
                     long itemCount = stream.count();
-                    addRow.accept(leftCol, new String[]{
-                            languageTextRetriever.getString(TextKeys.FILE_ITEM_COUNT),
-                            itemCount + " items"});
+                    addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_ITEM_COUNT), itemCount + " items"});
                 } catch (IOException e) {
                     log.debug("Failed to count items in directory '{}': {}", candidate.path(), e.getMessage());
                 }
             } else {
                 try {
                     long bytes = Files.size(candidate.path());
-                    addRow.accept(leftCol, new String[]{
-                            languageTextRetriever.getString(TextKeys.FILE_SIZE), formatFileSize(bytes)});
+                    addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_SIZE), formatFileSize(bytes)});
                 } catch (IOException e) {
                     log.debug("Failed to read file size for '{}': {}", candidate.path(), e.getMessage());
                 }
@@ -654,16 +622,10 @@ public class ApplicationMainViewController implements Initializable {
         if (candidate != null) {
             try {
                 var attrs = Files.readAttributes(candidate.path(), BasicFileAttributes.class);
-                var modTime = attrs.lastModifiedTime().toInstant()
-                        .atZone(ZoneId.systemDefault()).toLocalDateTime();
-                var creTime = attrs.creationTime().toInstant()
-                        .atZone(ZoneId.systemDefault()).toLocalDateTime();
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.FILE_MODIFICATION_TIME),
-                        modTime.format(fmt)});
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.FILE_CREATION_TIME),
-                        creTime.format(fmt)});
+                var modTime = attrs.lastModifiedTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                var creTime = attrs.creationTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_MODIFICATION_TIME), modTime.format(fmt)});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_CREATION_TIME), creTime.format(fmt)});
             } catch (IOException e) {
                 log.debug("Failed to read file attributes for '{}': {}", candidate.path(), e.getMessage());
             }
@@ -674,39 +636,23 @@ public class ApplicationMainViewController implements Initializable {
             String na = languageTextRetriever.getString(TextKeys.METADATA_NOT_AVAILABLE);
             boolean isDir = candidate != null && Files.isDirectory(candidate.path());
             if (dto.mimeType() != null && !dto.mimeType().isBlank()) {
-                addRow.accept(leftCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.FILE_MIME_TYPE), dto.mimeType()});
+                addRow.accept(leftCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_MIME_TYPE), dto.mimeType()});
             }
             if (!isDir && ("IMAGE".equals(dto.category()) || "VIDEO".equals(dto.category()))) {
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.FILE_CONTENT_CREATION_TIME),
-                        dto.contentCreationDate() != null ? dto.contentCreationDate().format(fmt) : na});
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.WIDTH),
-                        dto.widthPx() != null ? dto.widthPx() + " px" : na});
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.HEIGHT),
-                        dto.heightPx() != null ? dto.heightPx() + " px" : na});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.FILE_CONTENT_CREATION_TIME), dto.contentCreationDate() != null ? dto.contentCreationDate().format(fmt) : na});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.WIDTH), dto.widthPx() != null ? dto.widthPx() + " px" : na});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.HEIGHT), dto.heightPx() != null ? dto.heightPx() + " px" : na});
             }
             if (!isDir && "AUDIO".equals(dto.category())) {
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.SONG_AUTHOR),
-                        dto.audioArtist() != null ? dto.audioArtist() : na});
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.SONG_NAME),
-                        dto.audioTitle() != null ? dto.audioTitle() : na});
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.SONG_ALBUM),
-                        dto.audioAlbum() != null ? dto.audioAlbum() : na});
-                addRow.accept(rightCol, new String[]{
-                        languageTextRetriever.getString(TextKeys.SONG_YEAR),
-                        dto.audioYear() != null ? String.valueOf(dto.audioYear()) : na});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.SONG_AUTHOR), dto.audioArtist() != null ? dto.audioArtist() : na});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.SONG_NAME), dto.audioTitle() != null ? dto.audioTitle() : na});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.SONG_ALBUM), dto.audioAlbum() != null ? dto.audioAlbum() : na});
+                addRow.accept(rightCol, new String[]{languageTextRetriever.getString(TextKeys.SONG_YEAR), dto.audioYear() != null ? String.valueOf(dto.audioYear()) : na});
             }
         });
 
         if (preview.hasError() && preview.errorMessage() != null) {
-            var errLabel = new Label(
-                    languageTextRetriever.getString(TextKeys.FILE_INFO_ERROR) + ": " + preview.errorMessage());
+            var errLabel = new Label(languageTextRetriever.getString(TextKeys.FILE_INFO_ERROR) + ": " + preview.errorMessage());
             errLabel.getStyleClass().add("file-info-error");
             rightCol.getChildren().add(errLabel);
         }
@@ -730,19 +676,15 @@ public class ApplicationMainViewController implements Initializable {
         }
         log.debug("handleRenameBtnClicked. Confirmed");
         var handle = sessionApi.execute();
-        handle.addProgressListener((workDone, totalWork, message) ->
-                Platform.runLater(() -> {
-                    if (totalWork > 0) {
-                        appProgressBar.setProgress(workDone / totalWork);
-                        progressLabel.setText(MessageFormat.format(
-                                languageTextRetriever.getString(TextKeys.PROGRESS_RENAMING_N),
-                                (long) workDone, (long) totalWork));
-                    } else {
-                        appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-                        progressLabel.setText(languageTextRetriever.getString(TextKeys.PROGRESS_RENAMING));
-                    }
-                })
-        );
+        handle.addProgressListener((workDone, totalWork, message) -> Platform.runLater(() -> {
+            if (totalWork > 0) {
+                appProgressBar.setProgress(workDone / totalWork);
+                progressLabel.setText(MessageFormat.format(languageTextRetriever.getString(TextKeys.PROGRESS_RENAMING_N), (long) workDone, (long) totalWork));
+            } else {
+                appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                progressLabel.setText(languageTextRetriever.getString(TextKeys.PROGRESS_RENAMING));
+            }
+        }));
         handle.result().thenRunAsync(() -> {
             appProgressBar.setProgress(0);
             progressLabel.setText(languageTextRetriever.getString(TextKeys.PROGRESS_DONE));
@@ -756,10 +698,8 @@ public class ApplicationMainViewController implements Initializable {
         alert.setTitle(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_HEADER));
         alert.setHeaderText(null);
         alert.setContentText(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_CONTENT));
-        var confirmButton = new ButtonType(
-                languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_OK));
-        var cancelButton = new ButtonType(
-                languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_CANCEL));
+        var confirmButton = new ButtonType(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_OK));
+        var cancelButton = new ButtonType(languageTextRetriever.getString(TextKeys.DIALOG_CONFIRM_BTN_CANCEL));
         alert.getButtonTypes().setAll(cancelButton, confirmButton);
         alert.setOnShowing(e -> {
             var bar = alert.getDialogPane().lookup(".button-bar");
@@ -805,25 +745,20 @@ public class ApplicationMainViewController implements Initializable {
         filesTableView.refresh();
 
         var files = List.copyOf(fxStateMirror.files());
-        var resultsByFileId = fxStateMirror.renameResults().stream()
-                .collect(Collectors.toMap(RenameSessionResult::fileId, r -> r));
+        var resultsByFileId = fxStateMirror.renameResults().stream().collect(Collectors.toMap(RenameSessionResult::fileId, r -> r));
 
-        var reloadPaths = files.stream()
-                .map(candidate -> {
-                    var result = resultsByFileId.get(candidate.fileId());
-                    if (result != null && result.status() == RenameStatus.SUCCESS) {
-                        return candidate.path().getParent().resolve(result.finalName());
-                    }
-                    return candidate.path();
-                })
-                .toList();
+        var reloadPaths = files.stream().map(candidate -> {
+            var result = resultsByFileId.get(candidate.fileId());
+            if (result != null && result.status() == RenameStatus.SUCCESS) {
+                return candidate.path().getParent().resolve(result.finalName());
+            }
+            return candidate.path();
+        }).toList();
 
-        sessionApi.clearFiles()
-                .thenCompose(ignored -> sessionApi.addFiles(reloadPaths))
-                .thenRunAsync(() -> {
-                    configureControlWidgetsState();
-                    updateFileCountLabel();
-                }, Platform::runLater);
+        sessionApi.clearFiles().thenCompose(ignored -> sessionApi.addFiles(reloadPaths)).thenRunAsync(() -> {
+            configureControlWidgetsState();
+            updateFileCountLabel();
+        }, Platform::runLater);
     }
 
 

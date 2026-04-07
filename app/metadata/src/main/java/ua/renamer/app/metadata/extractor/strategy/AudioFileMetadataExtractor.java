@@ -16,10 +16,11 @@ import java.io.File;
 public class AudioFileMetadataExtractor implements FileMetadataExtractor {
     private final UnifiedAudioFileMetadataExtractor unifiedAudioFileMetadataExtractor;
 
-    @Inject
+
     /**
      * @param unifiedAudioFileMetadataExtractor the unified extractor covering all supported audio formats
      */
+    @Inject
     public AudioFileMetadataExtractor(UnifiedAudioFileMetadataExtractor unifiedAudioFileMetadataExtractor) {
         this.unifiedAudioFileMetadataExtractor = unifiedAudioFileMetadataExtractor;
     }

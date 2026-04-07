@@ -44,6 +44,7 @@ public class FileModel {
     }
 
     // Explicit getter for boolean field to ensure Lombok compatibility
+    @SuppressWarnings("LombokGetterMayBeUsed")
     public boolean isFile() {
         return isFile;
     }
