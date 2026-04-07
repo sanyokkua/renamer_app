@@ -154,7 +154,12 @@ public enum TextKeys {
     SETTINGS_LOGGING_OPEN_BTN("settings_logging_open_btn"),
     SETTINGS_BTN_SAVE("settings_btn_save"),
     SETTINGS_BTN_CANCEL("settings_btn_cancel"),
-    MENU_SETTINGS_OPEN("menu_settings_open");
+    MENU_SETTINGS_OPEN("menu_settings_open"),
+    LIVE_PREVIEW("live_preview"),
+    PREVIEW_FORMAT("preview_format"),
+    FILE_COUNT_SUMMARY("file_count_summary"),
+    FILE_COUNT_RENAMED("file_count_renamed"),
+    SETTINGS_SAVE_ERROR("settings_save_error");
 
     private final String keyString;
 

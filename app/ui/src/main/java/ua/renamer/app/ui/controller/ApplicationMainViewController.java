@@ -9,11 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -38,6 +34,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.MessageFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -369,9 +366,11 @@ public class ApplicationMainViewController implements Initializable {
         if (total == 0) {
             fileCountLabel.setText("");
         } else if (renamed > 0) {
-            fileCountLabel.setText(total + " files \u00b7 " + renamed + " renamed");
+            fileCountLabel.setText(MessageFormat.format(
+                    languageTextRetriever.getString(TextKeys.FILE_COUNT_RENAMED), total, renamed));
         } else {
-            fileCountLabel.setText(total + " files");
+            fileCountLabel.setText(MessageFormat.format(
+                    languageTextRetriever.getString(TextKeys.FILE_COUNT_SUMMARY), total));
         }
     }
 
@@ -446,7 +445,8 @@ public class ApplicationMainViewController implements Initializable {
     private void updatePreview(ModeApi<?> modeApi) {
         modeApi.previewSingleFile("photo", "jpg")
                 .ifPresentOrElse(
-                        newName -> mainPreviewLabel.setText("photo.jpg  \u2192  " + newName),
+                        newName -> mainPreviewLabel.setText(MessageFormat.format(
+                                languageTextRetriever.getString(TextKeys.PREVIEW_FORMAT), "photo.jpg", newName)),
                         () -> mainPreviewLabel.setText("\u2014")
                 );
     }
@@ -501,7 +501,7 @@ public class ApplicationMainViewController implements Initializable {
 
             var pathsToAdd = java.util.List.copyOf(toAdd);
             appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-            progressLabel.setText("Loading files\u2026");
+            progressLabel.setText(languageTextRetriever.getString(TextKeys.PROGRESS_LOADING));
             sessionApi.addFiles(pathsToAdd).thenRunAsync(() -> {
                 appProgressBar.setProgress(0);
                 progressLabel.setText("");
@@ -698,16 +698,18 @@ public class ApplicationMainViewController implements Initializable {
                 Platform.runLater(() -> {
                     if (totalWork > 0) {
                         appProgressBar.setProgress(workDone / totalWork);
-                        progressLabel.setText(String.format("Renaming %.0f / %.0f\u2026", workDone, totalWork));
+                        progressLabel.setText(MessageFormat.format(
+                                languageTextRetriever.getString(TextKeys.PROGRESS_RENAMING_N),
+                                (long) workDone, (long) totalWork));
                     } else {
                         appProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-                        progressLabel.setText("Renaming\u2026");
+                        progressLabel.setText(languageTextRetriever.getString(TextKeys.PROGRESS_RENAMING));
                     }
                 })
         );
         handle.result().thenRunAsync(() -> {
             appProgressBar.setProgress(0);
-            progressLabel.setText("Done.");
+            progressLabel.setText(languageTextRetriever.getString(TextKeys.PROGRESS_DONE));
             areFilesRenamed = true;
             configureControlWidgetsState();
         }, Platform::runLater);

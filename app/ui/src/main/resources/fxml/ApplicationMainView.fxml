@@ -31,7 +31,7 @@
             </ScrollPane>
             <!-- Fixed preview strip — always visible, never scrolls -->
             <VBox styleClass="config-preview-panel" VBox.vgrow="NEVER">
-                <Label text="Live preview" styleClass="preview-box-title"/>
+                <Label text="%live_preview" styleClass="preview-box-title"/>
                 <Label fx:id="mainPreviewLabel" text="—"
                        styleClass="preview-box-value" wrapText="true"/>
             </VBox>

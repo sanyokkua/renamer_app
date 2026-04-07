@@ -28,11 +28,8 @@ import ua.renamer.app.ui.service.ViewLoaderApi;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.text.MessageFormat;
+import java.util.*;
 
 @Slf4j
 @Singleton
@@ -41,6 +38,12 @@ public class SettingsDialogController implements Initializable {
 
     private static final Map<String, String> SUPPORTED_LANGUAGES;
     private static final Map<String, String> LANGUAGE_CODE_BY_DISPLAY;
+    private static final Map<LogLevel, String> LEVEL_COLORS = Map.of(
+            LogLevel.DEBUG, "#A8CFEF",
+            LogLevel.INFO, "#2C6FBF",
+            LogLevel.WARN, "#F5D98A",
+            LogLevel.ERROR, "#F5AAAA"
+    );
 
     static {
         SUPPORTED_LANGUAGES = new LinkedHashMap<>();
@@ -51,27 +54,29 @@ public class SettingsDialogController implements Initializable {
         SUPPORTED_LANGUAGES.forEach((code, display) -> LANGUAGE_CODE_BY_DISPLAY.put(display, code));
     }
 
-    private static final Map<LogLevel, String> LEVEL_COLORS = Map.of(
-            LogLevel.DEBUG, "#A8CFEF",
-            LogLevel.INFO, "#2C6FBF",
-            LogLevel.WARN, "#F5D98A",
-            LogLevel.ERROR, "#F5AAAA"
-    );
-
     private final SettingsService settingsService;
     private final LanguageTextRetrieverApi languageTextRetriever;
     private final LoggingConfigService loggingConfigService;
     private final ViewLoaderApi viewLoader;
 
-    @FXML private CheckBox customConfigCheckbox;
-    @FXML private HBox customConfigPathRow;
-    @FXML private TextField customConfigPathField;
-    @FXML private CheckBox loggingCheckbox;
-    @FXML private VBox loggingSubOptions;
-    @FXML private ComboBox<String> languageComboBox;
-    @FXML private HBox languageRestartBadge;
-    @FXML private ComboBox<LogLevel> logLevelComboBox;
-    @FXML private TextField logFilePathField;
+    @FXML
+    private CheckBox customConfigCheckbox;
+    @FXML
+    private HBox customConfigPathRow;
+    @FXML
+    private TextField customConfigPathField;
+    @FXML
+    private CheckBox loggingCheckbox;
+    @FXML
+    private VBox loggingSubOptions;
+    @FXML
+    private ComboBox<String> languageComboBox;
+    @FXML
+    private HBox languageRestartBadge;
+    @FXML
+    private ComboBox<LogLevel> logLevelComboBox;
+    @FXML
+    private TextField logFilePathField;
 
     @Override
     public void initialize(URL url, ResourceBundle resources) {
@@ -128,7 +133,8 @@ public class SettingsDialogController implements Initializable {
             } catch (IOException e) {
                 log.error("Failed to save settings", e);
                 Alert alert = new Alert(Alert.AlertType.ERROR,
-                        "Failed to save settings: " + e.getMessage());
+                        MessageFormat.format(languageTextRetriever.getString(TextKeys.SETTINGS_SAVE_ERROR),
+                                e.getMessage()));
                 alert.initOwner(owner);
                 alert.showAndWait();
             }
