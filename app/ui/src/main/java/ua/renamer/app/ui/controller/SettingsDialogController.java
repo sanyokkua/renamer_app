@@ -49,6 +49,23 @@ public class SettingsDialogController implements Initializable {
     static {
         SUPPORTED_LANGUAGES = new LinkedHashMap<>();
         SUPPORTED_LANGUAGES.put("en", "English");
+        SUPPORTED_LANGUAGES.put("cs", "Čeština");
+        SUPPORTED_LANGUAGES.put("cnr", "Crnogorski");
+        SUPPORTED_LANGUAGES.put("de", "Deutsch");
+        SUPPORTED_LANGUAGES.put("et", "Eesti");
+        SUPPORTED_LANGUAGES.put("es", "Español");
+        SUPPORTED_LANGUAGES.put("fr", "Français");
+        SUPPORTED_LANGUAGES.put("hr", "Hrvatski");
+        SUPPORTED_LANGUAGES.put("it", "Italiano");
+        SUPPORTED_LANGUAGES.put("lv", "Latviešu");
+        SUPPORTED_LANGUAGES.put("lt", "Lietuvių");
+        SUPPORTED_LANGUAGES.put("hu", "Magyar");
+        SUPPORTED_LANGUAGES.put("pl", "Polski");
+        SUPPORTED_LANGUAGES.put("ro", "Română");
+        SUPPORTED_LANGUAGES.put("sq", "Shqip");
+        SUPPORTED_LANGUAGES.put("sk", "Slovenčina");
+        SUPPORTED_LANGUAGES.put("sl", "Slovenščina");
+        SUPPORTED_LANGUAGES.put("bg", "Български");
         SUPPORTED_LANGUAGES.put("uk_UA", "Українська");
 
         LANGUAGE_CODE_BY_DISPLAY = new LinkedHashMap<>();
