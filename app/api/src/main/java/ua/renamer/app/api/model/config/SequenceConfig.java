@@ -38,6 +38,10 @@ public class SequenceConfig implements TransformationConfig {
     boolean perFolderCounting;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class SequenceConfigBuilder {
         /**
          * Builds the {@link SequenceConfig}, validating that padding is non-negative.

@@ -9,8 +9,17 @@ import lombok.NoArgsConstructor;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Shared utility methods for reading metadata from {@link Metadata} objects.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MetadataCommons {
+    /**
+     * Flattens all directories and tags in a {@link Metadata} object into a single map.
+     *
+     * @param metadata the metadata object to flatten
+     * @return a map of {@code "DirectoryName.TagName"} → tag description strings
+     */
     public static Map<String, String> buildMetadataMap(Metadata metadata) {
         Map<String, String> metadataMap = new HashMap<>();
 

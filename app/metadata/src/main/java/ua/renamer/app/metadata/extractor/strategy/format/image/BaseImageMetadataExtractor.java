@@ -27,6 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Base class for format-specific image metadata extractors using the metadata-extractor library.
+ */
 @Slf4j
 @AllArgsConstructor
 public abstract class BaseImageMetadataExtractor implements FileMetadataExtractor {

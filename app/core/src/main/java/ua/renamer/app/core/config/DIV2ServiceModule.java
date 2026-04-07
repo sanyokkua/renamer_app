@@ -10,7 +10,16 @@ import ua.renamer.app.core.service.RenameExecutionService;
 import ua.renamer.app.core.service.impl.DuplicateNameResolverImpl;
 import ua.renamer.app.core.service.impl.FileRenameOrchestratorImpl;
 import ua.renamer.app.core.service.impl.RenameExecutionServiceImpl;
-import ua.renamer.app.core.service.transformation.*;
+import ua.renamer.app.core.service.transformation.AddTextTransformer;
+import ua.renamer.app.core.service.transformation.CaseChangeTransformer;
+import ua.renamer.app.core.service.transformation.DateTimeTransformer;
+import ua.renamer.app.core.service.transformation.ExtensionChangeTransformer;
+import ua.renamer.app.core.service.transformation.ImageDimensionsTransformer;
+import ua.renamer.app.core.service.transformation.ParentFolderTransformer;
+import ua.renamer.app.core.service.transformation.RemoveTextTransformer;
+import ua.renamer.app.core.service.transformation.ReplaceTextTransformer;
+import ua.renamer.app.core.service.transformation.SequenceTransformer;
+import ua.renamer.app.core.service.transformation.TruncateTransformer;
 
 /**
  * Dependency injection module for v2 services architecture.

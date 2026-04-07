@@ -23,6 +23,10 @@ public class CaseChangeConfig implements TransformationConfig {
     boolean capitalizeFirstLetter;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class CaseChangeConfigBuilder {
         /**
          * Builds the {@link CaseChangeConfig}, validating that required fields are non-null.

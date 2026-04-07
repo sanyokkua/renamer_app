@@ -11,6 +11,9 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
  */
 public class DngFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public DngFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

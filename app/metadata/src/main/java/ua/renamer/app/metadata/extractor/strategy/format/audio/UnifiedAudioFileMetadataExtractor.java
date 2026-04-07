@@ -24,6 +24,8 @@ import java.util.List;
 @Slf4j
 public class UnifiedAudioFileMetadataExtractor implements FileMetadataExtractor {
 
+    private static final int YEAR_DIGIT_LENGTH = 4;
+
     @Override
     public FileMeta extract(File file, String mimeType) {
         try {
@@ -118,8 +120,8 @@ public class UnifiedAudioFileMetadataExtractor implements FileMetadataExtractor 
                 try {
                     // Year might be "2023" or "2023-05-15", extract first 4 consecutive digits
                     String digits = yearStr.replaceAll("\\D", "");
-                    if (digits.length() >= 4) {
-                        int year = Integer.parseInt(digits.substring(0, 4));
+                    if (digits.length() >= YEAR_DIGIT_LENGTH) {
+                        int year = Integer.parseInt(digits.substring(0, YEAR_DIGIT_LENGTH));
                         // Sanity check: year should be reasonable
                         if (year >= 1900 && year <= 2100) {
                             return ExtractionResult.success(year);

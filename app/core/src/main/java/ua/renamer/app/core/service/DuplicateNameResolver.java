@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Service for resolving duplicate target names by appending suffixes.
  */
+@FunctionalInterface
 public interface DuplicateNameResolver {
     /**
      * Resolve duplicate target names by appending suffixes like " (01)", " (02)", etc.

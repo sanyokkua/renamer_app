@@ -3,7 +3,11 @@ package ua.renamer.app.api.session;
 import org.junit.jupiter.api.Test;
 import ua.renamer.app.api.model.RenameStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class RenameSessionResultTest {
 

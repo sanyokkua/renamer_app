@@ -11,6 +11,9 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
  */
 public class NefFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public NefFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

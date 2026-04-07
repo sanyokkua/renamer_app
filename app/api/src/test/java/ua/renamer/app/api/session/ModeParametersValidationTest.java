@@ -5,7 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import ua.renamer.app.api.enums.*;
+import ua.renamer.app.api.enums.DateFormat;
+import ua.renamer.app.api.enums.DateTimeFormat;
+import ua.renamer.app.api.enums.DateTimeSource;
+import ua.renamer.app.api.enums.ImageDimensionOptions;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.enums.ItemPositionExtended;
+import ua.renamer.app.api.enums.ItemPositionWithReplacement;
+import ua.renamer.app.api.enums.SortSource;
+import ua.renamer.app.api.enums.TextCaseOptions;
+import ua.renamer.app.api.enums.TimeFormat;
+import ua.renamer.app.api.enums.TruncateOptions;
 import ua.renamer.app.api.model.TransformationMode;
 
 import java.time.LocalDateTime;

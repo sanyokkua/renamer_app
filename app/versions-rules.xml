@@ -1,5 +1,5 @@
-<ruleset xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0"
          xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 https://www.mojohaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
     <ignoreVersions>
         <ignoreVersion type="regex">.*-(alpha|beta|rc|ea|m|milestone|M|MR|R|snapshot).*</ignoreVersion>

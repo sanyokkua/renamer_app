@@ -32,6 +32,9 @@ public record FolderDropOptions(Action action, boolean recursive, boolean includ
         return new FolderDropOptions(Action.USE_AS_ITEM, false, false);
     }
 
+    /**
+     * Describes what to do when a folder is dropped onto the file list.
+     */
     public enum Action {
         CANCEL,
         USE_AS_ITEM,

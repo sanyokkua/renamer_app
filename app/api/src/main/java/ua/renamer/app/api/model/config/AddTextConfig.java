@@ -23,6 +23,10 @@ public class AddTextConfig implements TransformationConfig {
     ItemPosition position;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class AddTextConfigBuilder {
         /**
          * Builds the {@link AddTextConfig}, validating that required fields are non-null.

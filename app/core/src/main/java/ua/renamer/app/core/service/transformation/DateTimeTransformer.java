@@ -79,8 +79,8 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
 
             if (isAmPmFormat(config.getTimeFormat())) {
                 formattedDateTime = config.isUseUppercaseForAmPm()
-                        ? formattedDateTime.toUpperCase()
-                        : formattedDateTime.toLowerCase();
+                        ? formattedDateTime.toUpperCase(java.util.Locale.ROOT)
+                        : formattedDateTime.toLowerCase(java.util.Locale.ROOT);
             }
 
             // Apply to filename based on position

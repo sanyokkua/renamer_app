@@ -11,6 +11,9 @@ import ua.renamer.app.metadata.extractor.strategy.format.video.QuickTimeFileMeta
 
 import java.io.File;
 
+/**
+ * Dispatches video metadata extraction to the appropriate format-level extractor based on MIME type.
+ */
 @Slf4j
 public class VideoFileMetadataExtractor implements FileMetadataExtractor {
     private final AviFileMetadataExtractor aviFileMetadataExtractor;

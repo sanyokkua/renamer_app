@@ -8,8 +8,26 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -19,7 +37,12 @@ import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.model.FolderDropOptions;
 import ua.renamer.app.api.model.RenameStatus;
 import ua.renamer.app.api.model.TransformationMode;
-import ua.renamer.app.api.session.*;
+import ua.renamer.app.api.session.ModeApi;
+import ua.renamer.app.api.session.ModeParameters;
+import ua.renamer.app.api.session.RenameCandidate;
+import ua.renamer.app.api.session.RenamePreview;
+import ua.renamer.app.api.session.RenameSessionResult;
+import ua.renamer.app.api.session.SessionApi;
 import ua.renamer.app.backend.service.FolderExpansionService;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.AppModesConverter;
@@ -34,6 +57,7 @@ import ua.renamer.app.ui.widget.table.TableCustomContextMenu;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 import java.time.ZoneId;
@@ -587,10 +611,11 @@ public class ApplicationMainViewController implements Initializable {
         }
 
         if (candidate != null) {
-            if (candidate.path().getParent() != null) {
+            Path candidateParent = candidate.path().getParent();
+            if (candidateParent != null) {
                 addRow.accept(leftCol, new String[]{
                         languageTextRetriever.getString(TextKeys.ABSOLUTE_PATH),
-                        candidate.path().getParent().toString()});
+                        candidateParent.toString()});
             }
             boolean isFile = !Files.isDirectory(candidate.path());
             addRow.accept(leftCol, new String[]{

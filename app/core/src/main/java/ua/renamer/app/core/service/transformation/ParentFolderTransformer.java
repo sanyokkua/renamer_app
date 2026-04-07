@@ -37,8 +37,9 @@ public class ParentFolderTransformer implements FileTransformationService<Parent
             // Collect parent folder names
             Path parent = filePath.getParent();
             for (int i = 0; i < config.getNumberOfParentFolders() && parent != null; i++) {
-                if (parent.getFileName() != null) {
-                    parentNames.add(parent.getFileName().toString());
+                Path fileNamePath = parent.getFileName();
+                if (fileNamePath != null) {
+                    parentNames.add(fileNamePath.toString());
                 }
                 parent = parent.getParent();
             }

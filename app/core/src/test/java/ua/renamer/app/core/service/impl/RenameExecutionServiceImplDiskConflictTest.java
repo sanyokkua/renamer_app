@@ -10,7 +10,12 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import ua.renamer.app.api.enums.Category;
-import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.RenameResult;
+import ua.renamer.app.api.model.RenameStatus;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.core.service.validator.impl.NameValidator;
 
 import java.io.File;
@@ -21,7 +26,9 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

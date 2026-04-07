@@ -5,8 +5,14 @@ import com.drew.metadata.photoshop.PsdHeaderDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for PSD (Photoshop) image files.
+ */
 public class PsdFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public PsdFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

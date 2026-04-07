@@ -11,7 +11,11 @@ import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.core.service.FileTransformationService;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

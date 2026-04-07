@@ -3,7 +3,17 @@ package ua.renamer.app.backend.session;
 import com.google.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.api.enums.*;
+import ua.renamer.app.api.enums.DateFormat;
+import ua.renamer.app.api.enums.DateTimeFormat;
+import ua.renamer.app.api.enums.DateTimeSource;
+import ua.renamer.app.api.enums.ImageDimensionOptions;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.enums.ItemPositionExtended;
+import ua.renamer.app.api.enums.ItemPositionWithReplacement;
+import ua.renamer.app.api.enums.SortSource;
+import ua.renamer.app.api.enums.TextCaseOptions;
+import ua.renamer.app.api.enums.TimeFormat;
+import ua.renamer.app.api.enums.TruncateOptions;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.api.model.RenameStatus;
@@ -13,7 +23,30 @@ import ua.renamer.app.api.model.meta.category.AudioMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
 import ua.renamer.app.api.service.FileRenameOrchestrator;
-import ua.renamer.app.api.session.*;
+import ua.renamer.app.api.session.AddTextParams;
+import ua.renamer.app.api.session.AvailableAction;
+import ua.renamer.app.api.session.ChangeCaseParams;
+import ua.renamer.app.api.session.CommandResult;
+import ua.renamer.app.api.session.DateTimeParams;
+import ua.renamer.app.api.session.ExtensionChangeParams;
+import ua.renamer.app.api.session.FileMetadataDto;
+import ua.renamer.app.api.session.ImageDimensionsParams;
+import ua.renamer.app.api.session.ModeApi;
+import ua.renamer.app.api.session.ModeParameters;
+import ua.renamer.app.api.session.ParentFolderParams;
+import ua.renamer.app.api.session.RemoveTextParams;
+import ua.renamer.app.api.session.RenameCandidate;
+import ua.renamer.app.api.session.RenamePreview;
+import ua.renamer.app.api.session.RenameSessionResult;
+import ua.renamer.app.api.session.ReplaceTextParams;
+import ua.renamer.app.api.session.SequenceParams;
+import ua.renamer.app.api.session.SessionApi;
+import ua.renamer.app.api.session.SessionSnapshot;
+import ua.renamer.app.api.session.SessionStatus;
+import ua.renamer.app.api.session.StatePublisher;
+import ua.renamer.app.api.session.TaskHandle;
+import ua.renamer.app.api.session.TruncateParams;
+import ua.renamer.app.api.session.ValidationResult;
 import ua.renamer.app.backend.service.BackendExecutor;
 
 import java.io.File;
@@ -26,7 +59,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static ua.renamer.app.api.session.AvailableAction.*;
+import static ua.renamer.app.api.session.AvailableAction.ADD_FILES;
+import static ua.renamer.app.api.session.AvailableAction.CANCEL;
+import static ua.renamer.app.api.session.AvailableAction.CLEAR;
+import static ua.renamer.app.api.session.AvailableAction.EXECUTE;
+import static ua.renamer.app.api.session.AvailableAction.REMOVE_FILES;
+import static ua.renamer.app.api.session.AvailableAction.SELECT_MODE;
 
 /**
  * Primary implementation of {@link SessionApi}.
@@ -407,7 +445,7 @@ public class RenameSessionService implements SessionApi {
         session.setLastPreview(preview);
         List<RenamePreview> previewDtos = buildPreviewDtos(
                 preview, session.getFiles(), session.getActiveMode());
-        List<ua.renamer.app.api.session.RenameCandidate> candidates = session.getFiles().stream()
+        List<RenameCandidate> candidates = session.getFiles().stream()
                 .map(RenameSessionConverter::toCandidate).toList();
         // Rebuild metadata cache — called on state thread; ConcurrentHashMap allows safe concurrent reads
         metadataCache.clear();

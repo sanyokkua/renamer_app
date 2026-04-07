@@ -16,7 +16,16 @@ import ua.renamer.app.core.service.RenameExecutionService;
 import ua.renamer.app.core.service.impl.DuplicateNameResolverImpl;
 import ua.renamer.app.core.service.impl.FileRenameOrchestratorImpl;
 import ua.renamer.app.core.service.impl.RenameExecutionServiceImpl;
-import ua.renamer.app.core.service.transformation.*;
+import ua.renamer.app.core.service.transformation.AddTextTransformer;
+import ua.renamer.app.core.service.transformation.CaseChangeTransformer;
+import ua.renamer.app.core.service.transformation.DateTimeTransformer;
+import ua.renamer.app.core.service.transformation.ExtensionChangeTransformer;
+import ua.renamer.app.core.service.transformation.ImageDimensionsTransformer;
+import ua.renamer.app.core.service.transformation.ParentFolderTransformer;
+import ua.renamer.app.core.service.transformation.RemoveTextTransformer;
+import ua.renamer.app.core.service.transformation.ReplaceTextTransformer;
+import ua.renamer.app.core.service.transformation.SequenceTransformer;
+import ua.renamer.app.core.service.transformation.TruncateTransformer;
 import ua.renamer.app.core.service.validator.impl.NameValidator;
 import ua.renamer.app.core.v2.util.TestDateTimeUtils;
 import ua.renamer.app.core.v2.util.TestFileUtils;
@@ -29,7 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Abstract base class for integration tests that use real files and the full orchestrator pipeline.

@@ -11,6 +11,9 @@ import ua.renamer.app.metadata.extractor.strategy.GenericFileMetadataExtractor;
 import ua.renamer.app.metadata.extractor.strategy.ImageFileMetadataExtractionExtractor;
 import ua.renamer.app.metadata.extractor.strategy.VideoFileMetadataExtractor;
 
+/**
+ * Resolves the correct {@link FileMetadataExtractor} strategy based on the file {@link Category}.
+ */
 @Slf4j
 public class CategoryFileMetadataExtractorResolver implements FileMetadataExtractorResolver {
     private final GenericFileMetadataExtractor genericFileMetadataExtractor;
@@ -19,6 +22,12 @@ public class CategoryFileMetadataExtractorResolver implements FileMetadataExtrac
     private final VideoFileMetadataExtractor videoFileMetadataExtractor;
 
     @Inject
+    /**
+     * @param genericFileMetadataExtractor fallback extractor for unknown categories
+     * @param imageFileMetadataExtractor   extractor for image files
+     * @param audioFileMetadataExtractor   extractor for audio files
+     * @param videoFileMetadataExtractor   extractor for video files
+     */
     public CategoryFileMetadataExtractorResolver(GenericFileMetadataExtractor genericFileMetadataExtractor,
                                                  ImageFileMetadataExtractionExtractor imageFileMetadataExtractor,
                                                  AudioFileMetadataExtractor audioFileMetadataExtractor,

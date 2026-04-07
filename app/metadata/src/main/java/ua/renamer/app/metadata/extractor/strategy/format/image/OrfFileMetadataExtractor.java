@@ -11,6 +11,9 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
  */
 public class OrfFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public OrfFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

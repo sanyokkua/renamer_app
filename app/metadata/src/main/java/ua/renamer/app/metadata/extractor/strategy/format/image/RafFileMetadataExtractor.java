@@ -11,6 +11,9 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
  */
 public class RafFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public RafFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

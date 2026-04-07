@@ -1,7 +1,11 @@
 package ua.renamer.app.ui.controller;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ua.renamer.app.api.model.FolderDropOptions;
 import ua.renamer.app.ui.enums.TextKeys;

@@ -11,8 +11,14 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.util.List;
 
+/**
+ * Metadata extractor for MP4 video files.
+ */
 public class Mp4FileMetadataExtractor extends BaseVideoMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public Mp4FileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

@@ -5,8 +5,14 @@ import com.drew.metadata.pcx.PcxDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for PCX image files.
+ */
 public class PcxFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public PcxFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

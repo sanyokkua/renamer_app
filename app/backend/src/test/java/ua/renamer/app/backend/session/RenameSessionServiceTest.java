@@ -10,14 +10,28 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.RenameResult;
+import ua.renamer.app.api.model.RenameStatus;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.meta.FileMeta;
 import ua.renamer.app.api.model.meta.category.AudioMeta;
 import ua.renamer.app.api.model.meta.category.ImageMeta;
 import ua.renamer.app.api.model.meta.category.VideoMeta;
 import ua.renamer.app.api.service.FileRenameOrchestrator;
 import ua.renamer.app.api.service.ProgressCallback;
-import ua.renamer.app.api.session.*;
+import ua.renamer.app.api.session.AddTextParams;
+import ua.renamer.app.api.session.AvailableAction;
+import ua.renamer.app.api.session.CommandResult;
+import ua.renamer.app.api.session.FileMetadataDto;
+import ua.renamer.app.api.session.RenameCandidate;
+import ua.renamer.app.api.session.RenamePreview;
+import ua.renamer.app.api.session.RenameSessionResult;
+import ua.renamer.app.api.session.SessionSnapshot;
+import ua.renamer.app.api.session.SessionStatus;
+import ua.renamer.app.api.session.StatePublisher;
+import ua.renamer.app.api.session.ValidationResult;
 import ua.renamer.app.backend.service.BackendExecutor;
 
 import java.io.File;
@@ -28,9 +42,16 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link RenameSessionService}.

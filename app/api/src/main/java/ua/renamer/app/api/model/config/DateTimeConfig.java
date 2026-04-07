@@ -2,7 +2,11 @@ package ua.renamer.app.api.model.config;
 
 import lombok.Builder;
 import lombok.Value;
-import ua.renamer.app.api.enums.*;
+import ua.renamer.app.api.enums.DateFormat;
+import ua.renamer.app.api.enums.DateTimeFormat;
+import ua.renamer.app.api.enums.DateTimeSource;
+import ua.renamer.app.api.enums.ItemPositionWithReplacement;
+import ua.renamer.app.api.enums.TimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -93,6 +97,10 @@ public class DateTimeConfig implements TransformationConfig {
     }
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class DateTimeConfigBuilder {
 
         /**

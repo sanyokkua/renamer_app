@@ -7,8 +7,14 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.util.List;
 
+/**
+ * Metadata extractor for AVI video files.
+ */
 public class AviFileMetadataExtractor extends BaseVideoMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public AviFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

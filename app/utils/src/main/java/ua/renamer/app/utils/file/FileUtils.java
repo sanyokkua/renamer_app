@@ -24,7 +24,11 @@ public class FileUtils {
      * @return the base name of the file
      */
     public static String getFileBaseName(Path path) {
-        String fileName = path.getFileName().toString();
+        Path fileNamePath = path.getFileName();
+        if (fileNamePath == null) {
+            return "";
+        }
+        String fileName = fileNamePath.toString();
 
         // Handle hidden files (files starting with .)
         if (fileName.startsWith(".")) {
@@ -59,7 +63,11 @@ public class FileUtils {
      * @return the file extension (without the leading dot), or empty string
      */
     public static String getFileExtension(Path path) {
-        String fileName = path.getFileName().toString();
+        Path fileNamePath = path.getFileName();
+        if (fileNamePath == null) {
+            return "";
+        }
+        String fileName = fileNamePath.toString();
 
         // Handle hidden files (files starting with .)
         if (fileName.startsWith(".")) {

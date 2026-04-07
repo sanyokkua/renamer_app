@@ -11,6 +11,9 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
  */
 public class AvifFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public AvifFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

@@ -3,7 +3,12 @@ package ua.renamer.app.core.service.transformation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ua.renamer.app.api.enums.*;
+import ua.renamer.app.api.enums.Category;
+import ua.renamer.app.api.enums.DateFormat;
+import ua.renamer.app.api.enums.DateTimeFormat;
+import ua.renamer.app.api.enums.DateTimeSource;
+import ua.renamer.app.api.enums.ItemPositionWithReplacement;
+import ua.renamer.app.api.enums.TimeFormat;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.PreparedFileModel;
@@ -20,7 +25,13 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Comprehensive unit tests for DateTimeTransformer.

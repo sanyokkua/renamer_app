@@ -15,6 +15,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Adapts the {@link ua.renamer.app.utils.datetime.DateTimeUtils} static helpers to the
+ * {@link DateTimeUtils} interface required by the metadata module.
+ */
 public class DateTimeConverter implements DateTimeUtils {
 
     @Override

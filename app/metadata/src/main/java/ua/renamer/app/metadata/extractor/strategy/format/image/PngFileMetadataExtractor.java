@@ -5,8 +5,14 @@ import com.drew.metadata.png.PngDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for PNG image files.
+ */
 public class PngFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public PngFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

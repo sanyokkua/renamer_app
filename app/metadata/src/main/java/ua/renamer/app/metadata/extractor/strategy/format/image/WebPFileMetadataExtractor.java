@@ -5,8 +5,14 @@ import com.drew.metadata.webp.WebpDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for WebP image files.
+ */
 public class WebPFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public WebPFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

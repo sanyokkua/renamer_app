@@ -9,11 +9,17 @@ import ua.renamer.app.metadata.extractor.strategy.format.audio.UnifiedAudioFileM
 
 import java.io.File;
 
+/**
+ * Dispatches audio metadata extraction to {@link UnifiedAudioFileMetadataExtractor}.
+ */
 @Slf4j
 public class AudioFileMetadataExtractor implements FileMetadataExtractor {
     private final UnifiedAudioFileMetadataExtractor unifiedAudioFileMetadataExtractor;
 
     @Inject
+    /**
+     * @param unifiedAudioFileMetadataExtractor the unified extractor covering all supported audio formats
+     */
     public AudioFileMetadataExtractor(UnifiedAudioFileMetadataExtractor unifiedAudioFileMetadataExtractor) {
         this.unifiedAudioFileMetadataExtractor = unifiedAudioFileMetadataExtractor;
     }

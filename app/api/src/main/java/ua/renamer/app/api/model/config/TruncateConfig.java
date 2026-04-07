@@ -23,6 +23,10 @@ public class TruncateConfig implements TransformationConfig {
     TruncateOptions truncateOption;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class TruncateConfigBuilder {
         /**
          * Builds the {@link TruncateConfig}, validating that required fields are non-null and

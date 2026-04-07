@@ -5,8 +5,14 @@ import com.drew.metadata.eps.EpsDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for EPS (Encapsulated PostScript) image files.
+ */
 public class EpsFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public EpsFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

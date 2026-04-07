@@ -5,7 +5,15 @@ import com.google.inject.Singleton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
@@ -30,7 +38,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 @Slf4j
 @Singleton
@@ -171,9 +183,11 @@ public class SettingsDialogController implements Initializable {
         loggingSubOptions.setVisible(checked);
         loggingSubOptions.setManaged(checked);
         if (checked) {
-            Path logPath = settingsService.getSettingsFilePath().getParent()
-                    .resolve("logs").resolve("renamer.log");
-            logFilePathField.setText(logPath.toString());
+            Path settingsParent = settingsService.getSettingsFilePath().getParent();
+            if (settingsParent != null) {
+                Path logPath = settingsParent.resolve("logs").resolve("renamer.log");
+                logFilePathField.setText(logPath.toString());
+            }
         }
     }
 
@@ -202,7 +216,11 @@ public class SettingsDialogController implements Initializable {
 
     @FXML
     void onOpenLogDirectory() {
-        Path logDir = settingsService.getSettingsFilePath().getParent().resolve("logs");
+        Path settingsParent = settingsService.getSettingsFilePath().getParent();
+        if (settingsParent == null) {
+            return;
+        }
+        Path logDir = settingsParent.resolve("logs");
         try {
             java.awt.Desktop.getDesktop().open(logDir.toFile());
         } catch (IOException e) {
@@ -227,9 +245,11 @@ public class SettingsDialogController implements Initializable {
         loggingSubOptions.setManaged(settings.isLoggingEnabled());
         logLevelComboBox.setValue(settings.getLogLevel());
         if (settings.isLoggingEnabled()) {
-            Path logPath = settingsService.getSettingsFilePath().getParent()
-                    .resolve("logs").resolve("renamer.log");
-            logFilePathField.setText(logPath.toString());
+            Path settingsParent = settingsService.getSettingsFilePath().getParent();
+            if (settingsParent != null) {
+                Path logPath = settingsParent.resolve("logs").resolve("renamer.log");
+                logFilePathField.setText(logPath.toString());
+            }
         }
     }
 

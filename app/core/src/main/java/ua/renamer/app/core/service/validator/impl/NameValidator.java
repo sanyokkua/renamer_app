@@ -58,7 +58,7 @@ public class NameValidator implements Validator<String> {
             return false;
         }
 
-        String os = System.getProperty("os.name").toLowerCase();
+        String os = System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT);
         if (os.contains("win")) {
             var isContainingRestrictedWinChars = WINDOWS_RESTRICTED_CHARS.stream().anyMatch(fileName::contains);
             if (isContainingRestrictedWinChars) {

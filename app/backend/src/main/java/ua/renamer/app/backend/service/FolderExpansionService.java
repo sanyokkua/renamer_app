@@ -14,6 +14,7 @@ import java.util.List;
  * <p>Implementations must never throw — inaccessible entries are logged and skipped,
  * and a partial result is returned.
  */
+@FunctionalInterface
 public interface FolderExpansionService {
 
     /**

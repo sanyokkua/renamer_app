@@ -5,8 +5,14 @@ import com.drew.metadata.gif.GifHeaderDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for GIF image files.
+ */
 public class GifFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public GifFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

@@ -1,7 +1,13 @@
 package ua.renamer.app.ui.controller.mode.impl;
 
 import javafx.application.Platform;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +22,11 @@ import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.session.DateTimeParams;
 import ua.renamer.app.api.session.ModeApi;
 import ua.renamer.app.api.session.ValidationResult;
-import ua.renamer.app.ui.converter.*;
+import ua.renamer.app.ui.converter.DateFormatConverter;
+import ua.renamer.app.ui.converter.DateTimeFormatConverter;
+import ua.renamer.app.ui.converter.DateTimeSourceConverter;
+import ua.renamer.app.ui.converter.ItemPositionWithReplacementConverter;
+import ua.renamer.app.ui.converter.TimeFormatConverter;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.widget.impl.ItemPositionWithReplacementRadioSelector;
 
@@ -31,7 +41,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link ModeAddDatetimeController} — V2 {@code bind()} contract.

@@ -17,6 +17,10 @@ public class ExtensionChangeConfig implements TransformationConfig {
     String newExtension;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class ExtensionChangeConfigBuilder {
         /**
          * Builds the {@link ExtensionChangeConfig}, validating that newExtension is non-null and non-blank.

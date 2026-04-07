@@ -17,12 +17,18 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 
+/**
+ * Implements {@link FileUtils} using Apache Tika for MIME detection and {@code java.nio} for attribute reads.
+ */
 @Slf4j
 public class CommonFileUtils implements FileUtils {
     private static final ThreadLocal<Tika> TIKA_INSTANCE = ThreadLocal.withInitial(Tika::new);
     private final DateTimeUtils dateTimeUtils;
 
     @Inject
+    /**
+     * @param dateTimeUtils used to convert file timestamps to {@link java.time.LocalDateTime}
+     */
     public CommonFileUtils(DateTimeUtils dateTimeUtils) {
         this.dateTimeUtils = dateTimeUtils;
     }

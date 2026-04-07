@@ -23,6 +23,11 @@ public class TestFileUtils implements FileUtils {
 
     private final DateTimeUtils dateTimeUtils;
 
+    /**
+     * Creates a new TestFileUtils backed by the given date-time utility.
+     *
+     * @param dateTimeUtils the date-time utility to use for file timestamp conversion; must not be null
+     */
     public TestFileUtils(DateTimeUtils dateTimeUtils) {
         this.dateTimeUtils = dateTimeUtils;
     }

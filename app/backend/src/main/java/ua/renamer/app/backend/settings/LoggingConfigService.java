@@ -87,10 +87,15 @@ public class LoggingConfigService {
         }
 
         Path logFile = appDir.resolve("logs").resolve("renamer.log");
+        Path logDir = logFile.getParent();
+        if (logDir == null) {
+            log.warn("Cannot resolve log directory from: {}", logFile);
+            return;
+        }
         try {
-            Files.createDirectories(logFile.getParent());
+            Files.createDirectories(logDir);
         } catch (IOException e) {
-            log.warn("Cannot create log directory: {}", logFile.getParent(), e);
+            log.warn("Cannot create log directory: {}", logDir, e);
             return;
         }
 

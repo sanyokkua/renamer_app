@@ -161,7 +161,11 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
             return targetPath;
         }
 
-        String fullName = targetPath.getFileName().toString();
+        Path fileNamePath = targetPath.getFileName();
+        if (fileNamePath == null) {
+            return targetPath;
+        }
+        String fullName = fileNamePath.toString();
         int dotIndex = fullName.lastIndexOf('.');
         String baseName = (dotIndex > 0) ? fullName.substring(0, dotIndex) : fullName;
         String ext = (dotIndex > 0) ? fullName.substring(dotIndex) : "";

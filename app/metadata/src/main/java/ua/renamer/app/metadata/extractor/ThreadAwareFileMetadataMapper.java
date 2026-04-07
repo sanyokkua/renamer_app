@@ -11,11 +11,17 @@ import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 
+/**
+ * Dispatches metadata extraction to the appropriate strategy resolved by {@link FileMetadataExtractorResolver}.
+ */
 @Slf4j
 public class ThreadAwareFileMetadataMapper implements FileMetadataMapper {
     private final FileMetadataExtractorResolver fileMetadataExtractorResolver;
 
     @Inject
+    /**
+     * @param fileMetadataExtractorResolver resolves the per-category extraction strategy
+     */
     public ThreadAwareFileMetadataMapper(FileMetadataExtractorResolver fileMetadataExtractorResolver) {
         this.fileMetadataExtractorResolver = fileMetadataExtractorResolver;
     }

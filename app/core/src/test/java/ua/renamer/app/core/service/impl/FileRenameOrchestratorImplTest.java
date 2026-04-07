@@ -8,14 +8,28 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.RenameResult;
+import ua.renamer.app.api.model.RenameStatus;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
 import ua.renamer.app.api.model.config.AddTextConfig;
 import ua.renamer.app.api.model.config.SequenceConfig;
 import ua.renamer.app.api.service.ProgressCallback;
 import ua.renamer.app.core.mapper.ThreadAwareFileMapper;
 import ua.renamer.app.core.service.DuplicateNameResolver;
 import ua.renamer.app.core.service.RenameExecutionService;
-import ua.renamer.app.core.service.transformation.*;
+import ua.renamer.app.core.service.transformation.AddTextTransformer;
+import ua.renamer.app.core.service.transformation.CaseChangeTransformer;
+import ua.renamer.app.core.service.transformation.DateTimeTransformer;
+import ua.renamer.app.core.service.transformation.ExtensionChangeTransformer;
+import ua.renamer.app.core.service.transformation.ImageDimensionsTransformer;
+import ua.renamer.app.core.service.transformation.ParentFolderTransformer;
+import ua.renamer.app.core.service.transformation.RemoveTextTransformer;
+import ua.renamer.app.core.service.transformation.ReplaceTextTransformer;
+import ua.renamer.app.core.service.transformation.SequenceTransformer;
+import ua.renamer.app.core.service.transformation.TruncateTransformer;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -25,10 +39,23 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Comprehensive unit tests for FileRenameOrchestratorImpl.

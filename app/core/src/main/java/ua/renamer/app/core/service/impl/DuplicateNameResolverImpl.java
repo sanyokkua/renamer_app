@@ -4,7 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.model.PreparedFileModel;
 import ua.renamer.app.core.service.DuplicateNameResolver;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -13,6 +17,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class DuplicateNameResolverImpl implements DuplicateNameResolver {
+
+    private static final int NO_COLLISION_GROUP_SIZE = 1;
 
     private static java.nio.file.Path parentOf(PreparedFileModel model) {
         java.nio.file.Path raw = model.getOriginalFile().getFile().toPath().getParent();
@@ -36,7 +42,7 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
         for (Map.Entry<NameKey, List<PreparedFileModel>> entry : nameGroups.entrySet()) {
             List<PreparedFileModel> group = entry.getValue();
 
-            if (group.size() == 1) {
+            if (group.size() == NO_COLLISION_GROUP_SIZE) {
                 // No collision
                 result.add(group.getFirst());
                 continue;
@@ -72,7 +78,8 @@ public class DuplicateNameResolverImpl implements DuplicateNameResolver {
                 String uniqueName;
                 String uniqueFullName;
                 do {
-                    String suffix = String.format(" (%0" + digits + "d)", counter++);
+                    String suffix = String.format(" (%0" + digits + "d)", counter);
+                    counter++;
                     uniqueName = model.getNewName() + suffix;
                     uniqueFullName = model.getNewExtension().isEmpty()
                             ? uniqueName

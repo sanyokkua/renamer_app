@@ -8,7 +8,11 @@ import org.junit.jupiter.api.Test;
 import ua.renamer.app.api.enums.ItemPosition;
 import ua.renamer.app.api.model.RenameStatus;
 import ua.renamer.app.api.model.TransformationMode;
-import ua.renamer.app.api.session.*;
+import ua.renamer.app.api.session.AddTextParams;
+import ua.renamer.app.api.session.RenameCandidate;
+import ua.renamer.app.api.session.RenamePreview;
+import ua.renamer.app.api.session.RenameSessionResult;
+import ua.renamer.app.api.session.SessionStatus;
 
 import java.nio.file.Path;
 import java.util.List;

@@ -5,8 +5,14 @@ import com.drew.metadata.bmp.BmpHeaderDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for BMP (bitmap) image files.
+ */
 public class BmpFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public BmpFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

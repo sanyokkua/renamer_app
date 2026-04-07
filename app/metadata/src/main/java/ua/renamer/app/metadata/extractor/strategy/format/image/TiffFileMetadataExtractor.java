@@ -6,8 +6,14 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for TIFF image files.
+ */
 public class TiffFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public TiffFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

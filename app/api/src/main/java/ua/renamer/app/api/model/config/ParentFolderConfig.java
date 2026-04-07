@@ -28,6 +28,10 @@ public class ParentFolderConfig implements TransformationConfig {
     String separator;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class ParentFolderConfigBuilder {
         /**
          * Builds the {@link ParentFolderConfig}, validating that required fields are non-null and

@@ -10,7 +10,14 @@ import ua.renamer.app.api.enums.TextCaseOptions;
 import ua.renamer.app.api.model.RenameResult;
 import ua.renamer.app.api.model.RenameStatus;
 import ua.renamer.app.api.model.TransformationMode;
-import ua.renamer.app.api.model.config.*;
+import ua.renamer.app.api.model.config.AddTextConfig;
+import ua.renamer.app.api.model.config.CaseChangeConfig;
+import ua.renamer.app.api.model.config.ExtensionChangeConfig;
+import ua.renamer.app.api.model.config.ParentFolderConfig;
+import ua.renamer.app.api.model.config.RemoveTextConfig;
+import ua.renamer.app.api.model.config.ReplaceTextConfig;
+import ua.renamer.app.api.model.config.SequenceConfig;
+import ua.renamer.app.api.model.config.TruncateConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +27,10 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Comprehensive integration tests for the complete file rename pipeline.

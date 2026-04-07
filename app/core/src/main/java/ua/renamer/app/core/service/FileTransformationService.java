@@ -11,6 +11,7 @@ import java.util.List;
  *
  * @param <C> Configuration type for this transformer
  */
+@FunctionalInterface
 public interface FileTransformationService<C> {
     /**
      * Transform a single file model to prepared file model.

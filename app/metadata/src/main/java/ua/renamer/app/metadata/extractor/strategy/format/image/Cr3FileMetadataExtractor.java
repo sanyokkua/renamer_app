@@ -11,6 +11,9 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
  */
 public class Cr3FileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public Cr3FileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

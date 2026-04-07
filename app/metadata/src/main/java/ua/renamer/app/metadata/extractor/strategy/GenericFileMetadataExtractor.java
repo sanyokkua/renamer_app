@@ -5,6 +5,10 @@ import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 
+/**
+ * Fallback extractor for file categories that have no specialised metadata support.
+ * Always returns {@link FileMeta#empty()}.
+ */
 public class GenericFileMetadataExtractor implements FileMetadataExtractor {
 
     @Override

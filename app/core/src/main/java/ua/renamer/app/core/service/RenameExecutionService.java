@@ -6,6 +6,7 @@ import ua.renamer.app.api.model.RenameResult;
 /**
  * Service for executing physical file renames.
  */
+@FunctionalInterface
 public interface RenameExecutionService {
     /**
      * Execute physical rename for a single prepared file.

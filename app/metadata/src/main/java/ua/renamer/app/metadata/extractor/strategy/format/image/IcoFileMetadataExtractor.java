@@ -5,8 +5,14 @@ import com.drew.metadata.ico.IcoDirectory;
 import jakarta.inject.Inject;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
 
+/**
+ * Metadata extractor for ICO (icon) image files.
+ */
 public class IcoFileMetadataExtractor extends BaseImageMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public IcoFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

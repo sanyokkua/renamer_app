@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Base class for format-specific video metadata extractors using the metadata-extractor library.
+ */
 @Slf4j
 @AllArgsConstructor
 public abstract class BaseVideoMetadataExtractor implements FileMetadataExtractor {
@@ -170,7 +173,10 @@ public abstract class BaseVideoMetadataExtractor implements FileMetadataExtracto
         // Duration might be in milliseconds, convert to seconds if > 10000 (arbitrary threshold)
         return result.stream()
                 .filter(Objects::nonNull)
-                .map(d -> d > 10000 ? d / 1000 : d)
+                .map(d -> {
+                    int v = d;
+                    return v > 10000 ? v / 1000 : v;
+                })
                 .min(Integer::compareTo)
                 .orElse(null);
     }

@@ -12,13 +12,18 @@ import ua.renamer.app.api.model.FileModel;
 import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Maps {@link java.io.File} instances to {@link ua.renamer.app.api.model.meta.FileMeta} using
+ * a category-aware strategy and a thread-safe MIME-extension cache.
+ */
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class ThreadAwareFileMapper implements FileMapper {
-    private static final ConcurrentHashMap<String, Set<String>> MIME_EXTENSIONS_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Set<String>> MIME_EXTENSIONS_CACHE = new ConcurrentHashMap<>();
 
     private final FileUtils fileUtils;
     private final FileMetadataMapper fileMetadataMapper;

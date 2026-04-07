@@ -9,7 +9,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ua.renamer.app.api.model.TransformationMode;
-import ua.renamer.app.api.session.*;
+import ua.renamer.app.api.session.ModeParameters;
+import ua.renamer.app.api.session.RenameCandidate;
+import ua.renamer.app.api.session.RenamePreview;
+import ua.renamer.app.api.session.RenameSessionResult;
+import ua.renamer.app.api.session.SessionStatus;
+import ua.renamer.app.api.session.StatePublisher;
 
 import java.util.List;
 

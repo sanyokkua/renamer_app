@@ -76,7 +76,7 @@ public class SettingsServiceImpl implements SettingsService {
     public void save(final AppSettings settings) throws IOException {
         Path path = getSettingsFilePath();
         Path dir = path.getParent();
-        if (!Files.exists(dir)) {
+        if (dir != null && !Files.exists(dir)) {
             Files.createDirectories(dir);
         }
         String json = serialize(settings);
@@ -149,7 +149,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     private LogLevel safeLogLevel(final String raw) {
         try {
-            return LogLevel.valueOf(raw.toUpperCase());
+            return LogLevel.valueOf(raw.toUpperCase(java.util.Locale.ROOT));
         } catch (IllegalArgumentException e) {
             log.warn("Unknown log level '{}', falling back to INFO", raw);
             log.debug("safeLogLevel failed with exception: {}", e.getMessage());
@@ -191,7 +191,7 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     private Path resolveAppDir() {
-        String os = System.getProperty("os.name", "").toLowerCase();
+        String os = System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT);
         String home = System.getProperty("user.home");
         if (os.contains("mac")) {
             return Path.of(home, "Library", "Application Support",

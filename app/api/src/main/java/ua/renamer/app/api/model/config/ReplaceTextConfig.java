@@ -28,6 +28,10 @@ public class ReplaceTextConfig implements TransformationConfig {
     ItemPositionExtended position;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class ReplaceTextConfigBuilder {
         /**
          * Builds the {@link ReplaceTextConfig}, validating that required fields are non-null.

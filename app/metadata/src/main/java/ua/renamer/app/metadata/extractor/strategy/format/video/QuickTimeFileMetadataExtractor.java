@@ -9,8 +9,14 @@ import ua.renamer.app.api.interfaces.DateTimeUtils;
 
 import java.util.List;
 
+/**
+ * Metadata extractor for QuickTime (MOV) video files.
+ */
 public class QuickTimeFileMetadataExtractor extends BaseVideoMetadataExtractor {
 
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
     @Inject
     public QuickTimeFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
         super(dateTimeUtils);

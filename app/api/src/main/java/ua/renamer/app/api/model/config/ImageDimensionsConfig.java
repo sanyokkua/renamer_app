@@ -39,6 +39,10 @@ public class ImageDimensionsConfig implements TransformationConfig {
     String nameSeparator;
 
     // Partial Lombok builder — Lombok adds with* methods; we override build() for validation
+
+    /**
+     * Partial Lombok builder that overrides {@code build()} to add validation.
+     */
     public static class ImageDimensionsConfigBuilder {
         /**
          * Builds the {@link ImageDimensionsConfig}, validating that required fields are non-null and

@@ -8,7 +8,26 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import ua.renamer.app.api.model.meta.FileMeta;
-import ua.renamer.app.metadata.extractor.strategy.format.image.*;
+import ua.renamer.app.metadata.extractor.strategy.format.image.ArwFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.AvifFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.BmpFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.Cr2FileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.Cr3FileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.DngFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.EpsFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.GifFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.HeifFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.IcoFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.JpegFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.NefFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.OrfFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.PcxFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.PngFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.PsdFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.RafFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.Rw2FileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.TiffFileMetadataExtractor;
+import ua.renamer.app.metadata.extractor.strategy.format.image.WebPFileMetadataExtractor;
 
 import java.io.File;
 
