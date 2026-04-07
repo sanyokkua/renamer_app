@@ -146,7 +146,7 @@ public class ApplicationMainViewController implements Initializable {
             item.setOnAction(e -> handleModeChanged(mode));
             modeMenu.getItems().add(item);
         }
-        ((RadioMenuItem) modeMenu.getItems().get(0)).setSelected(true);
+        ((RadioMenuItem) modeMenu.getItems().getFirst()).setSelected(true);
     }
 
     private void configureFilesTableView() {
@@ -272,7 +272,7 @@ public class ApplicationMainViewController implements Initializable {
                 String badgeText;
                 if (preview.hasError()) {
                     badgeClass = "badge-error";
-                    badgeText = "\u2715 Error";
+                    badgeText = "✕ Error";
                 } else {
                     var result = renameResultsByFileId.get(preview.fileId());
                     if (result != null) {
@@ -282,13 +282,13 @@ public class ApplicationMainViewController implements Initializable {
                             default -> "badge-error";
                         };
                         badgeText = switch (result.status()) {
-                            case SUCCESS -> "\u2713 Renamed";
-                            case SKIPPED -> "\u26A0 Skipped";
-                            default -> "\u2715 Error";
+                            case SUCCESS -> "✓ Renamed";
+                            case SKIPPED -> "⚠ Skipped";
+                            default -> "✕ Error";
                         };
                     } else if (preview.newName() != null && !preview.newName().equals(preview.originalName())) {
                         badgeClass = "badge-pending";
-                        badgeText = "\u25CF Pending";
+                        badgeText = "● Pending";
                     } else {
                         setGraphic(null);
                         return;
@@ -413,7 +413,7 @@ public class ApplicationMainViewController implements Initializable {
         modeViewRegistry.getView(mode).ifPresent(view -> {
             StackPane.setMargin(view, Insets.EMPTY);
             if (!appModeContainer.getChildren().isEmpty()) {
-                var current = appModeContainer.getChildren().get(0);
+                var current = appModeContainer.getChildren().getFirst();
                 var fadeOut = new FadeTransition(Duration.millis(80), current);
                 fadeOut.setToValue(0.0);
                 fadeOut.setOnFinished(e -> {
@@ -447,7 +447,7 @@ public class ApplicationMainViewController implements Initializable {
                 .ifPresentOrElse(
                         newName -> mainPreviewLabel.setText(MessageFormat.format(
                                 languageTextRetriever.getString(TextKeys.PREVIEW_FORMAT), "photo.jpg", newName)),
-                        () -> mainPreviewLabel.setText("\u2014")
+                        () -> mainPreviewLabel.setText("—")
                 );
     }
 
@@ -471,7 +471,7 @@ public class ApplicationMainViewController implements Initializable {
             var dirs = allPaths.stream().filter(Files::isDirectory).toList();
             var files = allPaths.stream().filter(p -> !Files.isDirectory(p)).toList();
 
-            var toAdd = new java.util.ArrayList<java.nio.file.Path>(files);
+            var toAdd = new java.util.ArrayList<>(files);
 
             if (!dirs.isEmpty()) {
                 var opts = FolderDropDialogController.show(dirs.size(), languageTextRetriever::getString);

@@ -31,6 +31,7 @@ import java.nio.file.StandardCopyOption;
 @Singleton
 public class SettingsServiceImpl implements SettingsService {
 
+    private static final String CUSTOM_CONFIG_PATH = "customConfigPath";
     /** Reusable Jackson mapper; ObjectMapper is thread-safe after construction. */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -111,9 +112,10 @@ public class SettingsServiceImpl implements SettingsService {
             String rawLevel = logging.path("level")
                                      .asText(AppDefaults.DEFAULT_LOG_LEVEL.name());
             LogLevel level = safeLogLevel(rawLevel);
-            String rawCustomPath = general.path("customConfigPath").isNull()
+
+            String rawCustomPath = general.path(CUSTOM_CONFIG_PATH).isNull()
                     ? null
-                    : general.path("customConfigPath").asText(null);
+                    : general.path(CUSTOM_CONFIG_PATH).asText(null);
             return AppSettings.builder()
                               .withVersion(root.path("version")
                                                .asInt(AppDefaults.SETTINGS_VERSION))
@@ -148,9 +150,9 @@ public class SettingsServiceImpl implements SettingsService {
         general.put("language", s.getLanguage());
         general.put("customConfigEnabled", s.isCustomConfigEnabled());
         if (s.getCustomConfigPath() != null) {
-            general.put("customConfigPath", s.getCustomConfigPath());
+            general.put(CUSTOM_CONFIG_PATH, s.getCustomConfigPath());
         } else {
-            general.putNull("customConfigPath");
+            general.putNull(CUSTOM_CONFIG_PATH);
         }
         ObjectNode logging = general.putObject("logging");
         logging.put("enabled", s.isLoggingEnabled());

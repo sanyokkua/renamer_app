@@ -346,10 +346,10 @@ public class RenameSessionService implements SessionApi {
                 .build();
         List<PreparedFileModel> results =
                 orchestrator.computePreview(List.of(mock), mode, ModeParametersConverter.toConfig(params), null);
-        if (results.isEmpty() || results.get(0).isHasError()) {
+        if (results.isEmpty() || results.getFirst().isHasError()) {
             return Optional.empty();
         }
-        return Optional.ofNullable(results.get(0).getNewFullName());
+        return Optional.ofNullable(results.getFirst().getNewFullName());
     }
 
     /**

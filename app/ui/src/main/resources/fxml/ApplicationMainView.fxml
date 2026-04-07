@@ -13,10 +13,8 @@
     <MenuBar VBox.vgrow="NEVER" useSystemMenuBar="true">
         <Menu fx:id="modeMenu" text="%menu_mode"/>
         <Menu text="%menu_settings">
-            <items>
-                <MenuItem fx:id="settingsMenuItem" text="%menu_settings_open"
-                          onAction="#onOpenSettings"/>
-            </items>
+            <MenuItem fx:id="settingsMenuItem" text="%menu_settings_open"
+                      onAction="#onOpenSettings"/>
         </Menu>
         <Menu text="%menu_help"/>
     </MenuBar>
@@ -26,7 +24,7 @@
 
         <VBox minWidth="220" styleClass="config-panel">
             <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true"
-                        hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                        hbarPolicy="NEVER">
                 <StackPane fx:id="appModeContainer"/>
             </ScrollPane>
             <!-- Fixed preview strip — always visible, never scrolls -->
@@ -54,7 +52,7 @@
             <ScrollPane VBox.vgrow="NEVER" fitToWidth="true" hbarPolicy="NEVER"
                         prefHeight="130" minHeight="80" maxHeight="200"
                         styleClass="file-info-scroll">
-                <VBox fx:id="fileInfoPanel" styleClass="file-info-panel" fillWidth="true"/>
+                <VBox fx:id="fileInfoPanel" styleClass="file-info-panel"/>
             </ScrollPane>
         </VBox>
 
