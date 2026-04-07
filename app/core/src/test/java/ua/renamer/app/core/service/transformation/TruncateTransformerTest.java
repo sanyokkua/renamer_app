@@ -434,7 +434,7 @@ class TruncateTransformerTest {
         // Then
         assertNotNull(result.getTransformationMeta());
         TransformationMetadata metadata = result.getTransformationMeta();
-        assertEquals(TransformationMode.TRUNCATE_FILE_NAME, metadata.getMode());
+        assertEquals(TransformationMode.TRIM_NAME, metadata.getMode());
         assertNotNull(metadata.getAppliedAt());
         assertTrue(metadata.getAppliedAt().isBefore(LocalDateTime.now().plusSeconds(1)));
         assertNotNull(metadata.getConfig());

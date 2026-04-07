@@ -147,7 +147,7 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 createTrackingCallback()
         );
@@ -259,7 +259,7 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         // Start async execution
         var future = orchestrator.executeAsync(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -364,7 +364,7 @@ class PerformanceIntegrationTest extends BaseTransformationIntegrationTest {
         Instant start2 = Instant.now();
         List<RenameResult> results2 = orchestrator.execute(
                 files2,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 seqConfig,
                 null
         );

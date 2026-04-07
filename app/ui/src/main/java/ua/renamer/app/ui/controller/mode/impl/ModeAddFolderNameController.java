@@ -19,11 +19,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the Use Parent Folder Name transformation mode.
+ * Controller for the Add Folder Name transformation mode.
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeUseParentFolderNameController implements ModeControllerV2Api<ParentFolderParams>, Initializable {
+public class ModeAddFolderNameController implements ModeControllerV2Api<ParentFolderParams>, Initializable {
 
     @FXML
     private ItemPositionRadioSelector itemPositionRadioSelector;
@@ -50,7 +50,7 @@ public class ModeUseParentFolderNameController implements ModeControllerV2Api<Pa
 
     @Override
     public TransformationMode supportedMode() {
-        return TransformationMode.USE_PARENT_FOLDER_NAME;
+        return TransformationMode.ADD_FOLDER_NAME;
     }
 
     @Override

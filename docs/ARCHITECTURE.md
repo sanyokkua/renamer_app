@@ -356,8 +356,8 @@ F -->|updates|C
 
 **Components:**
 
-- **View**: FXML files (e.g., `app_main_view.fxml`, `mode_add_custom_text.fxml`)
-- **Controller**: Java classes (e.g., `ApplicationMainViewController`, `ModeAddCustomTextController`)
+- **View**: FXML files (e.g., `app_main_view.fxml`, `ModeAddText.fxml`)
+- **Controller**: Java classes (e.g., `ApplicationMainViewController`, `ModeAddTextController`)
 - **Model**: `ObservableList<RenameModel>` shared across the application
 
 ### 6.4. Dependency Injection (Guice)
@@ -820,9 +820,9 @@ in(Singleton .class);
 
 ```java
 // Custom qualifiers for each mode's FXML loader, Parent, and Controller
-@AddCustomTextFxmlLoader
+@AddTextFxmlLoader
 @ChangeCaseFxmlLoader
-@UseDatetimeFxmlLoader
+@AddDatetimeFxmlLoader
 // ... and so on
 ```
 
@@ -1040,15 +1040,15 @@ setNext(reserveMapper);
 
 | Mode                       | Enum                     | Command                                      | Purpose                       |
 |----------------------------|--------------------------|----------------------------------------------|-------------------------------|
-| **Add Custom Text**        | `ADD_CUSTOM_TEXT`        | `AddTextPrepareInformationCommand`           | Prepend or append text        |
+| **Add Text**               | `ADD_TEXT`               | `AddTextPrepareInformationCommand`           | Prepend or append text        |
 | **Change Case**            | `CHANGE_CASE`            | `ChangeCasePreparePrepareInformationCommand` | UPPER, lower, Title Case      |
-| **Use DateTime**           | `USE_DATETIME`           | `DateTimeRenamePrepareInformationCommand`    | Use file/metadata dates       |
-| **Use Image Dimensions**   | `USE_IMAGE_DIMENSIONS`   | `ImageDimensionsPrepareInformationCommand`   | Add WIDTHxHEIGHT              |
-| **Use Parent Folder Name** | `USE_PARENT_FOLDER_NAME` | `ParentFoldersPrepareInformationCommand`     | Use folder names              |
-| **Remove Custom Text**     | `REMOVE_CUSTOM_TEXT`     | `RemoveTextPrepareInformationCommand`        | Remove N chars from begin/end |
-| **Replace Custom Text**    | `REPLACE_CUSTOM_TEXT`    | `ReplaceTextPrepareInformationCommand`       | Find & replace text           |
-| **Add Sequence**           | `ADD_SEQUENCE`           | `SequencePrepareInformationCommand`          | Add sequential numbers        |
-| **Truncate File Name**     | `TRUNCATE_FILE_NAME`     | `TruncateNamePrepareInformationCommand`      | Limit filename length         |
+| **Add Date & Time**        | `ADD_DATETIME`           | `DateTimeRenamePrepareInformationCommand`    | Use file/metadata dates       |
+| **Add Dimensions**         | `ADD_DIMENSIONS`         | `ImageDimensionsPrepareInformationCommand`   | Add WIDTHxHEIGHT              |
+| **Add Folder Name**        | `ADD_FOLDER_NAME`        | `ParentFoldersPrepareInformationCommand`     | Use folder names              |
+| **Remove Text**            | `REMOVE_TEXT`            | `RemoveTextPrepareInformationCommand`        | Remove N chars from begin/end |
+| **Replace Text**           | `REPLACE_TEXT`           | `ReplaceTextPrepareInformationCommand`       | Find & replace text           |
+| **Number Files**           | `NUMBER_FILES`           | `SequencePrepareInformationCommand`          | Add sequential numbers        |
+| **Trim Name**              | `TRIM_NAME`              | `TruncateNamePrepareInformationCommand`      | Limit filename length         |
 | **Change Extension**       | `CHANGE_EXTENSION`       | `ExtensionChangePrepareInformationCommand`   | Change file extension         |
 
 ---

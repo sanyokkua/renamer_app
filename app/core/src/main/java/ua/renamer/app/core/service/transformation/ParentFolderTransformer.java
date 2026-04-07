@@ -74,7 +74,7 @@ public class ParentFolderTransformer implements FileTransformationService<Parent
 
     private TransformationMetadata buildMetadata(ParentFolderConfig config) {
         return TransformationMetadata.builder()
-                .withMode(TransformationMode.USE_PARENT_FOLDER_NAME)
+                .withMode(TransformationMode.ADD_FOLDER_NAME)
                 .withAppliedAt(LocalDateTime.now())
                 .withConfig(Map.of(
                         "numberOfParentFolders", config.getNumberOfParentFolders(),

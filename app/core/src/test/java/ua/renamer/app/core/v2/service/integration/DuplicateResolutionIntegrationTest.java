@@ -37,7 +37,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -65,7 +65,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -91,7 +91,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -122,7 +122,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -151,7 +151,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 createTrackingCallback()
         );
@@ -195,7 +195,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -244,7 +244,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -273,7 +273,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -302,7 +302,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -336,7 +336,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -363,7 +363,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -396,7 +396,7 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );

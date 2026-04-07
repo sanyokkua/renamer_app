@@ -21,11 +21,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the Add Sequence transformation mode.
+ * Controller for the Number Files transformation mode.
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeAddSequenceController
+public class ModeNumberFilesController
         implements ModeControllerV2Api<SequenceParams>, Initializable {
 
     private final SortSourceConverter converter;
@@ -88,7 +88,7 @@ public class ModeAddSequenceController
 
     @Override
     public TransformationMode supportedMode() {
-        return TransformationMode.ADD_SEQUENCE;
+        return TransformationMode.NUMBER_FILES;
     }
 
     @Override

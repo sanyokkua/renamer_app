@@ -146,7 +146,7 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
 
     private TransformationMetadata buildMetadata(SequenceConfig config) {
         return TransformationMetadata.builder()
-                .withMode(TransformationMode.ADD_SEQUENCE)
+                .withMode(TransformationMode.NUMBER_FILES)
                 .withAppliedAt(LocalDateTime.now())
                 .withConfig(Map.of(
                         "startNumber", config.getStartNumber(),

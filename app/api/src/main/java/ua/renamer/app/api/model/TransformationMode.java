@@ -25,29 +25,29 @@ public enum TransformationMode {
     CHANGE_CASE,
 
     /**
-     * Use datetime in filename from various sources.
+     * Add datetime to the filename from various sources.
      */
-    USE_DATETIME,
+    ADD_DATETIME,
 
     /**
-     * Use image dimensions in filename (e.g., 1920x1080).
+     * Add image dimensions to the filename (e.g., 1920x1080).
      */
-    USE_IMAGE_DIMENSIONS,
+    ADD_DIMENSIONS,
 
     /**
-     * Add sequence numbers to files.
+     * Number files with a sequential numeric sequence.
      */
-    ADD_SEQUENCE,
+    NUMBER_FILES,
 
     /**
-     * Use parent folder name in filename.
+     * Add parent folder name to the filename.
      */
-    USE_PARENT_FOLDER_NAME,
+    ADD_FOLDER_NAME,
 
     /**
-     * Truncate filename by removing characters.
+     * Trim filename by removing characters from the beginning or end.
      */
-    TRUNCATE_FILE_NAME,
+    TRIM_NAME,
 
     /**
      * Change file extension.

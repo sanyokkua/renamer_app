@@ -28,15 +28,15 @@ public class AppModesConverter extends StringConverter<TransformationMode> {
     @Override
     public String toString(TransformationMode object) {
         return switch (object) {
-            case ADD_TEXT -> languageTextRetriever.getString(TextKeys.MODE_ADD_CUSTOM_TEXT);
+            case ADD_TEXT -> languageTextRetriever.getString(TextKeys.MODE_ADD_TEXT);
             case CHANGE_CASE -> languageTextRetriever.getString(TextKeys.MODE_CHANGE_CASE);
-            case USE_DATETIME -> languageTextRetriever.getString(TextKeys.MODE_DATETIME);
-            case USE_IMAGE_DIMENSIONS -> languageTextRetriever.getString(TextKeys.MODE_IMG_VID_DIMENSIONS);
-            case USE_PARENT_FOLDER_NAME -> languageTextRetriever.getString(TextKeys.MODE_PARENT_FOLDERS);
+            case ADD_DATETIME -> languageTextRetriever.getString(TextKeys.MODE_ADD_DATETIME);
+            case ADD_DIMENSIONS -> languageTextRetriever.getString(TextKeys.MODE_ADD_DIMENSIONS);
+            case ADD_FOLDER_NAME -> languageTextRetriever.getString(TextKeys.MODE_ADD_FOLDER_NAME);
             case REMOVE_TEXT -> languageTextRetriever.getString(TextKeys.MODE_REMOVE_TEXT);
             case REPLACE_TEXT -> languageTextRetriever.getString(TextKeys.MODE_REPLACE_TEXT);
-            case ADD_SEQUENCE -> languageTextRetriever.getString(TextKeys.MODE_USE_DIGITAL_SEQUENCE);
-            case TRUNCATE_FILE_NAME -> languageTextRetriever.getString(TextKeys.MODE_TRUNCATE);
+            case NUMBER_FILES -> languageTextRetriever.getString(TextKeys.MODE_NUMBER_FILES);
+            case TRIM_NAME -> languageTextRetriever.getString(TextKeys.MODE_TRIM_NAME);
             case CHANGE_EXTENSION -> languageTextRetriever.getString(TextKeys.MODE_CHANGE_EXTENSION);
         };
     }

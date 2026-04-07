@@ -6,7 +6,7 @@ import ua.renamer.app.api.model.TransformationMode;
 import java.time.LocalDateTime;
 
 /**
- * Parameters for the {@link TransformationMode#USE_DATETIME} transformation mode.
+ * Parameters for the {@link TransformationMode#ADD_DATETIME} transformation mode.
  * Configures how date and/or time values are extracted from a source and embedded in the filename.
  *
  * @param source                      the origin of the date/time value; must not be null
@@ -44,7 +44,7 @@ public record DateTimeParams(
 
     @Override
     public TransformationMode mode() {
-        return TransformationMode.USE_DATETIME;
+        return TransformationMode.ADD_DATETIME;
     }
 
     @Override

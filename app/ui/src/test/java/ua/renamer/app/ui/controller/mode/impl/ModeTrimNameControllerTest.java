@@ -32,7 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeTruncateFileNameController}.
+ * Unit tests for {@link ModeTrimNameController}.
  *
  * <p>Test categories:
  * <ul>
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  * in {@code module-info.java}).
  */
 @ExtendWith(MockitoExtension.class)
-class ModeTruncateFileNameControllerTest {
+class ModeTrimNameControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
@@ -56,7 +56,7 @@ class ModeTruncateFileNameControllerTest {
     @Mock
     private ModeApi<TruncateParams> modeApi;
 
-    private ModeTruncateFileNameController controller;
+    private ModeTrimNameController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -75,9 +75,9 @@ class ModeTruncateFileNameControllerTest {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
-    private static void injectSpinner(ModeTruncateFileNameController target, Spinner<Integer> spinner)
+    private static void injectSpinner(ModeTrimNameController target, Spinner<Integer> spinner)
             throws Exception {
-        Field f = ModeTruncateFileNameController.class.getDeclaredField("amountOfSymbolsSpinner");
+        Field f = ModeTrimNameController.class.getDeclaredField("amountOfSymbolsSpinner");
         f.setAccessible(true);
         f.set(target, spinner);
     }
@@ -86,42 +86,42 @@ class ModeTruncateFileNameControllerTest {
     // Reflection helpers — inject / read @FXML fields
     // -----------------------------------------------------------------------
 
-    private static void injectRadioSelector(ModeTruncateFileNameController target,
+    private static void injectRadioSelector(ModeTrimNameController target,
                                             ItemPositionTruncateRadioSelector selector) throws Exception {
-        Field f = ModeTruncateFileNameController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeTrimNameController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         f.set(target, selector);
     }
 
-    private static void injectLabel(ModeTruncateFileNameController target, Label label) throws Exception {
-        Field f = ModeTruncateFileNameController.class.getDeclaredField("amountOfSymbolsLabel");
+    private static void injectLabel(ModeTrimNameController target, Label label) throws Exception {
+        Field f = ModeTrimNameController.class.getDeclaredField("amountOfSymbolsLabel");
         f.setAccessible(true);
         f.set(target, label);
     }
 
 
     @SuppressWarnings("unchecked")
-    private static Spinner<Integer> readSpinner(ModeTruncateFileNameController target) throws Exception {
-        Field f = ModeTruncateFileNameController.class.getDeclaredField("amountOfSymbolsSpinner");
+    private static Spinner<Integer> readSpinner(ModeTrimNameController target) throws Exception {
+        Field f = ModeTrimNameController.class.getDeclaredField("amountOfSymbolsSpinner");
         f.setAccessible(true);
         return (Spinner<Integer>) f.get(target);
     }
 
-    private static ItemPositionTruncateRadioSelector readRadioSelector(ModeTruncateFileNameController target)
+    private static ItemPositionTruncateRadioSelector readRadioSelector(ModeTrimNameController target)
             throws Exception {
-        Field f = ModeTruncateFileNameController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeTrimNameController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         return (ItemPositionTruncateRadioSelector) f.get(target);
     }
 
-    private static Label readLabel(ModeTruncateFileNameController target) throws Exception {
-        Field f = ModeTruncateFileNameController.class.getDeclaredField("amountOfSymbolsLabel");
+    private static Label readLabel(ModeTrimNameController target) throws Exception {
+        Field f = ModeTrimNameController.class.getDeclaredField("amountOfSymbolsLabel");
         f.setAccessible(true);
         return (Label) f.get(target);
     }
 
     @SuppressWarnings("unchecked")
-    private static Spinner<Integer> readSpinnerUnchecked(ModeTruncateFileNameController target) {
+    private static Spinner<Integer> readSpinnerUnchecked(ModeTrimNameController target) {
         try {
             return readSpinner(target);
         } catch (Exception e) {
@@ -130,7 +130,7 @@ class ModeTruncateFileNameControllerTest {
     }
 
     private static ItemPositionTruncateRadioSelector readRadioSelectorUnchecked(
-            ModeTruncateFileNameController target) {
+            ModeTrimNameController target) {
         try {
             return readRadioSelector(target);
         } catch (Exception e) {
@@ -138,7 +138,7 @@ class ModeTruncateFileNameControllerTest {
         }
     }
 
-    private static Label readLabelUnchecked(ModeTruncateFileNameController target) {
+    private static Label readLabelUnchecked(ModeTrimNameController target) {
         try {
             return readLabel(target);
         } catch (Exception e) {
@@ -209,7 +209,7 @@ class ModeTruncateFileNameControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        controller = new ModeTruncateFileNameController();
+        controller = new ModeTrimNameController();
 
         var converter = new TruncateOptionsConverter(languageTextRetriever);
 
@@ -240,7 +240,7 @@ class ModeTruncateFileNameControllerTest {
             TransformationMode result = controller.supportedMode();
 
             // Assert
-            assertThat(result).isEqualTo(TransformationMode.TRUNCATE_FILE_NAME);
+            assertThat(result).isEqualTo(TransformationMode.TRIM_NAME);
         }
 
         @Test

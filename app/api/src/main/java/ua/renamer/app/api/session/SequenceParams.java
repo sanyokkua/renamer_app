@@ -4,7 +4,7 @@ import ua.renamer.app.api.enums.SortSource;
 import ua.renamer.app.api.model.TransformationMode;
 
 /**
- * Parameters for the {@link TransformationMode#ADD_SEQUENCE} transformation mode.
+ * Parameters for the {@link TransformationMode#NUMBER_FILES} transformation mode.
  * Specifies how a numeric sequence is generated and appended to filenames.
  * This mode requires sequential (non-parallel) execution across all files;
  * see {@link #requiresSequentialExecution()}.
@@ -22,7 +22,7 @@ public record SequenceParams(int startNumber, int stepValue, int paddingDigits, 
 
     @Override
     public TransformationMode mode() {
-        return TransformationMode.ADD_SEQUENCE;
+        return TransformationMode.NUMBER_FILES;
     }
 
     @Override

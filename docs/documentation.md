@@ -3,7 +3,7 @@
   * [Overview](#overview)
   * [Start renaming](#start-renaming)
     * [Renaming Modes](#renaming-modes)
-      * [Add Custom Text](#add-custom-text)
+      * [Add Text](#add-text)
       * [Change Text Case](#change-text-case)
       * [DateTime Integration](#datetime-integration)
       * [Image Dimensions](#image-dimensions)
@@ -34,9 +34,9 @@ When files are added, you can click on the row in the table to get more informat
 
 Explore the different renaming modes available in the application:
 
-#### Add Custom Text
+#### Add Text
 
-![Add custom text mode](1_add_custom.png)
+![Add text mode](1_add_custom.png)
 
 Append or prepend custom text to the existing file names.
 

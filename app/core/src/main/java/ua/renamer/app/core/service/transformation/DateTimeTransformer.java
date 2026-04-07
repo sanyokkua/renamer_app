@@ -155,7 +155,7 @@ public class DateTimeTransformer implements FileTransformationService<DateTimeCo
 
     private TransformationMetadata buildMetadata(DateTimeConfig config) {
         return TransformationMetadata.builder()
-                .withMode(TransformationMode.USE_DATETIME)
+                .withMode(TransformationMode.ADD_DATETIME)
                 .withAppliedAt(LocalDateTime.now())
                 .withConfig(Map.of(
                         "source", config.getSource().name(),

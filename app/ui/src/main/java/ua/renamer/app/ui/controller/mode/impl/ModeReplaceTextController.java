@@ -18,11 +18,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the Replace Custom Text transformation mode.
+ * Controller for the Replace Text transformation mode.
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeReplaceCustomTextController implements ModeControllerV2Api<ReplaceTextParams>, Initializable {
+public class ModeReplaceTextController implements ModeControllerV2Api<ReplaceTextParams>, Initializable {
 
     @FXML
     private ItemPositionExtendedRadioSelector itemPositionRadioSelector;

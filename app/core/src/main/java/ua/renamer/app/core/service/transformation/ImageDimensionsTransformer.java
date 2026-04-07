@@ -117,7 +117,7 @@ public class ImageDimensionsTransformer implements FileTransformationService<Ima
 
     private TransformationMetadata buildMetadata(ImageDimensionsConfig config) {
         return TransformationMetadata.builder()
-                .withMode(TransformationMode.USE_IMAGE_DIMENSIONS)
+                .withMode(TransformationMode.ADD_DIMENSIONS)
                 .withAppliedAt(LocalDateTime.now())
                 .withConfig(Map.of(
                         "leftSide", config.getLeftSide().name(),

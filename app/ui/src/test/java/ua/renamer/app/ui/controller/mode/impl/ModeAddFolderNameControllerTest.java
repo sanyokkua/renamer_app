@@ -35,7 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeUseParentFolderNameController}.
+ * Unit tests for {@link ModeAddFolderNameController}.
  *
  * <p>Test categories:
  * <ul>
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
  * in {@code module-info.java}).
  */
 @ExtendWith(MockitoExtension.class)
-class ModeUseParentFolderNameControllerTest {
+class ModeAddFolderNameControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
@@ -59,7 +59,7 @@ class ModeUseParentFolderNameControllerTest {
     @Mock
     private ModeApi<ParentFolderParams> modeApi;
 
-    private ModeUseParentFolderNameController controller;
+    private ModeAddFolderNameController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -78,9 +78,9 @@ class ModeUseParentFolderNameControllerTest {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
-    private static void injectSpinner(ModeUseParentFolderNameController target, Spinner<Integer> spinner)
+    private static void injectSpinner(ModeAddFolderNameController target, Spinner<Integer> spinner)
             throws Exception {
-        Field f = ModeUseParentFolderNameController.class.getDeclaredField("parentsNumberSpinner");
+        Field f = ModeAddFolderNameController.class.getDeclaredField("parentsNumberSpinner");
         f.setAccessible(true);
         f.set(target, spinner);
     }
@@ -89,43 +89,43 @@ class ModeUseParentFolderNameControllerTest {
     // Reflection helpers — inject / read @FXML fields
     // -----------------------------------------------------------------------
 
-    private static void injectTextField(ModeUseParentFolderNameController target, TextField field)
+    private static void injectTextField(ModeAddFolderNameController target, TextField field)
             throws Exception {
-        Field f = ModeUseParentFolderNameController.class.getDeclaredField("fileNameSeparatorTextField");
+        Field f = ModeAddFolderNameController.class.getDeclaredField("fileNameSeparatorTextField");
         f.setAccessible(true);
         f.set(target, field);
     }
 
-    private static void injectRadioSelector(ModeUseParentFolderNameController target,
+    private static void injectRadioSelector(ModeAddFolderNameController target,
                                             ItemPositionRadioSelector selector) throws Exception {
-        Field f = ModeUseParentFolderNameController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeAddFolderNameController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         f.set(target, selector);
     }
 
 
     @SuppressWarnings("unchecked")
-    private static Spinner<Integer> readSpinner(ModeUseParentFolderNameController target) throws Exception {
-        Field f = ModeUseParentFolderNameController.class.getDeclaredField("parentsNumberSpinner");
+    private static Spinner<Integer> readSpinner(ModeAddFolderNameController target) throws Exception {
+        Field f = ModeAddFolderNameController.class.getDeclaredField("parentsNumberSpinner");
         f.setAccessible(true);
         return (Spinner<Integer>) f.get(target);
     }
 
-    private static TextField readTextField(ModeUseParentFolderNameController target) throws Exception {
-        Field f = ModeUseParentFolderNameController.class.getDeclaredField("fileNameSeparatorTextField");
+    private static TextField readTextField(ModeAddFolderNameController target) throws Exception {
+        Field f = ModeAddFolderNameController.class.getDeclaredField("fileNameSeparatorTextField");
         f.setAccessible(true);
         return (TextField) f.get(target);
     }
 
-    private static ItemPositionRadioSelector readRadioSelector(ModeUseParentFolderNameController target)
+    private static ItemPositionRadioSelector readRadioSelector(ModeAddFolderNameController target)
             throws Exception {
-        Field f = ModeUseParentFolderNameController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeAddFolderNameController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         return (ItemPositionRadioSelector) f.get(target);
     }
 
     @SuppressWarnings("unchecked")
-    private static Spinner<Integer> readSpinnerUnchecked(ModeUseParentFolderNameController target) {
+    private static Spinner<Integer> readSpinnerUnchecked(ModeAddFolderNameController target) {
         try {
             return readSpinner(target);
         } catch (Exception e) {
@@ -133,7 +133,7 @@ class ModeUseParentFolderNameControllerTest {
         }
     }
 
-    private static TextField readTextFieldUnchecked(ModeUseParentFolderNameController target) {
+    private static TextField readTextFieldUnchecked(ModeAddFolderNameController target) {
         try {
             return readTextField(target);
         } catch (Exception e) {
@@ -142,7 +142,7 @@ class ModeUseParentFolderNameControllerTest {
     }
 
     private static ItemPositionRadioSelector readRadioSelectorUnchecked(
-            ModeUseParentFolderNameController target) {
+            ModeAddFolderNameController target) {
         try {
             return readRadioSelector(target);
         } catch (Exception e) {
@@ -198,7 +198,7 @@ class ModeUseParentFolderNameControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        controller = new ModeUseParentFolderNameController();
+        controller = new ModeAddFolderNameController();
 
         var converter = new ItemPositionConverter(languageTextRetriever);
 
@@ -237,7 +237,7 @@ class ModeUseParentFolderNameControllerTest {
         void supportedMode_returnsUseParentFolderName() {
             TransformationMode result = controller.supportedMode();
 
-            assertThat(result).isEqualTo(TransformationMode.USE_PARENT_FOLDER_NAME);
+            assertThat(result).isEqualTo(TransformationMode.ADD_FOLDER_NAME);
         }
 
         @Test

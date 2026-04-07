@@ -712,7 +712,7 @@ class DateTimeTransformerTest {
         // Then
         assertNotNull(result.getTransformationMeta());
         TransformationMetadata metadata = result.getTransformationMeta();
-        assertEquals(TransformationMode.USE_DATETIME, metadata.getMode());
+        assertEquals(TransformationMode.ADD_DATETIME, metadata.getMode());
         assertNotNull(metadata.getAppliedAt());
         assertNotNull(metadata.getConfig());
     }

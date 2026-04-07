@@ -768,7 +768,7 @@ class SequenceTransformerTest {
         PreparedFileModel result = results.get(0);
         assertNotNull(result.getTransformationMeta());
         TransformationMetadata metadata = result.getTransformationMeta();
-        assertEquals(TransformationMode.ADD_SEQUENCE, metadata.getMode());
+        assertEquals(TransformationMode.NUMBER_FILES, metadata.getMode());
         assertNotNull(metadata.getAppliedAt());
         assertNotNull(metadata.getConfig());
     }

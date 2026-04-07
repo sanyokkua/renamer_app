@@ -82,16 +82,16 @@ public class DIUIModule extends AbstractModule {
     }
 
     private void bindViewControllers() {
-        bind(ModeAddCustomTextController.class).in(Singleton.class);
-        bind(ModeAddSequenceController.class).in(Singleton.class);
+        bind(ModeAddTextController.class).in(Singleton.class);
+        bind(ModeNumberFilesController.class).in(Singleton.class);
         bind(ModeChangeCaseController.class).in(Singleton.class);
         bind(ModeChangeExtensionController.class).in(Singleton.class);
-        bind(ModeRemoveCustomTextController.class).in(Singleton.class);
-        bind(ModeReplaceCustomTextController.class).in(Singleton.class);
-        bind(ModeTruncateFileNameController.class).in(Singleton.class);
-        bind(ModeUseDatetimeController.class).in(Singleton.class);
-        bind(ModeUseImageDimensionsController.class).in(Singleton.class);
-        bind(ModeUseParentFolderNameController.class).in(Singleton.class);
+        bind(ModeRemoveTextController.class).in(Singleton.class);
+        bind(ModeReplaceTextController.class).in(Singleton.class);
+        bind(ModeTrimNameController.class).in(Singleton.class);
+        bind(ModeAddDatetimeController.class).in(Singleton.class);
+        bind(ModeAddDimensionsController.class).in(Singleton.class);
+        bind(ModeAddFolderNameController.class).in(Singleton.class);
         bind(ApplicationMainViewController.class).in(Singleton.class);
     }
 
@@ -99,17 +99,17 @@ public class DIUIModule extends AbstractModule {
      * Provides a fully populated {@link ModeViewRegistry} by loading each mode's FXML
      * and pairing its loaded {@link Parent} view with its injected controller.
      *
-     * @param viewLoaderApi       the service that resolves FXML files by view name
-     * @param addCustomText       controller for ADD_TEXT mode
-     * @param changeCase          controller for CHANGE_CASE mode
-     * @param useDatetime         controller for USE_DATETIME mode
-     * @param useImageDimensions  controller for USE_IMAGE_DIMENSIONS mode
-     * @param useParentFolderName controller for USE_PARENT_FOLDER_NAME mode
-     * @param removeCustomText    controller for REMOVE_TEXT mode
-     * @param replaceCustomText   controller for REPLACE_TEXT mode
-     * @param addSequence         controller for ADD_SEQUENCE mode
-     * @param truncateFileName    controller for TRUNCATE_FILE_NAME mode
-     * @param changeExtension     controller for CHANGE_EXTENSION mode
+     * @param viewLoaderApi  the service that resolves FXML files by view name
+     * @param addText        controller for ADD_TEXT mode
+     * @param changeCase     controller for CHANGE_CASE mode
+     * @param addDatetime    controller for ADD_DATETIME mode
+     * @param addDimensions  controller for ADD_DIMENSIONS mode
+     * @param addFolderName  controller for ADD_FOLDER_NAME mode
+     * @param removeText     controller for REMOVE_TEXT mode
+     * @param replaceText    controller for REPLACE_TEXT mode
+     * @param numberFiles    controller for NUMBER_FILES mode
+     * @param trimName       controller for TRIM_NAME mode
+     * @param changeExtension controller for CHANGE_EXTENSION mode
      * @return a populated registry; never null
      * @throws IOException if any FXML file cannot be loaded
      */
@@ -117,26 +117,26 @@ public class DIUIModule extends AbstractModule {
     @Singleton
     public ModeViewRegistry provideModeViewRegistry(
             ViewLoaderApi viewLoaderApi,
-            ModeAddCustomTextController addCustomText,
+            ModeAddTextController addText,
             ModeChangeCaseController changeCase,
-            ModeUseDatetimeController useDatetime,
-            ModeUseImageDimensionsController useImageDimensions,
-            ModeUseParentFolderNameController useParentFolderName,
-            ModeRemoveCustomTextController removeCustomText,
-            ModeReplaceCustomTextController replaceCustomText,
-            ModeAddSequenceController addSequence,
-            ModeTruncateFileNameController truncateFileName,
+            ModeAddDatetimeController addDatetime,
+            ModeAddDimensionsController addDimensions,
+            ModeAddFolderNameController addFolderName,
+            ModeRemoveTextController removeText,
+            ModeReplaceTextController replaceText,
+            ModeNumberFilesController numberFiles,
+            ModeTrimNameController trimName,
             ModeChangeExtensionController changeExtension) throws IOException {
         var registry = new ModeViewRegistry();
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_CUSTOM_TEXT, addCustomText);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_TEXT, addText);
         loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_CHANGE_CASE, changeCase);
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_USE_DATETIME, useDatetime);
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_USE_IMAGE_DIMENSIONS, useImageDimensions);
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_USE_PARENT_FOLDER_NAME, useParentFolderName);
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_REMOVE_CUSTOM_TEXT, removeCustomText);
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_REPLACE_CUSTOM_TEXT, replaceCustomText);
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_SEQUENCE, addSequence);
-        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_TRUNCATE_FILE_NAME, truncateFileName);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_DATETIME, addDatetime);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_DIMENSIONS, addDimensions);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_FOLDER_NAME, addFolderName);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_REMOVE_TEXT, removeText);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_REPLACE_TEXT, replaceText);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_NUMBER_FILES, numberFiles);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_TRIM_NAME, trimName);
         loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_CHANGE_EXTENSION, changeExtension);
         return registry;
     }

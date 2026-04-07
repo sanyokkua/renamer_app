@@ -679,7 +679,7 @@ class ImageDimensionsTransformerTest {
         // Then
         assertNotNull(result.getTransformationMeta());
         TransformationMetadata metadata = result.getTransformationMeta();
-        assertEquals(TransformationMode.USE_IMAGE_DIMENSIONS, metadata.getMode());
+        assertEquals(TransformationMode.ADD_DIMENSIONS, metadata.getMode());
         assertNotNull(metadata.getAppliedAt());
         assertNotNull(metadata.getConfig());
     }

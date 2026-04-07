@@ -20,11 +20,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the Truncate File Name transformation mode.
+ * Controller for the Trim Name transformation mode.
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeTruncateFileNameController implements ModeControllerV2Api<TruncateParams>, Initializable {
+public class ModeTrimNameController implements ModeControllerV2Api<TruncateParams>, Initializable {
 
     @FXML
     private Label amountOfSymbolsLabel;
@@ -63,7 +63,7 @@ public class ModeTruncateFileNameController implements ModeControllerV2Api<Trunc
 
     @Override
     public TransformationMode supportedMode() {
-        return TransformationMode.TRUNCATE_FILE_NAME;
+        return TransformationMode.TRIM_NAME;
     }
 
     @Override

@@ -86,18 +86,18 @@ public class RenameSessionService implements SessionApi {
             case REMOVE_TEXT -> new RemoveTextParams("", ItemPosition.BEGIN);
             case REPLACE_TEXT -> new ReplaceTextParams("", "", ItemPositionExtended.BEGIN);
             case CHANGE_CASE -> new ChangeCaseParams(TextCaseOptions.UPPERCASE, false);
-            case ADD_SEQUENCE -> new SequenceParams(1, 1, 2, SortSource.FILE_NAME, true);
-            case TRUNCATE_FILE_NAME -> new TruncateParams(0, TruncateOptions.REMOVE_SYMBOLS_FROM_END);
+            case NUMBER_FILES -> new SequenceParams(1, 1, 2, SortSource.FILE_NAME, true);
+            case TRIM_NAME -> new TruncateParams(0, TruncateOptions.REMOVE_SYMBOLS_FROM_END);
             case CHANGE_EXTENSION -> new ExtensionChangeParams("");
-            case USE_DATETIME -> new DateTimeParams(
+            case ADD_DATETIME -> new DateTimeParams(
                     DateTimeSource.FILE_CREATION_DATE, DateFormat.YYYY_MM_DD_DASHED,
                     TimeFormat.DO_NOT_USE_TIME, ItemPositionWithReplacement.BEGIN,
                     true, false, false, true, false, null, true,
                     DateTimeFormat.DATE_TIME_TOGETHER, "");
-            case USE_IMAGE_DIMENSIONS -> new ImageDimensionsParams(
+            case ADD_DIMENSIONS -> new ImageDimensionsParams(
                     ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
                     ItemPositionWithReplacement.BEGIN, " ", "x");
-            case USE_PARENT_FOLDER_NAME -> new ParentFolderParams(1, ItemPosition.BEGIN, " ");
+            case ADD_FOLDER_NAME -> new ParentFolderParams(1, ItemPosition.BEGIN, " ");
         };
     }
 

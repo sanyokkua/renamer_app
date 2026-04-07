@@ -36,7 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeAddSequenceController}.
+ * Unit tests for {@link ModeNumberFilesController}.
  *
  * <p>Test categories:
  * <ul>
@@ -52,14 +52,14 @@ import static org.mockito.Mockito.*;
  * (the package is unconditionally opened in {@code module-info.java}).
  */
 @ExtendWith(MockitoExtension.class)
-class ModeAddSequenceControllerTest {
+class ModeNumberFilesControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
     @Mock
     private LanguageTextRetrieverApi languageTextRetriever;
 
-    private ModeAddSequenceController controller;
+    private ModeNumberFilesController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -79,9 +79,9 @@ class ModeAddSequenceControllerTest {
     }
 
     private static void injectStartSeqNumberSpinner(
-            ModeAddSequenceController target,
+            ModeNumberFilesController target,
             Spinner<Integer> spinner) throws Exception {
-        Field f = ModeAddSequenceController.class.getDeclaredField("startSeqNumberSpinner");
+        Field f = ModeNumberFilesController.class.getDeclaredField("startSeqNumberSpinner");
         f.setAccessible(true);
         f.set(target, spinner);
     }
@@ -91,40 +91,40 @@ class ModeAddSequenceControllerTest {
     // -----------------------------------------------------------------------
 
     private static void injectStepValueSpinner(
-            ModeAddSequenceController target,
+            ModeNumberFilesController target,
             Spinner<Integer> spinner) throws Exception {
-        Field f = ModeAddSequenceController.class.getDeclaredField("stepValueSpinner");
+        Field f = ModeNumberFilesController.class.getDeclaredField("stepValueSpinner");
         f.setAccessible(true);
         f.set(target, spinner);
     }
 
     private static void injectMinDigitAmountSpinner(
-            ModeAddSequenceController target,
+            ModeNumberFilesController target,
             Spinner<Integer> spinner) throws Exception {
-        Field f = ModeAddSequenceController.class.getDeclaredField("minDigitAmountSpinner");
+        Field f = ModeNumberFilesController.class.getDeclaredField("minDigitAmountSpinner");
         f.setAccessible(true);
         f.set(target, spinner);
     }
 
     private static void injectSortingSourceChoiceBox(
-            ModeAddSequenceController target,
+            ModeNumberFilesController target,
             ChoiceBox<ua.renamer.app.api.enums.SortSource> box) throws Exception {
-        Field f = ModeAddSequenceController.class.getDeclaredField("sortingSourceChoiceBox");
+        Field f = ModeNumberFilesController.class.getDeclaredField("sortingSourceChoiceBox");
         f.setAccessible(true);
         f.set(target, box);
     }
 
     private static void injectPerFolderCountingCheckBox(
-            ModeAddSequenceController target,
+            ModeNumberFilesController target,
             CheckBox checkBox) throws Exception {
-        Field f = ModeAddSequenceController.class.getDeclaredField("perFolderCountingCheckBox");
+        Field f = ModeNumberFilesController.class.getDeclaredField("perFolderCountingCheckBox");
         f.setAccessible(true);
         f.set(target, checkBox);
     }
 
-    private static CheckBox readPerFolderCheckBoxUnchecked(ModeAddSequenceController target) {
+    private static CheckBox readPerFolderCheckBoxUnchecked(ModeNumberFilesController target) {
         try {
-            Field f = ModeAddSequenceController.class.getDeclaredField("perFolderCountingCheckBox");
+            Field f = ModeNumberFilesController.class.getDeclaredField("perFolderCountingCheckBox");
             f.setAccessible(true);
             return (CheckBox) f.get(target);
         } catch (Exception e) {
@@ -134,9 +134,9 @@ class ModeAddSequenceControllerTest {
 
 
     @SuppressWarnings("unchecked")
-    private static Spinner<Integer> readStartSpinnerUnchecked(ModeAddSequenceController target) {
+    private static Spinner<Integer> readStartSpinnerUnchecked(ModeNumberFilesController target) {
         try {
-            Field f = ModeAddSequenceController.class.getDeclaredField("startSeqNumberSpinner");
+            Field f = ModeNumberFilesController.class.getDeclaredField("startSeqNumberSpinner");
             f.setAccessible(true);
             return (Spinner<Integer>) f.get(target);
         } catch (Exception e) {
@@ -149,9 +149,9 @@ class ModeAddSequenceControllerTest {
     // -----------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    private static Spinner<Integer> readStepSpinnerUnchecked(ModeAddSequenceController target) {
+    private static Spinner<Integer> readStepSpinnerUnchecked(ModeNumberFilesController target) {
         try {
-            Field f = ModeAddSequenceController.class.getDeclaredField("stepValueSpinner");
+            Field f = ModeNumberFilesController.class.getDeclaredField("stepValueSpinner");
             f.setAccessible(true);
             return (Spinner<Integer>) f.get(target);
         } catch (Exception e) {
@@ -160,9 +160,9 @@ class ModeAddSequenceControllerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static Spinner<Integer> readPaddingSpinnerUnchecked(ModeAddSequenceController target) {
+    private static Spinner<Integer> readPaddingSpinnerUnchecked(ModeNumberFilesController target) {
         try {
-            Field f = ModeAddSequenceController.class.getDeclaredField("minDigitAmountSpinner");
+            Field f = ModeNumberFilesController.class.getDeclaredField("minDigitAmountSpinner");
             f.setAccessible(true);
             return (Spinner<Integer>) f.get(target);
         } catch (Exception e) {
@@ -172,9 +172,9 @@ class ModeAddSequenceControllerTest {
 
     @SuppressWarnings("unchecked")
     private static ChoiceBox<ua.renamer.app.api.enums.SortSource> readSortBoxUnchecked(
-            ModeAddSequenceController target) {
+            ModeNumberFilesController target) {
         try {
-            Field f = ModeAddSequenceController.class.getDeclaredField("sortingSourceChoiceBox");
+            Field f = ModeNumberFilesController.class.getDeclaredField("sortingSourceChoiceBox");
             f.setAccessible(true);
             return (ChoiceBox<ua.renamer.app.api.enums.SortSource>) f.get(target);
         } catch (Exception e) {
@@ -239,7 +239,7 @@ class ModeAddSequenceControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         SortSourceConverter converter = new SortSourceConverter(languageTextRetriever);
-        controller = new ModeAddSequenceController(converter);
+        controller = new ModeNumberFilesController(converter);
 
         // @FXML field 1: startSeqNumberSpinner — range [0, MAX_VALUE], initial = 0
         Spinner<Integer> startSpinner = new Spinner<>(
@@ -290,7 +290,7 @@ class ModeAddSequenceControllerTest {
         void supportedMode_returnsAddSequence() {
             TransformationMode result = controller.supportedMode();
 
-            assertThat(result).isEqualTo(TransformationMode.ADD_SEQUENCE);
+            assertThat(result).isEqualTo(TransformationMode.NUMBER_FILES);
         }
 
         @Test

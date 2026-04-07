@@ -198,35 +198,35 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
                 }
                 yield applyTransformationParallel(fileModels, caseChangeTransformer, typedConfig, executor, progressCallback);
             }
-            case USE_DATETIME -> {
+            case ADD_DATETIME -> {
                 if (!(config instanceof DateTimeConfig typedConfig)) {
-                    throw new IllegalArgumentException("USE_DATETIME requires DateTimeConfig, got: " + configClassName);
+                    throw new IllegalArgumentException("ADD_DATETIME requires DateTimeConfig, got: " + configClassName);
                 }
                 yield applyTransformationParallel(fileModels, dateTimeTransformer, typedConfig, executor, progressCallback);
             }
-            case USE_IMAGE_DIMENSIONS -> {
+            case ADD_DIMENSIONS -> {
                 if (!(config instanceof ImageDimensionsConfig typedConfig)) {
-                    throw new IllegalArgumentException("USE_IMAGE_DIMENSIONS requires ImageDimensionsConfig, got: " + configClassName);
+                    throw new IllegalArgumentException("ADD_DIMENSIONS requires ImageDimensionsConfig, got: " + configClassName);
                 }
                 yield applyTransformationParallel(fileModels, imageDimensionsTransformer, typedConfig, executor, progressCallback);
             }
-            case ADD_SEQUENCE -> {
+            case NUMBER_FILES -> {
                 if (!(config instanceof SequenceConfig typedConfig)) {
-                    throw new IllegalArgumentException("ADD_SEQUENCE requires SequenceConfig, got: " + configClassName);
+                    throw new IllegalArgumentException("NUMBER_FILES requires SequenceConfig, got: " + configClassName);
                 }
                 // Sequence mode always uses sequential processing
-                log.debug("Using sequential transformation for SEQUENCE mode");
+                log.debug("Using sequential transformation for NUMBER_FILES mode");
                 yield sequenceTransformer.transformBatch(fileModels, typedConfig);
             }
-            case USE_PARENT_FOLDER_NAME -> {
+            case ADD_FOLDER_NAME -> {
                 if (!(config instanceof ParentFolderConfig typedConfig)) {
-                    throw new IllegalArgumentException("USE_PARENT_FOLDER_NAME requires ParentFolderConfig, got: " + configClassName);
+                    throw new IllegalArgumentException("ADD_FOLDER_NAME requires ParentFolderConfig, got: " + configClassName);
                 }
                 yield applyTransformationParallel(fileModels, parentFolderTransformer, typedConfig, executor, progressCallback);
             }
-            case TRUNCATE_FILE_NAME -> {
+            case TRIM_NAME -> {
                 if (!(config instanceof TruncateConfig typedConfig)) {
-                    throw new IllegalArgumentException("TRUNCATE_FILE_NAME requires TruncateConfig, got: " + configClassName);
+                    throw new IllegalArgumentException("TRIM_NAME requires TruncateConfig, got: " + configClassName);
                 }
                 yield applyTransformationParallel(fileModels, truncateTransformer, typedConfig, executor, progressCallback);
             }

@@ -37,7 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeUseImageDimensionsController}.
+ * Unit tests for {@link ModeAddDimensionsController}.
  *
  * <p>Test categories:
  * <ul>
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
  * in {@code module-info.java}).
  */
 @ExtendWith(MockitoExtension.class)
-class ModeUseImageDimensionsControllerTest {
+class ModeAddDimensionsControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
@@ -62,7 +62,7 @@ class ModeUseImageDimensionsControllerTest {
     @Mock
     private ModeApi<ImageDimensionsParams> modeApi;
 
-    private ModeUseImageDimensionsController controller;
+    private ModeAddDimensionsController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -82,9 +82,9 @@ class ModeUseImageDimensionsControllerTest {
     }
 
     private static void injectLeftDimensionChoiceBox(
-            ModeUseImageDimensionsController target,
+            ModeAddDimensionsController target,
             ChoiceBox<ImageDimensionOptions> box) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("leftDimensionChoiceBox");
+        Field f = ModeAddDimensionsController.class.getDeclaredField("leftDimensionChoiceBox");
         f.setAccessible(true);
         f.set(target, box);
     }
@@ -94,31 +94,31 @@ class ModeUseImageDimensionsControllerTest {
     // -----------------------------------------------------------------------
 
     private static void injectRightDimensionChoiceBox(
-            ModeUseImageDimensionsController target,
+            ModeAddDimensionsController target,
             ChoiceBox<ImageDimensionOptions> box) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("rightDimensionChoiceBox");
+        Field f = ModeAddDimensionsController.class.getDeclaredField("rightDimensionChoiceBox");
         f.setAccessible(true);
         f.set(target, box);
     }
 
     private static void injectDimensionsSeparatorTextField(
-            ModeUseImageDimensionsController target, TextField field) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("dimensionsSeparatorTextField");
+            ModeAddDimensionsController target, TextField field) throws Exception {
+        Field f = ModeAddDimensionsController.class.getDeclaredField("dimensionsSeparatorTextField");
         f.setAccessible(true);
         f.set(target, field);
     }
 
     private static void injectDimensionsAndFileSeparatorTextField(
-            ModeUseImageDimensionsController target, TextField field) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("dimensionsAndFileSeparatorTextField");
+            ModeAddDimensionsController target, TextField field) throws Exception {
+        Field f = ModeAddDimensionsController.class.getDeclaredField("dimensionsAndFileSeparatorTextField");
         f.setAccessible(true);
         f.set(target, field);
     }
 
     private static void injectItemPositionRadioSelector(
-            ModeUseImageDimensionsController target,
+            ModeAddDimensionsController target,
             ItemPositionWithReplacementRadioSelector selector) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeAddDimensionsController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         f.set(target, selector);
     }
@@ -126,8 +126,8 @@ class ModeUseImageDimensionsControllerTest {
 
     @SuppressWarnings("unchecked")
     private static ChoiceBox<ImageDimensionOptions> readLeftDimensionChoiceBox(
-            ModeUseImageDimensionsController target) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("leftDimensionChoiceBox");
+            ModeAddDimensionsController target) throws Exception {
+        Field f = ModeAddDimensionsController.class.getDeclaredField("leftDimensionChoiceBox");
         f.setAccessible(true);
         return (ChoiceBox<ImageDimensionOptions>) f.get(target);
     }
@@ -138,36 +138,36 @@ class ModeUseImageDimensionsControllerTest {
 
     @SuppressWarnings("unchecked")
     private static ChoiceBox<ImageDimensionOptions> readRightDimensionChoiceBox(
-            ModeUseImageDimensionsController target) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("rightDimensionChoiceBox");
+            ModeAddDimensionsController target) throws Exception {
+        Field f = ModeAddDimensionsController.class.getDeclaredField("rightDimensionChoiceBox");
         f.setAccessible(true);
         return (ChoiceBox<ImageDimensionOptions>) f.get(target);
     }
 
     private static TextField readDimensionsSeparatorTextField(
-            ModeUseImageDimensionsController target) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("dimensionsSeparatorTextField");
+            ModeAddDimensionsController target) throws Exception {
+        Field f = ModeAddDimensionsController.class.getDeclaredField("dimensionsSeparatorTextField");
         f.setAccessible(true);
         return (TextField) f.get(target);
     }
 
     private static TextField readDimensionsAndFileSeparatorTextField(
-            ModeUseImageDimensionsController target) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("dimensionsAndFileSeparatorTextField");
+            ModeAddDimensionsController target) throws Exception {
+        Field f = ModeAddDimensionsController.class.getDeclaredField("dimensionsAndFileSeparatorTextField");
         f.setAccessible(true);
         return (TextField) f.get(target);
     }
 
     private static ItemPositionWithReplacementRadioSelector readItemPositionRadioSelector(
-            ModeUseImageDimensionsController target) throws Exception {
-        Field f = ModeUseImageDimensionsController.class.getDeclaredField("itemPositionRadioSelector");
+            ModeAddDimensionsController target) throws Exception {
+        Field f = ModeAddDimensionsController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         return (ItemPositionWithReplacementRadioSelector) f.get(target);
     }
 
     @SuppressWarnings("unchecked")
     private static ChoiceBox<ImageDimensionOptions> readLeftBoxUnchecked(
-            ModeUseImageDimensionsController target) {
+            ModeAddDimensionsController target) {
         try {
             return readLeftDimensionChoiceBox(target);
         } catch (Exception e) {
@@ -179,7 +179,7 @@ class ModeUseImageDimensionsControllerTest {
 
     @SuppressWarnings("unchecked")
     private static ChoiceBox<ImageDimensionOptions> readRightBoxUnchecked(
-            ModeUseImageDimensionsController target) {
+            ModeAddDimensionsController target) {
         try {
             return readRightDimensionChoiceBox(target);
         } catch (Exception e) {
@@ -187,7 +187,7 @@ class ModeUseImageDimensionsControllerTest {
         }
     }
 
-    private static TextField readDimensionsSepUnchecked(ModeUseImageDimensionsController target) {
+    private static TextField readDimensionsSepUnchecked(ModeAddDimensionsController target) {
         try {
             return readDimensionsSeparatorTextField(target);
         } catch (Exception e) {
@@ -195,7 +195,7 @@ class ModeUseImageDimensionsControllerTest {
         }
     }
 
-    private static TextField readNameSepUnchecked(ModeUseImageDimensionsController target) {
+    private static TextField readNameSepUnchecked(ModeAddDimensionsController target) {
         try {
             return readDimensionsAndFileSeparatorTextField(target);
         } catch (Exception e) {
@@ -204,7 +204,7 @@ class ModeUseImageDimensionsControllerTest {
     }
 
     private static ItemPositionWithReplacementRadioSelector readRadioSelectorUnchecked(
-            ModeUseImageDimensionsController target) {
+            ModeAddDimensionsController target) {
         try {
             return readItemPositionRadioSelector(target);
         } catch (Exception e) {
@@ -272,7 +272,7 @@ class ModeUseImageDimensionsControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        controller = new ModeUseImageDimensionsController(
+        controller = new ModeAddDimensionsController(
                 new ImageDimensionOptionsConverter(languageTextRetriever));
 
         // @FXML field 1: leftDimensionChoiceBox — seed all enum values, initial = DO_NOT_USE
@@ -321,7 +321,7 @@ class ModeUseImageDimensionsControllerTest {
         void supportedMode_returnsUseImageDimensions() {
             TransformationMode result = controller.supportedMode();
 
-            assertThat(result).isEqualTo(TransformationMode.USE_IMAGE_DIMENSIONS);
+            assertThat(result).isEqualTo(TransformationMode.ADD_DIMENSIONS);
         }
 
         @Test

@@ -43,7 +43,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -81,7 +81,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -115,7 +115,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -150,7 +150,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 createTrackingCallback()
         );
@@ -183,7 +183,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -212,7 +212,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -239,7 +239,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -267,7 +267,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -293,7 +293,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -321,7 +321,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -348,7 +348,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -376,7 +376,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -404,7 +404,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -429,7 +429,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -461,7 +461,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -491,7 +491,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 createTrackingCallback()
         );
@@ -524,7 +524,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -557,7 +557,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -586,7 +586,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 List.of(file),
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );
@@ -616,7 +616,7 @@ class SequenceTransformationIntegrationTest extends BaseTransformationIntegratio
 
         List<RenameResult> results = orchestrator.execute(
                 files,
-                TransformationMode.ADD_SEQUENCE,
+                TransformationMode.NUMBER_FILES,
                 config,
                 null
         );

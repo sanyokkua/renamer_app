@@ -66,7 +66,7 @@ public class TruncateTransformer implements FileTransformationService<TruncateCo
 
     private TransformationMetadata buildMetadata(TruncateConfig config) {
         return TransformationMetadata.builder()
-                .withMode(TransformationMode.TRUNCATE_FILE_NAME)
+                .withMode(TransformationMode.TRIM_NAME)
                 .withAppliedAt(LocalDateTime.now())
                 .withConfig(Map.of(
                         "numberOfSymbols", config.getNumberOfSymbols(),

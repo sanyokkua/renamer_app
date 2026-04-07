@@ -27,11 +27,11 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the Use Datetime transformation mode.
+ * Controller for the Add Date & Time transformation mode.
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeUseDatetimeController
+public class ModeAddDatetimeController
         implements ModeControllerV2Api<DateTimeParams>, Initializable {
 
     private final DateFormatConverter dateFormatConverter;
@@ -224,7 +224,7 @@ public class ModeUseDatetimeController
 
     @Override
     public TransformationMode supportedMode() {
-        return TransformationMode.USE_DATETIME;
+        return TransformationMode.ADD_DATETIME;
     }
 
     @Override

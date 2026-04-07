@@ -15,9 +15,9 @@ public enum ViewNames {
     APP_MAIN_VIEW("ApplicationMainView.fxml"),
 
     /**
-     * The view for the mode where custom text is added.
+     * The view for the Add Text mode.
      */
-    MODE_ADD_CUSTOM_TEXT("ModeAddCustomText.fxml"),
+    MODE_ADD_TEXT("ModeAddText.fxml"),
 
     /**
      * The view for the mode where the case of text is changed.
@@ -25,39 +25,39 @@ public enum ViewNames {
     MODE_CHANGE_CASE("ModeChangeCase.fxml"),
 
     /**
-     * The view for the mode where the current date and time are used.
+     * The view for the Add Date & Time mode.
      */
-    MODE_USE_DATETIME("ModeUseDatetime.fxml"),
+    MODE_ADD_DATETIME("ModeAddDatetime.fxml"),
 
     /**
-     * The view for the mode where image dimensions are used.
+     * The view for the Add Dimensions mode.
      */
-    MODE_USE_IMAGE_DIMENSIONS("ModeUseImageDimensions.fxml"),
+    MODE_ADD_DIMENSIONS("ModeAddDimensions.fxml"),
 
     /**
-     * The view for the mode where the parent folder's name is used.
+     * The view for the Add Folder Name mode.
      */
-    MODE_USE_PARENT_FOLDER_NAME("ModeUseParentFolderName.fxml"),
+    MODE_ADD_FOLDER_NAME("ModeAddFolderName.fxml"),
 
     /**
-     * The view for the mode where custom text is removed.
+     * The view for the Remove Text mode.
      */
-    MODE_REMOVE_CUSTOM_TEXT("ModeRemoveCustomText.fxml"),
+    MODE_REMOVE_TEXT("ModeRemoveText.fxml"),
 
     /**
-     * The view for the mode where custom text is replaced.
+     * The view for the Replace Text mode.
      */
-    MODE_REPLACE_CUSTOM_TEXT("ModeReplaceCustomText.fxml"),
+    MODE_REPLACE_TEXT("ModeReplaceText.fxml"),
 
     /**
-     * The view for the mode where a sequence is added.
+     * The view for the Number Files mode.
      */
-    MODE_ADD_SEQUENCE("ModeAddSequence.fxml"),
+    MODE_NUMBER_FILES("ModeNumberFiles.fxml"),
 
     /**
-     * The view for the mode where the file name is truncated.
+     * The view for the Trim Name mode.
      */
-    MODE_TRUNCATE_FILE_NAME("ModeTruncateFileName.fxml"),
+    MODE_TRIM_NAME("ModeTrimName.fxml"),
 
     /**
      * The view for the mode where the file extension is changed.

@@ -459,7 +459,7 @@ class ParentFolderTransformerTest {
         // Then
         assertNotNull(result.getTransformationMeta());
         TransformationMetadata metadata = result.getTransformationMeta();
-        assertEquals(TransformationMode.USE_PARENT_FOLDER_NAME, metadata.getMode());
+        assertEquals(TransformationMode.ADD_FOLDER_NAME, metadata.getMode());
         assertNotNull(metadata.getAppliedAt());
         assertNotNull(metadata.getConfig());
     }

@@ -5,7 +5,7 @@ import ua.renamer.app.api.enums.ItemPositionWithReplacement;
 import ua.renamer.app.api.model.TransformationMode;
 
 /**
- * Parameters for the {@link TransformationMode#USE_IMAGE_DIMENSIONS} transformation mode.
+ * Parameters for the {@link TransformationMode#ADD_DIMENSIONS} transformation mode.
  * Configures how image width and/or height values are embedded in the filename.
  *
  * @param leftSide      the dimension to place on the left side of the dimension separator; may be {@link ImageDimensionOptions#DO_NOT_USE}
@@ -24,7 +24,7 @@ public record ImageDimensionsParams(
 
     @Override
     public TransformationMode mode() {
-        return TransformationMode.USE_IMAGE_DIMENSIONS;
+        return TransformationMode.ADD_DIMENSIONS;
     }
 
     @Override

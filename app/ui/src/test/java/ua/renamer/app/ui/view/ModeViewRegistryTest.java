@@ -108,14 +108,14 @@ class ModeViewRegistryTest {
         @Test
         void getView_invokesSupplierEachCall() {
             AtomicInteger callCount = new AtomicInteger(0);
-            registry.register(TransformationMode.USE_DATETIME, () -> {
+            registry.register(TransformationMode.ADD_DATETIME, () -> {
                 callCount.incrementAndGet();
                 return new Group();
             });
 
-            registry.getView(TransformationMode.USE_DATETIME);
-            registry.getView(TransformationMode.USE_DATETIME);
-            registry.getView(TransformationMode.USE_DATETIME);
+            registry.getView(TransformationMode.ADD_DATETIME);
+            registry.getView(TransformationMode.ADD_DATETIME);
+            registry.getView(TransformationMode.ADD_DATETIME);
 
             assertThat(callCount.get()).isEqualTo(3);
         }
@@ -143,9 +143,9 @@ class ModeViewRegistryTest {
 
         @Test
         void register_oneMode_doesNotAffectOtherModes() {
-            registry.register(TransformationMode.ADD_SEQUENCE, Group::new);
+            registry.register(TransformationMode.NUMBER_FILES, Group::new);
 
-            assertThat(registry.getView(TransformationMode.TRUNCATE_FILE_NAME)).isEmpty();
+            assertThat(registry.getView(TransformationMode.TRIM_NAME)).isEmpty();
             assertThat(registry.getView(TransformationMode.CHANGE_EXTENSION)).isEmpty();
             assertThat(registry.getView(TransformationMode.REPLACE_TEXT)).isEmpty();
         }
@@ -154,12 +154,12 @@ class ModeViewRegistryTest {
         void register_twoDistinctModes_eachReturnsOwnView() {
             Parent viewA = new Group();
             Parent viewB = new Group();
-            registry.register(TransformationMode.USE_IMAGE_DIMENSIONS, () -> viewA);
-            registry.register(TransformationMode.USE_PARENT_FOLDER_NAME, () -> viewB);
+            registry.register(TransformationMode.ADD_DIMENSIONS, () -> viewA);
+            registry.register(TransformationMode.ADD_FOLDER_NAME, () -> viewB);
 
-            assertThat(registry.getView(TransformationMode.USE_IMAGE_DIMENSIONS).orElseThrow())
+            assertThat(registry.getView(TransformationMode.ADD_DIMENSIONS).orElseThrow())
                     .isSameAs(viewA);
-            assertThat(registry.getView(TransformationMode.USE_PARENT_FOLDER_NAME).orElseThrow())
+            assertThat(registry.getView(TransformationMode.ADD_FOLDER_NAME).orElseThrow())
                     .isSameAs(viewB);
         }
     }

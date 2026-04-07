@@ -353,7 +353,7 @@ class ModeParametersValidationTest {
 
         @Test
         void mode_whenCalled_thenReturnsAddSequence() {
-            assertThat(valid().mode()).isEqualTo(TransformationMode.ADD_SEQUENCE);
+            assertThat(valid().mode()).isEqualTo(TransformationMode.NUMBER_FILES);
         }
 
         @Test
@@ -490,7 +490,7 @@ class ModeParametersValidationTest {
 
         @Test
         void mode_whenCalled_thenReturnsTruncateFileName() {
-            assertThat(valid().mode()).isEqualTo(TransformationMode.TRUNCATE_FILE_NAME);
+            assertThat(valid().mode()).isEqualTo(TransformationMode.TRIM_NAME);
         }
 
         @Test
@@ -681,7 +681,7 @@ class ModeParametersValidationTest {
 
         @Test
         void mode_whenCalled_thenReturnsUseDatetime() {
-            assertThat(fullyValid().mode()).isEqualTo(TransformationMode.USE_DATETIME);
+            assertThat(fullyValid().mode()).isEqualTo(TransformationMode.ADD_DATETIME);
         }
 
         @Test
@@ -950,7 +950,7 @@ class ModeParametersValidationTest {
 
         @Test
         void mode_whenCalled_thenReturnsUseImageDimensions() {
-            assertThat(valid().mode()).isEqualTo(TransformationMode.USE_IMAGE_DIMENSIONS);
+            assertThat(valid().mode()).isEqualTo(TransformationMode.ADD_DIMENSIONS);
         }
 
         @Test
@@ -1104,7 +1104,7 @@ class ModeParametersValidationTest {
 
         @Test
         void mode_whenCalled_thenReturnsUseParentFolderName() {
-            assertThat(valid().mode()).isEqualTo(TransformationMode.USE_PARENT_FOLDER_NAME);
+            assertThat(valid().mode()).isEqualTo(TransformationMode.ADD_FOLDER_NAME);
         }
 
         @Test
@@ -1319,12 +1319,12 @@ class ModeParametersValidationTest {
                 "REMOVE_TEXT",
                 "REPLACE_TEXT",
                 "CHANGE_CASE",
-                "ADD_SEQUENCE",
-                "TRUNCATE_FILE_NAME",
+                "NUMBER_FILES",
+                "TRIM_NAME",
                 "CHANGE_EXTENSION",
-                "USE_DATETIME",
-                "USE_IMAGE_DIMENSIONS",
-                "USE_PARENT_FOLDER_NAME"
+                "ADD_DATETIME",
+                "ADD_DIMENSIONS",
+                "ADD_FOLDER_NAME"
         })
         void eachModeConstant_isCoveredByExactlyOneRecord(String modeName) {
             TransformationMode mode = TransformationMode.valueOf(modeName);

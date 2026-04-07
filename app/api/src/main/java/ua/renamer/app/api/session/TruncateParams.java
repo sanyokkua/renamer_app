@@ -4,7 +4,7 @@ import ua.renamer.app.api.enums.TruncateOptions;
 import ua.renamer.app.api.model.TransformationMode;
 
 /**
- * Parameters for the {@link TransformationMode#TRUNCATE_FILE_NAME} transformation mode.
+ * Parameters for the {@link TransformationMode#TRIM_NAME} transformation mode.
  * Specifies how many characters to remove and from which end of the filename.
  *
  * @param numberOfSymbols the number of characters to remove; must be zero or greater
@@ -15,7 +15,7 @@ public record TruncateParams(int numberOfSymbols, TruncateOptions truncateOption
 
     @Override
     public TransformationMode mode() {
-        return TransformationMode.TRUNCATE_FILE_NAME;
+        return TransformationMode.TRIM_NAME;
     }
 
     @Override

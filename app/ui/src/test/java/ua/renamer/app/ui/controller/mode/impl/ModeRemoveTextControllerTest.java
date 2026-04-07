@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeRemoveCustomTextController}.
+ * Unit tests for {@link ModeRemoveTextController}.
  *
  * <p>Test categories:
  * <ul>
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
  * in {@code module-info.java}).
  */
 @ExtendWith(MockitoExtension.class)
-class ModeRemoveCustomTextControllerTest {
+class ModeRemoveTextControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
@@ -56,7 +56,7 @@ class ModeRemoveCustomTextControllerTest {
     private ModeApi<RemoveTextParams> modeApi;
 
     private ItemPositionConverter itemPositionConverter;
-    private ModeRemoveCustomTextController controller;
+    private ModeRemoveTextController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -75,8 +75,8 @@ class ModeRemoveCustomTextControllerTest {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
-    private static void injectTextField(ModeRemoveCustomTextController target, TextField tf) throws Exception {
-        Field f = ModeRemoveCustomTextController.class.getDeclaredField("removeTextField");
+    private static void injectTextField(ModeRemoveTextController target, TextField tf) throws Exception {
+        Field f = ModeRemoveTextController.class.getDeclaredField("removeTextField");
         f.setAccessible(true);
         f.set(target, tf);
     }
@@ -85,27 +85,27 @@ class ModeRemoveCustomTextControllerTest {
     // Reflection helpers — inject / read @FXML fields
     // -----------------------------------------------------------------------
 
-    private static void injectRadioSelector(ModeRemoveCustomTextController target, ItemPositionRadioSelector sel)
+    private static void injectRadioSelector(ModeRemoveTextController target, ItemPositionRadioSelector sel)
             throws Exception {
-        Field f = ModeRemoveCustomTextController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeRemoveTextController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         f.set(target, sel);
     }
 
 
-    private static TextField readTextField(ModeRemoveCustomTextController target) throws Exception {
-        Field f = ModeRemoveCustomTextController.class.getDeclaredField("removeTextField");
+    private static TextField readTextField(ModeRemoveTextController target) throws Exception {
+        Field f = ModeRemoveTextController.class.getDeclaredField("removeTextField");
         f.setAccessible(true);
         return (TextField) f.get(target);
     }
 
-    private static ItemPositionRadioSelector readRadioSelector(ModeRemoveCustomTextController target) throws Exception {
-        Field f = ModeRemoveCustomTextController.class.getDeclaredField("itemPositionRadioSelector");
+    private static ItemPositionRadioSelector readRadioSelector(ModeRemoveTextController target) throws Exception {
+        Field f = ModeRemoveTextController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         return (ItemPositionRadioSelector) f.get(target);
     }
 
-    private static TextField readTextFieldUnchecked(ModeRemoveCustomTextController target) {
+    private static TextField readTextFieldUnchecked(ModeRemoveTextController target) {
         try {
             return readTextField(target);
         } catch (Exception e) {
@@ -113,7 +113,7 @@ class ModeRemoveCustomTextControllerTest {
         }
     }
 
-    private static ItemPositionRadioSelector readRadioSelectorUnchecked(ModeRemoveCustomTextController target) {
+    private static ItemPositionRadioSelector readRadioSelectorUnchecked(ModeRemoveTextController target) {
         try {
             return readRadioSelector(target);
         } catch (Exception e) {
@@ -184,7 +184,7 @@ class ModeRemoveCustomTextControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         itemPositionConverter = new ItemPositionConverter(languageTextRetriever);
-        controller = new ModeRemoveCustomTextController();
+        controller = new ModeRemoveTextController();
         injectTextField(controller, new TextField());
         injectRadioSelector(controller, new ItemPositionRadioSelector("", itemPositionConverter));
     }

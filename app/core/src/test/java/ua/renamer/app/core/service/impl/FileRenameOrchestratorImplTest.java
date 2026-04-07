@@ -237,7 +237,7 @@ class FileRenameOrchestratorImplTest {
         when(renameExecutor.execute(prepared1)).thenReturn(result1);
 
         // When
-        List<RenameResult> results = orchestrator.execute(files, TransformationMode.ADD_SEQUENCE,
+        List<RenameResult> results = orchestrator.execute(files, TransformationMode.NUMBER_FILES,
                 config, null);
 
         // Then
@@ -486,7 +486,7 @@ class FileRenameOrchestratorImplTest {
         when(renameExecutor.execute(prepared1)).thenReturn(result1);
 
         // When
-        orchestrator.execute(List.of(file1), TransformationMode.ADD_SEQUENCE, config, null);
+        orchestrator.execute(List.of(file1), TransformationMode.NUMBER_FILES, config, null);
 
         // Then - Sequential mode: transformBatch() called, not transform()
         verify(sequenceTransformer, times(1)).transformBatch(any(), any());

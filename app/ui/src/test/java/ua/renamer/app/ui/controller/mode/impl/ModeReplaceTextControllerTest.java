@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeReplaceCustomTextController}.
+ * Unit tests for {@link ModeReplaceTextController}.
  *
  * <p>Test categories:
  * <ul>
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
  * in {@code module-info.java}).
  */
 @ExtendWith(MockitoExtension.class)
-class ModeReplaceCustomTextControllerTest {
+class ModeReplaceTextControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
@@ -55,7 +55,7 @@ class ModeReplaceCustomTextControllerTest {
     @Mock
     private ModeApi<ReplaceTextParams> modeApi;
 
-    private ModeReplaceCustomTextController controller;
+    private ModeReplaceTextController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -74,9 +74,9 @@ class ModeReplaceCustomTextControllerTest {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
-    private static void injectTextToReplaceField(ModeReplaceCustomTextController target, TextField tf)
+    private static void injectTextToReplaceField(ModeReplaceTextController target, TextField tf)
             throws Exception {
-        Field f = ModeReplaceCustomTextController.class.getDeclaredField("textToReplaceTextField");
+        Field f = ModeReplaceTextController.class.getDeclaredField("textToReplaceTextField");
         f.setAccessible(true);
         f.set(target, tf);
     }
@@ -85,41 +85,41 @@ class ModeReplaceCustomTextControllerTest {
     // Reflection helpers — inject / read @FXML fields
     // -----------------------------------------------------------------------
 
-    private static void injectTextToAddField(ModeReplaceCustomTextController target, TextField tf)
+    private static void injectTextToAddField(ModeReplaceTextController target, TextField tf)
             throws Exception {
-        Field f = ModeReplaceCustomTextController.class.getDeclaredField("textToAddTextField");
+        Field f = ModeReplaceTextController.class.getDeclaredField("textToAddTextField");
         f.setAccessible(true);
         f.set(target, tf);
     }
 
-    private static void injectRadioSelector(ModeReplaceCustomTextController target,
+    private static void injectRadioSelector(ModeReplaceTextController target,
                                             ItemPositionExtendedRadioSelector sel) throws Exception {
-        Field f = ModeReplaceCustomTextController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeReplaceTextController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         f.set(target, sel);
     }
 
 
-    private static TextField readTextToReplaceField(ModeReplaceCustomTextController target) throws Exception {
-        Field f = ModeReplaceCustomTextController.class.getDeclaredField("textToReplaceTextField");
+    private static TextField readTextToReplaceField(ModeReplaceTextController target) throws Exception {
+        Field f = ModeReplaceTextController.class.getDeclaredField("textToReplaceTextField");
         f.setAccessible(true);
         return (TextField) f.get(target);
     }
 
-    private static TextField readTextToAddField(ModeReplaceCustomTextController target) throws Exception {
-        Field f = ModeReplaceCustomTextController.class.getDeclaredField("textToAddTextField");
+    private static TextField readTextToAddField(ModeReplaceTextController target) throws Exception {
+        Field f = ModeReplaceTextController.class.getDeclaredField("textToAddTextField");
         f.setAccessible(true);
         return (TextField) f.get(target);
     }
 
-    private static ItemPositionExtendedRadioSelector readRadioSelector(ModeReplaceCustomTextController target)
+    private static ItemPositionExtendedRadioSelector readRadioSelector(ModeReplaceTextController target)
             throws Exception {
-        Field f = ModeReplaceCustomTextController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeReplaceTextController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         return (ItemPositionExtendedRadioSelector) f.get(target);
     }
 
-    private static TextField readTextToReplaceFieldUnchecked(ModeReplaceCustomTextController target) {
+    private static TextField readTextToReplaceFieldUnchecked(ModeReplaceTextController target) {
         try {
             return readTextToReplaceField(target);
         } catch (Exception e) {
@@ -127,7 +127,7 @@ class ModeReplaceCustomTextControllerTest {
         }
     }
 
-    private static TextField readTextToAddFieldUnchecked(ModeReplaceCustomTextController target) {
+    private static TextField readTextToAddFieldUnchecked(ModeReplaceTextController target) {
         try {
             return readTextToAddField(target);
         } catch (Exception e) {
@@ -136,7 +136,7 @@ class ModeReplaceCustomTextControllerTest {
     }
 
     private static ItemPositionExtendedRadioSelector readRadioSelectorUnchecked(
-            ModeReplaceCustomTextController target) {
+            ModeReplaceTextController target) {
         try {
             return readRadioSelector(target);
         } catch (Exception e) {
@@ -207,7 +207,7 @@ class ModeReplaceCustomTextControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         var converter = new ItemPositionExtendedConverter(languageTextRetriever);
-        controller = new ModeReplaceCustomTextController();
+        controller = new ModeReplaceTextController();
         injectTextToReplaceField(controller, new TextField());
         injectTextToAddField(controller, new TextField());
         injectRadioSelector(controller, new ItemPositionExtendedRadioSelector(converter, ""));

@@ -1,0 +1,262 @@
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif}
+  .overlay{background:rgba(20,35,55,0.38);min-height:680px;display:flex;align-items:center;justify-content:center;padding:24px}
+  .dialog{background:#fff;border:1px solid #C4D4E8;border-radius:8px;width:660px;display:flex;flex-direction:column;overflow:hidden}
+  .titlebar{background:#1F3C5C;padding:11px 16px;display:flex;align-items:center;justify-content:space-between}
+  .titlebar-text{font-size:13px;font-weight:500;color:#EAEEF2;letter-spacing:0.2px}
+  .close-btn{width:14px;height:14px;border-radius:50%;background:#4A6A8A;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .body{display:flex;flex:1;min-height:440px}
+  .sidebar{width:168px;flex-shrink:0;background:#E3EBF5;border-right:1px solid #C4D4E8;padding:10px 0}
+  .sidebar-section-label{font-size:10px;font-weight:500;color:#6688AA;letter-spacing:1.2px;text-transform:uppercase;padding:8px 14px 4px}
+  .nav-item{padding:7px 14px;font-size:12.5px;color:#35506A;cursor:pointer;display:flex;align-items:center;gap:8px;border-left:3px solid transparent}
+  .nav-item.active{background:#D4E5F9;color:#1F3C5C;font-weight:500;border-left-color:#2C6FBF}
+  .nav-item:not(.active):hover{background:#D8E5F2}
+  .nav-icon{width:15px;height:15px;flex-shrink:0;opacity:0.6}
+  .nav-item.active .nav-icon{opacity:1}
+  .content{flex:1;padding:22px 24px;overflow-y:auto;background:#EFF4FA}
+  .content-title{font-size:15px;font-weight:500;color:#1F3C5C;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid #C4D4E8}
+  .section{background:#fff;border:1px solid #C4D4E8;border-radius:6px;margin-bottom:14px;overflow:hidden}
+  .section-header{background:#E3EBF5;padding:8px 14px;font-size:11px;font-weight:500;color:#35506A;letter-spacing:0.3px;border-bottom:1px solid #C4D4E8;text-transform:uppercase;letter-spacing:0.8px}
+  .section-body{padding:14px}
+  .field-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:0.5px solid #EEF2F8}
+  .field-row:last-child{border-bottom:none;padding-bottom:0}
+  .field-row:first-child{padding-top:0}
+  .field-label{width:148px;flex-shrink:0;font-size:12px;color:#35506A;padding-top:2px;line-height:1.4}
+  .field-label small{display:block;font-size:11px;color:#6688AA;margin-top:1px}
+  .field-control{flex:1}
+  .fx-checkbox{display:flex;align-items:center;gap:7px;cursor:pointer}
+  .fx-checkbox-box{width:14px;height:14px;border:1.5px solid #BDD0E8;border-radius:3px;background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background 0.1s,border-color 0.1s}
+  .fx-checkbox-box.checked{background:#2C6FBF;border-color:#2C6FBF}
+  .fx-checkbox-box.checked::after{content:'';display:block;width:7px;height:5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+  .fx-checkbox-text{font-size:12.5px;color:#162030}
+  .fx-combo{background:#fff;border:1px solid #BDD0E8;border-radius:4px;padding:5px 8px;font-size:12.5px;color:#162030;display:flex;align-items:center;justify-content:space-between;cursor:pointer;min-width:180px}
+  .fx-combo-arrow{color:#6688AA;font-size:10px}
+  .fx-combo.disabled{background:#F4F8FD;color:#8FA4BB;cursor:not-allowed}
+  .path-box{background:#EAF0F8;border:1px solid #C4D4E8;border-radius:4px;padding:7px 10px;margin-top:8px;display:flex;align-items:center;gap:8px}
+  .path-box.hidden{display:none}
+  .path-icon{width:14px;height:14px;flex-shrink:0;color:#6688AA}
+  .path-text{font-size:11px;color:#35506A;font-family:monospace;flex:1;word-break:break-all}
+  .path-copy{font-size:10px;color:#2C6FBF;background:#D4E5F9;border:none;border-radius:3px;padding:2px 7px;cursor:pointer;flex-shrink:0;font-family:inherit}
+  .inline-row{display:flex;align-items:center;gap:10px}
+  .combo-label{font-size:11px;color:#6688AA;flex-shrink:0}
+  .info-badge{display:inline-flex;align-items:center;gap:5px;background:#EBF1FA;border:0.5px solid #BDD0E8;border-radius:3px;padding:4px 8px;margin-top:8px}
+  .info-badge-text{font-size:11px;color:#5580AC}
+  .footer{background:#F7F9FC;border-top:1px solid #C4D4E8;padding:10px 16px;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+  .btn-ghost{background:transparent;border:1px solid #C4D4E8;border-radius:5px;padding:5px 16px;font-size:12.5px;color:#35506A;cursor:pointer;font-family:inherit}
+  .btn-ghost:hover{background:#E3EBF5}
+  .btn-primary{background:#2C6FBF;border:none;border-radius:5px;padding:5px 18px;font-size:12.5px;color:#fff;font-weight:500;cursor:pointer;font-family:inherit}
+  .btn-primary:hover{background:#1E5A9E}
+  .annotation{font-size:10px;color:#6688AA;margin-top:5px;font-style:italic}
+  .divider{height:0.5px;background:#EEF2F8;margin:6px 0}
+</style>
+
+<div class="overlay">
+  <div class="dialog">
+
+    <div class="titlebar">
+      <div class="titlebar-text">Preferences</div>
+      <div class="close-btn"></div>
+    </div>
+
+    <div class="body">
+
+      <div class="sidebar">
+        <div class="sidebar-section-label">Settings</div>
+        <div class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="#2C6FBF" stroke-width="1.5">
+            <circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42"/>
+          </svg>
+          General
+        </div>
+        <div class="nav-item" style="color:#8FA4BB;cursor:not-allowed;opacity:0.6">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="#8FA4BB" stroke-width="1.5">
+            <rect x="2" y="3" width="12" height="10" rx="1"/><path d="M5 7h6M5 10h4"/>
+          </svg>
+          Appearance
+        </div>
+        <div class="nav-item" style="color:#8FA4BB;cursor:not-allowed;opacity:0.6">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="#8FA4BB" stroke-width="1.5">
+            <path d="M2 4h12M2 8h8M2 12h5"/>
+          </svg>
+          Advanced
+        </div>
+        <div style="margin-top:auto;padding:10px 14px 4px;border-top:0.5px solid #C4D4E8;margin-top:16px">
+          <div style="font-size:10px;color:#8FA4BB">v1.0.0</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="content-title">General</div>
+
+        <div class="section">
+          <div class="section-header">Custom configuration</div>
+          <div class="section-body">
+            <div class="field-row">
+              <div class="field-label">
+                Use custom settings
+                <small>Saves config to disk instead of defaults</small>
+              </div>
+              <div class="field-control">
+                <div class="fx-checkbox" id="cb-custom" onclick="toggleCustom()">
+                  <div class="fx-checkbox-box checked" id="cb-custom-box"></div>
+                  <span class="fx-checkbox-text">Enable custom settings file</span>
+                </div>
+                <div class="path-box" id="custom-path">
+                  <svg class="path-icon" viewBox="0 0 16 16" fill="none" stroke="#6688AA" stroke-width="1.5">
+                    <path d="M2 4a1 1 0 011-1h3l2 2h5a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V4z"/>
+                  </svg>
+                  <span class="path-text">~/.config/renamer/settings.json</span>
+                  <button class="path-copy">Copy</button>
+                </div>
+                <div class="annotation" id="custom-note">Settings file is loaded on startup. Restart required after disabling.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Language</div>
+          <div class="section-body">
+            <div class="field-row">
+              <div class="field-label">
+                Interface language
+                <small>Requires app restart</small>
+              </div>
+              <div class="field-control">
+                <div class="fx-combo" id="lang-combo" onclick="toggleLangMenu()">
+                  <span id="lang-selected">English (en)</span>
+                  <span class="fx-combo-arrow">&#9660;</span>
+                </div>
+                <div id="lang-menu" style="display:none;background:#fff;border:1px solid #BDD0E8;border-radius:4px;margin-top:2px;overflow:hidden;width:180px">
+                  <div class="lang-opt" onclick="selectLang(this,'English (en)')" style="padding:6px 10px;font-size:12.5px;color:#162030;background:#D4E5F9;cursor:pointer">English (en)</div>
+                  <div class="lang-opt" onclick="selectLang(this,'Українська (uk)')" style="padding:6px 10px;font-size:12.5px;color:#162030;cursor:pointer;border-top:0.5px solid #EEF2F8">Українська (uk)</div>
+                  <div class="lang-opt" onclick="selectLang(this,'Deutsch (de)')" style="padding:6px 10px;font-size:12.5px;color:#162030;cursor:pointer;border-top:0.5px solid #EEF2F8">Deutsch (de)</div>
+                  <div class="lang-opt" onclick="selectLang(this,'Français (fr)')" style="padding:6px 10px;font-size:12.5px;color:#162030;cursor:pointer;border-top:0.5px solid #EEF2F8">Français (fr)</div>
+                </div>
+                <div class="info-badge">
+                  <svg style="width:12px;height:12px;flex-shrink:0" viewBox="0 0 16 16" fill="none" stroke="#5580AC" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5"/></svg>
+                  <span class="info-badge-text">App will restart to apply the new language.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Logging</div>
+          <div class="section-body">
+            <div class="field-row">
+              <div class="field-label">
+                Enable logging
+                <small>Write events to a log file</small>
+              </div>
+              <div class="field-control">
+                <div class="fx-checkbox" id="cb-log" onclick="toggleLog()">
+                  <div class="fx-checkbox-box" id="cb-log-box"></div>
+                  <span class="fx-checkbox-text">Write logs to file</span>
+                </div>
+              </div>
+            </div>
+            <div id="log-options" style="display:none">
+              <div class="divider"></div>
+              <div class="field-row">
+                <div class="field-label">
+                  Log level
+                  <small>Minimum severity to record</small>
+                </div>
+                <div class="field-control">
+                  <div class="inline-row">
+                    <div class="fx-combo" style="min-width:140px" onclick="toggleLevelMenu()">
+                      <span id="level-selected">INFO</span>
+                      <span class="fx-combo-arrow">&#9660;</span>
+                    </div>
+                    <span style="font-size:11px;color:#6688AA">Records INFO and above</span>
+                  </div>
+                  <div id="level-menu" style="display:none;background:#fff;border:1px solid #BDD0E8;border-radius:4px;margin-top:2px;overflow:hidden;width:140px">
+                    <div onclick="selectLevel(this,'DEBUG')" style="padding:6px 10px;font-size:12px;color:#162030;cursor:pointer;border-top:0.5px solid #EEF2F8;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#A8CFEF;flex-shrink:0"></span>DEBUG</div>
+                    <div onclick="selectLevel(this,'INFO')" style="padding:6px 10px;font-size:12px;color:#162030;cursor:pointer;background:#D4E5F9;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#2C6FBF;flex-shrink:0"></span>INFO</div>
+                    <div onclick="selectLevel(this,'WARN')" style="padding:6px 10px;font-size:12px;color:#162030;cursor:pointer;border-top:0.5px solid #EEF2F8;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#F5D98A;flex-shrink:0"></span>WARN</div>
+                    <div onclick="selectLevel(this,'ERROR')" style="padding:6px 10px;font-size:12px;color:#162030;cursor:pointer;border-top:0.5px solid #EEF2F8;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#F5AAAA;flex-shrink:0"></span>ERROR</div>
+                  </div>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="field-row">
+                <div class="field-label">
+                  Log file location
+                  <small>Current log file path</small>
+                </div>
+                <div class="field-control">
+                  <div class="path-box">
+                    <svg class="path-icon" viewBox="0 0 16 16" fill="none" stroke="#6688AA" stroke-width="1.5">
+                      <path d="M3 2h7l3 3v9H3V2z"/><path d="M10 2v3h3"/>
+                    </svg>
+                    <span class="path-text">~/.config/renamer/logs/renamer.log</span>
+                    <button class="path-copy">Open</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer">
+      <div style="font-size:11px;color:#8FA4BB;margin-right:auto">Some changes require restart</div>
+      <button class="btn-ghost">Cancel</button>
+      <button class="btn-primary">Save &amp; Close</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleCustom(){
+  var box=document.getElementById('cb-custom-box');
+  var path=document.getElementById('custom-path');
+  var note=document.getElementById('custom-note');
+  var on=box.classList.toggle('checked');
+  path.classList.toggle('hidden',!on);
+  note.style.display=on?'':'none';
+}
+function toggleLog(){
+  var box=document.getElementById('cb-log-box');
+  var opts=document.getElementById('log-options');
+  var on=box.classList.toggle('checked');
+  opts.style.display=on?'':'none';
+}
+var langOpen=false;
+function toggleLangMenu(){
+  langOpen=!langOpen;
+  document.getElementById('lang-menu').style.display=langOpen?'block':'none';
+}
+function selectLang(el,val){
+  document.getElementById('lang-selected').textContent=val;
+  document.querySelectorAll('#lang-menu .lang-opt').forEach(function(o){o.style.background='';});
+  el.style.background='#D4E5F9';
+  langOpen=false;
+  document.getElementById('lang-menu').style.display='none';
+}
+var levelOpen=false;
+function toggleLevelMenu(){
+  levelOpen=!levelOpen;
+  document.getElementById('level-menu').style.display=levelOpen?'block':'none';
+}
+function selectLevel(el,val){
+  document.getElementById('level-selected').textContent=val;
+  document.querySelectorAll('#level-menu div').forEach(function(o){o.style.background='';});
+  el.style.background='#D4E5F9';
+  levelOpen=false;
+  document.getElementById('level-menu').style.display='none';
+  var desc=document.querySelector('.inline-row span');
+  var map={DEBUG:'Records all events',INFO:'Records INFO and above',WARN:'Records WARN and above',ERROR:'Records errors only'};
+  if(desc)desc.textContent=map[val]||'';
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#lang-combo')&&!e.target.closest('#lang-menu')){langOpen=false;document.getElementById('lang-menu').style.display='none';}
+  if(!e.target.closest('[onclick="toggleLevelMenu()"]')&&!e.target.closest('#level-menu')){levelOpen=false;document.getElementById('level-menu').style.display='none';}
+});
+</script>

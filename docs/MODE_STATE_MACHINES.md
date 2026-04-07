@@ -12,16 +12,16 @@
 
 1. [Overview and Shared Infrastructure](#1-overview-and-shared-infrastructure)
 2. [State Machine Notation](#2-state-machine-notation)
-3. [Mode 1: Add Custom Text](#3-mode-1-add-custom-text)
-4. [Mode 2: Remove Custom Text](#4-mode-2-remove-custom-text)
-5. [Mode 3: Replace Custom Text](#5-mode-3-replace-custom-text)
+3. [Mode 1: Add Text](#3-mode-1-add-text)
+4. [Mode 2: Remove Text](#4-mode-2-remove-text)
+5. [Mode 3: Replace Text](#5-mode-3-replace-text)
 6. [Mode 4: Change Case](#6-mode-4-change-case)
-7. [Mode 5: Add Sequence](#7-mode-5-add-sequence)
-8. [Mode 6: Truncate File Name](#8-mode-6-truncate-file-name)
+7. [Mode 5: Number Files](#7-mode-5-number-files)
+8. [Mode 6: Trim Name](#8-mode-6-trim-name)
 9. [Mode 7: Change Extension](#9-mode-7-change-extension)
-10. [Mode 8: Use Datetime](#10-mode-8-use-datetime)
-11. [Mode 9: Use Image Dimensions](#11-mode-9-use-image-dimensions)
-12. [Mode 10: Use Parent Folder Name](#12-mode-10-use-parent-folder-name)
+10. [Mode 8: Add Date & Time](#10-mode-8-add-date--time)
+11. [Mode 9: Add Dimensions](#11-mode-9-add-dimensions)
+12. [Mode 10: Add Folder Name](#12-mode-10-add-folder-name)
 13. [Conflict Resolution State Machine](#13-conflict-resolution-state-machine)
 14. [Cross-Mode Concerns](#14-cross-mode-concerns)
 15. [Design Implications for Approach 3](#15-design-implications-for-approach-3)
@@ -34,16 +34,16 @@
 
 | Mode Number | Mode Name | Enum Value | Parallelizable | Sequential Requirement |
 |---|---|---|---|---|
-| 1 | Add Custom Text | `ADD_TEXT` | ✅ YES | None |
-| 2 | Remove Custom Text | `REMOVE_TEXT` | ✅ YES | None |
-| 3 | Replace Custom Text | `REPLACE_TEXT` | ✅ YES | None |
+| 1 | Add Text | `ADD_TEXT` | ✅ YES | None |
+| 2 | Remove Text | `REMOVE_TEXT` | ✅ YES | None |
+| 3 | Replace Text | `REPLACE_TEXT` | ✅ YES | None |
 | 4 | Change Case | `CHANGE_CASE` | ✅ YES | None |
-| 5 | Add Sequence | `ADD_SEQUENCE` | ❌ **NO** | Must sort files; apply sequence in order |
-| 6 | Truncate File Name | `TRUNCATE_FILE_NAME` | ✅ YES | None |
+| 5 | Number Files | `NUMBER_FILES` | ❌ **NO** | Must sort files; apply sequence in order |
+| 6 | Trim Name | `TRIM_NAME` | ✅ YES | None |
 | 7 | Change Extension | `CHANGE_EXTENSION` | ✅ YES | None |
-| 8 | Use Datetime | `USE_DATETIME` | ✅ YES | None (but metadata extraction is sequential per metadata API) |
-| 9 | Use Image Dimensions | `USE_IMAGE_DIMENSIONS` | ✅ YES | None (metadata extraction is sequential) |
-| 10 | Use Parent Folder Name | `USE_PARENT_FOLDER_NAME` | ✅ YES | None |
+| 8 | Add Date & Time | `ADD_DATETIME` | ✅ YES | None (but metadata extraction is sequential per metadata API) |
+| 9 | Add Dimensions | `ADD_DIMENSIONS` | ✅ YES | None (metadata extraction is sequential) |
+| 10 | Add Folder Name | `ADD_FOLDER_NAME` | ✅ YES | None |
 
 **Enumeration:** `TransformationMode` in `ua.renamer.app.core.enums`
 
@@ -51,16 +51,16 @@
 
 ### 1.2 Position Enums (Shared Across Modes)
 
-**`ItemPosition`** (used by Add Text, Remove Text, Use Parent Folder Name):
+**`ItemPosition`** (used by Add Text, Remove Text, Add Folder Name):
 - `BEGIN` — position at start of filename
 - `END` — position at end of filename
 
-**`ItemPositionExtended`** (used by Replace Text, Use Image Dimensions, Use Datetime):
+**`ItemPositionExtended`** (used by Replace Text, Add Dimensions, Add Date & Time):
 - `BEGIN` — replace/insert at start
 - `END` — replace/insert at end
 - `EVERYWHERE` — replace all occurrences (Replace Text mode only)
 
-**`ItemPositionWithReplacement`** (used by Replace Text, Use Datetime, Use Image Dimensions):
+**`ItemPositionWithReplacement`** (used by Replace Text, Add Date & Time, Add Dimensions):
 - `BEGIN` — replace/insert at start of filename
 - `END` — replace/insert at end of filename
 - `REPLACE` — replace entire filename with new value
@@ -190,7 +190,7 @@ This document uses **Mermaid `stateDiagram-v2`** syntax to describe the lifecycl
 
 ---
 
-## 3. Mode 1: Add Custom Text
+## 3. Mode 1: Add Text
 
 ### 3.1 State Machine
 
@@ -309,7 +309,7 @@ public sealed record AddTextParameters(
 
 ---
 
-## 4. Mode 2: Remove Custom Text
+## 4. Mode 2: Remove Text
 
 ### 4.1 State Machine
 
@@ -428,7 +428,7 @@ public sealed record RemoveTextParameters(
 
 ---
 
-## 5. Mode 3: Replace Custom Text
+## 5. Mode 3: Replace Text
 
 ### 5.1 State Machine
 
@@ -754,7 +754,7 @@ public sealed record ChangeCaseParameters(
 
 ---
 
-## 7. Mode 5: Add Sequence
+## 7. Mode 5: Number Files
 
 ### 7.1 State Machine
 
@@ -905,7 +905,7 @@ public sealed record SequenceParameters(
 
 ---
 
-## 8. Mode 6: Truncate File Name
+## 8. Mode 6: Trim Name
 
 ### 8.1 State Machine
 
@@ -1186,7 +1186,7 @@ public sealed record ExtensionChangeParameters(
 
 ---
 
-## 10. Mode 8: Use Datetime
+## 10. Mode 8: Add Date & Time
 
 ### 10.1 State Machine
 
@@ -1419,7 +1419,7 @@ public sealed record DateTimeParameters(
 
 ---
 
-## 11. Mode 9: Use Image Dimensions
+## 11. Mode 9: Add Dimensions
 
 ### 11.1 State Machine
 
@@ -1618,7 +1618,7 @@ public sealed record ImageDimensionsParameters(
 
 ---
 
-## 12. Mode 10: Use Parent Folder Name
+## 12. Mode 10: Add Folder Name
 
 ### 12.1 State Machine
 
@@ -1984,10 +1984,10 @@ Results differ based on order.
 
 | Mode | Depends On | Notes |
 |---|---|---|
-| Add Sequence | ALL previous modes | Must run last (after all name modifications) to avoid overwriting |
+| Number Files | ALL previous modes | Must run last (after all name modifications) to avoid overwriting |
 | Change Extension | Requires valid filename | Must run after modes that modify base name |
-| Use Datetime | Requires file metadata | No dependency on other modes |
-| Use Parent Folder | Requires filesystem path | No dependency on other modes |
+| Add Date & Time | Requires file metadata | No dependency on other modes |
+| Add Folder Name | Requires filesystem path | No dependency on other modes |
 | Others | Independent | Can be applied in any order |
 
 ### 14.3 Idempotence
@@ -2000,12 +2000,12 @@ An operation is **idempotent** if applying it twice produces the same result as 
 | Remove Text | ✅ YES | Removes text once; no match second time → original returned |
 | Replace Text | ⚠️ CONDITIONAL | Idempotent only if replacement text doesn't match pattern |
 | Change Case | ✅ YES | Case conversion is idempotent: UPPERCASE → UPPERCASE |
-| Add Sequence | ❌ NO | Sequence number changes on each run (depends on file order) |
-| Truncate | ✅ YES | Truncating twice: `file.txt` → `ile.txt` → `ile.txt` (no-op) |
+| Number Files | ❌ NO | Sequence number changes on each run (depends on file order) |
+| Trim Name | ✅ YES | Truncating twice: `file.txt` → `ile.txt` → `ile.txt` (no-op) |
 | Change Extension | ⚠️ CONDITIONAL | Idempotent if new extension == old extension |
-| Use Datetime | ❌ NO | CURRENT_DATE changes on each run (not deterministic) |
-| Use Image Dimensions | ✅ YES | Dimensions don't change (metadata static) |
-| Use Parent Folder | ✅ YES | Parent folder names don't change |
+| Add Date & Time | ❌ NO | CURRENT_DATE changes on each run (not deterministic) |
+| Add Dimensions | ✅ YES | Dimensions don't change (metadata static) |
+| Add Folder Name | ✅ YES | Parent folder names don't change |
 
 ### 14.4 Conflict Interaction Between Modes
 
@@ -2264,12 +2264,12 @@ class DuplicateNameResolverTest {
 | 2 | Remove Text | 2 | 2 | Identical | No | Low |
 | 3 | Replace Text | 3 | 3 | ⚠️ Literal vs Regex | No | Medium |
 | 4 | Change Case | 2 | 2 | ✅ V2 safer (no crash) | No | Low |
-| 5 | Add Sequence | 4 | 4 | Identical | **YES** | High (stepValue=0) |
-| 6 | Truncate | 2 | 2 | ⚠️ Empty handling | No | Low |
+| 5 | Number Files | 4 | 4 | Identical | **YES** | High (stepValue=0) |
+| 6 | Trim Name | 2 | 2 | ⚠️ Empty handling | No | Low |
 | 7 | Change Extension | 1 | 1 | ⚠️ Empty handling | No | Very Low |
-| 8 | Use Datetime | 10 | 7 | ❌ 3 features missing | No | Very Low |
-| 9 | Image Dimensions | 5 | 4 | ⚠️ Hardcoded separator bug | No | Low |
-| 10 | Parent Folder | 3 | 3 | ⚠️ Root-level error | No | Very Low |
+| 8 | Add Date & Time | 10 | 7 | ❌ 3 features missing | No | Very Low |
+| 9 | Add Dimensions | 5 | 4 | ⚠️ Hardcoded separator bug | No | Low |
+| 10 | Add Folder Name | 3 | 3 | ⚠️ Root-level error | No | Very Low |
 
 ---
 

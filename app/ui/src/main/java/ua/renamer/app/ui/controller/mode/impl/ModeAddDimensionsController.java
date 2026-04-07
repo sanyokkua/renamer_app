@@ -20,11 +20,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller for the Use Image Dimensions transformation mode.
+ * Controller for the Add Dimensions transformation mode.
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeUseImageDimensionsController
+public class ModeAddDimensionsController
         implements ModeControllerV2Api<ImageDimensionsParams>, Initializable {
 
     private final ImageDimensionOptionsConverter converter;
@@ -67,7 +67,7 @@ public class ModeUseImageDimensionsController
 
     @Override
     public TransformationMode supportedMode() {
-        return TransformationMode.USE_IMAGE_DIMENSIONS;
+        return TransformationMode.ADD_DIMENSIONS;
     }
 
     @Override

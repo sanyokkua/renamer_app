@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeUseDatetimeController} — V2 {@code bind()} contract.
+ * Unit tests for {@link ModeAddDatetimeController} — V2 {@code bind()} contract.
  *
  * <p>Test categories:
  * <ul>
@@ -49,14 +49,14 @@ import static org.mockito.Mockito.*;
  * in {@code module-info.java}.
  */
 @ExtendWith(MockitoExtension.class)
-class ModeUseDatetimeControllerV2Test {
+class ModeAddDatetimeControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
     @Mock
     private LanguageTextRetrieverApi languageTextRetriever;
 
-    private ModeUseDatetimeController controller;
+    private ModeAddDatetimeController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -76,9 +76,9 @@ class ModeUseDatetimeControllerV2Test {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T readFieldUnchecked(ModeUseDatetimeController target, String fieldName) {
+    private static <T> T readFieldUnchecked(ModeAddDatetimeController target, String fieldName) {
         try {
-            Field f = ModeUseDatetimeController.class.getDeclaredField(fieldName);
+            Field f = ModeAddDatetimeController.class.getDeclaredField(fieldName);
             f.setAccessible(true);
             return (T) f.get(target);
         } catch (Exception e) {
@@ -91,58 +91,58 @@ class ModeUseDatetimeControllerV2Test {
     // -----------------------------------------------------------------------
 
     private static ChoiceBox<ua.renamer.app.api.enums.DateTimeSource> readSourceBoxUnchecked(
-            ModeUseDatetimeController target) {
+            ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "dateTimeSourceChoiceBox");
     }
 
     private static ChoiceBox<ua.renamer.app.api.enums.DateFormat> readDateFormatBoxUnchecked(
-            ModeUseDatetimeController target) {
+            ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "dateFormatChoiceBox");
     }
 
     private static ChoiceBox<ua.renamer.app.api.enums.TimeFormat> readTimeFormatBoxUnchecked(
-            ModeUseDatetimeController target) {
+            ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "timeFormatChoiceBox");
     }
 
     private static ItemPositionWithReplacementRadioSelector readRadioSelectorUnchecked(
-            ModeUseDatetimeController target) {
+            ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "dateTimePositionInTheNameRadioSelector");
     }
 
-    private static CheckBox readUseFallbackCheckBoxUnchecked(ModeUseDatetimeController target) {
+    private static CheckBox readUseFallbackCheckBoxUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "useFallbackDateTimeCheckBox");
     }
 
-    private static CheckBox readUseCustomFallbackCheckBoxUnchecked(ModeUseDatetimeController target) {
+    private static CheckBox readUseCustomFallbackCheckBoxUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "useCustomDateTimeAsFallbackCheckBox");
     }
 
-    private static CheckBox readUseUppercaseCheckBoxUnchecked(ModeUseDatetimeController target) {
+    private static CheckBox readUseUppercaseCheckBoxUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "useUppercaseForAmPmCheckBox");
     }
 
-    private static DatePicker readDatePickerUnchecked(ModeUseDatetimeController target) {
+    private static DatePicker readDatePickerUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "datePicker");
     }
 
-    private static Spinner<Integer> readHourSpinnerUnchecked(ModeUseDatetimeController target) {
+    private static Spinner<Integer> readHourSpinnerUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "hourSpinner");
     }
 
-    private static Spinner<Integer> readMinuteSpinnerUnchecked(ModeUseDatetimeController target) {
+    private static Spinner<Integer> readMinuteSpinnerUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "minuteSpinner");
     }
 
-    private static Spinner<Integer> readSecondSpinnerUnchecked(ModeUseDatetimeController target) {
+    private static Spinner<Integer> readSecondSpinnerUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "secondSpinner");
     }
 
-    private static VBox readDateTimePickerPanelUnchecked(ModeUseDatetimeController target) {
+    private static VBox readDateTimePickerPanelUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "dateTimePicker");
     }
 
-    private static Label readSeparatorLabelUnchecked(ModeUseDatetimeController target) {
+    private static Label readSeparatorLabelUnchecked(ModeAddDatetimeController target) {
         return readFieldUnchecked(target, "datetimeAndNameSeparatorLabel");
     }
 
@@ -209,7 +209,7 @@ class ModeUseDatetimeControllerV2Test {
         var dateTimeFormatConverter = new DateTimeFormatConverter(languageTextRetriever);
         var dateTimeSourceConverter = new DateTimeSourceConverter(languageTextRetriever);
 
-        controller = new ModeUseDatetimeController(
+        controller = new ModeAddDatetimeController(
                 dateFormatConverter,
                 timeFormatConverter,
                 dateTimeFormatConverter,
@@ -276,7 +276,7 @@ class ModeUseDatetimeControllerV2Test {
     // -----------------------------------------------------------------------
 
     private void injectField(String fieldName, Object value) throws Exception {
-        Field f = ModeUseDatetimeController.class.getDeclaredField(fieldName);
+        Field f = ModeAddDatetimeController.class.getDeclaredField(fieldName);
         f.setAccessible(true);
         f.set(controller, value);
     }
@@ -301,7 +301,7 @@ class ModeUseDatetimeControllerV2Test {
         void supportedMode_returnsUseDatetime() {
             TransformationMode result = controller.supportedMode();
 
-            assertThat(result).isEqualTo(TransformationMode.USE_DATETIME);
+            assertThat(result).isEqualTo(TransformationMode.ADD_DATETIME);
         }
 
         @Test

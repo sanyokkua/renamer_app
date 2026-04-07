@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ModeAddCustomTextController}.
+ * Unit tests for {@link ModeAddTextController}.
  *
  * <p>Test categories:
  * <ul>
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
  * in {@code module-info.java}).
  */
 @ExtendWith(MockitoExtension.class)
-class ModeAddCustomTextControllerTest {
+class ModeAddTextControllerTest {
 
     private static final long FX_TIMEOUT_MS = 5_000;
 
@@ -56,7 +56,7 @@ class ModeAddCustomTextControllerTest {
     private ModeApi<AddTextParams> modeApi;
 
     private ItemPositionConverter itemPositionConverter;
-    private ModeAddCustomTextController controller;
+    private ModeAddTextController controller;
 
     // -----------------------------------------------------------------------
     // Toolkit bootstrap — shared across all nested classes
@@ -75,8 +75,8 @@ class ModeAddCustomTextControllerTest {
                 .as("JavaFX toolkit must start within timeout").isTrue();
     }
 
-    private static void injectTextField(ModeAddCustomTextController target, TextField tf) throws Exception {
-        Field f = ModeAddCustomTextController.class.getDeclaredField("textField");
+    private static void injectTextField(ModeAddTextController target, TextField tf) throws Exception {
+        Field f = ModeAddTextController.class.getDeclaredField("textField");
         f.setAccessible(true);
         f.set(target, tf);
     }
@@ -85,27 +85,27 @@ class ModeAddCustomTextControllerTest {
     // Reflection helpers — inject / read @FXML fields
     // -----------------------------------------------------------------------
 
-    private static void injectRadioSelector(ModeAddCustomTextController target, ItemPositionRadioSelector sel)
+    private static void injectRadioSelector(ModeAddTextController target, ItemPositionRadioSelector sel)
             throws Exception {
-        Field f = ModeAddCustomTextController.class.getDeclaredField("itemPositionRadioSelector");
+        Field f = ModeAddTextController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         f.set(target, sel);
     }
 
 
-    private static TextField readTextField(ModeAddCustomTextController target) throws Exception {
-        Field f = ModeAddCustomTextController.class.getDeclaredField("textField");
+    private static TextField readTextField(ModeAddTextController target) throws Exception {
+        Field f = ModeAddTextController.class.getDeclaredField("textField");
         f.setAccessible(true);
         return (TextField) f.get(target);
     }
 
-    private static ItemPositionRadioSelector readRadioSelector(ModeAddCustomTextController target) throws Exception {
-        Field f = ModeAddCustomTextController.class.getDeclaredField("itemPositionRadioSelector");
+    private static ItemPositionRadioSelector readRadioSelector(ModeAddTextController target) throws Exception {
+        Field f = ModeAddTextController.class.getDeclaredField("itemPositionRadioSelector");
         f.setAccessible(true);
         return (ItemPositionRadioSelector) f.get(target);
     }
 
-    private static TextField readTextFieldUnchecked(ModeAddCustomTextController target) {
+    private static TextField readTextFieldUnchecked(ModeAddTextController target) {
         try {
             return readTextField(target);
         } catch (Exception e) {
@@ -113,7 +113,7 @@ class ModeAddCustomTextControllerTest {
         }
     }
 
-    private static ItemPositionRadioSelector readRadioSelectorUnchecked(ModeAddCustomTextController target) {
+    private static ItemPositionRadioSelector readRadioSelectorUnchecked(ModeAddTextController target) {
         try {
             return readRadioSelector(target);
         } catch (Exception e) {
@@ -184,7 +184,7 @@ class ModeAddCustomTextControllerTest {
     @BeforeEach
     void setUp() throws Exception {
         itemPositionConverter = new ItemPositionConverter(languageTextRetriever);
-        controller = new ModeAddCustomTextController();
+        controller = new ModeAddTextController();
         injectTextField(controller, new TextField());
         injectRadioSelector(controller, new ItemPositionRadioSelector("", itemPositionConverter));
     }

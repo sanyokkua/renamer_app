@@ -4,7 +4,7 @@ import ua.renamer.app.api.enums.ItemPosition;
 import ua.renamer.app.api.model.TransformationMode;
 
 /**
- * Parameters for the {@link TransformationMode#USE_PARENT_FOLDER_NAME} mode.
+ * Parameters for the {@link TransformationMode#ADD_FOLDER_NAME} mode.
  * Adds one or more parent folder names to the filename.
  *
  * @param numberOfParentFolders number of parent folders to include; must be &gt;= 1
@@ -19,7 +19,7 @@ public record ParentFolderParams(
 
     @Override
     public TransformationMode mode() {
-        return TransformationMode.USE_PARENT_FOLDER_NAME;
+        return TransformationMode.ADD_FOLDER_NAME;
     }
 
     @Override
