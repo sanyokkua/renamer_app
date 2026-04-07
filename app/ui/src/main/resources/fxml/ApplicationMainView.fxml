@@ -12,7 +12,12 @@
     <!-- ── MenuBar: Mode / Settings / Help ── -->
     <MenuBar VBox.vgrow="NEVER" useSystemMenuBar="true">
         <Menu fx:id="modeMenu" text="%menu_mode"/>
-        <Menu text="%menu_settings"/>
+        <Menu text="%menu_settings">
+            <items>
+                <MenuItem fx:id="settingsMenuItem" text="%menu_settings_open"
+                          onAction="#onOpenSettings"/>
+            </items>
+        </Menu>
         <Menu text="%menu_help"/>
     </MenuBar>
 

@@ -134,7 +134,27 @@ public enum TextKeys {
     MENU_MODE("menu_mode"),
     MENU_SETTINGS("menu_settings"),
     MENU_HELP("menu_help"),
-    METADATA_NOT_AVAILABLE("metadata_not_available");
+    METADATA_NOT_AVAILABLE("metadata_not_available"),
+    SETTINGS_DIALOG_TITLE("settings_dialog_title"),
+    SETTINGS_SIDEBAR_LABEL("settings_sidebar_label"),
+    SETTINGS_NAV_GENERAL("settings_nav_general"),
+    SETTINGS_NAV_APPEARANCE("settings_nav_appearance"),
+    SETTINGS_NAV_ADVANCED("settings_nav_advanced"),
+    SETTINGS_SECTION_GENERAL_TITLE("settings_section_general_title"),
+    SETTINGS_SECTION_CUSTOM_CONFIG("settings_section_custom_config"),
+    SETTINGS_CUSTOM_CONFIG_ENABLE("settings_custom_config_enable"),
+    SETTINGS_CUSTOM_CONFIG_COPY("settings_custom_config_copy"),
+    SETTINGS_CUSTOM_CONFIG_ANNOTATION("settings_custom_config_annotation"),
+    SETTINGS_SECTION_LANGUAGE("settings_section_language"),
+    SETTINGS_LANGUAGE_LABEL("settings_language_label"),
+    SETTINGS_LANGUAGE_RESTART_NOTICE("settings_language_restart_notice"),
+    SETTINGS_SECTION_LOGGING("settings_section_logging"),
+    SETTINGS_LOGGING_ENABLE("settings_logging_enable"),
+    SETTINGS_LOGGING_LEVEL_LABEL("settings_logging_level_label"),
+    SETTINGS_LOGGING_OPEN_BTN("settings_logging_open_btn"),
+    SETTINGS_BTN_SAVE("settings_btn_save"),
+    SETTINGS_BTN_CANCEL("settings_btn_cancel"),
+    MENU_SETTINGS_OPEN("menu_settings_open");
 
     private final String keyString;
 

@@ -12,6 +12,7 @@ module ua.renamer.app.api {
     exports ua.renamer.app.api.model.meta.category;
     exports ua.renamer.app.api.service;
     exports ua.renamer.app.api.session;
+    exports ua.renamer.app.api.settings;
 
     opens ua.renamer.app.api.enums;
     opens ua.renamer.app.api.model;
@@ -19,4 +20,5 @@ module ua.renamer.app.api {
     opens ua.renamer.app.api.model.meta;
     opens ua.renamer.app.api.model.meta.category;
     opens ua.renamer.app.api.session;
+    opens ua.renamer.app.api.settings;
 }

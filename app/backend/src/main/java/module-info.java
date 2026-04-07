@@ -7,9 +7,13 @@ module ua.renamer.app.backend {
     requires jakarta.annotation;
     requires static lombok;
     requires org.slf4j;
+    requires ch.qos.logback.classic;
+    requires ch.qos.logback.core;
+    requires com.fasterxml.jackson.databind;
     // IMPORTANT: NO require javafx.* — JPMS enforces FX-free backend
 
     exports ua.renamer.app.backend.service;
+    exports ua.renamer.app.backend.settings;
     exports ua.renamer.app.backend.service.impl;
     exports ua.renamer.app.backend.session;
     exports ua.renamer.app.backend.config;
@@ -18,4 +22,5 @@ module ua.renamer.app.backend {
     opens ua.renamer.app.backend.service.impl;
     opens ua.renamer.app.backend.session;
     opens ua.renamer.app.backend.config;
+    opens ua.renamer.app.backend.settings;
 }

@@ -10,6 +10,9 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -53,9 +56,12 @@ public class ApplicationMainViewController implements Initializable {
     private final ModeViewRegistry modeViewRegistry;
     private final LanguageTextRetrieverApi languageTextRetriever;
     private final FolderExpansionService folderExpansionService;
+    private final SettingsDialogController settingsDialogController;
 
     @FXML
     private Menu modeMenu;
+    @FXML
+    private MenuItem settingsMenuItem;
     @FXML
     private StackPane appModeContainer;
     @FXML
@@ -130,6 +136,8 @@ public class ApplicationMainViewController implements Initializable {
                 updateFileInfoPanel(lastFileInfoPreview, lastFileInfoCandidate);
             }
         });
+        settingsMenuItem.setAccelerator(
+                new KeyCodeCombination(KeyCode.COMMA, KeyCombination.SHORTCUT_DOWN));
     }
 
     private void configureModeMenu() {
@@ -743,6 +751,11 @@ public class ApplicationMainViewController implements Initializable {
             configureControlWidgetsState();
             updateFileCountLabel();
         }, Platform::runLater);
+    }
+
+    @FXML
+    private void onOpenSettings() {
+        settingsDialogController.show(appModeContainer.getScene().getWindow());
     }
 
     private void handleBtnClickedReload() {

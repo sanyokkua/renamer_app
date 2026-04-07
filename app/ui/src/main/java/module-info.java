@@ -5,6 +5,7 @@ module ua.renamer.app.ui {
 
     requires com.google.guice;
 
+    requires java.desktop;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;

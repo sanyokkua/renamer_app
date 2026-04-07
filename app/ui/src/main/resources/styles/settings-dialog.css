@@ -1,0 +1,185 @@
+/* ── Settings Dialog ── */
+
+.settings-dialog {
+    -fx-background-color: transparent;
+}
+
+/* Sidebar */
+.settings-sidebar {
+    -fx-background-color: #E3EBF5;
+    -fx-min-width: 160px;
+    -fx-max-width: 160px;
+    -fx-padding: 12 0 12 0;
+    -fx-spacing: 0;
+}
+
+.settings-sidebar-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6688AA;
+    -fx-padding: 4 12 10 12;
+}
+
+.settings-nav-item {
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+    -fx-spacing: 0;
+}
+
+.settings-nav-item-active {
+    -fx-background-color: #D4E5F9;
+    -fx-border-color: transparent transparent transparent #2C6FBF;
+    -fx-border-width: 0 0 0 3;
+}
+
+.settings-nav-item-active .settings-nav-label {
+    -fx-font-weight: 500;
+    -fx-text-fill: #162030;
+}
+
+.settings-nav-item-disabled {
+    -fx-opacity: 0.5;
+    -fx-cursor: default;
+}
+
+.settings-nav-label {
+    -fx-text-fill: #35506A;
+    -fx-font-size: 12px;
+}
+
+/* Content area */
+.settings-content {
+    -fx-background-color: #EFF4FA;
+    -fx-padding: 20 24 20 24;
+    -fx-spacing: 0;
+}
+
+.settings-content-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #1F3C5C;
+    -fx-border-color: transparent transparent #C4D4E8 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0 0 10 0;
+}
+
+.settings-section {
+    -fx-spacing: 0;
+    -fx-padding: 0;
+}
+
+.settings-section-header {
+    -fx-background-color: #E3EBF5;
+    -fx-text-fill: #35506A;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8 4 8;
+    -fx-max-width: Infinity;
+}
+
+.settings-section-body {
+    -fx-padding: 10 0 10 0;
+    -fx-spacing: 8;
+}
+
+/* Path boxes */
+.settings-path-box {
+    -fx-background-color: #EAF0F8;
+    -fx-border-color: #C4D4E8;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 5 8 5 8;
+    -fx-spacing: 6;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.settings-path-icon {
+    -fx-font-size: 13px;
+}
+
+.settings-path-text {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-text-fill: #35506A;
+    -fx-font-size: 11px;
+}
+
+.settings-path-text:focused {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.settings-path-copy-btn {
+    -fx-background-color: #D4E5F9;
+    -fx-text-fill: #2C6FBF;
+    -fx-font-size: 10px;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
+    -fx-padding: 2 8 2 8;
+    -fx-border-color: transparent;
+}
+
+.settings-path-copy-btn:hover {
+    -fx-background-color: #BFDBF7;
+}
+
+/* Info badge */
+.settings-info-badge {
+    -fx-background-color: #EBF1FA;
+    -fx-border-color: #BDD0E8;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 5 10 5 10;
+}
+
+.settings-info-icon {
+    -fx-text-fill: #5580AC;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+.settings-info-badge-text {
+    -fx-text-fill: #5580AC;
+    -fx-font-size: 11px;
+    -fx-max-width: 360;
+}
+
+/* Field rows */
+.settings-field-row {
+    -fx-spacing: 10;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.settings-field-label {
+    -fx-text-fill: #35506A;
+    -fx-font-size: 12px;
+    -fx-min-width: 80;
+}
+
+/* Combo boxes */
+.settings-combo {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C4D4E8;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-min-width: 160;
+}
+
+/* Annotation */
+.settings-annotation {
+    -fx-text-fill: #6688AA;
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+}
+
+/* Divider */
+.settings-divider {
+    -fx-padding: 6 0 0 0;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}

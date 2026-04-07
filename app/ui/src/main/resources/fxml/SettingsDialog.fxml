@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ua.renamer.app.ui.controller.SettingsDialogController"
+      prefWidth="620" minHeight="420"
+      styleClass="settings-dialog">
+
+    <!-- Left Sidebar -->
+    <VBox styleClass="settings-sidebar" prefWidth="160">
+        <Label text="%settings_sidebar_label" styleClass="settings-sidebar-title"/>
+
+        <VBox fx:id="navGeneral" styleClass="settings-nav-item,settings-nav-item-active">
+            <Label text="%settings_nav_general" styleClass="settings-nav-label"/>
+        </VBox>
+        <VBox fx:id="navAppearance" styleClass="settings-nav-item,settings-nav-item-disabled" disable="true">
+            <Label text="%settings_nav_appearance" styleClass="settings-nav-label"/>
+        </VBox>
+        <VBox fx:id="navAdvanced" styleClass="settings-nav-item,settings-nav-item-disabled" disable="true">
+            <Label text="%settings_nav_advanced" styleClass="settings-nav-label"/>
+        </VBox>
+    </VBox>
+
+    <!-- Right Content Area -->
+    <VBox styleClass="settings-content" HBox.hgrow="ALWAYS">
+        <Label text="%settings_section_general_title" styleClass="settings-content-title"/>
+
+        <!-- Section: Custom Configuration -->
+        <VBox styleClass="settings-section">
+            <Label text="%settings_section_custom_config" styleClass="settings-section-header"/>
+            <VBox styleClass="settings-section-body">
+                <CheckBox fx:id="customConfigCheckbox"
+                          text="%settings_custom_config_enable"
+                          onAction="#onCustomConfigCheckboxChanged"/>
+                <HBox fx:id="customConfigPathRow" styleClass="settings-path-box"
+                      visible="false" managed="false">
+                    <Label text="&#x1F4C1;" styleClass="settings-path-icon"/>
+                    <TextField fx:id="customConfigPathField"
+                               editable="false"
+                               styleClass="settings-path-text"
+                               HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="customConfigCopyBtn"
+                            text="%settings_custom_config_copy"
+                            styleClass="settings-path-copy-btn"
+                            onAction="#onCopyConfigPath"/>
+                </HBox>
+                <Label text="%settings_custom_config_annotation" styleClass="settings-annotation"/>
+            </VBox>
+        </VBox>
+
+        <Separator styleClass="settings-divider"/>
+
+        <!-- Section: Language -->
+        <VBox styleClass="settings-section">
+            <Label text="%settings_section_language" styleClass="settings-section-header"/>
+            <VBox styleClass="settings-section-body">
+                <HBox styleClass="settings-field-row" alignment="CENTER_LEFT" spacing="10">
+                    <Label text="%settings_language_label" styleClass="settings-field-label"/>
+                    <ComboBox fx:id="languageComboBox"
+                              styleClass="settings-combo"
+                              onAction="#onLanguageChanged"/>
+                </HBox>
+                <HBox fx:id="languageRestartBadge" styleClass="settings-info-badge"
+                      visible="false" managed="false" spacing="6" alignment="CENTER_LEFT">
+                    <Label text="i" styleClass="settings-info-icon"/>
+                    <Label text="%settings_language_restart_notice" styleClass="settings-info-badge-text"
+                           wrapText="true"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <Separator styleClass="settings-divider"/>
+
+        <!-- Section: Logging -->
+        <VBox styleClass="settings-section">
+            <Label text="%settings_section_logging" styleClass="settings-section-header"/>
+            <VBox styleClass="settings-section-body">
+                <CheckBox fx:id="loggingCheckbox"
+                          text="%settings_logging_enable"
+                          onAction="#onLoggingCheckboxChanged"/>
+                <VBox fx:id="loggingSubOptions" visible="false" managed="false" spacing="6">
+                    <HBox styleClass="settings-field-row" alignment="CENTER_LEFT" spacing="10">
+                        <Label text="%settings_logging_level_label" styleClass="settings-field-label"/>
+                        <ComboBox fx:id="logLevelComboBox" styleClass="settings-combo"/>
+                    </HBox>
+                    <HBox fx:id="logFilePathRow" styleClass="settings-path-box">
+                        <Label text="&#x1F4C4;" styleClass="settings-path-icon"/>
+                        <TextField fx:id="logFilePathField"
+                                   editable="false"
+                                   styleClass="settings-path-text"
+                                   HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="openLogDirBtn"
+                                text="%settings_logging_open_btn"
+                                styleClass="settings-path-copy-btn"
+                                onAction="#onOpenLogDirectory"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </VBox>
+
+    </VBox>
+</HBox>

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.session.StatePublisher;
 import ua.renamer.app.backend.config.DIBackendModule;
 import ua.renamer.app.ui.controller.ApplicationMainViewController;
+import ua.renamer.app.ui.controller.SettingsDialogController;
 import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.controller.mode.impl.*;
 import ua.renamer.app.ui.converter.*;
@@ -93,6 +94,7 @@ public class DIUIModule extends AbstractModule {
         bind(ModeAddDimensionsController.class).in(Singleton.class);
         bind(ModeAddFolderNameController.class).in(Singleton.class);
         bind(ApplicationMainViewController.class).in(Singleton.class);
+        bind(SettingsDialogController.class).in(Singleton.class);
     }
 
     /**

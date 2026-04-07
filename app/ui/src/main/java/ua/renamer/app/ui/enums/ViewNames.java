@@ -62,7 +62,12 @@ public enum ViewNames {
     /**
      * The view for the mode where the file extension is changed.
      */
-    MODE_CHANGE_EXTENSION("ModeChangeExtension.fxml");
+    MODE_CHANGE_EXTENSION("ModeChangeExtension.fxml"),
+
+    /**
+     * The settings dialog view.
+     */
+    SETTINGS_DIALOG("SettingsDialog.fxml");
 
     /**
      * The name of the FXML file associated with the view.
