@@ -106,7 +106,7 @@ public class SettingsDialogController implements Initializable {
                 getClass().getResource("/styles/components.css").toExternalForm(),
                 getClass().getResource("/styles/settings-dialog.css").toExternalForm()
         );
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
         dialog.setOnShowing(e -> {
             Button saveBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
             Button cancelBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
