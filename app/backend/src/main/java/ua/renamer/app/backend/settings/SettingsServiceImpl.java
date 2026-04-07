@@ -174,6 +174,22 @@ public class SettingsServiceImpl implements SettingsService {
         return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
     }
 
+    /**
+     * Return the value of the named OS environment variable.
+     *
+     * <p>Extracted as a protected method so that tests can subclass
+     * {@link SettingsServiceImpl} and override this seam to inject fake
+     * values for {@code APPDATA} and {@code XDG_CONFIG_HOME} without
+     * requiring real environment-variable mutation (which is not possible
+     * in the JVM).
+     *
+     * @param name environment variable name; must not be null
+     * @return the value, or {@code null} if not set
+     */
+    protected String getEnv(final String name) {
+        return System.getenv(name);
+    }
+
     private Path resolveAppDir() {
         String os = System.getProperty("os.name", "").toLowerCase();
         String home = System.getProperty("user.home");
@@ -181,11 +197,11 @@ public class SettingsServiceImpl implements SettingsService {
             return Path.of(home, "Library", "Application Support",
                     AppDefaults.APP_DIR_NAME);
         } else if (os.contains("win")) {
-            String appData = System.getenv("APPDATA");
+            String appData = getEnv("APPDATA");
             return Path.of(appData != null ? appData : home,
                     AppDefaults.APP_DIR_NAME);
         } else {
-            String xdg = System.getenv("XDG_CONFIG_HOME");
+            String xdg = getEnv("XDG_CONFIG_HOME");
             return Path.of(xdg != null ? xdg : home + "/.config",
                     AppDefaults.APP_DIR_NAME.toLowerCase());
         }

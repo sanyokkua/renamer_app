@@ -181,6 +181,22 @@ class RenameSessionTest {
             // Assert — implementation transitions status regardless of whether any file was added
             assertThat(session.getStatus()).isEqualTo(SessionStatus.FILES_LOADED);
         }
+
+        @Test
+        void givenModeSetButParamsNulled_whenAddFiles_thenStatusIsFilesLoaded() {
+            // Arrange — activeMode != null but currentParams == null (the compound-branch
+            // that is distinct from both "mode not set" and "mode fully configured").
+            // Achieved by: set both via setActiveMode, then null out params via setParameters.
+            session.setActiveMode(TransformationMode.ADD_TEXT, DEFAULT_PARAMS);
+            session.setParameters(null); // currentParams = null; activeMode still set
+
+            // Act
+            session.addFiles(List.of(FILE_A));
+
+            // Assert — condition (activeMode != null && currentParams != null) is FALSE
+            // so the else branch fires: FILES_LOADED, not MODE_CONFIGURED
+            assertThat(session.getStatus()).isEqualTo(SessionStatus.FILES_LOADED);
+        }
     }
 
     // =========================================================================
@@ -265,6 +281,24 @@ class RenameSessionTest {
 
             // Assert
             assertThat(session.getLastPreview()).isEmpty();
+        }
+
+        @Test
+        void givenModeSetButParamsNulled_thenFilesRemaining_whenRemoveOne_thenStatusIsFilesLoaded() {
+            // Arrange — activeMode != null but currentParams == null (compound-branch coverage).
+            // After removeFiles, list is non-empty so the non-empty path is taken, and
+            // the inner condition (activeMode != null && currentParams != null) is FALSE
+            // because currentParams was nulled out.
+            session.addFiles(List.of(FILE_A, FILE_B));
+            session.setActiveMode(TransformationMode.ADD_TEXT, DEFAULT_PARAMS);
+            session.setParameters(null); // currentParams = null; activeMode still set
+
+            // Act — remove one file; one remains
+            session.removeFiles(List.of(FILE_A.getAbsolutePath()));
+
+            // Assert — non-empty list, mode set, but params null → FILES_LOADED (not MODE_CONFIGURED)
+            assertThat(session.getFiles()).hasSize(1);
+            assertThat(session.getStatus()).isEqualTo(SessionStatus.FILES_LOADED);
         }
     }
 

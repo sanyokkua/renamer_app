@@ -796,7 +796,59 @@ class ReplaceTextTransformerTest {
     }
 
     // ============================================================================
-    // L. Helper Methods for Tests
+    // L. Directory / Non-file Input Tests
+    // ============================================================================
+
+    @Test
+    void transform_whenInputIsDirectory_withDirectoryMime_shouldSucceed() {
+        // isFile=false but MIME = "application/x-directory" → valid directory entry
+        FileModel directory = FileModel.builder()
+                .withFile(new File("/test/aaa_dir"))
+                .withIsFile(false)
+                .withFileSize(0L)
+                .withName("aaa_dir")
+                .withExtension("")
+                .withAbsolutePath("/test/aaa_dir")
+                .withDetectedMimeType("application/x-directory")
+                .withMetadata(null)
+                .build();
+
+        // Replace "aaa" with "bbb"; "dir" does not contain "aaa" so result is "bbb_dir"
+        ReplaceTextConfig config = createConfig("aaa", "bbb", ItemPositionExtended.EVERYWHERE);
+
+        PreparedFileModel result = transformer.transform(directory, config);
+
+        assertNotNull(result);
+        assertFalse(result.isHasError());
+        assertEquals("bbb_dir", result.getNewName());
+    }
+
+    @Test
+    void transform_whenInputIsNotFileAndNotDirectory_shouldReturnError() {
+        // isFile=false AND detectedMimeType is NOT "application/x-directory"
+        FileModel badInput = FileModel.builder()
+                .withFile(new File("/special/socket"))
+                .withIsFile(false)
+                .withFileSize(0L)
+                .withName("socket")
+                .withExtension("")
+                .withAbsolutePath("/special/socket")
+                .withDetectedMimeType("application/octet-stream")
+                .withMetadata(null)
+                .build();
+
+        ReplaceTextConfig config = createConfig("socket", "renamed", ItemPositionExtended.EVERYWHERE);
+
+        PreparedFileModel result = transformer.transform(badInput, config);
+
+        assertNotNull(result);
+        assertTrue(result.isHasError());
+        assertTrue(result.getErrorMessage().isPresent());
+        assertTrue(result.getErrorMessage().get().contains("extraction failed"));
+    }
+
+    // ============================================================================
+    // M. Helper Methods for Tests
     // ============================================================================
 
     /**

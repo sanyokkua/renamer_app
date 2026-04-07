@@ -205,6 +205,85 @@ class RenameSessionConverterTest {
     }
 
     // =========================================================================
+    // toPlaceholderPreview
+    // =========================================================================
+
+    @Nested
+    class ToPlaceholderPreviewTests {
+
+        @Test
+        void givenFileModelWithExtension_whenToPlaceholderPreview_thenOriginalNameIncludesDot() {
+            // Arrange
+            FileModel model = buildFileModel("/tmp/image.png", "image", "png");
+
+            // Act
+            RenamePreview preview = RenameSessionConverter.toPlaceholderPreview(model);
+
+            // Assert — "image.png" format
+            assertThat(preview.originalName()).isEqualTo("image.png");
+        }
+
+        @Test
+        void givenFileModelWithEmptyExtension_whenToPlaceholderPreview_thenOriginalNameHasNoDot() {
+            // Arrange — extension is empty string (e.g., Makefile, Dockerfile)
+            FileModel model = buildFileModel("/tmp/Makefile", "Makefile", "");
+
+            // Act
+            RenamePreview preview = RenameSessionConverter.toPlaceholderPreview(model);
+
+            // Assert — no trailing dot appended when extension is empty
+            assertThat(preview.originalName()).isEqualTo("Makefile");
+        }
+
+        @Test
+        void givenFileModelWithNullExtension_whenToPlaceholderPreview_thenOriginalNameHasNoDot() {
+            // Arrange — extension field is null (not all file models guarantee non-null extension)
+            FileModel model = FileModel.builder()
+                    .withFile(new File("/tmp/noext"))
+                    .withName("noext")
+                    .withExtension(null)
+                    .withAbsolutePath("/tmp/noext")
+                    .withIsFile(true)
+                    .withFileSize(0L)
+                    .build();
+
+            // Act
+            RenamePreview preview = RenameSessionConverter.toPlaceholderPreview(model);
+
+            // Assert — null extension must not produce a trailing dot
+            assertThat(preview.originalName()).isEqualTo("noext");
+        }
+
+        @Test
+        void givenFileModel_whenToPlaceholderPreview_thenNewNameIsNull() {
+            // Placeholder means no preview computed yet
+            FileModel model = buildFileModel("/tmp/doc.txt", "doc", "txt");
+
+            RenamePreview preview = RenameSessionConverter.toPlaceholderPreview(model);
+
+            assertThat(preview.newName()).isNull();
+        }
+
+        @Test
+        void givenFileModel_whenToPlaceholderPreview_thenHasErrorIsFalse() {
+            FileModel model = buildFileModel("/tmp/ok.txt", "ok", "txt");
+
+            RenamePreview preview = RenameSessionConverter.toPlaceholderPreview(model);
+
+            assertThat(preview.hasError()).isFalse();
+        }
+
+        @Test
+        void givenFileModel_whenToPlaceholderPreview_thenFileIdMatchesAbsolutePath() {
+            FileModel model = buildFileModel("/data/archive.zip", "archive", "zip");
+
+            RenamePreview preview = RenameSessionConverter.toPlaceholderPreview(model);
+
+            assertThat(preview.fileId()).isEqualTo("/data/archive.zip");
+        }
+    }
+
+    // =========================================================================
     // toSessionResult
     // =========================================================================
 

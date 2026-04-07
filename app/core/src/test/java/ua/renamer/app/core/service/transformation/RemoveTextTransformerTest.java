@@ -692,4 +692,61 @@ class RemoveTextTransformerTest {
         assertEquals("txt", result.getNewExtension());
         assertTrue(result.needsRename());
     }
+
+    // ============================================================================
+    // G. Directory / Non-file Input Tests
+    // ============================================================================
+
+    @Test
+    void transform_whenInputIsDirectory_withDirectoryMime_shouldSucceed() {
+        // isFile=false but MIME = "application/x-directory" → valid directory entry
+        FileModel directory = FileModel.builder()
+                .withFile(new File("/test/prefix_folder"))
+                .withIsFile(false)
+                .withFileSize(0L)
+                .withName("prefix_folder")
+                .withExtension("")
+                .withAbsolutePath("/test/prefix_folder")
+                .withDetectedMimeType("application/x-directory")
+                .withMetadata(null)
+                .build();
+
+        RemoveTextConfig config = RemoveTextConfig.builder()
+                .withTextToRemove("prefix_")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
+
+        PreparedFileModel result = transformer.transform(directory, config);
+
+        assertNotNull(result);
+        assertFalse(result.isHasError());
+        assertEquals("folder", result.getNewName());
+    }
+
+    @Test
+    void transform_whenInputIsNotFileAndNotDirectory_shouldReturnError() {
+        // isFile=false AND detectedMimeType is NOT "application/x-directory"
+        FileModel badInput = FileModel.builder()
+                .withFile(new File("/special/device"))
+                .withIsFile(false)
+                .withFileSize(0L)
+                .withName("device")
+                .withExtension("")
+                .withAbsolutePath("/special/device")
+                .withDetectedMimeType("application/octet-stream")
+                .withMetadata(null)
+                .build();
+
+        RemoveTextConfig config = RemoveTextConfig.builder()
+                .withTextToRemove("device")
+                .withPosition(ItemPosition.BEGIN)
+                .build();
+
+        PreparedFileModel result = transformer.transform(badInput, config);
+
+        assertNotNull(result);
+        assertTrue(result.isHasError());
+        assertTrue(result.getErrorMessage().isPresent());
+        assertTrue(result.getErrorMessage().get().contains("extraction failed"));
+    }
 }

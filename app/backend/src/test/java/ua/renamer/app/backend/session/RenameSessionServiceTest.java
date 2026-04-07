@@ -8,10 +8,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.enums.ItemPosition;
-import ua.renamer.app.api.model.FileModel;
-import ua.renamer.app.api.model.PreparedFileModel;
-import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.model.*;
+import ua.renamer.app.api.model.meta.FileMeta;
+import ua.renamer.app.api.model.meta.category.AudioMeta;
+import ua.renamer.app.api.model.meta.category.ImageMeta;
+import ua.renamer.app.api.model.meta.category.VideoMeta;
 import ua.renamer.app.api.service.FileRenameOrchestrator;
 import ua.renamer.app.api.service.ProgressCallback;
 import ua.renamer.app.api.session.*;
@@ -19,7 +22,9 @@ import ua.renamer.app.backend.service.BackendExecutor;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -605,6 +610,475 @@ class RenameSessionServiceTest {
         void givenAnyState_whenAvailableActions_thenNeverThrows() {
             assertThatCode(() -> service.availableActions())
                     .doesNotThrowAnyException();
+        }
+    }
+
+    // =========================================================================
+    // availableActions — all SessionStatus branches
+    // =========================================================================
+
+    @Nested
+    class AvailableActionsAllStatusTests {
+
+        @Test
+        void givenExecutingStatus_whenAvailableActions_thenOnlyCancelAllowed() throws Exception {
+            // Arrange — reach MODE_CONFIGURED, then start execute() which sets EXECUTING
+            File fileA = new File("/tmp/exec_avail_a.txt");
+            FileModel modelA = buildFileModel(fileA);
+            stubExtractMetadata(List.of(modelA));
+            service.addFiles(List.of(Path.of("/tmp/exec_avail_a.txt"))).get(5, TimeUnit.SECONDS);
+            stubComputePreviewAnyMode(List.of(buildPreparedModel(modelA)));
+            service.selectMode(TransformationMode.ADD_TEXT).get(5, TimeUnit.SECONDS);
+
+            CountDownLatch executeStarted = new CountDownLatch(1);
+            CountDownLatch releaseLatch = new CountDownLatch(1);
+
+            when(orchestrator.execute(any(List.class), any(), any(), any()))
+                    .thenAnswer(invocation -> {
+                        executeStarted.countDown();
+                        releaseLatch.await(5, TimeUnit.SECONDS);
+                        return List.of();
+                    });
+
+            service.execute();
+            assertThat(executeStarted.await(5, TimeUnit.SECONDS)).isTrue();
+
+            // Assert — EXECUTING state
+            assertThat(service.availableActions()).containsExactly(AvailableAction.CANCEL);
+
+            releaseLatch.countDown();
+        }
+
+        @Test
+        void givenCompleteStatus_whenAvailableActions_thenAddFilesAndClearAndSelectModeAllowed()
+                throws Exception {
+            // Arrange — run full execute() to reach COMPLETE
+            File fileA = new File("/tmp/complete_avail_a.txt");
+            FileModel modelA = buildFileModel(fileA);
+            stubExtractMetadata(List.of(modelA));
+            service.addFiles(List.of(Path.of("/tmp/complete_avail_a.txt"))).get(5, TimeUnit.SECONDS);
+            stubComputePreviewAnyMode(List.of(buildPreparedModel(modelA)));
+            service.selectMode(TransformationMode.ADD_TEXT).get(5, TimeUnit.SECONDS);
+
+            PreparedFileModel preparedA = buildPreparedModel(modelA);
+            RenameResult successResult = RenameResult.builder()
+                    .withPreparedFile(preparedA)
+                    .withStatus(RenameStatus.SUCCESS)
+                    .withErrorMessage(null)
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
+            when(orchestrator.execute(any(List.class), any(), any(), any()))
+                    .thenReturn(List.of(successResult));
+
+            // execute() and wait for completion
+            service.execute().result().get(5, TimeUnit.SECONDS);
+
+            // Assert — COMPLETE status exposes ADD_FILES, CLEAR, SELECT_MODE
+            assertThat(service.availableActions())
+                    .contains(AvailableAction.ADD_FILES, AvailableAction.CLEAR, AvailableAction.SELECT_MODE)
+                    .doesNotContain(AvailableAction.EXECUTE);
+        }
+
+        @Test
+        void givenErrorStatus_whenAvailableActions_thenAddFilesAndClearAndSelectModeAllowed()
+                throws Exception {
+            // Arrange — run execute() with a result that contains an error to reach ERROR status
+            File fileA = new File("/tmp/error_avail_a.txt");
+            FileModel modelA = buildFileModel(fileA);
+            stubExtractMetadata(List.of(modelA));
+            service.addFiles(List.of(Path.of("/tmp/error_avail_a.txt"))).get(5, TimeUnit.SECONDS);
+            stubComputePreviewAnyMode(List.of(buildPreparedModel(modelA)));
+            service.selectMode(TransformationMode.ADD_TEXT).get(5, TimeUnit.SECONDS);
+
+            PreparedFileModel preparedA = buildPreparedModel(modelA);
+            RenameResult errorResult = RenameResult.builder()
+                    .withPreparedFile(preparedA)
+                    .withStatus(RenameStatus.ERROR_EXECUTION)
+                    .withErrorMessage("Permission denied")
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
+            when(orchestrator.execute(any(List.class), any(), any(), any()))
+                    .thenReturn(List.of(errorResult));
+
+            service.execute().result().get(5, TimeUnit.SECONDS);
+
+            // Assert — ERROR status allows recovery actions
+            assertThat(service.availableActions())
+                    .contains(AvailableAction.ADD_FILES, AvailableAction.CLEAR, AvailableAction.SELECT_MODE);
+        }
+    }
+
+    // =========================================================================
+    // execute — success path and canExecute-false guard
+    // =========================================================================
+
+    @Nested
+    class ExecuteTests {
+
+        @Test
+        void givenCannotExecute_whenExecute_thenFutureCompletesExceptionally() {
+            // Empty session → canExecute() == false
+            assertThatCode(() -> {
+                var handle = service.execute();
+                // The future must complete exceptionally (IllegalStateException)
+                handle.result()
+                        .exceptionally(ex -> null)
+                        .get(5, TimeUnit.SECONDS);
+            }).doesNotThrowAnyException();
+        }
+
+        @Test
+        void givenModeConfigured_whenExecute_thenResultsReturnedForAllFiles() throws Exception {
+            // Arrange
+            File fileA = new File("/tmp/exec_ok_a.txt");
+            FileModel modelA = buildFileModel(fileA);
+            stubExtractMetadata(List.of(modelA));
+            service.addFiles(List.of(Path.of("/tmp/exec_ok_a.txt"))).get(5, TimeUnit.SECONDS);
+            stubComputePreviewAnyMode(List.of(buildPreparedModel(modelA)));
+            service.selectMode(TransformationMode.ADD_TEXT).get(5, TimeUnit.SECONDS);
+
+            PreparedFileModel preparedA = buildPreparedModel(modelA);
+            RenameResult successResult = RenameResult.builder()
+                    .withPreparedFile(preparedA)
+                    .withStatus(RenameStatus.SUCCESS)
+                    .withErrorMessage(null)
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
+            when(orchestrator.execute(any(List.class), any(), any(), any()))
+                    .thenReturn(List.of(successResult));
+
+            // Act
+            List<RenameSessionResult> results =
+                    service.execute().result().get(5, TimeUnit.SECONDS);
+
+            // Assert
+            assertThat(results).hasSize(1);
+            assertThat(results.get(0).status()).isEqualTo(RenameStatus.SUCCESS);
+        }
+
+        @Test
+        void givenExecutePipelineFails_whenExecute_thenStatusBecomesError() throws Exception {
+            // Arrange
+            File fileA = new File("/tmp/exec_fail_a.txt");
+            FileModel modelA = buildFileModel(fileA);
+            stubExtractMetadata(List.of(modelA));
+            service.addFiles(List.of(Path.of("/tmp/exec_fail_a.txt"))).get(5, TimeUnit.SECONDS);
+            stubComputePreviewAnyMode(List.of(buildPreparedModel(modelA)));
+            service.selectMode(TransformationMode.ADD_TEXT).get(5, TimeUnit.SECONDS);
+
+            when(orchestrator.execute(any(List.class), any(), any(), any()))
+                    .thenThrow(new RuntimeException("Disk full"));
+
+            // Act — the future should complete exceptionally
+            var handle = service.execute();
+            handle.result()
+                    .exceptionally(ex -> null)
+                    .get(5, TimeUnit.SECONDS);
+
+            // Assert — session status must transition to ERROR, not stay EXECUTING
+            // Give the state thread time to process the exceptionally() callback
+            Thread.sleep(100);
+            assertThat(service.availableActions())
+                    .doesNotContain(AvailableAction.CANCEL);
+        }
+    }
+
+    // =========================================================================
+    // getFileMetadata — cache presence and absence
+    // =========================================================================
+
+    @Nested
+    class GetFileMetadataTests {
+
+        @Test
+        void givenNoFilesLoaded_whenGetFileMetadata_thenEmpty() {
+            Optional<FileMetadataDto> result = service.getFileMetadata("/nonexistent/path.txt");
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void givenNullFileId_whenGetFileMetadata_thenNullPointerExceptionThrown() {
+            assertThatThrownBy(() -> service.getFileMetadata(null))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        @Test
+        void givenFilesLoaded_whenGetFileMetadata_thenMetadataCached() throws Exception {
+            // Arrange
+            File fileA = new File("/tmp/meta_a.txt");
+            FileModel modelA = buildFileModel(fileA);
+            stubExtractMetadata(List.of(modelA));
+
+            service.addFiles(List.of(Path.of("/tmp/meta_a.txt"))).get(5, TimeUnit.SECONDS);
+
+            // Act
+            Optional<FileMetadataDto> result = service.getFileMetadata(fileA.getAbsolutePath());
+
+            // Assert — cache populated by addFiles/refreshAndPublish
+            assertThat(result).isPresent();
+        }
+    }
+
+    // =========================================================================
+    // buildMetadataDto — image / video / audio / no-meta branches
+    // =========================================================================
+
+    @Nested
+    class BuildMetadataDtoTests {
+
+        /**
+         * Builds a FileModel with ImageMeta attached.
+         */
+        private FileModel buildFileModelWithImageMeta(File file) {
+            LocalDateTime capturedAt = LocalDateTime.of(2025, 6, 15, 10, 30);
+            ImageMeta img = ImageMeta.builder()
+                    .withContentCreationDate(capturedAt)
+                    .withWidth(1920)
+                    .withHeight(1080)
+                    .build();
+            FileMeta meta = FileMeta.builder().withImage(img).build();
+            return FileModel.builder()
+                    .withFile(file)
+                    .withName("photo")
+                    .withExtension("jpg")
+                    .withAbsolutePath(file.getAbsolutePath())
+                    .withIsFile(true)
+                    .withFileSize(2048L)
+                    .withCategory(Category.IMAGE)
+                    .withMetadata(meta)
+                    .build();
+        }
+
+        private FileModel buildFileModelWithVideoMeta(File file) {
+            LocalDateTime recorded = LocalDateTime.of(2025, 3, 10, 18, 0);
+            VideoMeta vid = VideoMeta.builder()
+                    .withContentCreationDate(recorded)
+                    .withWidth(1280)
+                    .withHeight(720)
+                    .build();
+            FileMeta meta = FileMeta.builder().withVideo(vid).build();
+            return FileModel.builder()
+                    .withFile(file)
+                    .withName("clip")
+                    .withExtension("mp4")
+                    .withAbsolutePath(file.getAbsolutePath())
+                    .withIsFile(true)
+                    .withFileSize(10_000_000L)
+                    .withCategory(Category.VIDEO)
+                    .withMetadata(meta)
+                    .build();
+        }
+
+        private FileModel buildFileModelWithAudioMeta(File file) {
+            AudioMeta aud = AudioMeta.builder()
+                    .withArtistName("Artist")
+                    .withAlbumName("Album")
+                    .withSongName("Song")
+                    .withYear(2024)
+                    .build();
+            FileMeta meta = FileMeta.builder().withAudio(aud).build();
+            return FileModel.builder()
+                    .withFile(file)
+                    .withName("track")
+                    .withExtension("mp3")
+                    .withAbsolutePath(file.getAbsolutePath())
+                    .withIsFile(true)
+                    .withFileSize(5_000_000L)
+                    .withCategory(Category.AUDIO)
+                    .withMetadata(meta)
+                    .build();
+        }
+
+        @Test
+        void givenImageMeta_whenAddFiles_thenMetadataDtoHasWidthAndHeight() throws Exception {
+            File fileA = new File("/tmp/img_meta.jpg");
+            FileModel modelA = buildFileModelWithImageMeta(fileA);
+
+            org.mockito.Mockito.lenient().doReturn(List.of(modelA))
+                    .when(orchestrator).extractMetadata(any(), isNull());
+            org.mockito.Mockito.lenient().doReturn(List.of(modelA))
+                    .when(orchestrator).extractMetadata(any(),
+                            any(ua.renamer.app.api.service.ProgressCallback.class));
+
+            service.addFiles(List.of(Path.of("/tmp/img_meta.jpg"))).get(5, TimeUnit.SECONDS);
+
+            FileMetadataDto dto = service.getFileMetadata(fileA.getAbsolutePath()).orElseThrow();
+
+            assertThat(dto.widthPx()).isEqualTo(1920);
+            assertThat(dto.heightPx()).isEqualTo(1080);
+            assertThat(dto.contentCreationDate()).isEqualTo(LocalDateTime.of(2025, 6, 15, 10, 30));
+        }
+
+        @Test
+        void givenVideoMeta_whenAddFiles_thenMetadataDtoHasWidthAndHeight() throws Exception {
+            File fileV = new File("/tmp/vid_meta.mp4");
+            FileModel modelV = buildFileModelWithVideoMeta(fileV);
+
+            org.mockito.Mockito.lenient().doReturn(List.of(modelV))
+                    .when(orchestrator).extractMetadata(any(), isNull());
+            org.mockito.Mockito.lenient().doReturn(List.of(modelV))
+                    .when(orchestrator).extractMetadata(any(),
+                            any(ua.renamer.app.api.service.ProgressCallback.class));
+
+            service.addFiles(List.of(Path.of("/tmp/vid_meta.mp4"))).get(5, TimeUnit.SECONDS);
+
+            FileMetadataDto dto = service.getFileMetadata(fileV.getAbsolutePath()).orElseThrow();
+
+            assertThat(dto.widthPx()).isEqualTo(1280);
+            assertThat(dto.heightPx()).isEqualTo(720);
+        }
+
+        @Test
+        void givenAudioMeta_whenAddFiles_thenMetadataDtoHasArtistAndAlbum() throws Exception {
+            File fileAud = new File("/tmp/aud_meta.mp3");
+            FileModel modelAud = buildFileModelWithAudioMeta(fileAud);
+
+            org.mockito.Mockito.lenient().doReturn(List.of(modelAud))
+                    .when(orchestrator).extractMetadata(any(), isNull());
+            org.mockito.Mockito.lenient().doReturn(List.of(modelAud))
+                    .when(orchestrator).extractMetadata(any(),
+                            any(ua.renamer.app.api.service.ProgressCallback.class));
+
+            service.addFiles(List.of(Path.of("/tmp/aud_meta.mp3"))).get(5, TimeUnit.SECONDS);
+
+            FileMetadataDto dto = service.getFileMetadata(fileAud.getAbsolutePath()).orElseThrow();
+
+            assertThat(dto.audioArtist()).isEqualTo("Artist");
+            assertThat(dto.audioAlbum()).isEqualTo("Album");
+            assertThat(dto.audioTitle()).isEqualTo("Song");
+            assertThat(dto.audioYear()).isEqualTo(2024);
+        }
+
+        @Test
+        void givenNoMeta_whenAddFiles_thenMetadataDtoCategoryIsGeneric() throws Exception {
+            // A FileModel with no metadata and null category
+            File fileG = new File("/tmp/generic_meta.bin");
+            FileModel modelG = FileModel.builder()
+                    .withFile(fileG)
+                    .withName("generic_meta")
+                    .withExtension("bin")
+                    .withAbsolutePath(fileG.getAbsolutePath())
+                    .withIsFile(true)
+                    .withFileSize(100L)
+                    .withCategory(null)
+                    .withMetadata(null)
+                    .build();
+
+            org.mockito.Mockito.lenient().doReturn(List.of(modelG))
+                    .when(orchestrator).extractMetadata(any(), isNull());
+            org.mockito.Mockito.lenient().doReturn(List.of(modelG))
+                    .when(orchestrator).extractMetadata(any(),
+                            any(ua.renamer.app.api.service.ProgressCallback.class));
+
+            service.addFiles(List.of(Path.of("/tmp/generic_meta.bin"))).get(5, TimeUnit.SECONDS);
+
+            FileMetadataDto dto = service.getFileMetadata(fileG.getAbsolutePath()).orElseThrow();
+
+            assertThat(dto.category()).isEqualTo("GENERIC");
+        }
+    }
+
+    // =========================================================================
+    // previewSingleFile — package-private method
+    // =========================================================================
+
+    @Nested
+    class PreviewSingleFileTests {
+
+        @Test
+        void givenValidParams_whenPreviewSingleFile_thenReturnsNewName() {
+            // Arrange — stub orchestrator to return a prepared model
+            File mockFile = new File("/preview/document.txt");
+            FileModel mockModel = FileModel.builder()
+                    .withFile(mockFile)
+                    .withName("document")
+                    .withExtension("txt")
+                    .withAbsolutePath("/preview/document.txt")
+                    .withIsFile(true)
+                    .withFileSize(0L)
+                    .build();
+            PreparedFileModel preparedResult = PreparedFileModel.builder()
+                    .withOriginalFile(mockModel)
+                    .withNewName("prefix_document")
+                    .withNewExtension("txt")
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(null)
+                    .build();
+            org.mockito.Mockito.lenient().doReturn(List.of(preparedResult))
+                    .when(orchestrator).computePreview(any(), any(), any(), any());
+
+            AddTextParams validParams = new AddTextParams("prefix_", ItemPosition.BEGIN);
+
+            // Act
+            Optional<String> result =
+                    service.previewSingleFile(TransformationMode.ADD_TEXT, validParams,
+                            "document", "txt");
+
+            // Assert
+            assertThat(result).isPresent();
+            assertThat(result.get()).isEqualTo("prefix_document.txt");
+        }
+
+        @Test
+        void givenInvalidParams_whenPreviewSingleFile_thenReturnsEmpty() {
+            // position == null → validate() returns error → previewSingleFile returns empty
+            AddTextParams invalidParams = new AddTextParams(null, null);
+
+            Optional<String> result =
+                    service.previewSingleFile(TransformationMode.ADD_TEXT, invalidParams,
+                            "document", "txt");
+
+            assertThat(result).isEmpty();
+            // orchestrator must not be called
+            org.mockito.Mockito.verify(orchestrator, org.mockito.Mockito.never())
+                    .computePreview(any(), any(), any(), any());
+        }
+
+        @Test
+        void givenOrchestratorReturnsError_whenPreviewSingleFile_thenReturnsEmpty() {
+            // Stub orchestrator to return a prepared model with hasError=true
+            File mockFile = new File("/preview/bad.txt");
+            FileModel mockModel = FileModel.builder()
+                    .withFile(mockFile)
+                    .withName("bad")
+                    .withExtension("txt")
+                    .withAbsolutePath("/preview/bad.txt")
+                    .withIsFile(true)
+                    .withFileSize(0L)
+                    .build();
+            PreparedFileModel errorResult = PreparedFileModel.builder()
+                    .withOriginalFile(mockModel)
+                    .withNewName("bad")
+                    .withNewExtension("txt")
+                    .withHasError(true)
+                    .withErrorMessage("Transformation failed")
+                    .withTransformationMeta(null)
+                    .build();
+            org.mockito.Mockito.lenient().doReturn(List.of(errorResult))
+                    .when(orchestrator).computePreview(any(), any(), any(), any());
+
+            AddTextParams validParams = new AddTextParams("prefix_", ItemPosition.BEGIN);
+
+            Optional<String> result =
+                    service.previewSingleFile(TransformationMode.ADD_TEXT, validParams, "bad", "txt");
+
+            assertThat(result).isEmpty();
+        }
+
+        @Test
+        void givenOrchestratorReturnsEmptyList_whenPreviewSingleFile_thenReturnsEmpty() {
+            org.mockito.Mockito.lenient().doReturn(List.of())
+                    .when(orchestrator).computePreview(any(), any(), any(), any());
+
+            AddTextParams validParams = new AddTextParams("x_", ItemPosition.BEGIN);
+
+            Optional<String> result =
+                    service.previewSingleFile(TransformationMode.ADD_TEXT, validParams,
+                            "file", "txt");
+
+            assertThat(result).isEmpty();
         }
     }
 }

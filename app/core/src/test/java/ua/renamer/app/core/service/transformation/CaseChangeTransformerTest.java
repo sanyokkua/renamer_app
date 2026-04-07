@@ -695,4 +695,63 @@ class CaseChangeTransformerTest {
         assertEquals("testFileNameWithDots", result.getNewName());
         assertTrue(result.needsRename());
     }
+
+    // ============================================================================
+    // H. Directory / Non-file Input Tests
+    // ============================================================================
+
+    @Test
+    void transform_whenInputIsDirectory_withDirectoryMime_shouldSucceed() {
+        // A directory entry has isFile=false but MIME = "application/x-directory".
+        // The transformer should treat it as a processable input, not an error.
+        FileModel directory = FileModel.builder()
+                .withFile(new File("/test/myFolder"))
+                .withIsFile(false)
+                .withFileSize(0L)
+                .withName("myFolder")
+                .withExtension("")
+                .withAbsolutePath("/test/myFolder")
+                .withDetectedMimeType("application/x-directory")
+                .withMetadata(null)
+                .build();
+
+        CaseChangeConfig config = CaseChangeConfig.builder()
+                .withCaseOption(TextCaseOptions.UPPERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
+
+        PreparedFileModel result = transformer.transform(directory, config);
+
+        assertNotNull(result);
+        assertFalse(result.isHasError());
+        assertEquals("MYFOLDER", result.getNewName());
+    }
+
+    @Test
+    void transform_whenInputIsNotFileAndNotDirectory_shouldReturnError() {
+        // isFile=false AND detectedMimeType is NOT "application/x-directory"
+        // → extraction failure branch.
+        FileModel badInput = FileModel.builder()
+                .withFile(new File("/dev/null"))
+                .withIsFile(false)
+                .withFileSize(0L)
+                .withName("null")
+                .withExtension("")
+                .withAbsolutePath("/dev/null")
+                .withDetectedMimeType("application/octet-stream")
+                .withMetadata(null)
+                .build();
+
+        CaseChangeConfig config = CaseChangeConfig.builder()
+                .withCaseOption(TextCaseOptions.UPPERCASE)
+                .withCapitalizeFirstLetter(false)
+                .build();
+
+        PreparedFileModel result = transformer.transform(badInput, config);
+
+        assertNotNull(result);
+        assertTrue(result.isHasError());
+        assertTrue(result.getErrorMessage().isPresent());
+        assertTrue(result.getErrorMessage().get().contains("extraction failed"));
+    }
 }
