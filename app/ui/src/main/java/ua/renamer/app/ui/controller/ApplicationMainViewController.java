@@ -25,6 +25,7 @@ import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.converter.AppModesConverter;
 import ua.renamer.app.ui.enums.TableStyles;
 import ua.renamer.app.ui.enums.TextKeys;
+import ua.renamer.app.ui.service.AppResourceRegistryApi;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.state.FxStateMirror;
 import ua.renamer.app.ui.view.ModeViewRegistry;
@@ -54,6 +55,7 @@ public class ApplicationMainViewController implements Initializable {
     private final LanguageTextRetrieverApi languageTextRetriever;
     private final FolderExpansionService folderExpansionService;
     private final SettingsDialogController settingsDialogController;
+    private final AppResourceRegistryApi appResources;
 
     @FXML
     private Menu modeMenu;
@@ -474,7 +476,7 @@ public class ApplicationMainViewController implements Initializable {
             var toAdd = new java.util.ArrayList<>(files);
 
             if (!dirs.isEmpty()) {
-                var opts = FolderDropDialogController.show(dirs.size(), languageTextRetriever::getString);
+                var opts = FolderDropDialogController.show(dirs.size(), languageTextRetriever::getString, appResources.getDialogStylesheets());
 
                 if (opts.action() == FolderDropOptions.Action.CANCEL) {
                     event.setDropCompleted(false);
@@ -738,11 +740,7 @@ public class ApplicationMainViewController implements Initializable {
             if (btnOk != null) btnOk.getStyleClass().add("btn-primary");
             if (btnCancel != null) btnCancel.getStyleClass().add("btn-ghost");
         });
-        alert.getDialogPane().getStylesheets().addAll(
-                ApplicationMainViewController.class.getResource("/styles/base.css").toExternalForm(),
-                ApplicationMainViewController.class.getResource("/styles/buttons.css").toExternalForm(),
-                ApplicationMainViewController.class.getResource("/styles/components.css").toExternalForm()
-        );
+        alert.getDialogPane().getStylesheets().addAll(appResources.getDialogStylesheets());
         alert.setGraphic(null);
         alert.showAndWait();
         return alert.getResult() == confirmButton;

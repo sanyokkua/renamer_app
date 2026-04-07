@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox;
 import ua.renamer.app.api.model.FolderDropOptions;
 import ua.renamer.app.ui.enums.TextKeys;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -26,10 +27,11 @@ public final class FolderDropDialogController {
      * @param folderCount number of folders dropped (used to customise the header)
      * @param resolver    function that converts a {@link TextKeys} constant to a localized string;
      *                    must not be null
+     * @param stylesheets external-form stylesheet URLs applied to the dialog pane; must not be null
      * @return the user's choice; never null; returns {@link FolderDropOptions#cancel()}
      * if the user closes the dialog without choosing
      */
-    public static FolderDropOptions show(int folderCount, Function<TextKeys, String> resolver) {
+    public static FolderDropOptions show(int folderCount, Function<TextKeys, String> resolver, List<String> stylesheets) {
         var btnCancel = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_CANCEL), ButtonBar.ButtonData.CANCEL_CLOSE);
         var btnAsItem = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_AS_ITEM), ButtonBar.ButtonData.OTHER);
         var btnContents = new ButtonType(resolver.apply(TextKeys.DIALOG_FOLDER_BTN_CONTENTS), ButtonBar.ButtonData.OK_DONE);
@@ -77,11 +79,7 @@ public final class FolderDropDialogController {
             return FolderDropOptions.cancel();
         });
 
-        dialog.getDialogPane().getStylesheets().addAll(
-                FolderDropDialogController.class.getResource("/styles/base.css").toExternalForm(),
-                FolderDropDialogController.class.getResource("/styles/buttons.css").toExternalForm(),
-                FolderDropDialogController.class.getResource("/styles/components.css").toExternalForm()
-        );
+        dialog.getDialogPane().getStylesheets().addAll(stylesheets);
 
         return dialog.showAndWait().orElse(FolderDropOptions.cancel());
     }

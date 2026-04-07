@@ -16,7 +16,9 @@ import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
 import ua.renamer.app.ui.controller.mode.impl.*;
 import ua.renamer.app.ui.converter.*;
 import ua.renamer.app.ui.enums.ViewNames;
+import ua.renamer.app.ui.service.AppResourceRegistryApi;
 import ua.renamer.app.ui.service.ViewLoaderApi;
+import ua.renamer.app.ui.service.impl.AppResourceRegistryService;
 import ua.renamer.app.ui.service.impl.ViewLoaderService;
 import ua.renamer.app.ui.state.FxStateMirror;
 import ua.renamer.app.ui.view.ModeViewRegistry;
@@ -50,6 +52,7 @@ public class DIUIModule extends AbstractModule {
     }
 
     private void bindServices() {
+        bind(AppResourceRegistryApi.class).to(AppResourceRegistryService.class).asEagerSingleton();
         bind(ViewLoaderApi.class).to(ViewLoaderService.class).in(Singleton.class);
     }
 
@@ -101,16 +104,16 @@ public class DIUIModule extends AbstractModule {
      * Provides a fully populated {@link ModeViewRegistry} by loading each mode's FXML
      * and pairing its loaded {@link Parent} view with its injected controller.
      *
-     * @param viewLoaderApi  the service that resolves FXML files by view name
-     * @param addText        controller for ADD_TEXT mode
-     * @param changeCase     controller for CHANGE_CASE mode
-     * @param addDatetime    controller for ADD_DATETIME mode
-     * @param addDimensions  controller for ADD_DIMENSIONS mode
-     * @param addFolderName  controller for ADD_FOLDER_NAME mode
-     * @param removeText     controller for REMOVE_TEXT mode
-     * @param replaceText    controller for REPLACE_TEXT mode
-     * @param numberFiles    controller for NUMBER_FILES mode
-     * @param trimName       controller for TRIM_NAME mode
+     * @param viewLoaderApi   the service that resolves FXML files by view name
+     * @param addText         controller for ADD_TEXT mode
+     * @param changeCase      controller for CHANGE_CASE mode
+     * @param addDatetime     controller for ADD_DATETIME mode
+     * @param addDimensions   controller for ADD_DIMENSIONS mode
+     * @param addFolderName   controller for ADD_FOLDER_NAME mode
+     * @param removeText      controller for REMOVE_TEXT mode
+     * @param replaceText     controller for REPLACE_TEXT mode
+     * @param numberFiles     controller for NUMBER_FILES mode
+     * @param trimName        controller for TRIM_NAME mode
      * @param changeExtension controller for CHANGE_EXTENSION mode
      * @return a populated registry; never null
      * @throws IOException if any FXML file cannot be loaded

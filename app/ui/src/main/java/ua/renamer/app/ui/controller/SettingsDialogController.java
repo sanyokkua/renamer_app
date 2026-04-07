@@ -22,6 +22,7 @@ import ua.renamer.app.api.settings.SettingsService;
 import ua.renamer.app.backend.settings.LoggingConfigService;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.enums.ViewNames;
+import ua.renamer.app.ui.service.AppResourceRegistryApi;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.service.ViewLoaderApi;
 
@@ -58,6 +59,7 @@ public class SettingsDialogController implements Initializable {
     private final LanguageTextRetrieverApi languageTextRetriever;
     private final LoggingConfigService loggingConfigService;
     private final ViewLoaderApi viewLoader;
+    private final AppResourceRegistryApi appResources;
 
     @FXML
     private CheckBox customConfigCheckbox;
@@ -100,12 +102,7 @@ public class SettingsDialogController implements Initializable {
         dialog.initModality(Modality.WINDOW_MODAL);
         dialog.setTitle(languageTextRetriever.getString(TextKeys.SETTINGS_DIALOG_TITLE));
         dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getStylesheets().addAll(
-                getClass().getResource("/styles/base.css").toExternalForm(),
-                getClass().getResource("/styles/buttons.css").toExternalForm(),
-                getClass().getResource("/styles/components.css").toExternalForm(),
-                getClass().getResource("/styles/settings-dialog.css").toExternalForm()
-        );
+        dialog.getDialogPane().getStylesheets().addAll(appResources.getSettingsDialogStylesheets());
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
         dialog.setOnShowing(e -> {
             Button saveBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
