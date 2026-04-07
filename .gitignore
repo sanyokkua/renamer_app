@@ -1129,3 +1129,4 @@ node_modules
 !.claude/skills/*
 !.claude/.mcp.json
 .gitnexus
+!/scripts/

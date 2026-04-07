@@ -15,41 +15,42 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.target>25</maven.compiler.target>
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
 
-        <javafx.version>25.0.1</javafx.version>
+        <javafx.version>25.0.2</javafx.version>
         <javafx-maven-plugin.version>0.0.8</javafx-maven-plugin.version>
 
-        <lombok.version>1.18.42</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <logback.version>1.5.32</logback.version>
         <metadata-extractor.version>2.19.0</metadata-extractor.version>
-        <junit-bom.version>6.0.1</junit-bom.version>
-        <mockito-core.version>5.20.0</mockito-core.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
-        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <junit-bom.version>6.0.3</junit-bom.version>
+        <mockito-core.version>5.23.0</mockito-core.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <guice.version>7.0.0</guice.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
-        <tika-core.version>3.2.3</tika-core.version>
+        <tika-core.version>3.3.0</tika-core.version>
         <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
         <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
-        <commons-io.version>2.18.0</commons-io.version>
+        <commons-io.version>2.21.0</commons-io.version>
         <guava.version>33.5.0-jre</guava.version>
         <jspecify.version>1.0.0</jspecify.version>
-        <jaudiotagger.version>2.0.10</jaudiotagger.version>
+        <jaudiotagger.version>2.0.19</jaudiotagger.version>
         <jackson.version>2.21.2</jackson.version>
         <junrar.version>7.5.8</junrar.version>
         <assertj-core.version>3.27.7</assertj-core.version>
 
         <!-- Code quality tool versions -->
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-        <checkstyle.version>10.21.4</checkstyle.version>
-        <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
-        <spotbugs-maven-plugin.version>4.9.3.0</spotbugs-maven-plugin.version>
+        <checkstyle.version>13.4.0</checkstyle.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.3</spotbugs-maven-plugin.version>
         <findsecbugs-plugin.version>1.13.0</findsecbugs-plugin.version>
-        <spotbugs-annotations.version>4.9.3</spotbugs-annotations.version>
+        <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
     </properties>
 
     <modules>
@@ -260,6 +261,17 @@
                     <artifactId>spotbugs-maven-plugin</artifactId>
                     <version>${spotbugs-maven-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${versions-maven-plugin.version}</version> <!-- Use latest stable -->
+                    <configuration>
+                        <allowMajorUpdates>false</allowMajorUpdates>
+                        <allowMinorUpdates>true</allowMinorUpdates>
+                        <allowSnapshots>false</allowSnapshots>
+                        <rulesUri>file:${project.basedir}/versions-rules.xml</rulesUri>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -336,8 +348,7 @@
                             <rulesets>
                                 <ruleset>${maven.multiModuleProjectDirectory}/pmd-rules.xml</ruleset>
                             </rulesets>
-                            <!-- Java 25 not yet supported by PMD — use highest supported LTS -->
-                            <targetJdk>21</targetJdk>
+                            <targetJdk>25</targetJdk>
                             <printFailingErrors>true</printFailingErrors>
                             <failOnViolation>false</failOnViolation>
                             <linkXRef>false</linkXRef>
@@ -360,13 +371,7 @@
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs-maven-plugin</artifactId>
                         <configuration>
-                            <!--
-                                JAVA 25 LIMITATION: SpotBugs uses ASM internally to read class files.
-                                Java 25 produces class file major version 69, which requires ASM 9.9+.
-                                Current spotbugs-maven-plugin ${spotbugs-maven-plugin.version} bundles
-                                an older ASM version. Set skip=false when SpotBugs gains Java 25 support.
-                            -->
-                            <skip>true</skip>
+                            <skip>false</skip>
                             <effort>Max</effort>
                             <threshold>Medium</threshold>
                             <failOnError>false</failOnError>

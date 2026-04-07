@@ -22,6 +22,12 @@ mvn clean install -q                                       # Build all modules
 cd app/ui && mvn javafx:run                                # Run the app
 ```
 
+## After Any Code Change — REQUIRED
+
+**MUST run `../scripts/ai-build.sh` after every code change before finishing.** This is not optional.
+
+The script runs the full pipeline in order: compile → Checkstyle → PMD → SpotBugs → tests. All three linting tools (Checkstyle, PMD with `targetJdk=25`, SpotBugs) are active. Violations are informational (`failOnViolation=false`) but must be reviewed and reported to the user.
+
 ## Architecture
 
 Strategy + Pipeline: `FileModel → PreparedFileModel → RenameResult`.
@@ -205,10 +211,11 @@ This project is indexed by GitNexus as **renamer_app** (4655 symbols, 17057 rela
 ## Self-Check Before Finishing
 
 Before completing any code modification task, verify:
-1. `gitnexus_impact` was run for all modified symbols
-2. No HIGH/CRITICAL risk warnings were ignored
-3. `gitnexus_detect_changes()` confirms changes match expected scope
-4. All d=1 (WILL BREAK) dependents were updated
+1. `../scripts/ai-build.sh` was run and output reviewed (compile → Checkstyle → PMD → SpotBugs → tests)
+2. `gitnexus_impact` was run for all modified symbols
+3. No HIGH/CRITICAL risk warnings were ignored
+4. `gitnexus_detect_changes()` confirms changes match expected scope
+5. All d=1 (WILL BREAK) dependents were updated
 
 ## Keeping the Index Fresh
 
