@@ -17,7 +17,7 @@ import java.util.Optional;
 @Value
 @Builder(setterPrefix = "with")
 public class FileMeta {
-    private static final FileMeta EMPTY = FileMeta.builder().build();
+    private static final FileMeta EMPTY_INSTANCE = FileMeta.builder().build();
 
     ImageMeta image;
     VideoMeta video;
@@ -34,7 +34,7 @@ public class FileMeta {
      * @return the shared empty instance; never null
      */
     public static FileMeta empty() {
-        return EMPTY;
+        return EMPTY_INSTANCE;
     }
 
     /**

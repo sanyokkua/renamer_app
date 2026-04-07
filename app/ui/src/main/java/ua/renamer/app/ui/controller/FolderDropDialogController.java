@@ -81,10 +81,10 @@ public final class FolderDropDialogController {
         dialog.getDialogPane().setContent(content);
 
         dialog.setResultConverter(buttonType -> {
-            if (buttonType == btnAsItem) {
+            if (btnAsItem.equals(buttonType)) {
                 return FolderDropOptions.useAsItem();
             }
-            if (buttonType == btnContents) {
+            if (btnContents.equals(buttonType)) {
                 return new FolderDropOptions(
                         FolderDropOptions.Action.USE_CONTENTS,
                         cbRecursive.isSelected(),

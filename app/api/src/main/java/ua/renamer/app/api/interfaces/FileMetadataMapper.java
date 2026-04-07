@@ -9,6 +9,7 @@ import java.io.File;
  * Port interface for orchestrating metadata extraction from a file.
  * Delegates to the appropriate {@link FileMetadataExtractor} via a resolver.
  */
+@FunctionalInterface
 public interface FileMetadataMapper {
 
     /**

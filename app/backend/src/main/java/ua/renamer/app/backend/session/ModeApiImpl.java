@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
 
-    private final TransformationMode mode;
+    private final TransformationMode transformationMode;
     private final RenameSessionService service;
     private final P defaultParams;
     private final AtomicReference<P> currentParams;
@@ -38,13 +38,13 @@ class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
     ModeApiImpl(P initialParams, TransformationMode mode, RenameSessionService service) {
         this.defaultParams = initialParams;
         this.currentParams = new AtomicReference<>(initialParams);
-        this.mode = mode;
+        this.transformationMode = mode;
         this.service = service;
     }
 
     @Override
     public TransformationMode mode() {
-        return mode;
+        return transformationMode;
     }
 
     @Override
@@ -76,7 +76,7 @@ class ModeApiImpl<P extends ModeParameters> implements ModeApi<P> {
 
     @Override
     public Optional<String> previewSingleFile(String exampleName, String exampleExtension) {
-        return service.previewSingleFile(mode, currentParams.get(), exampleName, exampleExtension);
+        return service.previewSingleFile(transformationMode, currentParams.get(), exampleName, exampleExtension);
     }
 
     @Override

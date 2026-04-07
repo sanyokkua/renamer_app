@@ -8,6 +8,7 @@ import java.io.File;
  * Port interface for category-specific metadata extraction strategies.
  * Each implementation handles a specific file category (image, audio, video, generic).
  */
+@FunctionalInterface
 public interface FileMetadataExtractor {
 
     /**

@@ -30,6 +30,8 @@ import java.util.stream.Stream;
 public class DateTimeUtils {
 
     private static final LocalDateTime MINIMAL = LocalDateTime.of(1900, 1, 1, 0, 0);
+    private static final int YEAR_MONTH_STRING_LENGTH = 7;  // yyyy-MM
+    private static final int YEAR_ONLY_STRING_LENGTH = 4;   // yyyy
 
     /**
      * Common locales for date parsing.
@@ -222,7 +224,7 @@ public class DateTimeUtils {
      * or an empty Optional otherwise.
      */
     public static Optional<LocalDateTime> parseYearAndMonth(String dateTimeString) {
-        if (dateTimeString.length() == 7) {
+        if (dateTimeString.length() == YEAR_MONTH_STRING_LENGTH) {
             try {
                 String[] strings = dateTimeString.split("-");
                 var year = Integer.parseInt(strings[0]);
@@ -233,7 +235,7 @@ public class DateTimeUtils {
             }
         }
 
-        if (dateTimeString.length() == 4) {
+        if (dateTimeString.length() == YEAR_ONLY_STRING_LENGTH) {
             try {
                 var year = Integer.parseInt(dateTimeString);
                 return Optional.of(LocalDateTime.of(LocalDate.of(year, 1, 1), LocalTime.of(0, 0)));

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.TextCaseOptions;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -86,7 +87,7 @@ public class CaseUtils {
             return inputString;
         }
 
-        var firstWordInLowerCase = separateWords.getFirst().toLowerCase();
+        var firstWordInLowerCase = separateWords.getFirst().toLowerCase(Locale.ROOT);
 
         return firstWordInLowerCase + separateWords.stream()
                 .skip(1)
@@ -125,7 +126,7 @@ public class CaseUtils {
 
         var separateWords = getSeparateWordsFromInputString(inputString);
 
-        return String.join("_", separateWords).toLowerCase();
+        return String.join("_", separateWords).toLowerCase(Locale.ROOT);
     }
 
     /**
@@ -142,7 +143,7 @@ public class CaseUtils {
 
         var separateWords = getSeparateWordsFromInputString(inputString);
 
-        return String.join("_", separateWords).toUpperCase();
+        return String.join("_", separateWords).toUpperCase(Locale.ROOT);
     }
 
     /**
@@ -159,7 +160,7 @@ public class CaseUtils {
 
         var separateWords = getSeparateWordsFromInputString(inputString);
 
-        return String.join("-", separateWords).toLowerCase();
+        return String.join("-", separateWords).toLowerCase(Locale.ROOT);
     }
 
     /**
@@ -173,7 +174,7 @@ public class CaseUtils {
             return inputString;
         }
 
-        return inputString.toUpperCase();
+        return inputString.toUpperCase(Locale.ROOT);
     }
 
     /**
@@ -187,7 +188,7 @@ public class CaseUtils {
             return inputString;
         }
 
-        return inputString.toLowerCase();
+        return inputString.toLowerCase(Locale.ROOT);
     }
 
     /**

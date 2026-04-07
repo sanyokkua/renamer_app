@@ -46,7 +46,7 @@ public class LoggingConfigService {
         AppSettings settings = settingsService.getCurrent();
         applyLogLevel(settings.getLogLevel());
         if (settings.isLoggingEnabled()) {
-            enableFileLogging(settingsService.getSettingsFilePath().getParent(), settings.getLogLevel());
+            enableFileLogging(settingsService.getSettingsFilePath().getParent());
         }
     }
 
@@ -62,7 +62,7 @@ public class LoggingConfigService {
         applyLogLevel(settings.getLogLevel());
         removeFileAppender();
         if (settings.isLoggingEnabled()) {
-            enableFileLogging(settingsService.getSettingsFilePath().getParent(), settings.getLogLevel());
+            enableFileLogging(settingsService.getSettingsFilePath().getParent());
         }
     }
 
@@ -80,7 +80,7 @@ public class LoggingConfigService {
         ctx.getLogger("ua.renamer.app").setLevel(Level.toLevel(level.name(), Level.INFO));
     }
 
-    private void enableFileLogging(final Path appDir, final LogLevel level) {
+    private void enableFileLogging(final Path appDir) {
         if (!(LoggerFactory.getILoggerFactory() instanceof LoggerContext ctx)) {
             log.warn("Cannot configure file logging: LoggerFactory is not a LoggerContext");
             return;

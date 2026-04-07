@@ -16,6 +16,44 @@
         <Class name="~.*\.(model|api)\..*(Model|Info|Result|Config)"/>
     </Match>
 
+    <!-- Lombok @Value + addNullAnnotations=jakarta: generated equals(@NonNull Object) tightens
+         the nullness annotation of Object.equals(@Nullable Object). This is a Lombok false positive
+         — the generated equals() correctly handles null via the @NonNull-guarded early return. -->
+    <Match>
+        <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION"/>
+        <Method name="equals"/>
+    </Match>
+
+    <!-- RenameSessionService: PATH_TRAVERSAL_IN on preview mock only.
+         new File("/preview/...") creates a value-only FileModel stub — it is never used for
+         actual filesystem I/O. SpotBugs cannot distinguish mock construction from real I/O here. -->
+    <Match>
+        <Class name="ua.renamer.app.backend.session.RenameSessionService"/>
+        <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </Match>
+
+    <!-- AppResourceRegistryService: CT_CONSTRUCTOR_THROW is flagged because the constructor
+         throws IllegalStateException when required classpath resources are missing (fail-fast).
+         There is no finalize() on this class, so the finalizer-attack vector does not apply.
+         Suppressing — the fail-fast behaviour is intentional. -->
+    <Match>
+        <Class name="ua.renamer.app.ui.service.impl.AppResourceRegistryService"/>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+
+    <!-- JavaFX UI classes: EI_EXPOSE_REP false positives in the following scenarios:
+         1. FxStateMirror exposes ReadOnlyObjectProperty — intentional reactive API (read-only binding).
+         2. AppResourceRegistryService.getAppIcon() returns javafx.scene.image.Image — Image is
+            effectively immutable after construction; no meaningful defensive copy is possible.
+         3. LanguageTextRetrieverService.getResourceBundle() — ResourceBundle is the required return
+            type of the LanguageTextRetrieverApi interface; wrapping is not practical.
+         4. Widget builder build() methods — Builder.build() returning the configured object
+            is the builder contract; SpotBugs cannot distinguish builder return from unsafe exposure. -->
+    <Match>
+        <Class name="~ua\.renamer\.app\.ui\..*"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+
     <!-- Test classes: performance findings are not actionable in tests -->
     <Match>
         <Class name="~.*Test$"/>

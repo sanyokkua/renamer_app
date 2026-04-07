@@ -64,6 +64,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -71,6 +72,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ApplicationMainViewController implements Initializable {
+
+    private static final long BYTES_PER_KB = 1024L;
+    private static final int FILE_INFO_TWO_COLUMN_MIN_WIDTH = 430;
 
     private final AppModesConverter appModesConverter;
     private final SessionApi sessionApi;
@@ -127,16 +131,16 @@ public class ApplicationMainViewController implements Initializable {
     }
 
     private static String formatFileSize(long bytes) {
-        if (bytes < 1024) {
+        if (bytes < BYTES_PER_KB) {
             return bytes + " B";
         }
-        if (bytes < 1024 * 1024) {
-            return String.format("%.1f KB", bytes / 1024.0);
+        if (bytes < BYTES_PER_KB * BYTES_PER_KB) {
+            return String.format("%.1f KB", bytes / (double) BYTES_PER_KB);
         }
-        if (bytes < 1024L * 1024 * 1024) {
-            return String.format("%.1f MB", bytes / (1024.0 * 1024));
+        if (bytes < BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB) {
+            return String.format("%.1f MB", bytes / (double) (BYTES_PER_KB * BYTES_PER_KB));
         }
-        return String.format("%.2f GB", bytes / (1024.0 * 1024 * 1024));
+        return String.format("%.2f GB", bytes / (double) (BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB));
     }
 
     @Override
@@ -348,7 +352,7 @@ public class ApplicationMainViewController implements Initializable {
                     int dot = name.lastIndexOf('.');
                     String ext = (dot >= 0 && dot < name.length() - 1) ? name.substring(dot + 1) : "";
                     if (!ext.isEmpty()) {
-                        var chip = new javafx.scene.control.Label(ext.toLowerCase());
+                        var chip = new javafx.scene.control.Label(ext.toLowerCase(Locale.ROOT));
                         chip.getStyleClass().add("type-chip");
                         setGraphic(chip);
                         return;
@@ -481,7 +485,7 @@ public class ApplicationMainViewController implements Initializable {
 
     private void handleFilesTableViewDragOverEvent(DragEvent event) {
         log.debug("handleDragOverEvent");
-        if (event.getGestureSource() != filesTableView && event.getDragboard().hasFiles()) {
+        if (!filesTableView.equals(event.getGestureSource()) && event.getDragboard().hasFiles()) {
             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
         }
         event.consume();
@@ -707,7 +711,7 @@ public class ApplicationMainViewController implements Initializable {
             rightCol.getChildren().add(errLabel);
         }
 
-        if (fileInfoPanel.getWidth() >= 430) {
+        if (fileInfoPanel.getWidth() >= FILE_INFO_TWO_COLUMN_MIN_WIDTH) {
             var columns = new HBox(leftCol, rightCol);
             columns.getStyleClass().add("file-info-columns");
             leftCol.prefWidthProperty().bind(columns.widthProperty().multiply(0.5));
@@ -774,7 +778,7 @@ public class ApplicationMainViewController implements Initializable {
         alert.getDialogPane().getStylesheets().addAll(appResources.getDialogStylesheets());
         alert.setGraphic(null);
         alert.showAndWait();
-        return alert.getResult() == confirmButton;
+        return confirmButton.equals(alert.getResult());
     }
 
     private void handleBtnClickedClear() {
@@ -787,6 +791,8 @@ public class ApplicationMainViewController implements Initializable {
         }, Platform::runLater);
     }
 
+    // Called by FXML via reflection — PMD cannot see the reference in the .fxml file
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     @FXML
     private void onOpenSettings() {
         settingsDialogController.show(appModeContainer.getScene().getWindow());

@@ -88,7 +88,8 @@ public abstract class RadioSelector<T extends Enum<T>> extends VBox {
         toggleGroup.selectedToggleProperty().addListener(this::toggleChangeListener);
     }
 
-    @SuppressWarnings("unchecked")
+    // observable and oldValue are required by the ChangeListener functional interface but not used here
+    @SuppressWarnings({"unchecked", "PMD.UnusedFormalParameter"})
     private void toggleChangeListener(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         if (Objects.nonNull(newValue)) {
             ValueRadioBtn<T> selectedRadio = (ValueRadioBtn<T>) newValue;

@@ -12,16 +12,15 @@ import java.util.Objects;
 @Value
 @Builder(setterPrefix = "with")
 public class ParentFolderConfig implements TransformationConfig {
+    private static final int MIN_PARENT_FOLDERS = 1;
     /**
      * Number of parent folders to include (e.g., 1 = immediate parent, 2 = parent + grandparent).
      */
     int numberOfParentFolders;
-
     /**
      * Position where to add parent folder names (BEGIN or END).
      */
     ItemPosition position;
-
     /**
      * Separator between folder names and filename.
      */
@@ -43,7 +42,7 @@ public class ParentFolderConfig implements TransformationConfig {
          */
         public ParentFolderConfig build() {
             Objects.requireNonNull(position, "position must not be null");
-            if (numberOfParentFolders < 1) {
+            if (numberOfParentFolders < MIN_PARENT_FOLDERS) {
                 throw new IllegalArgumentException(
                         "numberOfParentFolders must be >= 1, got: " + numberOfParentFolders);
             }

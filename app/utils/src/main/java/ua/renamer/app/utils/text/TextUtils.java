@@ -3,6 +3,7 @@ package ua.renamer.app.utils.text;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -33,8 +34,8 @@ public class TextUtils {
             return word;
         }
 
-        var firstLetter = word.substring(0, 1).toUpperCase();
-        var restOfLetters = word.substring(1).toLowerCase();
+        var firstLetter = word.substring(0, 1).toUpperCase(Locale.ROOT);
+        var restOfLetters = word.substring(1).toLowerCase(Locale.ROOT);
 
         return firstLetter + restOfLetters;
     }
@@ -49,7 +50,7 @@ public class TextUtils {
      * @return the full file name (e.g., "fileName.ext")
      */
     public static String getFileNewFullName(String name, String ext) {
-        var fixedExt = "";
+        String fixedExt;
         if (ext != null && !ext.isBlank() && ext.startsWith(".")) {
             fixedExt = ext;
         } else if (Objects.isNull(ext) || ext.isBlank()) {

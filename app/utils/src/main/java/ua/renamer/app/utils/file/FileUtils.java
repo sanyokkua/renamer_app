@@ -97,8 +97,8 @@ public class FileUtils {
         }
         // Normalize the file path by replacing backslashes with forward slashes
         // and removing redundant slashes and trailing slash
-        filePath = filePath.replace("\\", "/").replaceAll("//+", "/").replaceAll("/$", "");
-        String[] splitPathItems = filePath.split("/");
+        String normalizedPath = filePath.replace("\\", "/").replaceAll("//+", "/").replaceAll("/$", "");
+        String[] splitPathItems = normalizedPath.split("/");
         if (splitPathItems.length == 0 || splitPathItems.length == 1) {
             // If path is empty or file in the root
             return List.of();

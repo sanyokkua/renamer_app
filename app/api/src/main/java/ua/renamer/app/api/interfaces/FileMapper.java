@@ -8,6 +8,7 @@ import java.io.File;
  * Port interface for mapping a raw {@link File} to an immutable {@link FileModel}.
  * Implementations perform metadata extraction and file attribute reading.
  */
+@FunctionalInterface
 public interface FileMapper {
 
     /**

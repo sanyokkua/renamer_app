@@ -5,6 +5,7 @@ import ua.renamer.app.api.enums.Category;
 /**
  * Port interface for resolving the appropriate {@link FileMetadataExtractor} by file category.
  */
+@FunctionalInterface
 public interface FileMetadataExtractorResolver {
 
     /**

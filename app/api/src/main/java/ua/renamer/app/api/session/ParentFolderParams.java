@@ -17,6 +17,8 @@ public record ParentFolderParams(
         String separator
 ) implements ModeParameters {
 
+    private static final int MIN_PARENT_FOLDERS = 1;
+
     @Override
     public TransformationMode mode() {
         return TransformationMode.ADD_FOLDER_NAME;
@@ -27,7 +29,7 @@ public record ParentFolderParams(
         if (position == null) {
             return ValidationResult.fieldError("position", "must not be null");
         }
-        if (numberOfParentFolders < 1) {
+        if (numberOfParentFolders < MIN_PARENT_FOLDERS) {
             return ValidationResult.fieldError("numberOfParentFolders", "must be >= 1, got: " + numberOfParentFolders);
         }
         return ValidationResult.valid();

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Locale;
 
 /**
  * Persist and retrieve {@link AppSettings} as a JSON file in the
@@ -203,7 +204,7 @@ public class SettingsServiceImpl implements SettingsService {
         } else {
             String xdg = getEnv("XDG_CONFIG_HOME");
             return Path.of(xdg != null ? xdg : home + "/.config",
-                    AppDefaults.APP_DIR_NAME.toLowerCase());
+                    AppDefaults.APP_DIR_NAME.toLowerCase(Locale.ROOT));
         }
     }
 }
