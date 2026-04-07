@@ -43,7 +43,9 @@ public class ModeChangeCaseController implements ModeControllerV2Api<ChangeCaseP
     @Override
     public void bind(ModeApi<ChangeCaseParams> modeApi) {
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (capitalizeListener != null) capitalizeCheckBox.selectedProperty().removeListener(capitalizeListener);
+        if (capitalizeListener != null) {
+            capitalizeCheckBox.selectedProperty().removeListener(capitalizeListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         caseChoiceBox.setValue(modeApi.currentParameters().caseOption());

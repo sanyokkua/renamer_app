@@ -41,7 +41,9 @@ public class ModeChangeExtensionController implements ModeControllerV2Api<Extens
     @Override
     public void bind(ModeApi<ExtensionChangeParams> modeApi) {
         // ── Remove old listener ───────────────────────────────────────────────
-        if (extensionListener != null) extensionTextField.textProperty().removeListener(extensionListener);
+        if (extensionListener != null) {
+            extensionTextField.textProperty().removeListener(extensionListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         extensionTextField.setText(modeApi.currentParameters().newExtension());

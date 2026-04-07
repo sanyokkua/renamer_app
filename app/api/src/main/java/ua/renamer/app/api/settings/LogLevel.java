@@ -5,12 +5,20 @@ package ua.renamer.app.api.settings;
  * Maps directly to Logback log levels applied at runtime.
  */
 public enum LogLevel {
-    /** Finest-grained diagnostic information, suitable for development. */
+    /**
+     * Finest-grained diagnostic information, suitable for development.
+     */
     DEBUG,
-    /** Informational messages confirming normal operation. */
+    /**
+     * Informational messages confirming normal operation.
+     */
     INFO,
-    /** Potentially harmful situations that do not prevent normal operation. */
+    /**
+     * Potentially harmful situations that do not prevent normal operation.
+     */
     WARN,
-    /** Error events that may still allow the application to continue running. */
+    /**
+     * Error events that may still allow the application to continue running.
+     */
     ERROR
 }

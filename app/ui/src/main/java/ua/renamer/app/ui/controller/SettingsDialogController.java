@@ -49,7 +49,7 @@ public class SettingsDialogController implements Initializable {
     static {
         SUPPORTED_LANGUAGES = new LinkedHashMap<>();
         SUPPORTED_LANGUAGES.put("en", "English");
-        SUPPORTED_LANGUAGES.put("uk_UA", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430");
+        SUPPORTED_LANGUAGES.put("uk_UA", "Українська");
 
         LANGUAGE_CODE_BY_DISPLAY = new LinkedHashMap<>();
         SUPPORTED_LANGUAGES.forEach((code, display) -> LANGUAGE_CODE_BY_DISPLAY.put(display, code));

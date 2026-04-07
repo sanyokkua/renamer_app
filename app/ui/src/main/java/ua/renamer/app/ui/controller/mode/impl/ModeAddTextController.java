@@ -47,7 +47,9 @@ public class ModeAddTextController implements ModeControllerV2Api<AddTextParams>
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (textToAddListener != null) textField.textProperty().removeListener(textToAddListener);
+        if (textToAddListener != null) {
+            textField.textProperty().removeListener(textToAddListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         textField.setText(params.textToAdd() != null ? params.textToAdd() : "");

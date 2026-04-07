@@ -47,7 +47,9 @@ public class ModeRemoveTextController implements ModeControllerV2Api<RemoveTextP
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (textToRemoveListener != null) removeTextField.textProperty().removeListener(textToRemoveListener);
+        if (textToRemoveListener != null) {
+            removeTextField.textProperty().removeListener(textToRemoveListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         removeTextField.setText(params.textToRemove() != null ? params.textToRemove() : "");

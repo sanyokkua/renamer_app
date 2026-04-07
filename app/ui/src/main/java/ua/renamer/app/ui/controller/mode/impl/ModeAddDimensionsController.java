@@ -75,14 +75,18 @@ public class ModeAddDimensionsController
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (leftSideListener != null)
+        if (leftSideListener != null) {
             leftDimensionChoiceBox.getSelectionModel().selectedItemProperty().removeListener(leftSideListener);
-        if (rightSideListener != null)
+        }
+        if (rightSideListener != null) {
             rightDimensionChoiceBox.getSelectionModel().selectedItemProperty().removeListener(rightSideListener);
-        if (separatorListener != null)
+        }
+        if (separatorListener != null) {
             dimensionsSeparatorTextField.textProperty().removeListener(separatorListener);
-        if (nameSeparatorListener != null)
+        }
+        if (nameSeparatorListener != null) {
             dimensionsAndFileSeparatorTextField.textProperty().removeListener(nameSeparatorListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         if (params.leftSide() != null) {

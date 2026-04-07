@@ -71,7 +71,9 @@ public class ModeTrimNameController implements ModeControllerV2Api<TruncateParam
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (symbolsListener != null) amountOfSymbolsSpinner.valueProperty().removeListener(symbolsListener);
+        if (symbolsListener != null) {
+            amountOfSymbolsSpinner.valueProperty().removeListener(symbolsListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         amountOfSymbolsSpinner.getValueFactory().setValue(params.numberOfSymbols());

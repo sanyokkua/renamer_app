@@ -12,22 +12,34 @@ import org.jspecify.annotations.Nullable;
 @Builder(setterPrefix = "with")
 public class AppSettings {
 
-    /** Settings schema version; used to detect and migrate old files. */
+    /**
+     * Settings schema version; used to detect and migrate old files.
+     */
     int version;
 
-    /** BCP-47 language tag for the UI locale (e.g. {@code "en"}, {@code "uk"}). */
+    /**
+     * BCP-47 language tag for the UI locale (e.g. {@code "en"}, {@code "uk"}).
+     */
     String language;
 
-    /** {@code true} if the user has enabled a custom Logback configuration file. */
+    /**
+     * {@code true} if the user has enabled a custom Logback configuration file.
+     */
     boolean customConfigEnabled;
 
-    /** Absolute path to the custom Logback config file; {@code null} when not set. */
+    /**
+     * Absolute path to the custom Logback config file; {@code null} when not set.
+     */
     @Nullable String customConfigPath;
 
-    /** {@code true} if file-based logging is active. */
+    /**
+     * {@code true} if file-based logging is active.
+     */
     boolean loggingEnabled;
 
-    /** Severity threshold applied to the {@code ua.renamer.app} logger when logging is enabled. */
+    /**
+     * Severity threshold applied to the {@code ua.renamer.app} logger when logging is enabled.
+     */
     LogLevel logLevel;
 
     /**
@@ -37,12 +49,12 @@ public class AppSettings {
      */
     public static AppSettings defaults() {
         return AppSettings.builder()
-                          .withVersion(AppDefaults.SETTINGS_VERSION)
-                          .withLanguage(AppDefaults.DEFAULT_LANGUAGE)
-                          .withCustomConfigEnabled(false)
-                          .withCustomConfigPath(null)
-                          .withLoggingEnabled(false)
-                          .withLogLevel(AppDefaults.DEFAULT_LOG_LEVEL)
-                          .build();
+                .withVersion(AppDefaults.SETTINGS_VERSION)
+                .withLanguage(AppDefaults.DEFAULT_LANGUAGE)
+                .withCustomConfigEnabled(false)
+                .withCustomConfigPath(null)
+                .withLoggingEnabled(false)
+                .withLogLevel(AppDefaults.DEFAULT_LOG_LEVEL)
+                .build();
     }
 }

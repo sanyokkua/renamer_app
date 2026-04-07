@@ -49,8 +49,12 @@ public class ModeReplaceTextController implements ModeControllerV2Api<ReplaceTex
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (textToReplaceListener != null) textToReplaceTextField.textProperty().removeListener(textToReplaceListener);
-        if (replacementTextListener != null) textToAddTextField.textProperty().removeListener(replacementTextListener);
+        if (textToReplaceListener != null) {
+            textToReplaceTextField.textProperty().removeListener(textToReplaceListener);
+        }
+        if (replacementTextListener != null) {
+            textToAddTextField.textProperty().removeListener(replacementTextListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         textToReplaceTextField.setText(params.textToReplace() != null ? params.textToReplace() : "");

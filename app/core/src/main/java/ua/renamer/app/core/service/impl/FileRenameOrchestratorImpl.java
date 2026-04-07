@@ -56,15 +56,15 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
 
             // PHASE 1: Extract metadata (Always Parallel)
             List<FileModel> fileModels = extractMetadataParallel(files, virtualExecutor, progressCallback);
-            log.debug("Phase 1 complete: {} file models extracted", fileModels.size());
+            log.debug("(execute) Phase 1 complete: {} file models extracted", fileModels.size());
 
             // PHASE 2: Apply transformation (Conditional)
             List<PreparedFileModel> prepared = applyTransformation(fileModels, mode, config, virtualExecutor, progressCallback);
-            log.debug("Phase 2 complete: {} files prepared", prepared.size());
+            log.debug("(execute) Phase 2 complete: {} files prepared", prepared.size());
 
             // PHASE 2.5: Resolve duplicates (Always Sequential)
             prepared = duplicateResolver.resolve(prepared);
-            log.debug("Phase 2.5 complete: {} files after deduplication", prepared.size());
+            log.debug("(execute) Phase 2.5 complete: {} files after deduplication", prepared.size());
 
             // PHASE 3: Execute renames (depth-ordered to avoid parent-before-child race)
             List<RenameResult> results = executeRenamesOrdered(prepared, progressCallback);
@@ -113,13 +113,13 @@ public class FileRenameOrchestratorImpl implements FileRenameOrchestrator {
             TransformationMode mode,
             Object config,
             ProgressCallback progressCallback) {
-        log.info("Phases 2-2.5: computing preview for {} files, mode={}", fileModels.size(), mode);
+        log.info("(computePreview) Phases 2-2.5: computing preview for {} files, mode={}", fileModels.size(), mode);
         try (ExecutorService virtualExecutor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<PreparedFileModel> prepared =
                     applyTransformation(fileModels, mode, config, virtualExecutor, progressCallback);
-            log.debug("Phase 2 complete: {} files prepared", prepared.size());
+            log.debug("(computePreview) Phase 2 complete: {} files prepared", prepared.size());
             prepared = duplicateResolver.resolve(prepared);
-            log.debug("Phase 2.5 complete: {} files after dedup", prepared.size());
+            log.debug("(computePreview) Phase 2.5 complete: {} files after dedup", prepared.size());
             return prepared;
         } catch (Exception e) {
             log.error("Preview computation failed", e);

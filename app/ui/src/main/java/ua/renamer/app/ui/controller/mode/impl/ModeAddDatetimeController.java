@@ -232,30 +232,42 @@ public class ModeAddDatetimeController
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (sourceListener != null)
+        if (sourceListener != null) {
             dateTimeSourceChoiceBox.getSelectionModel().selectedItemProperty().removeListener(sourceListener);
-        if (dateFormatListener != null)
+        }
+        if (dateFormatListener != null) {
             dateFormatChoiceBox.getSelectionModel().selectedItemProperty().removeListener(dateFormatListener);
-        if (timeFormatListener != null)
+        }
+        if (timeFormatListener != null) {
             timeFormatChoiceBox.getSelectionModel().selectedItemProperty().removeListener(timeFormatListener);
-        if (useFallbackListener != null)
+        }
+        if (useFallbackListener != null) {
             useFallbackDateTimeCheckBox.selectedProperty().removeListener(useFallbackListener);
-        if (useCustomFallbackListener != null)
+        }
+        if (useCustomFallbackListener != null) {
             useCustomDateTimeAsFallbackCheckBox.selectedProperty().removeListener(useCustomFallbackListener);
-        if (datePickerListener != null)
+        }
+        if (datePickerListener != null) {
             datePicker.valueProperty().removeListener(datePickerListener);
-        if (hourListener != null)
+        }
+        if (hourListener != null) {
             hourSpinner.valueProperty().removeListener(hourListener);
-        if (minuteListener != null)
+        }
+        if (minuteListener != null) {
             minuteSpinner.valueProperty().removeListener(minuteListener);
-        if (secondListener != null)
+        }
+        if (secondListener != null) {
             secondSpinner.valueProperty().removeListener(secondListener);
-        if (useUppercaseListener != null)
+        }
+        if (useUppercaseListener != null) {
             useUppercaseForAmPmCheckBox.selectedProperty().removeListener(useUppercaseListener);
-        if (dateTimeFormatListener != null)
+        }
+        if (dateTimeFormatListener != null) {
             dateTimeFormatChoiceBox.getSelectionModel().selectedItemProperty().removeListener(dateTimeFormatListener);
-        if (separatorListener != null)
+        }
+        if (separatorListener != null) {
             dateTimeAndNameSeparatorTextField.textProperty().removeListener(separatorListener);
+        }
 
         // ── Init: source ────────────────────────────────────────────────────────
         if (params.source() != null) {

@@ -196,7 +196,9 @@ public class ApplicationMainViewController implements Initializable {
                 cd -> new SimpleStringProperty(cd.getValue().originalName()));
         itemTypeColumn.setCellValueFactory(cd -> {
             var candidate = candidatesByFileId.get(cd.getValue().fileId());
-            if (candidate == null) return new SimpleStringProperty("");
+            if (candidate == null) {
+                return new SimpleStringProperty("");
+            }
             boolean isFile = !java.nio.file.Files.isDirectory(candidate.path());
             var key = isFile ? TextKeys.TYPE_FILE : TextKeys.TYPE_FOLDER;
             return new SimpleStringProperty(languageTextRetriever.getString(key));
@@ -737,8 +739,12 @@ public class ApplicationMainViewController implements Initializable {
             }
             var btnOk = alert.getDialogPane().lookupButton(confirmButton);
             var btnCancel = alert.getDialogPane().lookupButton(cancelButton);
-            if (btnOk != null) btnOk.getStyleClass().add("btn-primary");
-            if (btnCancel != null) btnCancel.getStyleClass().add("btn-ghost");
+            if (btnOk != null) {
+                btnOk.getStyleClass().add("btn-primary");
+            }
+            if (btnCancel != null) {
+                btnCancel.getStyleClass().add("btn-ghost");
+            }
         });
         alert.getDialogPane().getStylesheets().addAll(appResources.getDialogStylesheets());
         alert.setGraphic(null);

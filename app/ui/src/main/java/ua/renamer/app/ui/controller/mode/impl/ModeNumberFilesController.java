@@ -96,13 +96,21 @@ public class ModeNumberFilesController
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (startListener != null) startSeqNumberSpinner.valueProperty().removeListener(startListener);
-        if (stepListener != null) stepValueSpinner.valueProperty().removeListener(stepListener);
-        if (paddingListener != null) minDigitAmountSpinner.valueProperty().removeListener(paddingListener);
-        if (sortSourceListener != null)
+        if (startListener != null) {
+            startSeqNumberSpinner.valueProperty().removeListener(startListener);
+        }
+        if (stepListener != null) {
+            stepValueSpinner.valueProperty().removeListener(stepListener);
+        }
+        if (paddingListener != null) {
+            minDigitAmountSpinner.valueProperty().removeListener(paddingListener);
+        }
+        if (sortSourceListener != null) {
             sortingSourceChoiceBox.getSelectionModel().selectedItemProperty().removeListener(sortSourceListener);
-        if (perFolderListener != null)
+        }
+        if (perFolderListener != null) {
             perFolderCountingCheckBox.selectedProperty().removeListener(perFolderListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         startSeqNumberSpinner.getValueFactory().setValue(params.startNumber());

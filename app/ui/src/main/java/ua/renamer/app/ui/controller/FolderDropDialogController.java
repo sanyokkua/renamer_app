@@ -63,19 +63,29 @@ public final class FolderDropDialogController {
             var nodeContents = dialog.getDialogPane().lookupButton(btnContents);
             var nodeAsItem = dialog.getDialogPane().lookupButton(btnAsItem);
             var nodeCancel = dialog.getDialogPane().lookupButton(btnCancel);
-            if (nodeContents != null) nodeContents.getStyleClass().add("btn-primary");
-            if (nodeAsItem != null) nodeAsItem.getStyleClass().add("btn-secondary");
-            if (nodeCancel != null) nodeCancel.getStyleClass().add("btn-ghost");
+            if (nodeContents != null) {
+                nodeContents.getStyleClass().add("btn-primary");
+            }
+            if (nodeAsItem != null) {
+                nodeAsItem.getStyleClass().add("btn-secondary");
+            }
+            if (nodeCancel != null) {
+                nodeCancel.getStyleClass().add("btn-ghost");
+            }
         });
 
         dialog.getDialogPane().setContent(content);
 
         dialog.setResultConverter(buttonType -> {
-            if (buttonType == btnAsItem) return FolderDropOptions.useAsItem();
-            if (buttonType == btnContents) return new FolderDropOptions(
-                    FolderDropOptions.Action.USE_CONTENTS,
-                    cbRecursive.isSelected(),
-                    cbIncludeFolders.isSelected());
+            if (buttonType == btnAsItem) {
+                return FolderDropOptions.useAsItem();
+            }
+            if (buttonType == btnContents) {
+                return new FolderDropOptions(
+                        FolderDropOptions.Action.USE_CONTENTS,
+                        cbRecursive.isSelected(),
+                        cbIncludeFolders.isSelected());
+            }
             return FolderDropOptions.cancel();
         });
 

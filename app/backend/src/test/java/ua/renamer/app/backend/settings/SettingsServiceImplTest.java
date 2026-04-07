@@ -32,7 +32,9 @@ class SettingsServiceImplTest {
     @TempDir
     Path tempDir;
 
-    /** Points to the settings file inside the temp directory. */
+    /**
+     * Points to the settings file inside the temp directory.
+     */
     private Path settingsFile;
 
     @BeforeEach
@@ -50,6 +52,47 @@ class SettingsServiceImplTest {
 
     // =========================================================================
     // load — missing file
+    // =========================================================================
+
+    /**
+     * Package-private subclass used only in tests. Overrides
+     * {@link SettingsServiceImpl#getSettingsFilePath()} to return a path inside
+     * a {@link TempDir}-controlled directory so tests never touch the real user
+     * home directory. The override is in place before the constructor body
+     * executes {@code doLoad()}, which calls {@code getSettingsFilePath()}.
+     */
+    static final class TestableSettingsServiceImpl extends SettingsServiceImpl {
+
+        private final Path overriddenPath;
+
+        TestableSettingsServiceImpl(Path settingsFilePath) {
+            // SettingsServiceImpl() calls doLoad() → getSettingsFilePath() in
+            // its own constructor body. Because Java dispatches overridden
+            // methods even during superclass construction, by the time the
+            // super() call returns here, overriddenPath is NOT yet set
+            // (it is initialized in the line below). This means the very first
+            // doLoad() call in the super constructor would see null.
+            //
+            // Work-around: the super constructor stores the result of doLoad()
+            // in `current`. We then set overriddenPath, call load() once more
+            // to actually read from the intended temp path, and store the result
+            // back into `current` via the public load() API.
+            super();
+            this.overriddenPath = settingsFilePath;
+            // Re-run load so that this instance reflects the temp-dir file.
+            load();
+        }
+
+        @Override
+        public Path getSettingsFilePath() {
+            // Guard against the super-constructor call that happens before
+            // overriddenPath is assigned.
+            return overriddenPath != null ? overriddenPath : super.getSettingsFilePath();
+        }
+    }
+
+    // =========================================================================
+    // load — valid JSON
     // =========================================================================
 
     @Nested
@@ -104,7 +147,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // load — valid JSON
+    // load — malformed JSON
     // =========================================================================
 
     @Nested
@@ -168,7 +211,9 @@ class SettingsServiceImplTest {
                     .isEqualTo("/custom/logback.xml");
         }
 
-        /** Builds a JSON payload with all non-default values for round-trip tests. */
+        /**
+         * Builds a JSON payload with all non-default values for round-trip tests.
+         */
         private String buildValidJson() {
             return """
                     {
@@ -188,7 +233,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // load — malformed JSON
+    // load — unknown fields
     // =========================================================================
 
     @Nested
@@ -228,7 +273,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // load — unknown fields
+    // load — invalid log level
     // =========================================================================
 
     @Nested
@@ -306,7 +351,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // load — invalid log level
+    // load — explicit null customConfigPath
     // =========================================================================
 
     @Nested
@@ -360,7 +405,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // load — explicit null customConfigPath
+    // save — file creation
     // =========================================================================
 
     @Nested
@@ -413,7 +458,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // save — file creation
+    // save — JSON validity
     // =========================================================================
 
     @Nested
@@ -452,7 +497,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // save — JSON validity
+    // save → load round-trip
     // =========================================================================
 
     @Nested
@@ -509,7 +554,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // save → load round-trip
+    // save — parent directory auto-creation
     // =========================================================================
 
     @Nested
@@ -618,7 +663,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // save — parent directory auto-creation
+    // save — no leftover .tmp file
     // =========================================================================
 
     @Nested
@@ -653,7 +698,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // save — no leftover .tmp file
+    // getCurrent — reflects last save without reload
     // =========================================================================
 
     @Nested
@@ -675,7 +720,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // getCurrent — reflects last save without reload
+    // load() explicit call
     // =========================================================================
 
     @Nested
@@ -711,7 +756,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // load() explicit call
+    // No-throw contract
     // =========================================================================
 
     @Nested
@@ -748,7 +793,7 @@ class SettingsServiceImplTest {
     }
 
     // =========================================================================
-    // No-throw contract
+    // Test subclass — redirects getSettingsFilePath() to @TempDir
     // =========================================================================
 
     @Nested
@@ -787,47 +832,6 @@ class SettingsServiceImplTest {
             SettingsServiceImpl service = newService();
 
             assertThat(service.getSettingsFilePath()).isEqualTo(settingsFile);
-        }
-    }
-
-    // =========================================================================
-    // Test subclass — redirects getSettingsFilePath() to @TempDir
-    // =========================================================================
-
-    /**
-     * Package-private subclass used only in tests. Overrides
-     * {@link SettingsServiceImpl#getSettingsFilePath()} to return a path inside
-     * a {@link TempDir}-controlled directory so tests never touch the real user
-     * home directory. The override is in place before the constructor body
-     * executes {@code doLoad()}, which calls {@code getSettingsFilePath()}.
-     */
-    static final class TestableSettingsServiceImpl extends SettingsServiceImpl {
-
-        private final Path overriddenPath;
-
-        TestableSettingsServiceImpl(Path settingsFilePath) {
-            // SettingsServiceImpl() calls doLoad() → getSettingsFilePath() in
-            // its own constructor body. Because Java dispatches overridden
-            // methods even during superclass construction, by the time the
-            // super() call returns here, overriddenPath is NOT yet set
-            // (it is initialized in the line below). This means the very first
-            // doLoad() call in the super constructor would see null.
-            //
-            // Work-around: the super constructor stores the result of doLoad()
-            // in `current`. We then set overriddenPath, call load() once more
-            // to actually read from the intended temp path, and store the result
-            // back into `current` via the public load() API.
-            super();
-            this.overriddenPath = settingsFilePath;
-            // Re-run load so that this instance reflects the temp-dir file.
-            load();
-        }
-
-        @Override
-        public Path getSettingsFilePath() {
-            // Guard against the super-constructor call that happens before
-            // overriddenPath is assigned.
-            return overriddenPath != null ? overriddenPath : super.getSettingsFilePath();
         }
     }
 }

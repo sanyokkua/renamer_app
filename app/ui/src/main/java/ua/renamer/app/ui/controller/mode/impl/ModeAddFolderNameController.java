@@ -58,8 +58,12 @@ public class ModeAddFolderNameController implements ModeControllerV2Api<ParentFo
         var params = modeApi.currentParameters();
 
         // ── Remove old listeners ──────────────────────────────────────────────
-        if (parentsListener != null) parentsNumberSpinner.valueProperty().removeListener(parentsListener);
-        if (separatorListener != null) fileNameSeparatorTextField.textProperty().removeListener(separatorListener);
+        if (parentsListener != null) {
+            parentsNumberSpinner.valueProperty().removeListener(parentsListener);
+        }
+        if (separatorListener != null) {
+            fileNameSeparatorTextField.textProperty().removeListener(separatorListener);
+        }
 
         // ── Init ──────────────────────────────────────────────────────────────
         parentsNumberSpinner.getValueFactory().setValue(params.numberOfParentFolders());
