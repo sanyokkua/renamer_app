@@ -47,7 +47,7 @@ class RenameExecutionServiceImplTest {
             Files.walk(tempDir).filter(Files::isRegularFile).forEach(path -> {
                 try {
                     Files.deleteIfExists(path);
-                } catch (IOException e) {
+                } catch (IOException _) {
                     // Ignore
                 }
             });
@@ -61,7 +61,7 @@ class RenameExecutionServiceImplTest {
             Files.walk(tempDir).filter(Files::isRegularFile).forEach(path -> {
                 try {
                     Files.deleteIfExists(path);
-                } catch (IOException e) {
+                } catch (IOException _) {
                     // Ignore
                 }
             });

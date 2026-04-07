@@ -1,5 +1,6 @@
 package ua.renamer.app.core.v2.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import ua.renamer.app.api.enums.DateFormat;
 import ua.renamer.app.api.enums.DateTimeFormat;
@@ -17,6 +18,7 @@ import java.util.Optional;
  * Test-only implementation of DateTimeUtils backed by java.time.
  * Used in core tests instead of the real DateTimeConverter (which lives in metadata).
  */
+@Slf4j
 public class TestDateTimeUtils implements DateTimeUtils {
 
     @Override
@@ -45,6 +47,7 @@ public class TestDateTimeUtils implements DateTimeUtils {
         try {
             return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss"));
         } catch (Exception e) {
+            log.debug("Failed to parse date-time string '{}', returning minimal date-time. Exception: {}", dateTimeString, e.getMessage());
             return getMinimalDateTime();
         }
     }
@@ -59,6 +62,7 @@ public class TestDateTimeUtils implements DateTimeUtils {
         try {
             return Optional.of(parseDateTimeString(dateTimeString));
         } catch (Exception e) {
+            log.debug("Failed to parse date-time string '{}' with zone info, returning empty. Exception: {}", dateTimeString, e.getMessage());
             return Optional.empty();
         }
     }
@@ -77,6 +81,7 @@ public class TestDateTimeUtils implements DateTimeUtils {
             LocalDate date = LocalDate.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy:MM:dd"));
             return Optional.of(date.atStartOfDay());
         } catch (Exception e) {
+            log.debug("Failed to parse date-only string '{}', returning empty. Exception: {}", dateTimeString, e.getMessage());
             return Optional.empty();
         }
     }
@@ -90,6 +95,7 @@ public class TestDateTimeUtils implements DateTimeUtils {
             YearMonth ym = YearMonth.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy:MM"));
             return Optional.of(ym.atDay(1).atStartOfDay());
         } catch (Exception e) {
+            log.debug("Failed to parse year/month string '{}', returning empty. Exception: {}", dateTimeString, e.getMessage());
             return Optional.empty();
         }
     }

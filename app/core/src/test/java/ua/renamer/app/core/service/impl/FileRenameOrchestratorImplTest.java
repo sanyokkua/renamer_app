@@ -876,7 +876,7 @@ class FileRenameOrchestratorImplTest {
         // Then - Should return error result
         assertNotNull(results);
         assertEquals(1, results.size());
-        RenameResult result = results.get(0);
+        RenameResult result = results.getFirst();
         assertEquals(RenameStatus.ERROR_EXTRACTION, result.getStatus());
         assertTrue(result.getErrorMessage().isPresent(),
                 "Error message should be present");
@@ -984,7 +984,7 @@ class FileRenameOrchestratorImplTest {
         // Then - Should return error result
         assertNotNull(results);
         assertEquals(1, results.size());
-        RenameResult result = results.get(0);
+        RenameResult result = results.getFirst();
         assertEquals(RenameStatus.ERROR_EXTRACTION, result.getStatus());
         assertTrue(result.getErrorMessage().isPresent(),
                 "Error message should be present");

@@ -2,6 +2,7 @@ package ua.renamer.app.metadata.extractor;
 
 import jakarta.inject.Inject;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.enums.Category;
 import ua.renamer.app.api.interfaces.FileMetadataExtractor;
 import ua.renamer.app.api.interfaces.FileMetadataExtractorResolver;
@@ -10,6 +11,7 @@ import ua.renamer.app.api.model.meta.FileMeta;
 
 import java.io.File;
 
+@Slf4j
 public class ThreadAwareFileMetadataMapper implements FileMetadataMapper {
     private final FileMetadataExtractorResolver fileMetadataExtractorResolver;
 
@@ -25,6 +27,7 @@ public class ThreadAwareFileMetadataMapper implements FileMetadataMapper {
         try {
             return strategy.extract(file, mimeType);
         } catch (Exception e) {
+            log.debug("Metadata extraction failed for file '{}' (category={}, mimeType={}): {}", file.getName(), category, mimeType, e.getMessage());
             return FileMeta.withError(e);
         }
     }

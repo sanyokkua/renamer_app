@@ -260,7 +260,7 @@ class CommonFileUtilsTest {
 
             // Should handle gracefully (either return valid date or null)
             // No exception should be thrown
-        } catch (IOException e) {
+        } catch (IOException _) {
             fail("Should not throw exception");
         }
     }

@@ -55,7 +55,7 @@ class Mp3MetadataExtractorIntegrationTest {
         assertNotNull(resource, "Test file not found: " + filename);
         try {
             return new File(resource.toURI());
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException _) {
             fail("Failed to load test file: " + filename);
             return null;
         }

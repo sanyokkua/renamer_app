@@ -32,10 +32,14 @@ import java.nio.file.StandardCopyOption;
 public class SettingsServiceImpl implements SettingsService {
 
     private static final String CUSTOM_CONFIG_PATH = "customConfigPath";
-    /** Reusable Jackson mapper; ObjectMapper is thread-safe after construction. */
+    /**
+     * Reusable Jackson mapper; ObjectMapper is thread-safe after construction.
+     */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /** Most-recently loaded or saved settings snapshot; updated atomically. */
+    /**
+     * Most-recently loaded or saved settings snapshot; updated atomically.
+     */
     private volatile AppSettings current;
 
     /**
@@ -48,20 +52,26 @@ public class SettingsServiceImpl implements SettingsService {
         this.current = doLoad();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AppSettings getCurrent() {
         return current;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AppSettings load() {
         current = doLoad();
         return current;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void save(final AppSettings settings) throws IOException {
         Path path = getSettingsFilePath();
@@ -78,12 +88,15 @@ public class SettingsServiceImpl implements SettingsService {
                     StandardCopyOption.ATOMIC_MOVE);
         } catch (java.nio.file.AtomicMoveNotSupportedException ex) {
             Files.move(tmp, path, StandardCopyOption.REPLACE_EXISTING);
+            log.debug("Files.move atomic failed with exception {}, fallback move is used", ex.getMessage());
         }
         current = settings;
         log.info("Settings saved to: {}", path);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Path getSettingsFilePath() {
         return resolveAppDir().resolve(AppDefaults.SETTINGS_FILE_NAME);
@@ -110,24 +123,24 @@ public class SettingsServiceImpl implements SettingsService {
             JsonNode general = root.path("general");
             JsonNode logging = general.path("logging");
             String rawLevel = logging.path("level")
-                                     .asText(AppDefaults.DEFAULT_LOG_LEVEL.name());
+                    .asText(AppDefaults.DEFAULT_LOG_LEVEL.name());
             LogLevel level = safeLogLevel(rawLevel);
 
             String rawCustomPath = general.path(CUSTOM_CONFIG_PATH).isNull()
                     ? null
                     : general.path(CUSTOM_CONFIG_PATH).asText(null);
             return AppSettings.builder()
-                              .withVersion(root.path("version")
-                                               .asInt(AppDefaults.SETTINGS_VERSION))
-                              .withLanguage(general.path("language")
-                                                   .asText(AppDefaults.DEFAULT_LANGUAGE))
-                              .withCustomConfigEnabled(
-                                      general.path("customConfigEnabled").asBoolean(false))
-                              .withCustomConfigPath(rawCustomPath)
-                              .withLoggingEnabled(
-                                      logging.path("enabled").asBoolean(false))
-                              .withLogLevel(level)
-                              .build();
+                    .withVersion(root.path("version")
+                            .asInt(AppDefaults.SETTINGS_VERSION))
+                    .withLanguage(general.path("language")
+                            .asText(AppDefaults.DEFAULT_LANGUAGE))
+                    .withCustomConfigEnabled(
+                            general.path("customConfigEnabled").asBoolean(false))
+                    .withCustomConfigPath(rawCustomPath)
+                    .withLoggingEnabled(
+                            logging.path("enabled").asBoolean(false))
+                    .withLogLevel(level)
+                    .build();
         } catch (Exception e) {
             log.warn("Failed to parse settings JSON, using defaults", e);
             return AppSettings.defaults();
@@ -139,6 +152,7 @@ public class SettingsServiceImpl implements SettingsService {
             return LogLevel.valueOf(raw.toUpperCase());
         } catch (IllegalArgumentException e) {
             log.warn("Unknown log level '{}', falling back to INFO", raw);
+            log.debug("safeLogLevel failed with exception: {}", e.getMessage());
             return AppDefaults.DEFAULT_LOG_LEVEL;
         }
     }

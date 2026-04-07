@@ -1,5 +1,6 @@
 package ua.renamer.app.core.service.validator.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.core.service.validator.Validator;
 
 import java.nio.file.FileSystems;
@@ -12,6 +13,7 @@ import java.util.Objects;
  * A validator implementation for validating file names.
  * It checks for various restrictions and common invalid characters in file names.
  */
+@Slf4j
 public class NameValidator implements Validator<String> {
 
     private static final List<String> WINDOWS_RESTRICTED_CHARS = List.of("\\", "*", "?", "<", ">", "|");
@@ -73,6 +75,7 @@ public class NameValidator implements Validator<String> {
             FileSystems.getDefault().getPath(fileName);
             return true;
         } catch (InvalidPathException e) {
+            log.debug("File name '{}' is not a valid path on this platform: {}", fileName, e.getMessage());
             return false;
         }
     }

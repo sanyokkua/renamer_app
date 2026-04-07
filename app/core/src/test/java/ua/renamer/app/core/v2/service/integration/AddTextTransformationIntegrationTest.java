@@ -45,7 +45,7 @@ class AddTextTransformationIntegrationTest extends BaseTransformationIntegration
 
         // Verify results
         assertEquals(1, results.size());
-        RenameResult result = results.get(0);
+        RenameResult result = results.getFirst();
         assertTrue(result.isSuccess());
         assertEquals(RenameStatus.SUCCESS, result.getStatus());
         assertEquals("document.txt", result.getOriginalFileName());

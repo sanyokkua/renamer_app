@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -48,6 +49,7 @@ import static org.mockito.Mockito.*;
  * in tests they are injected via reflection (the package is unconditionally opened
  * in {@code module-info.java}).
  */
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class ModeAddFolderNameControllerTest {
 
@@ -70,8 +72,8 @@ class ModeAddFolderNameControllerTest {
         CountDownLatch latch = new CountDownLatch(1);
         try {
             Platform.startup(latch::countDown);
-        } catch (IllegalStateException ignored) {
-            // Toolkit already running in this JVM (e.g. from a prior test class).
+        } catch (IllegalStateException e) {
+            log.debug("JavaFX toolkit already running, continuing. Exception: {}", e.getMessage());
             latch.countDown();
         }
         assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
@@ -307,7 +309,7 @@ class ModeAddFolderNameControllerTest {
 
             // Assert
             TextField textField = readTextField(controller);
-            assertThat(textField.getText()).isEqualTo("");
+            assertThat(textField.getText()).isEmpty();
         }
 
         @Test
@@ -321,7 +323,7 @@ class ModeAddFolderNameControllerTest {
 
             // Assert — null separator must be treated as empty string, never set null on TextField
             TextField textField = readTextField(controller);
-            assertThat(textField.getText()).isEqualTo("");
+            assertThat(textField.getText()).isEmpty();
         }
 
         @Test
@@ -447,7 +449,7 @@ class ModeAddFolderNameControllerTest {
             // An empty string is a valid separator — verify it passes through
             ParentFolderParams original = new ParentFolderParams(1, ItemPosition.BEGIN, "old");
             ParentFolderParams updated = captor.getValue().apply(original);
-            assertThat(updated.separator()).isEqualTo("");
+            assertThat(updated.separator()).isEmpty();
         }
 
         @Test

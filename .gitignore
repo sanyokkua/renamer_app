@@ -1128,3 +1128,4 @@ node_modules
 !.claude/CLAUDE.md
 !.claude/skills/*
 !.claude/.mcp.json
+.gitnexus

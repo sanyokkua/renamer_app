@@ -2,6 +2,7 @@ package ua.renamer.app.utils.datetime;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.file.attribute.FileTime;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
  * Utility class providing date-time parsing and formatting methods.
  * All methods are static, pure functions without side effects.
  */
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateTimeUtils {
 
@@ -136,7 +138,7 @@ public class DateTimeUtils {
                     ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTimeString, formatter);
                     return Optional.ofNullable(zonedDateTime.toLocalDateTime());
                 } catch (DateTimeParseException e) {
-                    // Ignore and continue trying other formats/locales
+                    log.debug("Failed to parse '{}' with format '{}' and locale '{}': {}", dateTimeString, format, currentLocale, e.getMessage());
                 }
             }
         }
@@ -156,6 +158,7 @@ public class DateTimeUtils {
         try {
             zoneOffset = offset == null ? ZoneOffset.UTC : ZoneOffset.of(offset);
         } catch (DateTimeException e) {
+            log.debug("Invalid zone offset '{}', falling back to empty result. Exception: {}", offset, e.getMessage());
             return Optional.empty();
         }
 
@@ -177,7 +180,7 @@ public class DateTimeUtils {
                 LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString, formatter);
                 return Optional.ofNullable(localDateTime.atOffset(zoneOffset).toLocalDateTime());
             } catch (DateTimeParseException e) {
-                // Ignore and try next format
+                log.debug("Failed to parse '{}' with format '{}': {}", dateTimeString, format, e.getMessage());
             }
         }
         return Optional.empty();
@@ -199,7 +202,7 @@ public class DateTimeUtils {
                 LocalDate localDate = LocalDate.parse(dateTimeString, formatter);
                 return Optional.of(LocalDateTime.of(localDate, LocalTime.of(0, 0)));
             } catch (DateTimeParseException e) {
-                // Ignore and try next format
+                log.debug("Failed to parse '{}' as date-only with format '{}': {}", dateTimeString, format, e.getMessage());
             }
         }
         return Optional.empty();
@@ -220,7 +223,7 @@ public class DateTimeUtils {
                 var month = Integer.parseInt(strings[1]);
                 return Optional.of(LocalDateTime.of(LocalDate.of(year, month, 1), LocalTime.of(0, 0)));
             } catch (NumberFormatException e) {
-                // Ignore and try next format
+                log.debug("Failed to parse year/month from '{}': {}", dateTimeString, e.getMessage());
             }
         }
 
@@ -229,7 +232,7 @@ public class DateTimeUtils {
                 var year = Integer.parseInt(dateTimeString);
                 return Optional.of(LocalDateTime.of(LocalDate.of(year, 1, 1), LocalTime.of(0, 0)));
             } catch (NumberFormatException e) {
-                // Ignore and try next format
+                log.debug("Failed to parse year from '{}': {}", dateTimeString, e.getMessage());
             }
         }
 

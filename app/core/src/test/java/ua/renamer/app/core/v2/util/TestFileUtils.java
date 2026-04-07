@@ -1,5 +1,6 @@
 package ua.renamer.app.core.v2.util;
 
+import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.api.exception.FileAttributesReadException;
 import ua.renamer.app.api.exception.FileNotFoundException;
 import ua.renamer.app.api.interfaces.DateTimeUtils;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
  * Test-only implementation of FileUtils backed by java.nio.
  * Used in core integration tests instead of the real CommonFileUtils (which lives in metadata).
  */
+@Slf4j
 public class TestFileUtils implements FileUtils {
 
     private final DateTimeUtils dateTimeUtils;
@@ -69,6 +71,7 @@ public class TestFileUtils implements FileUtils {
             String probedType = Files.probeContentType(path);
             return probedType != null ? probedType : "application/octet-stream";
         } catch (IOException e) {
+            log.debug("Failed to probe content type for '{}', falling back to application/octet-stream. Exception: {}", path, e.getMessage());
             return "application/octet-stream";
         }
     }
@@ -78,7 +81,8 @@ public class TestFileUtils implements FileUtils {
         FileTime creationTime = null;
         try {
             creationTime = attributes.creationTime();
-        } catch (UnsupportedOperationException ignored) {
+        } catch (UnsupportedOperationException e) {
+            log.debug("Creation time not supported by file system on this platform, returning null. Exception: {}", e.getMessage());
         }
         return dateTimeUtils.toLocalDateTime(creationTime);
     }
@@ -88,7 +92,8 @@ public class TestFileUtils implements FileUtils {
         FileTime modificationTime = null;
         try {
             modificationTime = attributes.lastModifiedTime();
-        } catch (UnsupportedOperationException ignored) {
+        } catch (UnsupportedOperationException e) {
+            log.debug("Modification time not supported by file system on this platform, returning null. Exception: {}", e.getMessage());
         }
         return dateTimeUtils.toLocalDateTime(modificationTime);
     }

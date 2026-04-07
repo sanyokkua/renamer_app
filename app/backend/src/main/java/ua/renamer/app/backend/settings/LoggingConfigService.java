@@ -1,7 +1,6 @@
 package ua.renamer.app.backend.settings;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -71,7 +70,7 @@ public class LoggingConfigService {
         if (!(LoggerFactory.getILoggerFactory() instanceof LoggerContext ctx)) {
             return;
         }
-        ctx.getLogger(Logger.ROOT_LOGGER_NAME).detachAppender("FILE");
+        ctx.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).detachAppender("FILE");
     }
 
     private void applyLogLevel(final LogLevel level) {
@@ -119,7 +118,7 @@ public class LoggingConfigService {
         appender.setEncoder(encoder);
         appender.start();
 
-        ctx.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(appender);
+        ctx.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).addAppender(appender);
         log.info("File logging enabled: {}", logFile);
     }
 }

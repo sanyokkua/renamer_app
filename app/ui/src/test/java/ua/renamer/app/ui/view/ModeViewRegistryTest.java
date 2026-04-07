@@ -3,6 +3,7 @@ package ua.renamer.app.ui.view;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Parent;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 class ModeViewRegistryTest {
 
     private static final long TOOLKIT_TIMEOUT_MS = 5_000;
@@ -29,8 +31,8 @@ class ModeViewRegistryTest {
         CountDownLatch latch = new CountDownLatch(1);
         try {
             Platform.startup(latch::countDown);
-        } catch (IllegalStateException ignored) {
-            // Toolkit already started in this JVM (e.g., prior test class).
+        } catch (IllegalStateException e) {
+            log.debug("JavaFX toolkit already running, continuing. Exception: {}", e.getMessage());
             latch.countDown();
         }
         assertThat(latch.await(TOOLKIT_TIMEOUT_MS, TimeUnit.MILLISECONDS))

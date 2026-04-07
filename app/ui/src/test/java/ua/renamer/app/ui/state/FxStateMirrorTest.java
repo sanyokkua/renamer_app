@@ -1,6 +1,7 @@
 package ua.renamer.app.ui.state;
 
 import javafx.application.Platform;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+@Slf4j
 class FxStateMirrorTest {
 
     private static final long TIMEOUT_MS = 5_000;
@@ -28,8 +30,8 @@ class FxStateMirrorTest {
         CountDownLatch latch = new CountDownLatch(1);
         try {
             Platform.startup(latch::countDown);
-        } catch (IllegalStateException ignored) {
-            // Toolkit already running in this JVM (e.g., prior test class)
+        } catch (IllegalStateException e) {
+            log.debug("JavaFX toolkit already running, continuing. Exception: {}", e.getMessage());
             latch.countDown();
         }
         assertThat(latch.await(TIMEOUT_MS, TimeUnit.MILLISECONDS))

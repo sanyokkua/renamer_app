@@ -603,14 +603,16 @@ public class ApplicationMainViewController implements Initializable {
                     addRow.accept(leftCol, new String[]{
                             languageTextRetriever.getString(TextKeys.FILE_ITEM_COUNT),
                             itemCount + " items"});
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    log.debug("Failed to count items in directory '{}': {}", candidate.path(), e.getMessage());
                 }
             } else {
                 try {
                     long bytes = Files.size(candidate.path());
                     addRow.accept(leftCol, new String[]{
                             languageTextRetriever.getString(TextKeys.FILE_SIZE), formatFileSize(bytes)});
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    log.debug("Failed to read file size for '{}': {}", candidate.path(), e.getMessage());
                 }
             }
         }
@@ -629,7 +631,8 @@ public class ApplicationMainViewController implements Initializable {
                 addRow.accept(rightCol, new String[]{
                         languageTextRetriever.getString(TextKeys.FILE_CREATION_TIME),
                         creTime.format(fmt)});
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                log.debug("Failed to read file attributes for '{}': {}", candidate.path(), e.getMessage());
             }
         }
 

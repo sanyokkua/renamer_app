@@ -765,7 +765,7 @@ class SequenceTransformerTest {
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
 
         // Then
-        PreparedFileModel result = results.get(0);
+        PreparedFileModel result = results.getFirst();
         assertNotNull(result.getTransformationMeta());
         TransformationMetadata metadata = result.getTransformationMeta();
         assertEquals(TransformationMode.NUMBER_FILES, metadata.getMode());
@@ -791,7 +791,7 @@ class SequenceTransformerTest {
         List<PreparedFileModel> results = transformer.transformBatch(files, config);
 
         // Then
-        PreparedFileModel result = results.get(0);
+        PreparedFileModel result = results.getFirst();
         TransformationMetadata metadata = result.getTransformationMeta();
         Map<String, Object> configMap = metadata.getConfig();
         assertEquals(10, configMap.get("startNumber"));

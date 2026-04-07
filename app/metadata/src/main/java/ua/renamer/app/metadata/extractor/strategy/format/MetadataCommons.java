@@ -3,10 +3,13 @@ package ua.renamer.app.metadata.extractor.strategy.format;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MetadataCommons {
     public static Map<String, String> buildMetadataMap(Metadata metadata) {
         Map<String, String> metadataMap = new HashMap<>();

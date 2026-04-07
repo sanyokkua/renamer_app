@@ -116,7 +116,7 @@ class TaskHandleImplTest {
 
             handle.notifyProgress(1.0, 1.0, null);
 
-            assertThat(counter.get()).isEqualTo(0);
+            assertThat(counter.get()).isZero();
         }
 
         @Test

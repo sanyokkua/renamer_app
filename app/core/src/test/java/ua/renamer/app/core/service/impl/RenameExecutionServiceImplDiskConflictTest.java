@@ -1,5 +1,6 @@
 package ua.renamer.app.core.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
  * and that case-change renames on case-insensitive file systems are handled
  * without any suffix.
  */
+@Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RenameExecutionServiceImplDiskConflictTest {
 
@@ -58,8 +60,8 @@ class RenameExecutionServiceImplDiskConflictTest {
                     .forEach(path -> {
                         try {
                             Files.deleteIfExists(path);
-                        } catch (IOException ignored) {
-                            // best-effort cleanup
+                        } catch (IOException e) {
+                            log.debug("Best-effort cleanup failed for '{}': {}", path, e.getMessage());
                         }
                     });
         }

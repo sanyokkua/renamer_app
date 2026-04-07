@@ -31,7 +31,7 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
     // ==================== FILE NOT FOUND ERRORS ====================
 
     @Test
-    void testError_FileDoesNotExist() throws IOException {
+    void testError_FileDoesNotExist() {
         // Create a File object pointing to non-existent file
         File nonExistent = tempDir.resolve("does_not_exist.txt").toFile();
         assertFalse(nonExistent.exists());
@@ -50,7 +50,7 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
 
         // Should return error result
         assertEquals(1, results.size());
-        RenameResult result = results.get(0);
+        RenameResult result = results.getFirst();
         assertFalse(result.isSuccess());
         assertEquals(RenameStatus.ERROR_EXTRACTION, result.getStatus());
         assertTrue(result.getErrorMessage().isPresent());
@@ -286,7 +286,7 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
     // ==================== ERROR MESSAGE VERIFICATION ====================
 
     @Test
-    void testError_ErrorMessagePresent() throws IOException {
+    void testError_ErrorMessagePresent() {
         File nonExistent = tempDir.resolve("missing.txt").toFile();
 
         AddTextConfig config = AddTextConfig.builder()
@@ -302,7 +302,7 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
         );
 
         assertEquals(1, results.size());
-        RenameResult result = results.get(0);
+        RenameResult result = results.getFirst();
 
         // Verify error details
         assertFalse(result.isSuccess());
@@ -312,7 +312,7 @@ class ErrorHandlingIntegrationTest extends BaseTransformationIntegrationTest {
     }
 
     @Test
-    void testError_AllErrorsHaveMessages() throws IOException {
+    void testError_AllErrorsHaveMessages() {
         List<File> files = new ArrayList<>();
 
         // Create 10 non-existent files

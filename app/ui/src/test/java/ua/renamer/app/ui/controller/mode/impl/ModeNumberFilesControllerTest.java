@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -51,6 +52,7 @@ import static org.mockito.Mockito.*;
  * {@code @FXML}-injected fields; in tests they are injected via reflection
  * (the package is unconditionally opened in {@code module-info.java}).
  */
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class ModeNumberFilesControllerTest {
 
@@ -70,8 +72,8 @@ class ModeNumberFilesControllerTest {
         CountDownLatch latch = new CountDownLatch(1);
         try {
             Platform.startup(latch::countDown);
-        } catch (IllegalStateException ignored) {
-            // Toolkit already running in this JVM (e.g. from a prior test class).
+        } catch (IllegalStateException e) {
+            log.debug("JavaFX toolkit already running, continuing. Exception: {}", e.getMessage());
             latch.countDown();
         }
         assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))

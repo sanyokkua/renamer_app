@@ -612,7 +612,7 @@ class DuplicateNameResolverImplTest {
         List<PreparedFileModel> models = List.of(
                 createPreparedFile("old", "txt", "new", "txt", "/test/old.txt")
         );
-        PreparedFileModel original = models.get(0);
+        PreparedFileModel original = models.getFirst();
 
         // When
         List<PreparedFileModel> result = resolver.resolve(models);

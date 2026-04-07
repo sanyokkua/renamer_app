@@ -1,6 +1,7 @@
 package ua.renamer.app.metadata.util;
 
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import ua.renamer.app.api.exception.FileAttributesReadException;
 import ua.renamer.app.api.exception.FileNotFoundException;
@@ -16,6 +17,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 
+@Slf4j
 public class CommonFileUtils implements FileUtils {
     private static final ThreadLocal<Tika> TIKA_INSTANCE = ThreadLocal.withInitial(Tika::new);
     private final DateTimeUtils dateTimeUtils;
@@ -75,7 +77,7 @@ public class CommonFileUtils implements FileUtils {
         try {
             creationTime = attributes.creationTime();
         } catch (UnsupportedOperationException e) {
-            // Creation time not supported on this platform (common on Linux)
+            log.debug("Creation time not supported by file system on this platform, returning null. Exception: {}", e.getMessage());
         }
 
         return dateTimeUtils.toLocalDateTime(creationTime);
@@ -87,7 +89,7 @@ public class CommonFileUtils implements FileUtils {
         try {
             modificationTime = attributes.lastModifiedTime();
         } catch (UnsupportedOperationException e) {
-            // Modification time not supported on this platform (common on Linux)
+            log.debug("Modification time not supported by file system on this platform, returning null. Exception: {}", e.getMessage());
         }
 
         return dateTimeUtils.toLocalDateTime(modificationTime);

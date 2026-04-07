@@ -50,6 +50,7 @@ public class BackendExecutor implements Closeable {
                 }
             }, stateThread);
         } catch (RejectedExecutionException e) {
+            log.debug("State thread rejected submission, executor is shut down. Exception: {}", e.getMessage());
             return CompletableFuture.failedFuture(new CompletionException(e));
         }
     }
@@ -74,6 +75,7 @@ public class BackendExecutor implements Closeable {
                 }
             }, virtualPool);
         } catch (RejectedExecutionException e) {
+            log.debug("Virtual thread pool rejected submission, executor is shut down. Exception: {}", e.getMessage());
             return CompletableFuture.failedFuture(new CompletionException(e));
         }
     }

@@ -3,6 +3,7 @@ package ua.renamer.app.ui.controller.mode.impl;
 import javafx.application.Platform;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.*;
  * in tests they are injected via reflection (the package is unconditionally opened
  * in {@code module-info.java}).
  */
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class ModeChangeCaseControllerTest {
 
@@ -67,8 +69,8 @@ class ModeChangeCaseControllerTest {
         CountDownLatch latch = new CountDownLatch(1);
         try {
             Platform.startup(latch::countDown);
-        } catch (IllegalStateException ignored) {
-            // Toolkit already running in this JVM (e.g. from a prior test class).
+        } catch (IllegalStateException e) {
+            log.debug("JavaFX toolkit already running, continuing. Exception: {}", e.getMessage());
             latch.countDown();
         }
         assertThat(latch.await(FX_TIMEOUT_MS, TimeUnit.MILLISECONDS))
@@ -349,7 +351,7 @@ class ModeChangeCaseControllerTest {
 
             // Assert
             ChoiceBox<TextCaseOptions> box = readChoiceBox(controller);
-            assertThat(box.getStyle()).isEqualTo("");
+            assertThat(box.getStyle()).isEmpty();
         }
 
         @Test
