@@ -1,5 +1,9 @@
 package ua.renamer.app.backend.settings;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.slf4j.LoggerFactory;
 import ua.renamer.app.api.settings.AppDefaults;
 import ua.renamer.app.api.settings.AppSettings;
 import ua.renamer.app.api.settings.LogLevel;
@@ -51,6 +56,25 @@ class LoggingConfigServiceTest {
     Path tempDir;
     @Mock
     private SettingsService settingsService;
+
+    /**
+     * Stop and detach the FILE appender after each test.
+     * On Windows, Logback holds a file lock on the log file; without explicitly stopping
+     * the appender, JUnit cannot delete the @TempDir and reports "Failed to close
+     * extension context".
+     */
+    @AfterEach
+    void stopFileAppender() {
+        if (!(LoggerFactory.getILoggerFactory() instanceof LoggerContext ctx)) {
+            return;
+        }
+        ch.qos.logback.classic.Logger root = ctx.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        Appender<ILoggingEvent> appender = root.getAppender("FILE");
+        if (appender != null) {
+            appender.stop();
+        }
+        root.detachAppender("FILE");
+    }
 
     // -------------------------------------------------------------------------
     // Build helpers

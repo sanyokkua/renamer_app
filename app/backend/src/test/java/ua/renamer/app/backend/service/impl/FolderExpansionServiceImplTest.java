@@ -2,6 +2,8 @@ package ua.renamer.app.backend.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import ua.renamer.app.api.model.FolderDropOptions;
 
@@ -97,6 +99,7 @@ class FolderExpansionServiceImplTest {
     }
 
     @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC}) // dot-prefix is not a hidden-file convention on Windows
     void expand_hiddenFilesExcluded() throws IOException {
         Files.createFile(tempDir.resolve(".hidden_file"));
         Path visible = Files.createFile(tempDir.resolve("visible.txt"));

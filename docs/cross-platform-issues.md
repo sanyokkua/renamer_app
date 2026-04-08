@@ -1,8 +1,8 @@
 # Cross-Platform Build Issues
 
 macOS builds (Intel and Apple Silicon) are stable — all tests pass and native packaging works.
-Linux and Windows (tested on ARM64 VMs) had three environment-specific issues documented here.
-All three are now **fixed** as of the `feature/v2-redesign` branch.
+Linux (ARM64), Windows (ARM64 VMs), and Windows (x86_64) had environment-specific issues
+documented here. All five are now **fixed** as of the `feature/v2-redesign` branch.
 
 For full Linux environment requirements (JDK, Maven, packaging tools, CI notes, `dist/` layout),
 see [`docs/linux-requirements.md`](linux-requirements.md).
@@ -94,6 +94,97 @@ Error: Could not create the Java Virtual Machine.
 ```bash
 sudo apt-get install fakeroot
 ```
+
+---
+
+## Issue 4 — Windows colon test returns ERROR_EXECUTION instead of ERROR_TRANSFORMATION
+
+**Status: FIXED**
+
+**Test:** `RenameExecutionServiceImplTest.givenFilenameWithColonOnWindows_whenExecute_thenErrorTransformationReturned`
+**Error:** `expected: <ERROR_TRANSFORMATION> but was: <ERROR_EXECUTION>`
+
+**Root cause (confirmed on Windows 11 x86_64):**
+
+`RenameExecutionServiceImpl.execute()` called `preparedFile.getNewPath()` before running
+`nameValidator.isValid()`. `PreparedFileModel.getNewPath()` calls `resolveSibling(getNewFullName())`
+on the Java NIO Path API. On Windows, filenames containing `:` (e.g. `"2024:01:01"`) cause
+`resolveSibling` to throw `InvalidPathException` immediately — `:` is an illegal character in
+Windows path components. The exception is caught by `catch (Exception e)`, which returns
+`ERROR_EXECUTION`. The `nameValidator.isValid()` check (which would have returned `false` →
+`ERROR_TRANSFORMATION`) was never reached.
+
+Contrast: the slash test (`bad/name.txt`) passes on all platforms because
+`resolveSibling("bad/name.txt")` does not throw on Windows, so the validator is reached.
+
+**Fix applied:**
+- Moved the `nameValidator.isValid(finalName)` block from inside the `try` block (after
+  `getNewPath()`) to **before** the `try` block (immediately after the `needsRename()` guard).
+  `getNewFullName()` is pure string concatenation and never throws. By the time `getNewPath()`
+  is called, the filename is already verified to be valid on the current OS.
+
+**Files changed:**
+- `app/core/src/main/java/ua/renamer/app/core/service/impl/RenameExecutionServiceImpl.java`
+
+**CI/GitHub Actions note:** The test is annotated `@EnabledOnOs(OS.WINDOWS)` and only runs on
+Windows. The `build-and-test` job runs on `ubuntu-latest` and skips this test. No CI change is
+needed for the fix itself.
+
+---
+
+## Issue 5 — Windows backend test failures: Logback file lock, dot-prefix hidden files, OS-specific path assertions
+
+**Status: FIXED**
+
+**Tests (confirmed on Windows 11 x86_64):**
+
+1. `LoggingConfigServiceTest` — multiple tests fail with `JUnit: Failed to close extension context`
+2. `FolderExpansionServiceImplTest.expand_hiddenFilesExcluded` — `AssertionError`: `.hidden_file` appears in results
+3. `SettingsServiceResolveAppDirTest$LinuxBranchWithXdg`, `$LinuxBranchWithoutXdg`, `$MacOsBranch` — path assertions fail
+
+**Root cause 1 — Logback file lock on Windows:**
+
+`LoggingConfigService.removeFileAppender()` called only `detachAppender("FILE")`, which removes the appender
+from the logger chain but does **not** call `appender.stop()`. On Windows, Logback holds an OS-level lock on
+the log file (`logs/renamer.log`). When JUnit tries to delete the `@TempDir` after the test, Windows rejects
+the deletion because the file handle is still open → `Failed to close extension context`.
+
+**Root cause 2 — Dot-prefix is not hidden on Windows:**
+
+On Unix systems, files whose names begin with `.` are treated as hidden by `Files.isHidden()`. On Windows,
+`Files.isHidden()` checks the HIDDEN file attribute (set via Properties → Hidden). A file named `.hidden_file`
+created with `Files.createFile()` is NOT hidden on Windows — no attribute is set. The test expected it to be
+filtered out, but it was returned as a regular visible file.
+
+**Root cause 3 — Unix path assertions fail on Windows:**
+
+`SettingsServiceResolveAppDirTest$LinuxBranchWithXdg` and `$LinuxBranchWithoutXdg` assert that resolved paths
+`startsWith("/home/testuser")` or `contains("/.config/")`. On Windows, `Path.of("/home/testuser").toString()`
+returns `\home\testuser` (backslash separators), so both `startsWith` and `contains` assertions fail.
+`MacOsBranch` similarly asserts `startsWith("/Users/testuser")`.
+
+**Fix applied:**
+
+1. `LoggingConfigService.removeFileAppender()` now gets the appender and calls `appender.stop()` **before**
+   `detachAppender()` to release the file handle on all platforms. A matching `@AfterEach` in
+   `LoggingConfigServiceTest` also stops the FILE appender to guard against tests that enable logging but
+   never disable it.
+
+2. `FolderExpansionServiceImplTest.expand_hiddenFilesExcluded` annotated with
+   `@EnabledOnOs({OS.LINUX, OS.MAC})` — the test covers Unix-specific hidden-file behaviour.
+
+3. `SettingsServiceResolveAppDirTest$LinuxBranchWithXdg` and `$LinuxBranchWithoutXdg` annotated with
+   `@EnabledOnOs(OS.LINUX)`; `$MacOsBranch` annotated with `@EnabledOnOs(OS.MAC)` — path assertions are
+   platform-specific and must only run where the expected separator is `/`.
+
+**Files changed:**
+- `app/backend/src/main/java/ua/renamer/app/backend/settings/LoggingConfigService.java`
+- `app/backend/src/test/java/ua/renamer/app/backend/settings/LoggingConfigServiceTest.java`
+- `app/backend/src/test/java/ua/renamer/app/backend/service/impl/FolderExpansionServiceImplTest.java`
+- `app/backend/src/test/java/ua/renamer/app/backend/settings/SettingsServiceResolveAppDirTest.java`
+
+**CI/GitHub Actions note:** All three failures only manifest on Windows runners. The existing
+`build-and-test` job (Ubuntu, Temurin) is unaffected. No CI workflow changes are needed for these fixes.
 
 ---
 

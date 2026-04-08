@@ -29,6 +29,7 @@ if not defined APP_VERSION set "APP_VERSION=2.0.0"
 set "APP_NAME=Renamer"
 set "JLINK_OPTIONS=--strip-debug --no-header-files --no-man-pages --compress zip-6"
 
+
 if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
 
 echo App: %APP_NAME% v%APP_VERSION%
@@ -55,26 +56,4 @@ jpackage ^
 
 echo App image created: %OUTPUT_DIR%\%APP_NAME%\
 
-REM Build .msi installer (requires WiX Toolset)
-echo === Building Windows .msi ===
-jpackage ^
-    --input "%INPUT_DIR%" ^
-    --dest "%OUTPUT_DIR%" ^
-    --name "%APP_NAME%" ^
-    --main-jar "%MAIN_JAR%" ^
-    --main-class ua.renamer.app.Launcher ^
-    --app-version "%APP_VERSION%" ^
-    --vendor "Renamer App" ^
-    --description "Batch file renaming application" ^
-    --icon "%ICON%" ^
-    --java-options "--enable-preview" ^
-    --java-options "-Xmx512m" ^
-    --jlink-options "%JLINK_OPTIONS%" ^
-    --type msi ^
-    --win-dir-chooser ^
-    --win-menu ^
-    --win-menu-group "Renamer" ^
-    --win-shortcut
-
 echo === Windows packaging complete ===
-dir "%OUTPUT_DIR%\*.msi" 2>nul

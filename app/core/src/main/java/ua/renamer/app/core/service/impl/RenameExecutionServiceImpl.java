@@ -56,6 +56,19 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
                     .build();
         }
 
+        // Validate the final filename before any path operations (getNewPath() throws on
+        // Windows for names containing ':', which would mask the real error as ERROR_EXECUTION)
+        String finalName = preparedFile.getNewFullName();
+        if (!nameValidator.isValid(finalName)) {
+            log.warn("Generated filename contains invalid characters: {}", finalName);
+            return RenameResult.builder()
+                    .withPreparedFile(preparedFile)
+                    .withStatus(RenameStatus.ERROR_TRANSFORMATION)
+                    .withErrorMessage("Generated filename contains invalid characters: " + finalName)
+                    .withExecutedAt(LocalDateTime.now())
+                    .build();
+        }
+
         // Execute physical rename
         try {
             Path oldPath = preparedFile.getOldPath();
@@ -87,18 +100,6 @@ public class RenameExecutionServiceImpl implements RenameExecutionService {
                             .build();
                 }
                 newPath = resolvedPath; // May be original path (no conflict) or suffixed path
-            }
-
-            // Validate the final filename before physical rename
-            String finalName = preparedFile.getNewFullName();
-            if (!nameValidator.isValid(finalName)) {
-                log.warn("Generated filename contains invalid characters: {}", finalName);
-                return RenameResult.builder()
-                        .withPreparedFile(preparedFile)
-                        .withStatus(RenameStatus.ERROR_TRANSFORMATION)
-                        .withErrorMessage("Generated filename contains invalid characters: " + finalName)
-                        .withExecutedAt(LocalDateTime.now())
-                        .build();
             }
 
             // Perform rename

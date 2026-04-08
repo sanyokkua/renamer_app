@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import ua.renamer.app.api.settings.AppDefaults;
 
 import java.nio.file.Path;
@@ -86,6 +88,7 @@ class SettingsServiceResolveAppDirTest {
     // =========================================================================
 
     @Nested
+    @EnabledOnOs(OS.MAC) // path assertions use Unix separators (e.g. startsWith("/Users/..."))
     class MacOsBranch {
 
         @Test
@@ -190,6 +193,7 @@ class SettingsServiceResolveAppDirTest {
     // =========================================================================
 
     @Nested
+    @EnabledOnOs(OS.LINUX) // path assertions use Unix separators (e.g. startsWith("/home/..."))
     class LinuxBranchWithXdg {
 
         @Test
@@ -226,6 +230,7 @@ class SettingsServiceResolveAppDirTest {
     // =========================================================================
 
     @Nested
+    @EnabledOnOs(OS.LINUX) // path assertions use Unix separators (e.g. startsWith("/home/..."))
     class LinuxBranchWithoutXdg {
 
         @Test

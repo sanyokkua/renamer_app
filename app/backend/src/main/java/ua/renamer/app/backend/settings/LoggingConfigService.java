@@ -70,7 +70,12 @@ public class LoggingConfigService {
         if (!(LoggerFactory.getILoggerFactory() instanceof LoggerContext ctx)) {
             return;
         }
-        ctx.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).detachAppender("FILE");
+        ch.qos.logback.classic.Logger root = ctx.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        ch.qos.logback.core.Appender<ILoggingEvent> existing = root.getAppender("FILE");
+        if (existing != null) {
+            existing.stop(); // release file handles before detach (required on Windows)
+        }
+        root.detachAppender("FILE");
     }
 
     private void applyLogLevel(final LogLevel level) {
