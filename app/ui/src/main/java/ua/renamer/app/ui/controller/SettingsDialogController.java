@@ -221,11 +221,23 @@ public class SettingsDialogController implements Initializable {
             return;
         }
         Path logDir = settingsParent.resolve("logs");
-        try {
-            java.awt.Desktop.getDesktop().open(logDir.toFile());
-        } catch (IOException e) {
-            log.warn("Cannot open log directory: {}", logDir, e);
-        }
+        String logDirStr = logDir.toAbsolutePath().toString();
+        Thread.ofVirtual().start(() -> {
+            try {
+                String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+                ProcessBuilder pb;
+                if (os.contains("linux")) {
+                    pb = new ProcessBuilder("xdg-open", logDirStr);
+                } else if (os.contains("mac")) {
+                    pb = new ProcessBuilder("open", logDirStr);
+                } else {
+                    pb = new ProcessBuilder("explorer", logDirStr);
+                }
+                pb.start();
+            } catch (IOException e) {
+                log.warn("Cannot open log directory: {}", logDirStr, e);
+            }
+        });
     }
 
     private void populateForm(AppSettings settings) {
