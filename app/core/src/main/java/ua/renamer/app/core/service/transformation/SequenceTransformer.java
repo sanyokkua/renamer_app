@@ -116,25 +116,42 @@ public class SequenceTransformer implements FileTransformationService<SequenceCo
         List<FileModel> sorted = new ArrayList<>(models);
 
         switch (config.getSortSource()) {
-            case FILE_NAME -> sorted.sort(Comparator.comparing(FileModel::getName));
+            case FILE_NAME -> sorted.sort(Comparator.comparing(FileModel::getName)
+                    .thenComparing(FileModel::getExtension)
+                    .thenComparing(FileModel::getAbsolutePath));
             case FILE_PATH -> sorted.sort(Comparator.comparing(FileModel::getAbsolutePath));
-            case FILE_SIZE -> sorted.sort(Comparator.comparing(FileModel::getFileSize));
-            case FILE_CREATION_DATETIME -> sorted.sort(Comparator.comparing(
-                    m -> m.getCreationDate().orElse(LocalDateTime.MIN)));
-            case FILE_MODIFICATION_DATETIME -> sorted.sort(Comparator.comparing(
-                    m -> m.getModificationDate().orElse(LocalDateTime.MIN)));
-            case FILE_CONTENT_CREATION_DATETIME -> sorted.sort(Comparator.comparing(m -> m.getMetadata()
+            case FILE_SIZE -> sorted.sort(Comparator.comparing(FileModel::getFileSize)
+                    .thenComparing(FileModel::getName)
+                    .thenComparing(FileModel::getAbsolutePath));
+            case FILE_CREATION_DATETIME -> sorted.sort(Comparator.<FileModel, LocalDateTime>comparing(
+                    m -> m.getCreationDate().orElse(LocalDateTime.MIN))
+                    .thenComparing(FileModel::getName)
+                    .thenComparing(FileModel::getAbsolutePath));
+            case FILE_MODIFICATION_DATETIME -> sorted.sort(Comparator.<FileModel, LocalDateTime>comparing(
+                    m -> m.getModificationDate().orElse(LocalDateTime.MIN))
+                    .thenComparing(FileModel::getName)
+                    .thenComparing(FileModel::getAbsolutePath));
+            case FILE_CONTENT_CREATION_DATETIME -> sorted.sort(Comparator.<FileModel, LocalDateTime>comparing(
+                    m -> m.getMetadata()
                     .flatMap(FileMeta::getImageMeta)
                     .flatMap(ImageMeta::getContentCreationDate)
-                    .orElse(LocalDateTime.MIN)));
-            case IMAGE_WIDTH -> sorted.sort(Comparator.comparing(m -> m.getMetadata()
+                    .orElse(LocalDateTime.MIN))
+                    .thenComparing(FileModel::getName)
+                    .thenComparing(FileModel::getAbsolutePath));
+            case IMAGE_WIDTH -> sorted.sort(Comparator.<FileModel, Integer>comparing(
+                    m -> m.getMetadata()
                     .flatMap(FileMeta::getImageMeta)
                     .flatMap(ImageMeta::getWidth)
-                    .orElse(0)));
-            case IMAGE_HEIGHT -> sorted.sort(Comparator.comparing(m -> m.getMetadata()
+                    .orElse(0))
+                    .thenComparing(FileModel::getName)
+                    .thenComparing(FileModel::getAbsolutePath));
+            case IMAGE_HEIGHT -> sorted.sort(Comparator.<FileModel, Integer>comparing(
+                    m -> m.getMetadata()
                     .flatMap(FileMeta::getImageMeta)
                     .flatMap(ImageMeta::getHeight)
-                    .orElse(0)));
+                    .orElse(0))
+                    .thenComparing(FileModel::getName)
+                    .thenComparing(FileModel::getAbsolutePath));
         }
 
         return sorted;

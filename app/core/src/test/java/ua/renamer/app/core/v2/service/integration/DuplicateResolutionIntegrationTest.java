@@ -253,10 +253,10 @@ class DuplicateResolutionIntegrationTest extends BaseTransformationIntegrationTe
         assertTrue(results.stream().allMatch(RenameResult::isSuccess));
 
         // No duplicates since step=1 gives unique sequence numbers
-        // Files are sorted alphabetically, so: file.doc → 003, file.pdf → 002, file.txt → 001
-        assertFileExists("003.doc");
+        // Files sorted by name then extension: file.doc → 001, file.pdf → 002, file.txt → 003
+        assertFileExists("001.doc");
         assertFileExists("002.pdf");
-        assertFileExists("001.txt");
+        assertFileExists("003.txt");
     }
 
     @Test

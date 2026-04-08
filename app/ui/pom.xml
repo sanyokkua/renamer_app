@@ -103,6 +103,7 @@
                 <version>${javafx-maven-plugin.version}</version>
                 <configuration>
                     <mainClass>ua.renamer.app.RenamerApplication</mainClass>
+                    <options>${javafx.jvm.args}</options>
                 </configuration>
             </plugin>
             <plugin>

@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR/app\" && mvn test-compile -q -B --no-transfer-progress 2>&1 | tail -10; if [ ${PIPESTATUS[0]} -ne 0 ]; then echo 'Compilation errors detected — please fix before continuing' >&2; exit 2; fi; exit 0"
+            "command": "bash -c 'cd \"$CLAUDE_PROJECT_DIR/app\" && mvn test-compile -q -B --no-transfer-progress 2>&1 | tail -10; if [ ${PIPESTATUS[0]} -ne 0 ]; then echo \"Compilation errors detected — please fix before continuing\" >&2; exit 2; fi; exit 0'"
           }
         ]
       }
