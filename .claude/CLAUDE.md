@@ -131,9 +131,26 @@ Documentation drift      → docs-writer
 
 Real test files in `app/core/src/test/resources/test-data/`. Generate with `tools/generate_test_data.py` or manually with FFmpeg + ExifTool (see skills above).
 
-## MCP Server
+## MCP Servers
 
 `py-search-helper` provides web search: `search_web_ddg(query)`, `open_page(url)`. Use for library API docs (Tika, Guice, JavaFX, metadata-extractor).
+
+`CodeGraphContext` provides code graph analysis via MCP tools (`mcp__CodeGraphContext__*`) and CLI (`cgc`). Use when answering questions about code structure, relationships, or quality:
+
+| Task | MCP Tool |
+|------|----------|
+| Find who calls a method | `analyze_code_relationships` (query_type: `find_callers`) |
+| Find what a method calls | `analyze_code_relationships` (query_type: `find_callees`) |
+| Class inheritance hierarchy | `analyze_code_relationships` (query_type: `class_hierarchy`) |
+| Search code by keyword | `find_code` |
+| Find unused functions | `find_dead_code` |
+| Measure complexity | `find_most_complex_functions` / `calculate_cyclomatic_complexity` |
+| Repo stats (file/class counts) | `get_repository_stats` |
+| Run custom Cypher query | `execute_cypher_query` |
+| Index the codebase | `add_code_to_graph` or CLI: `cgc index .` |
+| Check indexing status | `check_job_status` / `list_jobs` |
+
+**Before using graph tools:** verify the repo is indexed with `list_indexed_repositories`. If not indexed, run `add_code_to_graph` with the repo path first.
 
 ## Deployment
 
