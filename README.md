@@ -3,7 +3,7 @@
 Welcome to the Renamer App repository! This is a desktop tool designed to streamline the process of renaming files on
 your PC. Say goodbye to manual file renaming and hello to a more efficient workflow.
 
-[For more detailed documentation, click here](docs/documentation.md)
+[For more detailed documentation, click here](docs/users/documentation.md)
 
 ## Problem
 

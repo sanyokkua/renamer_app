@@ -18,7 +18,7 @@
 <!-- TOC -->
 # File Renamer Application
 
-![Example of the application screen](app_screen_example_1.png)
+![Example of the application screen](../screens/v1/app_screen_example_1.png)
 
 ## Overview
 
@@ -36,61 +36,61 @@ Explore the different renaming modes available in the application:
 
 #### Add Text
 
-![Add text mode](1_add_custom.png)
+![Add text mode](../screens/v1/1_add_custom.png)
 
 Append or prepend custom text to the existing file names.
 
 #### Change Text Case
 
-![Change case mode](2_change_case.png)
+![Change case mode](../screens/v1/2_change_case.png)
 
 Alter the case of file names to different variants, enhancing consistency and readability.
 
 #### DateTime Integration
 
-![DateTime mode](3_date_time.png)
+![DateTime mode](../screens/v1/3_date_time.png)
 
 Incorporate DateTime information into file names or replace existing names with DateTime details, with support for various formats and source selection.
 
 #### Image Dimensions
 
-![Image dimensions mode](4_img_dimensions.png)
+![Image dimensions mode](../screens/v1/4_img_dimensions.png)
 
 Utilize image width and height metadata to enrich file names, exclusive to image files.
 
 #### Parent Folder Names
 
-![Parent folder mode](5_parents.png)
+![Parent folder mode](../screens/v1/5_parents.png)
 
 Include parent folder names in file names, offering organization and context.
 
 #### Remove Text
 
-![Remove text mode](6_remove.png)
+![Remove text mode](../screens/v1/6_remove.png)
 
 Effortlessly trim text from the beginning or end of file names.
 
 #### Replace Text
 
-![Replace text mode](7_replace.png)
+![Replace text mode](../screens/v1/7_replace.png)
 
 Swap text segments in file names with custom alternatives, enhancing file name clarity.
 
 #### Digit Sequence Replacement
 
-![Digit sequence mode](8_seq.png)
+![Digit sequence mode](../screens/v1/8_seq.png)
 
 Replace file names with sequential digit sequences, with sorting options available for streamlined management.
 
 #### Symbol Truncation
 
-![Symbol truncation mode](9_truncate.png)
+![Symbol truncation mode](../screens/v1/9_truncate.png)
 
 Remove specified symbols from file names, optimizing file name lengths.
 
 #### Change Extensions
 
-![Change extensions mode](10_ext_change.png)
+![Change extensions mode](../screens/v1/10_ext_change.png)
 
 Modify file extensions, ensuring compatibility and consistency across file types.
 
