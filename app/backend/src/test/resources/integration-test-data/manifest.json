@@ -1,0 +1,186 @@
+{
+  "generated_at": "2026-04-08T12:00:00Z",
+  "platform_note": "fs_creation_date and fs_modification_date are NOT reliable after file copy. Only content_creation_date (EXIF-embedded) is stable.",
+  "files": {
+    "media/photo_1920x1080.jpg": {
+      "file_name": "photo_1920x1080",
+      "extension": "jpg",
+      "width": 1920,
+      "height": 1080,
+      "content_creation_date": "2025-06-15T08:22:15",
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "media/photo_no_exif.jpg": {
+      "file_name": "photo_no_exif",
+      "extension": "jpg",
+      "width": 800,
+      "height": 600,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "media/image_800x600.png": {
+      "file_name": "image_800x600",
+      "extension": "png",
+      "width": 800,
+      "height": 600,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "media/song_with_tags.mp3": {
+      "file_name": "song_with_tags",
+      "extension": "mp3",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": "TestArtist",
+      "audio_title": "TestSong",
+      "audio_year": 2020
+    },
+    "media/audio_no_tags.wav": {
+      "file_name": "audio_no_tags",
+      "extension": "wav",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "flat/document.txt": {
+      "file_name": "document",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "flat/report_final.md": {
+      "file_name": "report_final",
+      "extension": "md",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "flat/data_export.csv": {
+      "file_name": "data_export",
+      "extension": "csv",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "flat/config_dev.json": {
+      "file_name": "config_dev",
+      "extension": "json",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "flat/no_extension": {
+      "file_name": "no_extension",
+      "extension": null,
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "nested/level1_a.txt": {
+      "file_name": "level1_a",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "nested/level1_b.txt": {
+      "file_name": "level1_b",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "nested/sublevel/level2_a.txt": {
+      "file_name": "level2_a",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "nested/sublevel/deep/level3_a.txt": {
+      "file_name": "level3_a",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "multi_folder/folder_a/file_x.txt": {
+      "file_name": "file_x",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "multi_folder/folder_a/file_y.txt": {
+      "file_name": "file_y",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "multi_folder/folder_b/file_p.txt": {
+      "file_name": "file_p",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    },
+    "multi_folder/folder_b/file_q.txt": {
+      "file_name": "file_q",
+      "extension": "txt",
+      "width": null,
+      "height": null,
+      "content_creation_date": null,
+      "audio_artist": null,
+      "audio_title": null,
+      "audio_year": null
+    }
+  }
+}
