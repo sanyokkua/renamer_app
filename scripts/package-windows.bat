@@ -24,7 +24,7 @@ if not exist "%INPUT_DIR%" (
     exit /b 1
 )
 
-if not defined APP_VERSION set "APP_VERSION=1.1.0"
+if not defined APP_VERSION set "APP_VERSION=2.0.0"
 
 set "APP_NAME=Renamer"
 set "JLINK_OPTIONS=--strip-debug --no-header-files --no-man-pages --compress zip-6"

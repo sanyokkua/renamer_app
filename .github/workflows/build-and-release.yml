@@ -6,7 +6,7 @@ on:
     branches: [ "*-release-*", "*-snapshot-*" ]
 
 env:
-  APP_VERSION: "1.1.0"
+  APP_VERSION: "2.0.0"
   JAVA_VERSION: "25"
 
 jobs:

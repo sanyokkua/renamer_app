@@ -12,7 +12,7 @@ OUTPUT_DIR="$PROJECT_ROOT/dist"
 
 # App metadata
 APP_NAME="Renamer"
-APP_VERSION="${APP_VERSION:-$(mvn -f "$PROJECT_ROOT/app/pom.xml" help:evaluate -Dexpression=project.version -q -DforceStdout 2>/dev/null || echo "1.1.0")}"
+APP_VERSION="${APP_VERSION:-$(mvn -f "$PROJECT_ROOT/app/pom.xml" help:evaluate -Dexpression=project.version -q -DforceStdout 2>/dev/null || echo "2.0.0")}"
 APP_VENDOR="Renamer App"
 APP_DESCRIPTION="Batch file renaming application"
 APP_COPYRIGHT="Copyright (c) Renamer App"

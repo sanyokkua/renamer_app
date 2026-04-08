@@ -146,7 +146,7 @@ OUTPUT_DIR="$PROJECT_ROOT/dist"
 
 # App metadata — update these for each release
 APP_NAME="Renamer"
-APP_VERSION="${APP_VERSION:-1.1.0}"
+APP_VERSION="${APP_VERSION:-2.0.0}"
 APP_VENDOR="Renamer App"
 APP_DESCRIPTION="Batch file renaming application"
 APP_COPYRIGHT="Copyright (c) Renamer App"
@@ -297,7 +297,7 @@ if "%MAIN_JAR%"=="" (
     exit /b 1
 )
 
-if not defined APP_VERSION set "APP_VERSION=1.1.0"
+if not defined APP_VERSION set "APP_VERSION=2.0.0"
 
 set "APP_NAME=Renamer"
 
@@ -380,9 +380,9 @@ scripts\package-windows.bat
 ```
 
 The results will be in `dist/`:
-- **macOS**: `dist/Renamer.app/` (executable) + `dist/Renamer-1.1.0.dmg` (installer)
-- **Linux**: `dist/Renamer/` (executable directory) + `dist/renamer_1.1.0-1_amd64.deb`
-- **Windows**: `dist/Renamer/` (executable directory with `Renamer.exe`) + `dist/Renamer-1.1.0.msi`
+- **macOS**: `dist/Renamer.app/` (executable) + `dist/Renamer-2.0.0.dmg` (installer)
+- **Linux**: `dist/Renamer/` (executable directory) + `dist/renamer_2.0.0-1_amd64.deb`
+- **Windows**: `dist/Renamer/` (executable directory with `Renamer.exe`) + `dist/Renamer-2.0.0.msi`
 
 ---
 
@@ -400,7 +400,7 @@ on:
 
 # Shared env vars for all jobs
 env:
-  APP_VERSION: "1.1.0"
+  APP_VERSION: "2.0.0"
   JAVA_VERSION: "25"
 
 jobs:
