@@ -1,0 +1,266 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'      # v1.2.3
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'    # v1.2.3-rc1, v1.2.3-beta.1
+
+permissions:
+  contents: write   # required to create GitHub Releases
+
+env:
+  JAVA_VERSION: '25'
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Job 1: Validate tag + extract version
+  # ──────────────────────────────────────────────
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      version-jpackage: ${{ steps.version.outputs.jpackage }}
+      version-full: ${{ steps.version.outputs.full }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # needed for git merge-base
+
+      - name: Verify tag is on main
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor ${{ github.sha }} origin/main; then
+            echo "::error::Tag must point to a commit on the main branch"
+            exit 1
+          fi
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          FULL_VERSION="${TAG#v}"
+          # Strip pre-release suffix for jpackage (requires X.Y.Z)
+          JPACKAGE_VERSION="${FULL_VERSION%%-*}"
+          if [[ ! "$JPACKAGE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Cannot derive numeric version from tag '$TAG' (got '$JPACKAGE_VERSION')"
+            exit 1
+          fi
+          echo "full=$FULL_VERSION" >> "$GITHUB_OUTPUT"
+          echo "jpackage=$JPACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Derived: full=$FULL_VERSION  jpackage=$JPACKAGE_VERSION"
+
+  # ──────────────────────────────────────────────
+  # Job 2: Build and test (once, on Linux)
+  # ──────────────────────────────────────────────
+  build-and-test:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Set Maven version
+        run: |
+          cd app
+          mvn versions:set \
+            -DnewVersion=${{ needs.verify.outputs.version-jpackage }} \
+            -DgenerateBackupFiles=false
+
+      - name: Build and test
+        run: cd app && mvn clean package
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+          retention-days: 1
+
+  # ──────────────────────────────────────────────
+  # Job 3: Package for macOS (Intel + Apple Silicon)
+  # ──────────────────────────────────────────────
+  package-macos:
+    needs: [verify, build-and-test]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-13
+            arch: x86_64
+          - runner: macos-14
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+
+      - name: Package macOS app
+        env:
+          APP_VERSION: ${{ needs.verify.outputs.version-jpackage }}
+        run: ./scripts/package-macos.sh
+
+      - name: Rename DMG to include arch
+        run: |
+          cd dist
+          for f in *.dmg; do
+            mv "$f" "${f%.dmg}-macos-${{ matrix.arch }}.dmg"
+          done
+
+      - name: Tar app bundle
+        env:
+          APP_VERSION: ${{ needs.verify.outputs.version-jpackage }}
+        run: cd dist && tar -czf "Renamer-${{ env.APP_VERSION }}-macos-${{ matrix.arch }}.tar.gz" Renamer.app
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-macos-${{ matrix.arch }}
+          path: |
+            dist/*.dmg
+            dist/*.tar.gz
+          retention-days: 1
+
+  # ──────────────────────────────────────────────
+  # Job 4: Package for Windows (x86_64 only)
+  # ──────────────────────────────────────────────
+  package-windows:
+    needs: [verify, build-and-test]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'liberica'
+          java-package: 'jdk+fx'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+
+      - name: Package Windows app
+        env:
+          APP_VERSION: ${{ needs.verify.outputs.version-jpackage }}
+        run: scripts\package-windows.bat
+
+      - name: Zip app image
+        env:
+          APP_VERSION: ${{ needs.verify.outputs.version-jpackage }}
+        run: Compress-Archive -Path dist\Renamer -DestinationPath "dist\Renamer-${{ env.APP_VERSION }}-windows-x86_64.zip"
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-windows-x86_64
+          path: dist/*.zip
+          retention-days: 1
+
+  # ──────────────────────────────────────────────
+  # Job 5: Package for Linux (x86_64 + arm64)
+  # ──────────────────────────────────────────────
+  package-linux:
+    needs: [verify, build-and-test]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+            distribution: temurin
+            java-package: jdk
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+            distribution: liberica
+            java-package: jdk+fx
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ matrix.distribution }}
+          java-package: ${{ matrix.java-package }}
+
+      - name: Install fakeroot
+        run: sudo apt-get update && sudo apt-get install -y fakeroot
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+
+      - name: Package Linux app
+        env:
+          APP_VERSION: ${{ needs.verify.outputs.version-jpackage }}
+        run: ./scripts/package-linux.sh
+
+      - name: Tar app image
+        env:
+          APP_VERSION: ${{ needs.verify.outputs.version-jpackage }}
+        run: cd dist && tar -czf "Renamer-${{ env.APP_VERSION }}-linux-${{ matrix.arch }}.tar.gz" Renamer/
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-linux-${{ matrix.arch }}
+          path: |
+            dist/*.deb
+            dist/*.tar.gz
+          retention-days: 1
+
+  # ──────────────────────────────────────────────
+  # Job 6: Create GitHub Release
+  # ──────────────────────────────────────────────
+  create-release:
+    needs: [verify, package-macos, package-windows, package-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts/
+          pattern: release-*
+          merge-multiple: false
+
+      - name: Collect release files
+        run: |
+          mkdir -p release-files
+          find release-artifacts/ -type f \
+            \( -name "*.dmg" -o -name "*.zip" -o -name "*.deb" -o -name "*.tar.gz" \) \
+            -exec cp {} release-files/ \;
+          echo "=== Release files ==="
+          ls -lh release-files/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Release ${{ github.ref_name }}"
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          files: release-files/*
