@@ -41,8 +41,6 @@ The app uses a four-zone layout:
   selected
 - **Bottom bar**: progress bar (expands to fill available width) + file count + Clear / Reload / Rename buttons
 
-> Screenshots will be updated in a future release to reflect the current layout.
-
 ## Download Page
 
 You can download an installer for the app by the [following link](https://github.com/sanyokkua/renamer_app/releases)

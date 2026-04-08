@@ -1130,3 +1130,7 @@ node_modules
 !.claude/.mcp.json
 .gitnexus
 !/scripts/
+
+# PMD bundled rule files (resolved from classpath, not filesystem — not needed in git)
+category/
+rulesets/
