@@ -134,8 +134,8 @@ public class RenameSessionService implements SessionApi {
                     DateTimeFormat.DATE_TIME_TOGETHER, "");
             case ADD_DIMENSIONS -> //noinspection SuspiciousNameCombination
                     new ImageDimensionsParams(
-                    ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
-                    ItemPositionWithReplacement.BEGIN, " ", "x");
+                            ImageDimensionOptions.WIDTH, ImageDimensionOptions.HEIGHT,
+                            ItemPositionWithReplacement.BEGIN, " ", "x");
             case ADD_FOLDER_NAME -> new ParentFolderParams(1, ItemPosition.BEGIN, " ");
         };
     }
@@ -373,7 +373,7 @@ public class RenameSessionService implements SessionApi {
         if (params.validate().isError()) {
             return Optional.empty();
         }
-        var mock = FileModel.builder()
+        var mockBuilder = FileModel.builder()
                 .withFile(new File("/preview/" + exampleName + "." + exampleExtension))
                 .withIsFile(true)
                 .withName(exampleName)
@@ -381,8 +381,12 @@ public class RenameSessionService implements SessionApi {
                 .withAbsolutePath("/preview/" + exampleName + "." + exampleExtension)
                 .withFileSize(0L)
                 .withCreationDate(LocalDateTime.now())
-                .withModificationDate(LocalDateTime.now())
-                .build();
+                .withModificationDate(LocalDateTime.now());
+        if (mode == TransformationMode.ADD_DIMENSIONS) {
+            var sampleImageMeta = ImageMeta.builder().withWidth(1920).withHeight(1080).build();
+            mockBuilder.withMetadata(FileMeta.builder().withImage(sampleImageMeta).build());
+        }
+        var mock = mockBuilder.build();
         List<PreparedFileModel> results =
                 orchestrator.computePreview(List.of(mock), mode, ModeParametersConverter.toConfig(params), null);
         if (results.isEmpty() || results.getFirst().isHasError()) {

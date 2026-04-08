@@ -28,7 +28,9 @@
             <MenuItem fx:id="settingsMenuItem" text="%menu_settings_open"
                       onAction="#onOpenSettings"/>
         </Menu>
-        <Menu text="%menu_help"/>
+        <Menu text="%menu_help">
+            <MenuItem text="%menu_help_about" onAction="#onOpenHelp"/>
+        </Menu>
     </MenuBar>
 
     <!-- ── Main panel: mode settings (left) + file table (right) ── -->

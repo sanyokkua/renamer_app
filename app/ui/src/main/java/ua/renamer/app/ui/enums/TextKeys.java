@@ -144,6 +144,7 @@ public enum TextKeys {
     SETTINGS_SECTION_CUSTOM_CONFIG("settings_section_custom_config"),
     SETTINGS_CUSTOM_CONFIG_ENABLE("settings_custom_config_enable"),
     SETTINGS_CUSTOM_CONFIG_COPY("settings_custom_config_copy"),
+    SETTINGS_CUSTOM_CONFIG_OPEN_BTN("settings_custom_config_open_btn"),
     SETTINGS_CUSTOM_CONFIG_ANNOTATION("settings_custom_config_annotation"),
     SETTINGS_SECTION_LANGUAGE("settings_section_language"),
     SETTINGS_LANGUAGE_LABEL("settings_language_label"),
@@ -159,7 +160,12 @@ public enum TextKeys {
     PREVIEW_FORMAT("preview_format"),
     FILE_COUNT_SUMMARY("file_count_summary"),
     FILE_COUNT_RENAMED("file_count_renamed"),
-    SETTINGS_SAVE_ERROR("settings_save_error");
+    SETTINGS_SAVE_ERROR("settings_save_error"),
+    HELP_MENU_ABOUT("menu_help_about"),
+    HELP_DIALOG_TITLE("help_dialog_title"),
+    HELP_DIALOG_MESSAGE("help_dialog_message"),
+    HELP_DIALOG_BTN_COPY("help_dialog_btn_copy"),
+    HELP_DIALOG_BTN_OPEN("help_dialog_btn_open");
 
     private final String keyString;
 

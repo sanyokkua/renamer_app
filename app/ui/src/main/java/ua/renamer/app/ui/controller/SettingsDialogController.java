@@ -113,7 +113,7 @@ public class SettingsDialogController implements Initializable {
     public void initialize(URL url, ResourceBundle resources) {
         languageComboBox.getItems().setAll(SUPPORTED_LANGUAGES.values());
         logLevelComboBox.getItems().setAll(LogLevel.values());
-        logLevelComboBox.setCellFactory(lv -> new LogLevelCell());
+        logLevelComboBox.setCellFactory(_ -> new LogLevelCell());
         logLevelComboBox.setButtonCell(new LogLevelCell());
     }
 
@@ -133,7 +133,7 @@ public class SettingsDialogController implements Initializable {
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getStylesheets().addAll(appResources.getSettingsDialogStylesheets());
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
-        dialog.setOnShowing(e -> {
+        dialog.setOnShowing(_ -> {
             Button saveBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
             Button cancelBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
             if (saveBtn != null) {
@@ -220,22 +220,34 @@ public class SettingsDialogController implements Initializable {
         if (settingsParent == null) {
             return;
         }
-        Path logDir = settingsParent.resolve("logs");
-        String logDirStr = logDir.toAbsolutePath().toString();
+        openDirectory(settingsParent.resolve("logs"));
+    }
+
+    @FXML
+    void onOpenSettingsDirectory() {
+        Path settingsParent = settingsService.getSettingsFilePath().getParent();
+        if (settingsParent == null) {
+            return;
+        }
+        openDirectory(settingsParent);
+    }
+
+    private void openDirectory(Path dir) {
+        String dirStr = dir.toAbsolutePath().toString();
         Thread.ofVirtual().start(() -> {
             try {
                 String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
                 ProcessBuilder pb;
                 if (os.contains("linux")) {
-                    pb = new ProcessBuilder("xdg-open", logDirStr);
+                    pb = new ProcessBuilder("xdg-open", dirStr);
                 } else if (os.contains("mac")) {
-                    pb = new ProcessBuilder("open", logDirStr);
+                    pb = new ProcessBuilder("open", dirStr);
                 } else {
-                    pb = new ProcessBuilder("explorer", logDirStr);
+                    pb = new ProcessBuilder("explorer", dirStr);
                 }
                 pb.start();
             } catch (IOException e) {
-                log.warn("Cannot open log directory: {}", logDirStr, e);
+                log.warn("Cannot open directory: {}", dirStr, e);
             }
         });
     }

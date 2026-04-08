@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -21,8 +22,11 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -31,6 +35,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.util.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,6 +80,7 @@ public class ApplicationMainViewController implements Initializable {
 
     private static final long BYTES_PER_KB = 1024L;
     private static final int FILE_INFO_TWO_COLUMN_MIN_WIDTH = 430;
+    private static final String REPO_URL = "https://github.com/sanyokkua/renamer_app";
 
     private final AppModesConverter appModesConverter;
     private final SessionApi sessionApi;
@@ -736,6 +742,78 @@ public class ApplicationMainViewController implements Initializable {
     @FXML
     private void onOpenSettings() {
         settingsDialogController.show(appModeContainer.getScene().getWindow());
+    }
+
+    // Called by FXML via reflection — PMD cannot see the reference in the .fxml file
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @FXML
+    private void onOpenHelp() {
+        showHelpDialog();
+    }
+
+    private void showHelpDialog() {
+        Label message = new Label(languageTextRetriever.getString(TextKeys.HELP_DIALOG_MESSAGE));
+        message.setWrapText(true);
+
+        TextField urlField = new TextField(REPO_URL);
+        urlField.setEditable(false);
+        urlField.setStyle("-fx-background-color: -color-bg-app; -fx-border-color: -color-border; -fx-border-radius: 4;");
+
+        Button copyBtn = new Button(languageTextRetriever.getString(TextKeys.HELP_DIALOG_BTN_COPY));
+        copyBtn.getStyleClass().add("btn-secondary");
+        copyBtn.setOnAction(e -> {
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString(REPO_URL);
+            Clipboard.getSystemClipboard().setContent(clipboardContent);
+        });
+
+        Button openBtn = new Button(languageTextRetriever.getString(TextKeys.HELP_DIALOG_BTN_OPEN));
+        openBtn.getStyleClass().add("btn-primary");
+        openBtn.setOnAction(e -> openUrl(REPO_URL));
+
+        HBox buttonRow = new HBox(8, copyBtn, openBtn);
+
+        VBox content = new VBox(10, message, urlField, buttonRow);
+        content.setPadding(new Insets(8, 16, 8, 16));
+        content.setPrefWidth(420);
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(appModeContainer.getScene().getWindow());
+        dialog.initModality(Modality.WINDOW_MODAL);
+        dialog.setTitle(languageTextRetriever.getString(TextKeys.HELP_DIALOG_TITLE));
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.getDialogPane().getStylesheets().addAll(appResources.getDialogStylesheets());
+        dialog.setOnShowing(e -> {
+            Button closeBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.CLOSE);
+            if (closeBtn != null) {
+                closeBtn.getStyleClass().add("btn-ghost");
+            }
+            ButtonBar bar = (ButtonBar) dialog.getDialogPane().lookup(".button-bar");
+            if (bar != null) {
+                bar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
+            }
+        });
+        dialog.showAndWait();
+    }
+
+    private void openUrl(String url) {
+        Thread.ofVirtual().start(() -> {
+            try {
+                String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+                ProcessBuilder pb;
+                if (os.contains("mac")) {
+                    pb = new ProcessBuilder("open", url);
+                } else if (os.contains("linux")) {
+                    pb = new ProcessBuilder("xdg-open", url);
+                } else {
+                    pb = new ProcessBuilder("cmd", "/c", "start", url);
+                }
+                pb.start();
+            } catch (IOException e) {
+                log.warn("Cannot open URL: {}", url, e);
+            }
+        });
     }
 
     private void handleBtnClickedReload() {

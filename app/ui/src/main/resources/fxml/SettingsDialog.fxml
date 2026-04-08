@@ -51,6 +51,10 @@
                             text="%settings_custom_config_copy"
                             styleClass="settings-path-copy-btn"
                             onAction="#onCopyConfigPath"/>
+                    <Button fx:id="openSettingsDirBtn"
+                            text="%settings_custom_config_open_btn"
+                            styleClass="settings-path-copy-btn"
+                            onAction="#onOpenSettingsDirectory"/>
                 </HBox>
                 <Label text="%settings_custom_config_annotation" styleClass="settings-annotation"/>
             </VBox>
