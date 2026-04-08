@@ -1128,7 +1128,6 @@ node_modules
 !.claude/CLAUDE.md
 !.claude/skills/*
 !.claude/.mcp.json
-.gitnexus
 !/scripts/
 
 # PMD bundled rule files (resolved from classpath, not filesystem — not needed in git)
