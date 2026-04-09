@@ -26,11 +26,11 @@ jobs:
         with:
           fetch-depth: 0   # needed for git merge-base
 
-      - name: Verify tag is on main
+      - name: Verify tag is on master
         run: |
-          git fetch origin main
-          if ! git merge-base --is-ancestor ${{ github.sha }} origin/main; then
-            echo "::error::Tag must point to a commit on the main branch"
+          git fetch origin master
+          if ! git merge-base --is-ancestor ${{ github.sha }} origin/master; then
+            echo "::error::Tag must point to a commit on the master branch"
             exit 1
           fi
 

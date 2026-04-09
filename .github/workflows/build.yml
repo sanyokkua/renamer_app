@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - master
     tags-ignore:
       - '**'   # release.yml handles tags; don't double-fire
 
