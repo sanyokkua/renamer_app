@@ -80,13 +80,6 @@ jobs:
         env:
           DISPLAY: ':99'
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
-        with:
-          name: app-libs
-          path: app/ui/target/libs/
-          retention-days: 1
-
   # ──────────────────────────────────────────────
   # Job 3: Package for macOS (Intel + Apple Silicon)
   # ──────────────────────────────────────────────
@@ -109,12 +102,10 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
+          cache: maven
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: app-libs
-          path: app/ui/target/libs/
+      - name: Build (skip tests)
+        run: cd app && mvn clean package -DskipTests -q
 
       - name: Package macOS app
         env:
@@ -157,12 +148,10 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'liberica'
           java-package: 'jdk+fx'
+          cache: maven
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: app-libs
-          path: app/ui/target/libs/
+      - name: Build (skip tests)
+        run: cd app && mvn clean package -DskipTests -q
 
       - name: Package Windows app
         env:
@@ -208,15 +197,13 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ matrix.distribution }}
           java-package: ${{ matrix.java-package }}
+          cache: maven
 
       - name: Install fakeroot
         run: sudo apt-get update && sudo apt-get install -y fakeroot
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: app-libs
-          path: app/ui/target/libs/
+      - name: Build (skip tests)
+        run: cd app && mvn clean package -DskipTests -q
 
       - name: Package Linux app
         env:

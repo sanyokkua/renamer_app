@@ -34,6 +34,7 @@ BASE_ARGS=(
 
 # Flags valid only for installer types (deb), not app-image
 DEB_ARGS=(
+    --linux-package-deps false
     --linux-shortcut
     --linux-menu-group "Utility"
     --linux-deb-maintainer "renamer-app@example.com"
