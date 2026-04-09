@@ -1,484 +1,189 @@
-# Renamer App - Technical Documentation & Architecture
+# Renamer App — Architecture Overview
 
 ## Table of Contents
 
 1. [System Overview](#1-system-overview)
 2. [Technology Stack](#2-technology-stack)
 3. [Project Structure](#3-project-structure)
-4. [Architecture Overview](#4-architecture-overview)
-5. [Core Domain Models](#5-core-domain-models)
-6. [Design Patterns](#6-design-patterns)
-7. [Component Details](#7-component-details)
-8. [Application Flows](#8-application-flows)
-9. [Threading Model](#9-threading-model)
+4. [Pipeline Architecture](#4-pipeline-architecture)
+5. [Application Flows](#5-application-flows)
+6. [Threading Model](#6-threading-model)
+7. [Data Models](#7-data-models)
+8. [Transformation Modes](#8-transformation-modes)
+9. [Metadata Extraction](#9-metadata-extraction)
 10. [Dependency Injection](#10-dependency-injection)
-11. [Extending the Application](#11-extending-the-application)
+11. [Further Reading](#11-further-reading)
 
 ---
 
 ## 1. System Overview
 
-**Renamer App** is a desktop application designed for batch renaming of files. It provides various modes for renaming,
-including:
+**Renamer App** is a JavaFX 25 desktop application for batch file renaming. It extracts embedded metadata (EXIF dates,
+image dimensions, audio tags, video streams) and applies one of 10 renaming modes to produce new filenames — with a live
+preview before committing any changes to disk.
 
-- Adding/removing custom text
-- Changing text case
-- Using metadata (EXIF, creation dates, image dimensions)
-- Sequencing files
-- Truncating filenames
-- Changing file extensions
+**10 renaming modes:**
 
-The application is built using **Java 25** with **JavaFX** for the UI, following clean architecture principles with
-strict separation between the Core business logic and UI presentation layer.
+- Add Text, Remove Text, Find & Replace, Change Case
+- Add Date/Time (from EXIF or file system), Add Dimensions, Number Files
+- Add Folder Name, Trim Name, Change Extension
+
+The app follows a strict **multi-module clean architecture**: shared contracts in `api`, business logic in `core`,
+metadata extraction in `metadata`, session management in `backend`, and JavaFX presentation in `ui`.
+See [Project Overview](project-overview.md) for a deeper module walkthrough.
 
 ---
 
 ## 2. Technology Stack
 
-| Component                 | Technology         | Version                       |
-|---------------------------|--------------------|-------------------------------|
-| **Language**              | Java               | 25 (Preview features enabled) |
-| **UI Framework**          | JavaFX             | 25.0.1                        |
-| **Dependency Injection**  | Google Guice       | 7.0.0                         |
-| **Build Tool**            | Maven              | Multi-module project          |
-| **Boilerplate Reduction** | Lombok             | 1.18.42                       |
-| **Logging**               | SLF4J + Logback    | 2.0.17 / 1.5.21               |
-| **File Analysis**         | Apache Tika        | 3.2.3                         |
-| **Metadata Extraction**   | Metadata Extractor | 2.19.0                        |
-| **Testing**               | JUnit 5 + Mockito  | 6.0.1 / 5.20.0                |
+| Component                 | Technology         | Version         |
+|---------------------------|--------------------|-----------------|
+| **Language**              | Java               | 25              |
+| **UI Framework**          | JavaFX             | 25.0.2          |
+| **Dependency Injection**  | Google Guice       | 7.0.0           |
+| **Build Tool**            | Maven              | Multi-module    |
+| **Boilerplate Reduction** | Lombok             | 1.18.44         |
+| **Logging**               | SLF4J + Logback    | 2.0.17 / 1.5.32 |
+| **MIME Detection**        | Apache Tika        | 3.3.0           |
+| **Metadata Extraction**   | metadata-extractor | 2.19.0          |
+| **Audio Metadata**        | jAudioTagger       | 2.0.19          |
+| **Testing**               | JUnit 5 + Mockito  | 6.0.3 / 5.23.0  |
 
 ---
 
 ## 3. Project Structure
 
-### 3.1. Module Organization
+### 3.1 Module Organization
+
+The app is a 6-module Maven project under `app/`. Each module has a single, bounded responsibility:
+
+| Module     | Root Package              | Responsibility                                                                                                             |
+|------------|---------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `api`      | `ua.renamer.app.api`      | Shared interfaces, enums, and immutable models (`FileModel`, `PreparedFileModel`, `RenameResult`, config sealed interface) |
+| `utils`    | `ua.renamer.app.utils`    | Standalone utility classes; **not imported by other modules**                                                              |
+| `core`     | `ua.renamer.app.core`     | Rename pipeline: all 10 transformers, orchestrator, duplicate resolver, name validator                                     |
+| `metadata` | `ua.renamer.app.metadata` | File metadata extractors: 20 image formats, 3 video formats, 19 audio formats                                              |
+| `backend`  | `ua.renamer.app.backend`  | Session management (`SessionApi`), settings, folder expansion, logging config                                              |
+| `ui`       | `ua.renamer.app.ui`       | JavaFX frontend: controllers, FXML, CSS, DI wiring, mode registry                                                          |
+
+### 3.2 Directory Layout
 
 ```
 renamer_app/
 ├── app/
-│   ├── pom.xml                    # Parent POM (dependency management)
-│   ├── lombok.config              # Lombok configuration
-│   ├── core/                      # Core business logic module
-│   │   ├── pom.xml
-│   │   └── src/main/java/
-│   │       └── ua/renamer/app/core/
-│   │           ├── enums/         # Application enums
-│   │           ├── model/         # Domain models
-│   │           └── service/       # Business logic services
-│   │               ├── command/   # Command pattern implementations
-│   │               ├── file/      # File operations
-│   │               ├── helper/    # Helper utilities
-│   │               ├── mapper/    # Data mappers
-│   │               └── validator/ # Validation logic
-│   └── ui/                        # UI module
-│       ├── pom.xml
+│   ├── pom.xml                        # Parent POM (v2.0.0; dependency management)
+│   ├── api/                           # Shared contracts module
+│   │   └── src/main/java/ua/renamer/app/api/
+│   │       ├── enums/                 # ItemPosition, TextCaseOptions, DateTimeSource, etc.
+│   │       └── model/                 # FileModel, PreparedFileModel, RenameResult, RenameStatus,
+│   │                                  #   TransformationMode, TransformationConfig (sealed)
+│   ├── utils/                         # Standalone helpers (not imported by other modules)
+│   ├── core/                          # Pipeline business logic
+│   │   └── src/main/java/ua/renamer/app/core/
+│   │       ├── config/                # DIV2ServiceModule
+│   │       ├── mapper/                # ThreadAwareFileMapper
+│   │       └── service/               # Transformers, orchestrator, validators
+│   ├── metadata/                      # Metadata extraction
+│   │   └── src/main/java/ua/renamer/app/metadata/
+│   │       └── extractor/             # Category dispatchers + format-specific extractors
+│   ├── backend/                       # Session and service layer
+│   │   └── src/main/java/ua/renamer/app/backend/
+│   │       ├── config/                # DIBackendModule
+│   │       └── service/               # RenameSessionService, SettingsService, etc.
+│   └── ui/                            # JavaFX frontend
 │       └── src/main/
-│           ├── java/
-│           │   └── ua/renamer/app/
-│           │       ├── Launcher.java          # Entry point
-│           │       ├── RenamerApplication.java # JavaFX Application
-│           │       └── ui/
-│           │           ├── config/            # DI configuration
-│           │           ├── controller/        # FXML controllers
-│           │           ├── converter/         # String converters
-│           │           ├── enums/             # UI enums
-│           │           ├── models/            # UI models
-│           │           ├── service/           # UI services
-│           │           └── widget/            # Custom widgets
+│           ├── java/ua/renamer/app/
+│           │   ├── Launcher.java      # Entry point
+│           │   ├── RenamerApplication.java
+│           │   └── ui/
+│           │       ├── config/        # DIAppModule, DICoreModule, DIUIModule
+│           │       ├── controller/    # ApplicationMainViewController + 10 mode controllers
+│           │       ├── widget/        # Custom JavaFX widgets
+│           │       └── service/       # ViewLoaderService, ModeViewRegistry
 │           └── resources/
-│               ├── fxml/                     # FXML view files
-│               ├── images/                   # Application icons
-│               └── langs/                    # i18n resource bundles
-├── package.json                             # jDeploy config
-├── icon.png, icon.ico, icon.icns           # Platform icons
-└── docs/                                    # Documentation
+│               ├── fxml/              # FXML view files
+│               ├── images/            # Application icons
+│               └── langs/             # 19 i18n resource bundles
+├── scripts/
+│   └── ai-build.sh                    # Sequential: compile → lint → test
+├── docs/                              # Documentation
+├── icon.png, icon.ico, icon.icns      # Platform icons
+└── .github/workflows/                 # CI (ci.yml) and release workflows
 ```
 
-### 3.2. Module Dependencies
+### 3.3 Module Dependency Graph
 
 ```mermaid
 graph TD
-    A[ui module] -->|depends on| B[core module]
-    A -->|uses| C[JavaFX 25.0.1]
-    B -->|uses| D[Apache Tika]
-    B -->|uses| E[Metadata Extractor]
-    A -->|uses| F[Google Guice]
-    B -->|uses| F
-    A -->|packaged with| G[jDeploy]
+    api["api\n(contracts / models / enums)"]
+    utils["utils\n(standalone helpers)"]
+    core["core\n(pipeline / transformers)"]
+    meta["metadata\n(extractors)"]
+    backend["backend\n(session / settings)"]
+    ui["ui\n(JavaFX frontend)"]
+    javafx(["JavaFX 25\n(external)"])
+    utils --> api
+    core --> api
+    core --> utils
+    meta --> api
+    meta --> utils
+    backend --> api
+    backend --> core
+    backend --> meta
+    ui --> api
+    ui --> core
+    ui --> backend
+    ui --> javafx
 ```
 
-**Core Module**: Pure business logic, no UI dependencies.
-**UI Module**: Depends on Core, contains all UI-related code and JavaFX controllers.
+**Key constraint:** `backend` has no `requires javafx.*` — it is a pure Java module enforced at compile time by JPMS.
+The UI layer is the only module that depends on JavaFX.
 
 ---
 
-## 4. Architecture Overview
+## 4. Pipeline Architecture
 
-### 4.1. High-Level Architecture Diagram
+The rename operation runs as a four-phase pipeline. The entry point is `FileRenameOrchestratorImpl` in
+`ua.renamer.app.core.service.impl`.
 
-```mermaid
-graph TB
-    subgraph "UI Layer"
-        A[Launcher] --> B[RenamerApplication]
-        B --> C[ApplicationMainViewController]
-        C --> D[Mode Controllers]
-        D --> E[FXML Views]
-    end
+### 4.1 Phase Overview
 
-    subgraph "Service Layer"
-        F[CoreFunctionalityHelper]
-        G[ViewLoaderService]
-        H[MainViewControllerHelper]
-    end
+| Phase                          | Input                     | Output                    | Threading                                        | Key Class                                      |
+|--------------------------------|---------------------------|---------------------------|--------------------------------------------------|------------------------------------------------|
+| **1 — Metadata Extraction**    | `List<File>`              | `List<FileModel>`         | Parallel, virtual threads                        | `ThreadAwareFileMapper`                        |
+| **2 — Transformation**         | `List<FileModel>`         | `List<PreparedFileModel>` | Parallel (9 modes) / sequential (`NUMBER_FILES`) | `FileTransformationService<C>` implementations |
+| **2.5 — Duplicate Resolution** | `List<PreparedFileModel>` | `List<PreparedFileModel>` | Sequential                                       | `DuplicateNameResolverImpl`                    |
+| **3 — Physical Rename**        | `List<PreparedFileModel>` | `List<RenameResult>`      | Sequential, depth-ordered                        | `RenameExecutionServiceImpl`                   |
 
-    subgraph "Core Domain Layer"
-        I[Commands]
-        J[Mappers]
-        K[File Operations]
-        L[Validators]
-    end
+### 4.2 Data Flow
 
-    subgraph "DI Container"
-        M[DIAppModule]
-        N[DICoreModule]
-        O[DIUIModule]
-    end
-
-    C --> F
-    C --> H
-    F --> I
-    F --> J
-    I --> K
-    J --> K
-    M -. provides .-> G
-    N -. provides .-> I
-    N -. provides .-> J
-    O -. provides .-> C
-    O -. provides .-> D
+```
+File  ──Phase 1──▶  FileModel  ──Phase 2──▶  PreparedFileModel  ──Phase 2.5──▶  PreparedFileModel  ──Phase 3──▶  RenameResult
 ```
 
-### 4.2. Layer Responsibilities
+### 4.3 No-Throw Contract
 
-| Layer             | Responsibility                   | Key Components                      |
-|-------------------|----------------------------------|-------------------------------------|
-| **UI Layer**      | User interaction, view rendering | Controllers, FXML, Widgets          |
-| **Service Layer** | Bridge between UI and Core       | CoreFunctionalityHelper, ViewLoader |
-| **Core Domain**   | Business logic, file processing  | Commands, Mappers, FilesOperations  |
-| **DI Container**  | Dependency management            | Guice Modules                       |
+The pipeline **never throws**. All errors are captured in model fields:
+
+- `PreparedFileModel.hasError` / `PreparedFileModel.errorMessage` — transformation errors
+- `RenameResult.status` (`RenameStatus` enum: `SUCCESS`, `SKIPPED`, `ERROR_EXTRACTION`, `ERROR_TRANSFORMATION`,
+  `ERROR_EXECUTION`)
+
+### 4.4 Preview vs Execute
+
+The orchestrator exposes three entry points:
+
+- `extractMetadata(files, callback)` — Phase 1 only (file drop)
+- `computePreview(fileModels, mode, config, callback)` — Phases 2 + 2.5 (live preview)
+- `execute(files, mode, config, callback)` / `executeAsync(...)` — all 4 phases (rename button)
+
+See [Pipeline Architecture](pipeline-architecture.md) for the full sequence diagram and duplicate resolution algorithm.
 
 ---
 
-## 5. Core Domain Models
+## 5. Application Flows
 
-### 5.1. Data Model Hierarchy
-
-```mermaid
-classDiagram
-    class FileInformation {
-        -File originalFile
-        -String fileAbsolutePath
-        -boolean isFile
-        -String fileName
-        -String fileExtension
-        -Set~String~ detectedExtension
-        -String detectedMimeType
-        -long fileSize
-        -LocalDateTime fsCreationDate
-        -LocalDateTime fsModificationDate
-        -FileInformationMetadata metadata
-        -String newName
-        -String newExtension
-        +getFsCreationDate() Optional~LocalDateTime~
-        +getFsModificationDate() Optional~LocalDateTime~
-        +getMetadata() Optional~FileInformationMetadata~
-    }
-
-    class FileInformationMetadata {
-        -LocalDateTime creationDate
-        -Integer imgVidWidth
-        -Integer imgVidHeight
-        -String audioArtistName
-        -String audioAlbumName
-        -String audioSongName
-        -Integer audioYear
-        +getCreationDate() Optional~LocalDateTime~
-        +getImgVidWidth() Optional~Integer~
-        +getImgVidHeight() Optional~Integer~
-    }
-
-    class RenameModel {
-        -FileInformation fileInformation
-        -boolean isNeedRename
-        -String oldName
-        -String newName
-        -String absolutePathWithoutName
-        -boolean hasRenamingError
-        -String renamingErrorMessage
-        -boolean isRenamed
-        -RenameResult renameResult
-    }
-
-    FileInformation "1" *-- "0..1" FileInformationMetadata
-    RenameModel "1" *-- "1" FileInformation
-```
-
-### 5.2. Model Descriptions
-
-#### **FileInformation**
-
-Represents comprehensive information about a file or directory:
-
-- **File system attributes**: path, name, extension, size
-- **Metadata**: Optional embedded metadata (EXIF, ID3, etc.)
-- **Detection results**: MIME type, detected extensions
-- **Mutable fields**: `newName`, `newExtension` (set during preparation phase)
-
-#### **FileInformationMetadata**
-
-Contains extracted metadata from various file types:
-
-- **Image/Video metadata**: dimensions (width, height), creation date
-- **Audio metadata**: artist, album, song name, year
-- All fields are Optional to handle missing metadata gracefully
-
-#### **RenameModel**
-
-UI-friendly wrapper around `FileInformation`:
-
-- **State tracking**: `isNeedRename`, `isRenamed`, `hasRenamingError`
-- **Display data**: `oldName`, `newName` (used by TableView)
-- **Status information**: `renameResult`, `renamingErrorMessage`
-
----
-
-## 6. Design Patterns
-
-### 6.1. Command Pattern
-
-The **Command Pattern** is central to the renaming logic. Each operation (mapping, preparation, renaming) is
-encapsulated in a command.
-
-```mermaid
-classDiagram
-    class Command~I,O~ {
-<<interface>>
-+execute(List~I~ input, ProgressCallback callback) List~O~
-}
-
-class ListProcessingCommand~I, O~ {
-<<abstract>>
-+execute(List~I~ input, ProgressCallback callback) List~O~
-#preprocessInput(List~I~ input) List~I~
-#processItem(I item) O*
-#updateProgress(int current, int max, ProgressCallback)
-}
-
-class FileInformationCommand {
-<<abstract>>
-+processItem(FileInformation) FileInformation
-}
-
-class AddTextPrepareInformationCommand {
--ItemPosition position
--String text
-+processItem(FileInformation) FileInformation
-}
-
-class RenameCommand {
--FilesOperations filesOperations
-+processItem(RenameModel) RenameModel
-}
-
-class MapFileToFileInformationCommand {
-+processItem(File) FileInformation
-}
-
-Command <|.. ListProcessingCommand
-ListProcessingCommand <|-- FileInformationCommand
-FileInformationCommand <|-- AddTextPrepareInformationCommand
-ListProcessingCommand <|-- RenameCommand
-ListProcessingCommand <|-- MapFileToFileInformationCommand
-```
-
-**Key Features:**
-
-- **Parallel Processing**: `ListProcessingCommand` uses `parallelStream()` for performance
-- **Progress Tracking**: Updates UI progress bar via `ProgressCallback`
-- **Preprocessing Hook**: `preprocessInput()` allows batch operations (e.g., `FixEqualNamesCommand`)
-
-### 6.2. Chain of Responsibility Pattern
-
-Used for **metadata extraction** from different file formats:
-
-```mermaid
-graph LR
-    A[FileToMetadataMapper Chain] --> B[NullMapper]
-    B --> C[AviMapper]
-    C --> D[BmpMapper]
-    D --> E[EpsMapper]
-    E --> F[GifMapper]
-    F --> G[HeifMapper]
-    G --> H[IcoMapper]
-    H --> I[JpegMapper]
-    I --> J[Mp3Mapper]
-    J --> K[Mp4Mapper]
-    K --> L[PcxMapper]
-    L --> M[PngMapper]
-    M --> N[PsdMapper]
-    N --> O[QuickTimeMapper]
-    O --> P[TiffMapper]
-    P --> Q[WavMapper]
-    Q --> R[WebPMapper]
-    R --> S[LastReserveMapper]
-```
-
-**How it works:**
-
-1. Each mapper checks if the file matches its supported extensions
-2. If yes, it extracts metadata and returns `FileInformationMetadata`
-3. If no or extraction fails, it delegates to the next mapper in the chain
-4. `LastReserveMapper` is a fallback that tries all mappers sequentially
-
-### 6.3. Model-View-Controller (MVC)
-
-JavaFX's FXML-based MVC pattern:
-
-```mermaid
-graph TB
-    A[FXML View] -->|binds to| B[Controller]
-    B -->|updates| C[Model - ObservableList~RenameModel~]
-C -->|notifies|A
-B -->|calls|D[CoreFunctionalityHelper]
-D -->|executes|E[Commands]
-E -->|returns|F[List~RenameModel~]
-F -->|updates|C
-```
-
-**Components:**
-
-- **View**: FXML files (e.g., `app_main_view.fxml`, `ModeAddText.fxml`)
-- **Controller**: Java classes (e.g., `ApplicationMainViewController`, `ModeAddTextController`)
-- **Model**: `ObservableList<RenameModel>` shared across the application
-
-### 6.4. Dependency Injection (Guice)
-
-```mermaid
-graph TB
-    A[Guice Injector] -->|creates| B[DIAppModule]
-    A -->|creates| C[DICoreModule]
-    A -->|creates| D[DIUIModule]
-    B -->|provides| E[ExecutorService]
-    B -->|provides| F[ResourceBundle]
-    B -->|provides| G[LanguageTextRetrieverApi]
-    C -->|provides| H[Commands]
-    C -->|provides| I[Mappers]
-    C -->|provides| J[FilesOperations]
-    D -->|provides| K[Controllers]
-    D -->|provides| L[FXMLLoaders]
-    D -->|provides| M[ObservableList~RenameModel~]
-
-K -->|injects| E
-K -->|injects|H
-K -->|injects|I
-```
-
----
-
-## 7. Component Details
-
-### 7.1. Core Layer Components
-
-#### **FilesOperations**
-
-Central service for file I/O operations:
-
-- **File attribute extraction**: `getFileAbsolutePath()`, `getFileNameWithoutExtension()`, `getFileExtension()`
-- **Metadata reading**: `getFileCreationTime()`, `getFileModificationTime()`, `getFileSize()`
-- **MIME detection**: `getMimeType()` using Apache Tika
-- **Renaming**: `renameFile(RenameModel)` - performs the actual `Files.move()` operation
-- **Path utilities**: `getParentFolders()` for extracting parent directory names
-
-#### **Commands**
-
-| Command                                        | Input                   | Output                  | Purpose                                 |
-|------------------------------------------------|-------------------------|-------------------------|-----------------------------------------|
-| `MapFileToFileInformationCommand`              | `List<File>`            | `List<FileInformation>` | Extracts file attributes and metadata   |
-| `MapFileInformationToRenameModelCommand`       | `List<FileInformation>` | `List<RenameModel>`     | Converts domain models to UI models     |
-| `RenameCommand`                                | `List<RenameModel>`     | `List<RenameModel>`     | Performs file renaming                  |
-| `ResetRenameModelsCommand`                     | `List<RenameModel>`     | `List<RenameModel>`     | Resets `newName` to original `fileName` |
-| `FixEqualNamesCommand`                         | `List<FileInformation>` | `List<FileInformation>` | Appends suffix to duplicate names       |
-| **Preparation Commands**                       | `List<FileInformation>` | `List<FileInformation>` | Apply renaming logic                    |
-| - `AddTextPrepareInformationCommand`           |                         |                         | Adds text at begin/end                  |
-| - `ChangeCasePreparePrepareInformationCommand` |                         |                         | Changes case (UPPER, lower, Title)      |
-| - `DateTimeRenamePrepareInformationCommand`    |                         |                         | Uses datetime from metadata/filesystem  |
-| - `ExtensionChangePrepareInformationCommand`   |                         |                         | Changes file extension                  |
-| - `ImageDimensionsPrepareInformationCommand`   |                         |                         | Uses image dimensions                   |
-| - `ParentFoldersPrepareInformationCommand`     |                         |                         | Uses parent folder names                |
-| - `RemoveTextPrepareInformationCommand`        |                         |                         | Removes text from begin/end             |
-| - `ReplaceTextPrepareInformationCommand`       |                         |                         | Replaces text occurrences               |
-| - `SequencePrepareInformationCommand`          |                         |                         | Adds sequential numbers                 |
-| - `TruncateNamePrepareInformationCommand`      |                         |                         | Truncates filename                      |
-
-#### **Mappers**
-
-```mermaid
-graph TB
-    A[DataMapper Interface] -->|implemented by| B[FileToFileInformationMapper]
-    A -->|implemented by| C[FileInformationToRenameModelMapper]
-    A -->|implemented by| D[RenameModelToHtmlMapper]
-    E[FileToMetadataMapper Abstract] -->|extended by| F[AviMapper]
-    E -->|extended by| G[JpegMapper]
-    E -->|extended by| H[Mp3Mapper]
-    E -->|extended by| I[...]
-```
-
-**Key Mappers:**
-
-- **FileToFileInformationMapper**: Uses `FilesOperations` and `FileToMetadataMapper` chain
-- **FileInformationToRenameModelMapper**: Creates UI models with `isNeedRename` logic
-- **RenameModelToHtmlMapper**: Generates HTML for the file info display panel
-
-### 7.2. UI Layer Components
-
-#### **ApplicationMainViewController**
-
-The main controller managing the entire UI:
-
-**Key responsibilities:**
-
-1. **File table management**: Drag & drop, selection, display
-2. **Mode selection**: Dynamically loads mode-specific views
-3. **Button handlers**: Preview, Rename, Clear, Reload
-4. **Progress tracking**: Binds progress bar to background tasks
-5. **Table styling**: Applies CSS classes based on `RenameModel` state
-
-**Important @FXML fields:**
-
-- `modeMenu: Menu` — Mode menu; `RadioMenuItem` entries for all `TransformationMode` values built programmatically in
-  `configureModeMenu()` via a `ToggleGroup`
-- `appModeContainer: StackPane` — hosts the active mode sub-view (wrapped in a `ScrollPane` in FXML so long mode panels
-  can scroll)
-- `filesTableView: TableView<RenamePreview>` — displays all loaded files with 4 columns (Name, Type, Changed Name, File
-  Status)
-- `fileInfoPanel: VBox` — metadata display; shows a placeholder label when no file is selected; shows a 2-column
-  layout (identity info left, temporal/media info right) when a file is selected
-- `appProgressBar: ProgressBar` — fills available width (`HBox.hgrow=ALWAYS`); 8 px height enforced via `components.css`
-- `progressLabel, fileCountLabel: Label` — status text in the bottom bar
-- `clearBtn, reloadBtn, renameBtn: Button` — action buttons always on the right of the bottom bar; `reloadBtn` is hidden
-  until at least one rename completes
-
-#### **Mode Sub-Controllers (V2)**
-
-Each renaming mode has its own controller implementing `ModeControllerV2Api<P>` (located in
-`app/ui/.../controller/mode/`).
-Controllers are registered in `ModeViewRegistry` (injected via Guice) and bound to the active `ModeApi<P>` returned by
-`SessionApi.selectMode()` when the user picks a mode.
-
----
-
-## 8. Application Flows
-
-### 8.1. Application Startup Flow
+### 5.1 Startup
 
 ```mermaid
 sequenceDiagram
@@ -491,577 +196,277 @@ sequenceDiagram
     User ->> Launcher: Run application
     Launcher ->> RenamerApplication: main(args)
     RenamerApplication ->> Guice: createInjector(DIAppModule, DICoreModule, DIUIModule)
+    Note over Guice: DIUIModule installs DIBackendModule<br/>DIBackendModule installs DIV2ServiceModule + DIMetadataModule
     Guice -->> RenamerApplication: Injector
-    RenamerApplication ->> RenamerApplication: launch()
-    RenamerApplication ->> RenamerApplication: start(Stage)
+    RenamerApplication ->> RenamerApplication: launch() → start(Stage)
     RenamerApplication ->> Guice: getInstance(ViewLoaderApi)
-    Guice -->> RenamerApplication: ViewLoaderService
     RenamerApplication ->> ViewLoaderApi: loadFXML(APP_MAIN_VIEW)
     ViewLoaderApi -->> RenamerApplication: Parent node
-    RenamerApplication ->> Stage: setScene(Scene)
-    RenamerApplication ->> Stage: show()
-    Stage -->> User: Display main window
+    RenamerApplication ->> Stage: setScene + show()
+    Stage -->> User: Main window visible
 ```
 
-### 8.2. File Loading Flow (Drag & Drop)
+### 5.2 File Drop
 
 ```mermaid
 sequenceDiagram
     participant User
     participant TableView
     participant MainController
-    participant CoreHelper
-    participant ExecutorService
-    participant Task
-    participant Commands
-    participant FilesOperations
-    User ->> TableView: Drag & Drop files
-    TableView ->> MainController: handleFilesDroppedEvent(DragEvent)
-    MainController ->> CoreHelper: mapFileToRenameModel(List<File>, ProgressBar, callback)
-    CoreHelper ->> Task: buildTaskWithCallbackOnUIThread()
-    CoreHelper ->> ExecutorService: execute(Task)
-    ExecutorService ->> Task: Background thread execution
-    Task ->> Commands: MapFileToFileInformationCommand.execute()
-    Commands ->> FilesOperations: getFileAbsolutePath(), getFileName(), etc.
-    FilesOperations -->> Commands: File attributes
-    Commands ->> Commands: FileToMetadataMapper (Chain of Responsibility)
-    Commands -->> Task: List<FileInformation>
-    Task ->> Commands: MapFileInformationToRenameModelCommand.execute()
-    Commands -->> Task: List<RenameModel>
-    Task ->> MainController: onSucceeded callback (JavaFX Thread)
-    MainController ->> MainController: loadedAppFilesList.addAll(result)
-    MainController ->> TableView: Refresh table
-    TableView -->> User: Display loaded files
+    participant SessionApi
+    participant FolderExpansion
+    participant Orchestrator
+    User ->> TableView: Drag & drop files/folders
+    TableView ->> MainController: onDragDropped(DragEvent)
+    MainController ->> SessionApi: addFiles(droppedItems)
+    SessionApi ->> FolderExpansion: expandIfFolder(items)
+    Note over FolderExpansion: Shows dialog if folder dropped:<br/>Expand contents vs Add folder itself
+    FolderExpansion -->> SessionApi: resolved File list
+    SessionApi ->> Orchestrator: extractMetadata(files, callback)
+    Note over Orchestrator: Phase 1 — virtual threads
+    Orchestrator -->> SessionApi: List<FileModel> (via callback)
+    SessionApi -->> MainController: updated file list (JavaFX thread)
+    MainController ->> TableView: refresh
+    TableView -->> User: Files displayed
 ```
 
-### 8.3. Preview Flow (Settings Changed)
+### 5.3 Live Preview
 
 ```mermaid
 sequenceDiagram
     participant User
     participant ModeController
-    participant MainController
-    participant CoreHelper
-    participant Task
-    participant Commands
-    User ->> ModeController: Change setting (e.g., text input)
-    ModeController ->> ModeController: handleTextChanged()
-    ModeController ->> ModeController: updateCommand()
-    ModeController ->> ModeController: setCommand(newCommand)
-    ModeController ->> MainController: commandProperty changed (listener)
-    MainController ->> MainController: handleModeControllerCommandChanged()
-
-    alt Auto-preview enabled
-        MainController ->> CoreHelper: prepareFiles(loadedAppFilesList, command, progressBar, callback)
-        CoreHelper ->> Task: Build background task
-        Task ->> Commands: ResetRenameModelsCommand.execute()
-        Task ->> Commands: PrepareCommand.execute() [e.g., AddTextPrepareInformationCommand]
-        Task ->> Commands: FixEqualNamesCommand.execute()
-        Task -->> MainController: onSucceeded callback
-        MainController ->> MainController: Update loadedAppFilesList
-        MainController -->> User: Update table with new names
-    end
+    participant SessionApi
+    participant Orchestrator
+    User ->> ModeController: Adjust parameter (text, dropdown, spinner...)
+    ModeController ->> SessionApi: notifyConfigChanged(config)
+    SessionApi ->> Orchestrator: computePreview(fileModels, mode, config, callback)
+    Note over Orchestrator: Phase 2 (transform) + Phase 2.5 (deduplicate)
+    Orchestrator -->> SessionApi: List<PreparedFileModel> (via callback)
+    SessionApi -->> ModeController: preview ready (JavaFX thread)
+    ModeController ->> ModeController: Update Preview column in TableView
+    ModeController -->> User: Live preview updated
 ```
 
-### 8.4. Rename Flow
+### 5.4 Rename Execution
 
 ```mermaid
 sequenceDiagram
     participant User
     participant MainController
-    participant Dialog
-    participant CoreHelper
-    participant Task
-    participant RenameCommand
-    participant FilesOperations
+    participant SessionApi
+    participant Orchestrator
     participant FileSystem
-    User ->> MainController: Click Rename button
-    MainController ->> Dialog: showConfirmationDialog()
-    Dialog -->> User: Confirm renaming?
-    User ->> Dialog: Confirm
-    Dialog -->> MainController: true
-    MainController ->> CoreHelper: renameFiles(loadedAppFilesList, progressBar, callback)
-    CoreHelper ->> Task: Build background task
-    Task ->> RenameCommand: execute(List<RenameModel>, progressCallback)
-
-    loop For each RenameModel (parallel stream)
-        RenameCommand ->> FilesOperations: renameFile(renameModel)
-        FilesOperations ->> FileSystem: Files.move(oldPath, newPath)
-
-        alt Rename successful
-            FileSystem -->> FilesOperations: Success
-            FilesOperations ->> FilesOperations: Set isRenamed=true, renameResult=SUCCESS
-        else Rename failed
-            FileSystem -->> FilesOperations: IOException
-            FilesOperations ->> FilesOperations: Set hasRenamingError=true, errorMessage
-        end
-
-        FilesOperations -->> RenameCommand: Updated RenameModel
-        RenameCommand ->> Task: updateProgress()
+    User ->> MainController: Click Rename Files button
+    MainController ->> SessionApi: executeRename(callback)
+    SessionApi ->> Orchestrator: execute(files, mode, config, callback)
+    Note over Orchestrator: All 4 phases including Phase 3 (physical rename)
+    loop For each PreparedFileModel (sequential, depth-ordered)
+        Orchestrator ->> FileSystem: Files.move(oldPath, newPath)
+        FileSystem -->> Orchestrator: Success or IOException
     end
-
-    RenameCommand -->> Task: List<RenameModel>
-    Task -->> MainController: onSucceeded callback
-    MainController ->> MainController: Update loadedAppFilesList
-    MainController ->> MainController: Set areFilesRenamed=true
-    MainController ->> MainController: Show Reload button, disable Rename button
-    MainController -->> User: Table shows renamed files with status
+    Orchestrator -->> SessionApi: List<RenameResult> (via callback)
+    SessionApi -->> MainController: results (JavaFX thread)
+    MainController ->> MainController: Update table status; show Reload button
+    MainController -->> User: Table shows SUCCESS / ERROR_* per file
 ```
 
-### 8.5. Mode Change Flow
+### 5.5 Mode Change
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant RadioMenuItem
+    participant MenuBar
     participant MainController
     participant ModeViewRegistry
-    participant StackPane
-    User ->> RadioMenuItem: Click mode item
-    RadioMenuItem ->> MainController: handleModeChanged(mode)
+    participant SessionApi
+    participant ModeController
+    User ->> MenuBar: Click mode item
+    MenuBar ->> MainController: handleModeChanged(TransformationMode)
     MainController ->> ModeViewRegistry: getView(mode)
-    ModeViewRegistry -->> MainController: Parent (FXML view)
-    MainController ->> StackPane: FadeTransition → swap view
-    MainController ->> ModeViewRegistry: getController(mode)
+    ModeViewRegistry -->> MainController: Parent (pre-loaded FXML)
+    MainController ->> MainController: FadeTransition → swap StackPane content
     MainController ->> SessionApi: selectMode(mode)
-    SessionApi -->> MainController: ModeApi (async, via thenAcceptAsync)
+    SessionApi -->> MainController: ModeApi (thenAcceptAsync)
     MainController ->> ModeController: bind(modeApi)
+    ModeController -->> User: Mode panel visible; preview triggers immediately
 ```
 
 ---
 
-## 9. Threading Model
+## 6. Threading Model
 
-### 9.1. Thread Architecture
+### 6.1 Thread Architecture
 
 ```mermaid
 graph TB
     subgraph "JavaFX Application Thread"
         A[UI Event Handlers]
-        B[TableView Updates]
-        C[Progress Bar Updates]
-        D[Task Success Callbacks]
+        B[TableView / ProgressBar Updates]
+        C[Task Success Callbacks]
     end
 
-    subgraph "Background Thread Pool"
-        E[ExecutorService - Single Thread]
-        F[Task 1: mapFileToRenameModel]
-        G[Task 2: prepareFiles]
-        H[Task 3: renameFiles]
+    subgraph "Backend Executor (DIBackendModule)"
+        D[JavaFX Task wrapper]
     end
 
-    subgraph "Commands Parallel Processing"
-        I[ParallelStream Worker 1]
-        J[ParallelStream Worker 2]
-        K[ParallelStream Worker N]
-    end
+subgraph "Virtual Thread Pool (DIV2ServiceModule)"
+E[Phase 1: Metadata extraction — N virtual threads]
+F[Phase 2: Transformation — N virtual threads]
+G[Phase 2.5 + 3: Sequential steps]
+end
 
-    A -->|submits| E
-    E -->|executes| F
-    E -->|executes| G
-    E -->|executes| H
-    F -->|spawns| I
-    F -->|spawns| J
-    F -->|spawns| K
-    I -->|progress updates| C
-    J -->|progress updates| C
-    K -->|progress updates| C
-    F -->|onSucceeded| D
-    G -->|onSucceeded| D
-    H -->|onSucceeded| D
-    D -->|updates| B
+A -->|submits Task|D
+D -->|calls orchestrator|E
+E --> F
+F --> G
+G -->|onSucceeded|C
+C -->|Platform . runLater|B
 ```
 
-### 9.2. Threading Strategy
+### 6.2 Threading Rules
 
-**ExecutorService Configuration:**
+| Concern               | Mechanism                                                                             |
+|-----------------------|---------------------------------------------------------------------------------------|
+| Pipeline phases 1 & 2 | `Executors.newVirtualThreadPerTaskExecutor()` — one virtual thread per file           |
+| Phase 2.5 & 3         | Sequential single-thread (ordering required)                                          |
+| UI updates            | Always via `Platform.runLater()` or `Task.setOnSucceeded` (JavaFX Application Thread) |
+| Background tasks      | Wrapped in JavaFX `Task<T>` submitted to `BackendExecutor` (`DIBackendModule`)        |
+| `NUMBER_FILES` mode   | Explicitly sequential within Phase 2 — counter state is shared across files           |
+
+**Rule:** No code outside `app/ui` may touch JavaFX APIs. The `backend` module enforces this at compile time via JPMS (
+no `requires javafx.*`).
+
+---
+
+## 7. Data Models
+
+The pipeline passes data through three immutable model classes:
+
+| Model               | Package                    | Produced By                                | Fields                                                   |
+|---------------------|----------------------------|--------------------------------------------|----------------------------------------------------------|
+| `FileModel`         | `ua.renamer.app.api.model` | `ThreadAwareFileMapper`                    | File attributes + extracted metadata (image/video/audio) |
+| `PreparedFileModel` | `ua.renamer.app.api.model` | Transformers / `DuplicateNameResolverImpl` | Original file ref + new name + error state               |
+| `RenameResult`      | `ua.renamer.app.api.model` | `RenameExecutionServiceImpl`               | Original + new path + `RenameStatus`                     |
+
+All models use `@Builder(setterPrefix = "with")` — the non-standard prefix is critical; `file.withOriginalFile(f)` not
+`file.originalFile(f)`.
+
+→ **Full reference:** [Data Models](data-models.md)
+
+---
+
+## 8. Transformation Modes
+
+Each of the 10 modes is implemented as a `FileTransformationService<C>` where `C` is a sealed config class from
+`ua.renamer.app.api.model.config`:
 
 ```java
-// Defined in DIAppModule
-ExecutorService provideExecutorService() {
-    return Executors.newSingleThreadExecutor(runnable -> {
-        Thread thread = new Thread(runnable);
-        thread.setDaemon(true);  // Daemon thread - won't prevent JVM shutdown
-        return thread;
-    });
+public sealed interface TransformationConfig
+        permits AddTextConfig, RemoveTextConfig, ReplaceTextConfig,
+        CaseChangeConfig, DateTimeConfig, ImageDimensionsConfig,
+        SequenceConfig, ParentFolderConfig, TruncateConfig,
+        ExtensionChangeConfig {
 }
 ```
 
-**Task Pattern:**
+Config classes use `@Value @Builder(setterPrefix = "with")` with validation in the builder's `build()` method.
+Transformer implementations live in `ua.renamer.app.core.service.transformation`.
 
-```java
-Task<List<T>> task = new Task<>() {
-    @Override
-    protected List<T> call() {
-        updateProgress(0, 0);  // Indeterminate
-        List<T> result = executeCommand(progressCallback);
-        return result;
-    }
-};
+→ **Full reference:** [Transformation Modes](transformation-modes.md) · [Mode State Machines](MODE_STATE_MACHINES.md)
 
-// Bind progress bar to task progress
-progressBar.
+---
 
-progressProperty().
+## 9. Metadata Extraction
 
-bind(task.progressProperty());
+Metadata extraction happens in Phase 1. A `CategoryFileMetadataExtractorResolver` dispatches by file category (IMAGE /
+AUDIO / VIDEO / GENERIC) to a category-specific extractor, which routes to a format-specific implementation.
 
-// Execute on background thread
-        executorService.
+**Supported formats:**
 
-execute(task);
+- **Image (20):** JPEG, PNG, GIF, BMP, TIFF, WebP, HEIC/HEIF, AVIF, ICO, PCX, EPS, PSD, ARW, CR2, CR3, NEF, ORF, RAF,
+  RW2, DNG
+- **Audio (19):** MP3, WAV, FLAC, OGG, WMA, AIFF, APE, and more via jAudioTagger
+- **Video (3):** MP4, QuickTime (MOV), AVI
 
-// Callback runs on JavaFX Application Thread
-task.
+Extracted metadata flows into `FileModel` as `FileMeta` (containing optional `ImageMeta`, `VideoMeta`, or `AudioMeta`).
 
-setOnSucceeded(event ->{
-        callback.
-
-accept(task.getValue());
-        });
-```
-
-**Parallel Processing in Commands:**
-
-- `ListProcessingCommand.execute()` uses `parallelStream()` for parallel processing of file list
-- Progress tracking is synchronized to avoid race conditions
-- Each file is processed independently, allowing multi-core utilization
+→ **Full reference:** [Metadata Extraction](metadata-extraction.md)
 
 ---
 
 ## 10. Dependency Injection
 
-### 10.1. Guice Module Structure
+The app uses **Google Guice 7** with constructor injection only. Six modules wire the entire object graph:
 
 ```mermaid
-graph TB
-subgraph "DIAppModule"
-A1[LanguageTextRetrieverApi → LanguageTextRetrieverService]
-A2[ResourceBundle Provider]
-A3[ExecutorService Provider]
-end
-
-subgraph "DICoreModule"
-B1[Tika Singleton]
-B2[FilesOperations]
-B3[Commands]
-B4[Mappers]
-B5[FileToMetadataMapper Chain Provider]
-B6[TextExtractorByKey Provider]
-end
-
-subgraph "DIUIModule"
-C1[ViewLoaderApi → ViewLoaderService]
-C2[CoreFunctionalityHelper]
-C3[MainViewControllerHelper]
-C4[Mode Controllers]
-C5[FXMLLoader Providers x 10]
-C6[Parent Providers x 10]
-C7[ModeControllerApi Providers x 10]
-C8[ObservableList RenameModel Provider]
-end
-
-A1 -.-> C2
-A2 -.-> A1
-A3 -.-> C2
-
-B3 -.-> C2
-B4 -.-> C2
-B2 -.-> B3
-B1 -.-> B2
-
-C1 -.-> C5
-C2 -.-> C4
-C8 -.-> C4
+graph TD
+    App["RenamerApplication<br/>(entry point)"]
+    DIApp["DIAppModule<br/>(app/ui)"]
+    DICore["DICoreModule<br/>(app/ui)"]
+    DIUI["DIUIModule<br/>(app/ui)"]
+    DIBackend["DIBackendModule<br/>(app/backend)"]
+    DIV2["DIV2ServiceModule<br/>(app/core)"]
+    DIMeta["DIMetadataModule<br/>(app/metadata)"]
+    App -->|" creates injector with "| DIApp
+    App -->|" creates injector with "| DICore
+    App -->|" creates injector with "| DIUI
+    DIUI -->|installs| DIBackend
+    DIBackend -->|installs| DIV2
+    DIBackend -->|installs| DIMeta
 ```
 
-### 10.2. Key Bindings
+| Module              | Key Bindings                                                                                                          |
+|---------------------|-----------------------------------------------------------------------------------------------------------------------|
+| `DIAppModule`       | `LanguageTextRetrieverApi`, `ResourceBundle`, UI `ExecutorService`                                                    |
+| `DICoreModule`      | `NameValidator`, `TextExtractorByKey`                                                                                 |
+| `DIUIModule`        | 10 mode controllers, converters, widgets, `ModeViewRegistry`, `FxStateMirror`                                         |
+| `DIBackendModule`   | `SessionApi → RenameSessionService`, `SettingsService`, `BackendExecutor` (virtual threads), `FolderExpansionService` |
+| `DIV2ServiceModule` | `FileRenameOrchestrator`, `DuplicateNameResolver`, `RenameExecutionService`, 10 transformers                          |
+| `DIMetadataModule`  | `FileMetadataMapper`, `CategoryFileMetadataExtractorResolver`, all extractors                                         |
 
-**Singleton Services:**
-
-```java
-// DIAppModule
-bind(LanguageTextRetrieverApi .class).
-
-to(LanguageTextRetrieverService .class).
-
-in(Singleton .class);
-
-// DICoreModule
-bind(Tika .class).
-
-in(Singleton .class);
-
-bind(FilesOperations .class).
-
-in(Singleton .class);
-
-bind(NameValidator .class).
-
-in(Singleton .class);
-
-// DIUIModule
-bind(ViewLoaderApi .class).
-
-to(ViewLoaderService .class).
-
-in(Singleton .class);
-
-bind(ApplicationMainViewController .class).
-
-in(Singleton .class);
-
-bind(CoreFunctionalityHelper .class).
-
-in(Singleton .class);
-```
-
-**Qualified Bindings:**
-
-```java
-// Custom qualifiers for each mode's FXML loader, Parent, and Controller
-@AddTextFxmlLoader
-@ChangeCaseFxmlLoader
-@AddDatetimeFxmlLoader
-// ... and so on
-```
-
-**Provider Methods:**
-
-```java
-
-@Provides
-@Singleton
-public FileToMetadataMapper provideFileToMetadataMapper(...) {
-    // Manually construct chain of responsibility
-    nullMapper.setNext(aviMapper);
-    aviMapper.setNext(bmpMapper);
-    // ... full chain setup
-    return nullMapper; // Head of the chain
-}
-
-@Provides
-@Singleton
-public ObservableList<RenameModel> provideAppGlobalRenameModelList() {
-    return FXCollections.observableArrayList();
-}
-```
-
-### 10.3. Injection Points
-
-**Controller Injection:**
+**Constructor injection only** — no field injection, no setter injection:
 
 ```java
 
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ApplicationMainViewController implements Initializable {
-    private final CoreFunctionalityHelper coreHelper;
-    private final MainViewControllerHelper mainControllerHelper;
-    private final AppModesConverter appModesConverter;
-    private final ObservableList<RenameModel> loadedAppFilesList;
-    // ...
+public class MyService {
+    private final SomeDependency dependency;
 }
 ```
 
-**Service Injection:**
-
-```java
-
-@RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class CoreFunctionalityHelper {
-    private final ExecutorService executorService;
-    private final LanguageTextRetrieverApi languageTextRetriever;
-    private final RenameModelToHtmlMapper renameModelToHtmlMapper;
-    private final MapFileToFileInformationCommand mapFileToFileInformationCommand;
-    private final MapFileInformationToRenameModelCommand mapFileInformationToRenameModelCommand;
-    private final RenameCommand renameCommand;
-    private final FixEqualNamesCommand fixEqualNamesCommand;
-    private final ResetRenameModelsCommand resetRenameModelsCommand;
-    // ...
-}
-```
+→ **Full reference:** [Dependency Injection](dependency-injection.md)
 
 ---
 
-## 11. Extending the Application
+## 11. Further Reading
 
-### 11.1. Adding a New Renaming Mode
+### Architecture
 
-**Step 1: Core Layer** - Create the command:
+| Document                                          | Contents                                                           |
+|---------------------------------------------------|--------------------------------------------------------------------|
+| [Project Overview](project-overview.md)           | Module map, JPMS design decisions, tech stack                      |
+| [Pipeline Architecture](pipeline-architecture.md) | Full sequence diagram, phase details, no-throw contract            |
+| [Transformation Modes](transformation-modes.md)   | Strategy pattern, sealed config interface, all 10 mode specs       |
+| [Mode State Machines](MODE_STATE_MACHINES.md)     | Per-mode state diagrams, algorithms, validation rules              |
+| [Metadata Extraction](metadata-extraction.md)     | Extractor hierarchy, all supported formats, `FileMeta` structure   |
+| [Data Models](data-models.md)                     | `FileModel`, `PreparedFileModel`, `RenameResult`, builder patterns |
+| [Dependency Injection](dependency-injection.md)   | All 6 modules, bindings, mode registration pattern                 |
 
-```java
-// app/core/src/main/java/.../service/command/impl/preparation/
-public class MyNewPrepareInformationCommand extends FileInformationCommand {
+### Developer Guides
 
-    private final String myParameter;
+| Document                                                        | Contents                                                                    |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------|
+| [Add Transformation Mode](../guides/add-transformation-mode.md) | Step-by-step guide: config class → transformer → UI controller → DI → tests |
+| [Add Language](../guides/add-language.md)                       | Adding a new UI language                                                    |
+| [Build & Package](../guides/build-and-package.md)               | Build commands, native installer builds, CI pipeline                        |
+| [Cross-Platform Notes](../guides/cross-platform-notes.md)       | macOS/Linux/Windows environment specifics                                   |
 
-    @Override
-    public FileInformation processItem(FileInformation item) {
-        // Your renaming logic
-        String newName = applyMyLogic(item.getFileName(), myParameter);
-        item.setNewName(newName);
-        return item;
-    }
-}
-```
+### Reference
 
-**Step 2: Core Layer** - Add enum:
-
-```java
-// app/core/src/main/java/.../enums/AppModes.java
-public enum AppModes {
-    // ... existing modes
-    MY_NEW_MODE,
-}
-```
-
-**Step 3: UI Layer** - Create FXML view:
-
-```xml
-<!-- app/ui/src/main/resources/fxml/mode_my_new_mode.fxml -->
-<?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TextField?>
-<VBox xmlns:fx="http://javafx.com/fxml">
-    <TextField fx:id="myParameterField" promptText="Enter parameter"/>
-</VBox>
-```
-
-**Step 4: UI Layer** - Create controller:
-
-```java
-// app/ui/src/main/java/.../controller/mode/impl/
-@RequiredArgsConstructor(onConstructor_ = {@Inject})
-public class ModeMyNewModeController extends ModeBaseController {
-
-    @FXML
-    private TextField myParameterField;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        myParameterField.textProperty().addListener((obs, old, newVal) -> updateCommand());
-    }
-
-    @Override
-    public void updateCommand() {
-        String param = myParameterField.getText();
-        var cmd = MyNewPrepareInformationCommand.builder()
-                .myParameter(param)
-                .build();
-        setCommand(cmd);
-    }
-}
-```
-
-**Step 5: UI Layer** - Register in DI:
-
-```java
-// DIUIModule.java
-private void bindViewControllers() {
-    // ... existing bindings
-    bind(ModeMyNewModeController.class).in(Singleton.class);
-}
-
-@Provides
-@Singleton
-@MyNewModeFxmlLoader
-public FXMLLoader provideMyNewModeFxmlLoader(ViewLoaderApi viewLoaderApi) {
-    return createFXMLLoader(viewLoaderApi, ViewNames.MODE_MY_NEW_MODE);
-}
-
-@Provides
-@Singleton
-@MyNewModeParent
-public Parent provideMyNewModeParent(@MyNewModeFxmlLoader FXMLLoader loader) throws IOException {
-    return loader.load();
-}
-
-@Provides
-@Singleton
-@MyNewModeController
-public ModeControllerApi provideMyNewModeController(@MyNewModeFxmlLoader FXMLLoader loader,
-                                                    @MyNewModeParent Parent parent) {
-    return loader.getController();
-}
-```
-
-**Step 6: UI Layer** - Add to ViewNames enum:
-
-```java
-public enum ViewNames {
-    // ... existing
-    MODE_MY_NEW_MODE("fxml/mode_my_new_mode.fxml"),
-}
-```
-
-**Step 7**: Update `MainViewControllerHelper` to map `AppModes.MY_NEW_MODE` to the new controller and view.
-
-### 11.2. Adding a New Metadata Mapper
-
-**Create mapper:**
-
-```java
-public class MyFileTypeMapper extends FileToMetadataMapper {
-
-    @Override
-    public List<String> getSupportedExtensions() {
-        return List.of(".myext");
-    }
-
-    @Override
-    public FileInformationMetadata process(File input) {
-        // Extract metadata using Metadata Extractor or custom logic
-        return FileInformationMetadata.builder()
-                .creationDate(extractedDate)
-                .build();
-    }
-}
-```
-
-**Register in DICoreModule:**
-
-```java
-bind(MyFileTypeMapper .class).
-
-in(Singleton .class);
-
-// Update provideFileToMetadataMapper to include in chain
-webPmapper.
-
-setNext(myFileTypeMapper);
-myFileTypeMapper.
-
-setNext(reserveMapper);
-```
-
----
-
-## Appendix: Renaming Modes Reference
-
-| Mode                       | Enum                     | Command                                      | Purpose                       |
-|----------------------------|--------------------------|----------------------------------------------|-------------------------------|
-| **Add Text**               | `ADD_TEXT`               | `AddTextPrepareInformationCommand`           | Prepend or append text        |
-| **Change Case**            | `CHANGE_CASE`            | `ChangeCasePreparePrepareInformationCommand` | UPPER, lower, Title Case      |
-| **Add Date & Time**        | `ADD_DATETIME`           | `DateTimeRenamePrepareInformationCommand`    | Use file/metadata dates       |
-| **Add Dimensions**         | `ADD_DIMENSIONS`         | `ImageDimensionsPrepareInformationCommand`   | Add WIDTHxHEIGHT              |
-| **Add Folder Name**        | `ADD_FOLDER_NAME`        | `ParentFoldersPrepareInformationCommand`     | Use folder names              |
-| **Remove Text**            | `REMOVE_TEXT`            | `RemoveTextPrepareInformationCommand`        | Remove N chars from begin/end |
-| **Replace Text**           | `REPLACE_TEXT`           | `ReplaceTextPrepareInformationCommand`       | Find & replace text           |
-| **Number Files**           | `NUMBER_FILES`           | `SequencePrepareInformationCommand`          | Add sequential numbers        |
-| **Trim Name**              | `TRIM_NAME`              | `TruncateNamePrepareInformationCommand`      | Limit filename length         |
-| **Change Extension**       | `CHANGE_EXTENSION`       | `ExtensionChangePrepareInformationCommand`   | Change file extension         |
-
----
-
-## Summary
-
-This document provides a comprehensive architectural overview of the Renamer App, covering:
-
-- **Modular structure** with clean separation between Core and UI
-- **Design patterns** (Command, Chain of Responsibility, MVC, DI)
-- **Threading model** for responsive UI with background processing
-- **Complete data flow** from file loading to renaming
-- **Extension points** for adding new features
-
-The application demonstrates solid software engineering practices, making it maintainable and extensible for future
-development.
+| Document                                             | Contents                                                      |
+|------------------------------------------------------|---------------------------------------------------------------|
+| [AI Agent Setup](../reference/ai-agent-setup.md)     | Claude Code agents, skills, MCP servers, development workflow |
+| [Testing Strategy](../reference/testing-strategy.md) | Test conventions, integration tests, coverage                 |
+| [UI Architecture](../reference/ui-architecture.md)   | JavaFX layout, FXML structure, CSS system, InjectQualifiers   |
+| [Settings System](../reference/settings-system.md)   | Language and log level settings                               |

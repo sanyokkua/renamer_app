@@ -156,4 +156,4 @@ Real test files in `app/core/src/test/resources/test-data/`. Generate with `tool
 
 jdeploy (`package.json`) builds native installers. CI/CD (`.github/workflows/maven.yml`) triggers on `*-release-*` / `*-snapshot-*` branches. Entry point: `ua.renamer.app.Launcher`.
 
-macOS builds are stable. Linux/Windows have known environment-specific issues — see [`docs/cross-platform-issues.md`](../docs/developers/temporary/cross-platform-issues.md).
+macOS builds are stable. Linux/Windows have known environment-specific issues — see [`cross-platform-notes.md`](../docs/developers/guides/cross-platform-notes.md).
