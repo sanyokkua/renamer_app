@@ -22,7 +22,7 @@ jobs:
       version-jpackage: ${{ steps.version.outputs.jpackage }}
       version-full: ${{ steps.version.outputs.full }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0   # needed for git merge-base
 
@@ -56,10 +56,10 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
@@ -81,7 +81,7 @@ jobs:
           DISPLAY: ':99'
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: app-libs
           path: app/ui/target/libs/
@@ -102,16 +102,16 @@ jobs:
             arch: aarch64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: app-libs
           path: app/ui/target/libs/
@@ -134,7 +134,7 @@ jobs:
         run: cd dist && tar -czf "Renamer-${{ env.APP_VERSION }}-macos-${{ matrix.arch }}.tar.gz" Renamer.app
 
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: release-macos-${{ matrix.arch }}
           path: |
@@ -149,17 +149,17 @@ jobs:
     needs: [verify, build-and-test]
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'liberica'
           java-package: 'jdk+fx'
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: app-libs
           path: app/ui/target/libs/
@@ -175,7 +175,7 @@ jobs:
         run: Compress-Archive -Path dist\Renamer -DestinationPath "dist\Renamer-${{ env.APP_VERSION }}-windows-x86_64.zip"
 
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: release-windows-x86_64
           path: dist/*.zip
@@ -200,10 +200,10 @@ jobs:
             java-package: jdk+fx
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ matrix.distribution }}
@@ -213,7 +213,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y fakeroot
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: app-libs
           path: app/ui/target/libs/
@@ -229,7 +229,7 @@ jobs:
         run: cd dist && tar -czf "Renamer-${{ env.APP_VERSION }}-linux-${{ matrix.arch }}.tar.gz" Renamer/
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: release-linux-${{ matrix.arch }}
           path: |
@@ -245,7 +245,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all release artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: release-artifacts/
           pattern: release-*
