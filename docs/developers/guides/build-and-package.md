@@ -9,26 +9,38 @@ installers with jpackage.
 
 ### JDK
 
-| Platform      | JDK Required                                          | Why                                                                                                                                         |
-|---------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| macOS         | Any JDK 25 distribution (Corretto, Temurin, Liberica) | JavaFX native libraries are embedded in platform-specific JARs on the classpath — jpackage resolves them via jlink without needing Full JDK |
-| Linux (ARM64) | **BellSoft Liberica JDK 25 Full Edition**             | OpenJDK ARM64 ships without JavaFX modules; Full edition bundles them                                                                       |
-| Windows       | **BellSoft Liberica JDK 25 Full Edition**             | Standard distributions lack the JavaFX `.jmod` files jlink needs to build a self-contained JRE                                              |
+| Platform      | JDK Required                                                         | Why                                                                                                                                                                                                      |
+|---------------|----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| macOS         | Any JDK 25 distribution (Corretto, Temurin, Liberica)                | JavaFX native libraries are embedded in platform-specific JARs on the classpath — jpackage resolves them via jlink without needing Full JDK                                                              |
+| Linux (ARM64) | Any JDK 25 distribution (Corretto, Temurin, BellSoft, OpenJDK, etc.) | jpackage resolves JavaFX from the modular JARs in `target/libs/` — no special JDK needed, same mechanism as macOS. Verified with BellSoft, Corretto, Temurin, OpenJDK.                                   |
+| Windows (x64) | Any x64 JDK 25 (Temurin, Liberica, Zulu, Corretto, etc.)             | Maven resolves JavaFX as platform-specific JARs — same mechanism as macOS/Linux. ARM64 Windows is not supported (OpenJFX has no win-aarch64 Maven artifacts). Verified with Liberica, Temurin, and Zulu. |
 
-**Verifying Liberica Full on Linux/Windows:**
+**Verify on Linux:**
 
 ```bash
-jmod list javafx.controls   # must succeed; fails on standard JDK
-java -version               # should show "BellSoft Liberica"
+java -version   # any JDK 25 vendor works
 ```
 
-**Installing Liberica Full on Linux (ARM64):**
+**Verify on Windows:**
 
 ```bash
-wget -q -O - https://packages.bell-sw.com/jetty/jetty.gpg.key | sudo apt-key add -
-echo "deb [arch=arm64] https://apt.bell-sw.com/ stable main" | sudo tee /etc/apt/sources.list.d/bellsoft.list
-sudo apt-get update
-sudo apt-get install bellsoft-java25-full
+java -version   # any JDK 25 vendor works; confirm arch shows amd64 (not aarch64)
+```
+
+**Installing JDK 25 on Linux (ARM64) — any vendor works:**
+
+```bash
+# Ubuntu/Debian — OpenJDK
+sudo apt-get install openjdk-25-jdk
+
+# Eclipse Temurin (via SDKMAN)
+sdk install java 25-tem
+
+# Amazon Corretto
+sudo apt-get install java-25-amazon-corretto-jdk
+
+# BellSoft Liberica (standard edition also works)
+sudo apt-get install bellsoft-java25
 ```
 
 **Installing on macOS (example — Corretto via direct download):**
@@ -196,13 +208,15 @@ dist/
 └── Renamer-2.0.0.dmg
 ```
 
-**Gatekeeper (unsigned app):** On first launch, macOS blocks unsigned apps. Bypass with:
+**Gatekeeper (unsigned app):** The app is not code-signed. macOS Gatekeeper blocks it on first launch. To allow it, use
+one of:
 
-```bash
-xattr -cr /Applications/Renamer.app
-```
-
-Or right-click → Open in Finder to accept the one-time prompt.
+- **Right-click → Open** in Finder — accepts a one-time prompt without touching the terminal
+- **Remove the quarantine flag** (most reliable after dragging from a DMG):
+  ```bash
+  xattr -rd com.apple.quarantine /Applications/Renamer.app
+  ```
+- **System Settings → Privacy & Security** — scroll to the blocked app entry and click **Open Anyway**
 
 ### Linux
 
@@ -235,7 +249,7 @@ dist/
 ### Windows
 
 **Script:** `scripts/package-windows.bat`  
-**Required JDK:** Liberica Full (for jlink to resolve JavaFX modules)  
+**Required JDK:** Any x64 JDK 25 — ARM64 Windows is not supported  
 **Icon:** `icon.ico` (project root)
 
 Run from a Command Prompt or PowerShell window:

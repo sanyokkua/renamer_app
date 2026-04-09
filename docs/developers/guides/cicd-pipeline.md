@@ -21,7 +21,7 @@ flowchart TD
     B["Push to main\n(no tags)"] --> BT["build.yml\nbuild-and-test\nubuntu-latest"]
     BT --> BM["package-macos\nmacos-13 x86_64\nmacos-14 aarch64\nTemurin"]
     BT --> BW["package-windows\nwindows-latest x86_64\nLiberica Full"]
-    BT --> BL["package-linux\nubuntu-latest x86_64 Temurin\nubuntu-24.04-arm aarch64 Liberica Full"]
+    BT --> BL["package-linux\nubuntu-latest x86_64 Temurin\nubuntu-24.04-arm aarch64 any JDK 25"]
     BM --> BA["Artifacts (14 days)\n.dmg + .tar.gz per arch\n.zip (Windows)\n.deb + .tar.gz per arch (Linux)"]
     BW --> BA
     BL --> BA
@@ -74,11 +74,11 @@ artifacts available for 14 days for manual testing.
 
 **Jobs 2–5 — packaging** (parallel, `fail-fast: false`; all download `app-libs`):
 
-| Job                  | Runner                              | JDK                      | Output                      |
-|----------------------|-------------------------------------|--------------------------|-----------------------------|
-| `package-macos` (×2) | `macos-13`, `macos-14`              | Temurin                  | `.dmg` + `.tar.gz` per arch |
-| `package-windows`    | `windows-latest`                    | Liberica Full (`jdk+fx`) | `.zip` (app-image)          |
-| `package-linux` (×2) | `ubuntu-latest`, `ubuntu-24.04-arm` | Temurin / Liberica Full  | `.deb` + `.tar.gz` per arch |
+| Job                  | Runner                              | JDK                        | Output                      |
+|----------------------|-------------------------------------|----------------------------|-----------------------------|
+| `package-macos` (×2) | `macos-13`, `macos-14`              | Temurin                    | `.dmg` + `.tar.gz` per arch |
+| `package-windows`    | `windows-latest`                    | Liberica Full (`jdk+fx`)   | `.zip` (app-image)          |
+| `package-linux` (×2) | `ubuntu-latest`, `ubuntu-24.04-arm` | Temurin (any JDK 25 works) | `.deb` + `.tar.gz` per arch |
 
 **APP_VERSION:** Hardcoded placeholder `2.0.0` in the workflow env. Snapshot builds are not versioned from a tag — they
 are for verification only, not distribution.
@@ -86,9 +86,14 @@ are for verification only, not distribution.
 **Artifacts retained 14 days** under names: `macos-x86_64`, `macos-aarch64`, `windows-x86_64`, `linux-x86_64`,
 `linux-aarch64`.
 
-**Why Liberica Full on Linux arm64 and Windows:**  jpackage needs JavaFX `.jmod` files to link a self-contained JRE.
-Liberica Full (`jdk+fx`) bundles them. macOS and Linux x86_64 work with Temurin because jpackage on these platforms
-resolves JavaFX from the modular JARs already in `app/ui/target/libs/`.
+**Why any JDK works on Linux:** jpackage on Linux resolves JavaFX from the modular JARs already in
+`app/ui/target/libs/` — no `.jmod` files from the JDK itself are needed. This is the same mechanism macOS uses.
+Verified with BellSoft Liberica, Amazon Corretto, Eclipse Temurin, and Ubuntu OpenJDK.
+
+**Why any x64 JDK works on Windows:** Maven resolves JavaFX as platform-specific JARs from Maven Central — the same
+mechanism used on macOS and Linux. No `.jmod` files from the JDK are needed. The CI uses Liberica Full (`jdk+fx`)
+because it is a known-good x64 distribution, but Temurin or Zulu would also work. Windows ARM64 is not supported —
+OpenJFX does not publish win-aarch64 Maven artifacts.
 
 ---
 
@@ -176,7 +181,8 @@ both arch artifacts are collected by `create-release`. `.deb` filenames are gene
 already embedded — no renaming needed.
 
 No code signing is applied. macOS Gatekeeper warning on first launch is documented in
-`docs/developers/guides/cross-platform-notes.md`.
+[`cross-platform-notes.md`](cross-platform-notes.md) (Section 3) and [`README.md`](../../../README.md) (Download →
+macOS).
 
 ---
 
@@ -288,12 +294,12 @@ git push origin v2.1.1
 
 ### Main branch build (`build.yml`) failures
 
-| Symptom                                  | Likely cause                                    | Fix                                                                                            |
-|------------------------------------------|-------------------------------------------------|------------------------------------------------------------------------------------------------|
-| `package-linux` arm64 fails on jpackage  | Temurin used instead of Liberica Full on arm64  | Matrix row for `ubuntu-24.04-arm` must use `distribution: liberica` and `java-package: jdk+fx` |
-| `package-windows` fails on jpackage      | Liberica Full not selected                      | Matrix must use `distribution: liberica` and `java-package: jdk+fx`                            |
-| `.deb` step skipped with warning         | `fakeroot` not installed                        | The Linux job installs `fakeroot` via `apt-get` — verify this step is present                  |
-| Artifact download fails in packaging job | `build-and-test` job failed or artifact expired | Check `build-and-test` job logs; artifact retention is 1 day                                   |
+| Symptom                                  | Likely cause                                                    | Fix                                                                                        |
+|------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| `package-linux` arm64 fails on jpackage  | JDK 25 not installed or wrong version                           | Any JDK 25 vendor works on Linux; verify `java -version` shows 25.x and Maven is on `PATH` |
+| `package-windows` fails on jpackage      | ARM64 Windows JDK selected, or no JavaFX artifacts for platform | Use an x64 (amd64) JDK; OpenJFX has no win-aarch64 Maven artifacts. Any x64 JDK 25 works.  |
+| `.deb` step skipped with warning         | `fakeroot` not installed                                        | The Linux job installs `fakeroot` via `apt-get` — verify this step is present              |
+| Artifact download fails in packaging job | `build-and-test` job failed or artifact expired                 | Check `build-and-test` job logs; artifact retention is 1 day                               |
 
 ### Release pipeline (`release.yml`) failures
 

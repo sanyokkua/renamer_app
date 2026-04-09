@@ -4,29 +4,30 @@ This document covers platform-specific JDK requirements, filesystem differences,
 platform quirks, packaging prerequisites, and test annotations required for cross-platform correctness.
 
 **Testing scope:** macOS (Intel and Apple Silicon) is the primary development platform — all tests pass and packaging is
-stable. Linux (ARM64) and Windows (ARM64 VM with emulated x86_64 JDK) were verified as working. Windows x86_64 on native
-hardware has not been tested.
+stable. Linux (ARM64) and Windows (x86_64) were verified as working with multiple JDK vendors. Windows ARM64 is not
+supported — OpenJFX does not publish win-aarch64 Maven artifacts.
 
 ---
 
 ## 1. JDK Requirements by Platform
 
-| Platform                                | Verified JDK                                            | Notes                                                                                                                                                                                |
-|-----------------------------------------|---------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| macOS (Intel + Apple Silicon)           | Any standard JDK 25 (Corretto, Temurin, Liberica, etc.) | Primary dev platform; JavaFX native libraries are bundled in platform-specific JARs on the classpath — no special JDK needed                                                         |
-| Linux ARM64                             | Liberica JDK 25 Full Edition                            | OpenJDK ARM64 typically ships without JavaFX modules; Liberica Full is confirmed working. Other distributions with JavaFX support (e.g. Azul Zulu+FX) may also work but are untested |
-| Windows (ARM64 VM, x86_64 JDK emulated) | Liberica JDK 25 Full Edition (x86_64)                   | Tested on an ARM64 Windows VM with x86_64 JDK running under emulation; the native ARM64 Windows JDK was not stable enough for use                                                    |
+| Platform                      | Verified JDK                                                         | Notes                                                                                                                                                                                  |
+|-------------------------------|----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| macOS (Intel + Apple Silicon) | Any standard JDK 25 (Corretto, Temurin, Liberica, etc.)              | Primary dev platform; JavaFX native libraries are bundled in platform-specific JARs on the classpath — no special JDK needed                                                           |
+| Linux ARM64                   | Any JDK 25 distribution (Corretto, Temurin, BellSoft, OpenJDK, etc.) | jpackage resolves JavaFX from the modular JARs in `target/libs/` — no special JDK needed, same mechanism as macOS. Verified with four vendors.                                         |
+| Windows x86_64                | Any x64 JDK 25 (Temurin, Liberica, Zulu, Corretto, etc.)             | Maven resolves JavaFX as platform-specific JARs — same mechanism as macOS/Linux. No special JDK needed. Verified with Liberica, Temurin, and Zulu. ARM64 Windows is **not supported**. |
 
-**Why Liberica Full on Linux/Windows:** Standard JDK distributions for non-macOS platforms do not include JavaFX `.jmod`
-files, which jlink needs to build a self-contained runtime for packaging. Liberica Full bundles these modules. For
-development and testing (not packaging), a standard JDK with JavaFX JARs on the classpath is sufficient — Maven resolves
-them from the OpenJFX dependency.
+**Why any JDK works on macOS, Linux, and Windows x64:** jpackage resolves JavaFX from the modular JARs already present
+in `app/ui/target/libs/` (pulled in by the OpenJFX Maven dependency) — no `.jmod` files from the JDK itself are needed.
+All three platforms share this mechanism.
 
-**Verify on Linux/Windows:**
+**Why Windows ARM64 is not supported:** OpenJFX does not publish Maven artifacts for the `win-aarch64` classifier.
+Maven dependency resolution fails for all JavaFX dependencies before any code is compiled.
+
+**Verify on Linux or Windows:**
 
 ```bash
-jmod list javafx.controls   # must succeed; fails on standard OpenJDK
-java -version               # should show BellSoft or your chosen distro
+java -version   # any JDK 25 vendor; confirm arch is x64 (amd64) on Windows
 ```
 
 ---
@@ -50,6 +51,31 @@ java -version               # should show BellSoft or your chosen distro
 ## 3. Known Platform Quirks
 
 These were each discovered as bugs and fixed. The explanations below describe why the code is structured the way it is.
+
+### macOS Gatekeeper — unsigned app blocked on first launch
+
+**Affected platform:** macOS  
+**Root cause:** Apps downloaded from the internet receive a `com.apple.quarantine` extended attribute set by the browser
+or
+the OS. macOS Gatekeeper checks this attribute and blocks launch for unsigned apps, displaying _"cannot be opened
+because
+it is from an unidentified developer."_
+
+**How to allow it (three options):**
+
+- **Right-click → Open** — right-click the app icon in Finder, choose **Open**, then click **Open** in the dialog. This
+  is a one-time bypass and is the quickest option.
+- **Remove the quarantine attribute** in Terminal:
+  ```bash
+  xattr -rd com.apple.quarantine /Applications/Renamer.app
+  ```
+  The `-rd` flags remove (`d`) the specific quarantine key recursively (`r`) without touching other extended attributes.
+- **System Settings → Privacy & Security** — if the app was already blocked once, scroll to the bottom of the Privacy &
+  Security pane; a _"Renamer was blocked"_ entry appears with an **Open Anyway** button.
+
+Code signing is not currently implemented. This is an end-user distribution concern, not a code defect.
+
+---
 
 ### Case-only rename on macOS and Windows
 
@@ -263,7 +289,7 @@ dist/
 └── renamer_<version>_arm64.deb    (~221 MB distributable)
 ```
 
-**Windows (ARM64 VM, x86_64 JDK):**
+**Windows (x86_64):**
 
 ```
 dist\

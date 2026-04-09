@@ -28,25 +28,47 @@
 
 ## Download
 
-Download the latest installer from [GitHub Releases](https://github.com/sanyokkua/renamer_app/releases).
+Download the latest release from [GitHub Releases](https://github.com/sanyokkua/renamer_app/releases).
 
 ### macOS
 
-1. Download the `.pkg` or `.dmg` installer.
-2. Open the installer and follow the on-screen steps.
-3. Launch **Renamer App** from Applications.
+1. Download the `.dmg` file.
+2. Open the DMG and drag **Renamer.app** to your Applications folder.
+3. Launch **Renamer** from Applications.
+
+> **macOS Gatekeeper — unsigned app warning**
+>
+> The app is not code-signed. macOS may block it on first launch with a message like
+> _"Renamer cannot be opened because it is from an unidentified developer."_
+>
+> To allow it, use **one** of the following options:
+>
+> - **Right-click → Open** — right-click the app icon and choose **Open**, then click **Open** in the prompt. This is
+    the quickest option and only needs to be done once.
+> - **Remove the quarantine flag** in Terminal:
+    >   ```bash
+>   xattr -rd com.apple.quarantine /Applications/Renamer.app
+>   ```
+> - **System Settings → Privacy & Security** — if the app was blocked, scroll to the bottom of the Privacy & Security
+    pane and click **Open Anyway** next to the Renamer entry.
 
 ### Windows
 
-1. Download the `.exe` or `.msi` installer.
-2. Run the installer and follow the on-screen steps.
-3. Launch **Renamer App** from the Start menu.
+1. Download the `.zip` file.
+2. Extract the zip.
+3. Run `Renamer.exe` from the extracted `Renamer\` folder.
+
+No installer is provided — the app runs directly from the extracted folder.
 
 ### Linux
 
-1. Download the `.deb`, `.rpm`, or `.AppImage` package for your distribution.
-2. Install via your package manager or run the AppImage directly.
-3. Launch **Renamer App** from your applications menu.
+1. Download the `.deb` package or the `.tar.gz` portable archive.
+2. Install the `.deb`:
+   ```bash
+   sudo dpkg -i renamer_<version>_amd64.deb   # or arm64
+   ```
+   Or extract the `.tar.gz` and run `./Renamer/bin/Renamer` directly.
+3. Launch **Renamer** from your applications menu.
 
 ---
 

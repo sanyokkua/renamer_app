@@ -1,8 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM Build Windows executable and .msi installer
-REM Requires: JDK 25 with jpackage, WiX Toolset 3.x for MSI
+REM Build Windows executable
+REM Requires: JDK 25 with jpackage
 
 set "SCRIPT_DIR=%~dp0"
 set "PROJECT_ROOT=%SCRIPT_DIR%.."
