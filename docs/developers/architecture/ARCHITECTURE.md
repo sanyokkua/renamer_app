@@ -272,7 +272,7 @@ sequenceDiagram
     end
     Orchestrator -->> SessionApi: List<RenameResult> (via callback)
     SessionApi -->> MainController: results (JavaFX thread)
-    MainController ->> MainController: Update table status; show Reload button
+    MainController ->> MainController: Update table status show Reload button
     MainController -->> User: Table shows SUCCESS / ERROR_* per file
 ```
 
@@ -294,7 +294,7 @@ sequenceDiagram
     MainController ->> SessionApi: selectMode(mode)
     SessionApi -->> MainController: ModeApi (thenAcceptAsync)
     MainController ->> ModeController: bind(modeApi)
-    ModeController -->> User: Mode panel visible; preview triggers immediately
+    ModeController -->> User: Mode panel visible preview triggers immediately
 ```
 
 ---

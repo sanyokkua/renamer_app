@@ -78,6 +78,26 @@ Code signing is not currently implemented. This is an end-user distribution conc
 
 ---
 
+### macOS detached menu bar vs integrated menu bar (Windows / Linux)
+
+**Affected platform:** macOS (visual difference from Windows and Linux)
+
+**Behavior:** JavaFX renders the app menu (Mode, Settings, Help) in the macOS system menu bar at the top of the screen when `setUseSystemMenuBar(true)` is set. On Windows and Linux, the menu bar is integrated into the application window. This is not a bug — it follows platform HIG conventions.
+
+**macOS** — menu bar in system bar, window has no menu strip:
+
+![macOS main window](../../screens/v2/MacOS_26/main_window_add_text_pending.png)
+
+**Linux** — menu bar inside the window:
+
+![Linux main window](../../screens/v2/Linux_Ubuntu_22/main_window_add_datetime_pending.png)
+
+**Windows 11** — menu bar inside the window:
+
+![Windows 11 main window](../../screens/v2/Windows_11/main_window_add_dimensions_pending.png)
+
+---
+
 ### Case-only rename on macOS and Windows
 
 **Affected platforms:** macOS, Windows

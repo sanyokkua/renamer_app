@@ -44,7 +44,7 @@ sequenceDiagram
             VT ->> Mapper: map(file)
             Mapper -->> VT: FileModel (isFile=false on error)
         end
-        VT -->>- Orc: List&lt;FileModel&gt;
+        VT -->>- Orc: List FileModel
     end
 
     rect rgb(230, 255, 230)
@@ -55,17 +55,17 @@ sequenceDiagram
                 VT ->> TX: transform(fileModel, config)
                 TX -->> VT: PreparedFileModel
             end
-            VT -->>- Orc: List&lt;PreparedFileModel&gt;
+            VT -->>- Orc: List PreparedFileModel
         else NUMBER_FILES mode
             Orc ->> TX: transformBatch(fileModels, config)
-            TX -->> Orc: List&lt;PreparedFileModel&gt;
+            TX -->> Orc: List PreparedFileModel
         end
     end
 
     rect rgb(255, 255, 220)
         Note over Orc, Dedup: Phase 2.5 - Duplicate Resolution (sequential)
         Orc ->> Dedup: resolve(preparedFiles)
-        Dedup -->> Orc: List&lt;PreparedFileModel&gt;
+        Dedup -->> Orc: List PreparedFileModel
     end
 
     rect rgb(255, 230, 230)

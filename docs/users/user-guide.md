@@ -50,16 +50,20 @@ Metadata features (dates, image dimensions) work with these file types: `jpg`, `
 
 ## The Interface
 
-![App overview](../screens/v2/app_overview.png)
+![Main window — files loaded, Add Text mode active](../screens/v2/MacOS_26/main_window_add_text_with_files.png)
+
+The full-screen view shows the macOS menu bar at the top of the screen and the file detail panel at the bottom:
+
+![Full-screen view with macOS menu bar visible](../screens/v2/MacOS_26/main_window_add_text_pending.png)
 
 The app has four main areas:
 
-| Area                 | Location   | What it does                                                       |
-|----------------------|------------|--------------------------------------------------------------------|
-| **Mode selector**    | Top bar    | Choose which renaming mode to use                                  |
-| **File list**        | Center     | Shows all your files and a live **Preview** column                 |
-| **Parameters panel** | Right side | Options for the selected mode                                      |
-| **Action buttons**   | Bottom     | **Preview renaming**, **Rename files**, **Clear**, **Reload File** |
+| Area                 | Location     | What it does                                                       |
+|----------------------|--------------|--------------------------------------------------------------------|
+| **Mode selector**    | Top bar      | Choose which renaming mode to use                                  |
+| **File list**        | Center/Right | Shows all your files and a live **Preview** column                 |
+| **Parameters panel** | Left side    | Options for the selected mode                                      |
+| **Action buttons**   | Bottom       | **Preview renaming**, **Rename files**, **Clear**, **Reload File** |
 
 The **Preview** column updates automatically as you change parameters — you always see exactly what the new filenames
 will look like before committing.
@@ -77,13 +81,15 @@ Drag files or folders from your file manager and drop them onto the file list.
 
 You can drag in multiple folders and files at the same time. To start fresh, click **Clear**.
 
+![Folder drop dialog — choose how to handle a dropped folder](../screens/v2/MacOS_26/drop_dialog.png)
+
 ---
 
 ## Modes
 
 ### Add Text
 
-![Add Text mode](../screens/v2/mode_add_text.png)
+![Add Text mode](../screens/v2/MacOS_26/main_window_add_text_empty.png)
 
 Add any word, phrase, or characters to the beginning or end of every filename.
 
@@ -101,7 +107,7 @@ Add any word, phrase, or characters to the beginning or end of every filename.
 
 ### Remove Text
 
-![Remove Text mode](../screens/v2/mode_remove_text.png)
+![Remove Text mode](../screens/v2/MacOS_26/main_window_remove_text_pending.png)
 
 Remove a specific word or phrase from the beginning or end of filenames. Useful for stripping camera prefixes like
 `IMG_` or `DSC_`.
@@ -120,7 +126,7 @@ Remove a specific word or phrase from the beginning or end of filenames. Useful 
 
 ### Replace Text
 
-![Replace Text mode](../screens/v2/mode_replace_text.png)
+![Replace Text mode](../screens/v2/MacOS_26/main_window_replace_text_pending.png)
 
 Find any text in your filenames and replace it with something else. You can target the very start, the very end, or
 every occurrence anywhere in the name.
@@ -140,7 +146,7 @@ every occurrence anywhere in the name.
 
 ### Change Case
 
-![Change Case mode](../screens/v2/mode_change_case.png)
+![Change Case mode](../screens/v2/MacOS_26/main_window_change_case_pending.png)
 
 Change the capitalization of every filename in one click.
 
@@ -170,16 +176,20 @@ Change the capitalization of every filename in one click.
 
 ### Add Date & Time
 
-![Add Date & Time mode](../screens/v2/mode_add_datetime.png)
+![Add Date & Time mode — without fallback, files missing EXIF show Error](../screens/v2/MacOS_26/main_window_add_datetime_no_fallback.png)
+
+When **Use fallback datetime** is enabled, every file gets a date even if EXIF data is missing:
+
+![Add Date & Time mode — with fallback enabled, all files pending](../screens/v2/MacOS_26/main_window_add_datetime_with_fallback.png)
 
 Add a date or time to every filename, pulled from the file's own metadata or a date you choose.
 
-| Parameter   | What it does                                                     |
-|-------------|------------------------------------------------------------------|
-| **Source**  | Where the date comes from (see below)                            |
-| Date format | How to format the date part (e.g., `yyyy-MM-dd`)                 |
-| Time format | How to format the time part (leave blank to omit time)           |
-| Position    | **Begin** — adds before the name · **End** — adds after the name |
+| Parameter   | What it does                                                                                                           |
+|-------------|------------------------------------------------------------------------------------------------------------------------|
+| **Source**  | Where the date comes from (see below)                                                                                  |
+| Date format | How to format the date part (e.g., `yyyy-MM-dd`)                                                                       |
+| Time format | How to format the time part (leave blank to omit time)                                                                 |
+| Position    | **Begin** — adds before the name · **End** — adds after the name, **Replace** - Replaces the whole name with Date/Time |
 
 **Date sources:**
 
@@ -200,7 +210,7 @@ Add a date or time to every filename, pulled from the file's own metadata or a d
 
 ### Add Dimensions
 
-![Add Dimensions mode](../screens/v2/mode_add_dimensions.png)
+![Add Dimensions mode](../screens/v2/MacOS_26/main_window_add_dimensions_pending.png)
 
 Add the image or video resolution to the filename. Works with image and video files that have dimension metadata.
 
@@ -221,7 +231,7 @@ Add the image or video resolution to the filename. Works with image and video fi
 
 ### Number Files
 
-![Number Files mode](../screens/v2/mode_number_files.png)
+![Number Files mode](../screens/v2/MacOS_26/main_window_number_files_pending.png)
 
 Add sequential numbers to filenames. Great for sorting a batch of photos or documents into a defined order.
 
@@ -245,7 +255,7 @@ Creation Datetime · Image/Video Width · Image/Video Height
 
 ### Add Folder Name
 
-![Add Folder Name mode](../screens/v2/mode_add_folder_name.png)
+![Add Folder Name mode](../screens/v2/MacOS_26/main_window_add_folder_name_pending.png)
 
 Add the name of the file's parent folder — or multiple parent folders — to the filename. Useful for giving files context
 about where they came from.
@@ -265,7 +275,7 @@ about where they came from.
 
 ### Trim Name
 
-![Trim Name mode](../screens/v2/mode_trim_name.png)
+![Trim Name mode](../screens/v2/MacOS_26/main_window_trim_name_pending.png)
 
 Remove a set number of characters from the start or end of filenames, or strip leading/trailing spaces.
 
@@ -284,7 +294,7 @@ Remove a set number of characters from the start or end of filenames, or strip l
 
 ### Change Extension
 
-![Change Extension mode](../screens/v2/mode_change_extension.png)
+![Change Extension mode](../screens/v2/MacOS_26/main_window_change_extension_pending.png)
 
 Change the file extension for every file in the list.
 
@@ -296,6 +306,8 @@ Change the file extension for every file in the list.
 
 - `photo.jpg` → `photo.jpeg`
 - `archive.tar.gz` → `archive.tar.zip`
+
+> **Note**: It doesn't change the FILE TYPE. Use only if an extension is missed or in cases where several options exist, like: .jpeg → .jpg.
 
 ---
 
@@ -315,16 +327,57 @@ When you're happy with the preview:
 
 To reset and start over, click **Clear** to remove all files from the list.
 
+The screenshots below show the Add Date & Time mode before and after clicking **Rename files**:
+
+![Before renaming — Changed Name column shows preview](../screens/v2/MacOS_26/main_window_add_datetime_before_rename.png)
+
+![After renaming — File Status column shows Renamed or Error for each file](../screens/v2/MacOS_26/main_window_add_datetime_after_rename.png)
+
 ---
 
 ## Settings
 
 Open **Settings** from the menu bar to adjust these options:
 
+![Settings window — all options enabled](../screens/v2/MacOS_26/settings_all_enabled.png)
+
 | Setting       | What it does                                                                                                                    |
 |---------------|---------------------------------------------------------------------------------------------------------------------------------|
 | **Language**  | Changes the app's display language. 19 languages are supported. Takes effect immediately.                                       |
 | **Log level** | Controls how much detail the app writes to its internal log. Leave this at the default unless you're troubleshooting a problem. |
+
+---
+
+## Cross-Platform Appearance
+
+The app looks and behaves the same on all platforms. The main visible difference is the menu bar position:
+
+- **macOS** — the menu bar (**Mode / Settings / Help**) appears in the macOS system menu bar at the top of the screen, separate from the application window. This is standard macOS behavior.
+- **Windows and Linux** — the menu bar is integrated into the top edge of the application window.
+
+**macOS** — menu bar detached at top of screen:
+
+![macOS — main window with detached system menu bar](../screens/v2/MacOS_26/main_window_add_text_pending.png)
+
+**Linux (Ubuntu 22)** — menu bar integrated into the window:
+
+![Linux — main window with integrated menu bar](../screens/v2/Linux_Ubuntu_22/main_window_add_datetime_pending.png)
+
+**Windows 11** — menu bar integrated into the window:
+
+![Windows 11 — main window with integrated menu bar](../screens/v2/Windows_11/main_window_add_dimensions_pending.png)
+
+The folder drop dialog appears on all platforms when a folder is dragged onto the file list:
+
+![macOS folder drop dialog](../screens/v2/MacOS_26/drop_dialog.png)
+
+![Windows 11 folder drop dialog](../screens/v2/Windows_11/drop_dialog.png)
+
+Settings paths differ by OS. On Linux, the config file is at `~/.config/renamer/settings.json`:
+
+![Linux Settings — logging disabled](../screens/v2/Linux_Ubuntu_22/settings_logging_disabled.png)
+
+![macOS Settings — all options enabled](../screens/v2/MacOS_26/settings_all_enabled.png)
 
 ---
 

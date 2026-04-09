@@ -36,9 +36,9 @@ Renamer App is a JavaFX desktop application for batch renaming files using metad
 
 ### Screenshots
 
-![Main Window](docs/screens/v2/main_window.png)
-![Mode Panel](docs/screens/v2/mode_panel.png)
-![Rename Result](docs/screens/v2/rename_result.png)
+![Main window — Add Text mode with files loaded](docs/screens/v2/MacOS_26/main_window_add_text_pending.png)
+![Mode selection menu](docs/screens/v2/MacOS_26/main_window_mode_menu_open.png)
+![After renaming — status column shows results](docs/screens/v2/MacOS_26/main_window_add_datetime_after_rename.png)
 
 ---
 
@@ -188,21 +188,6 @@ The app is built with industry-standard Java libraries and frameworks:
 | Apache Tika        | 3.3.0   | MIME type detection                             |
 | Lombok             | 1.18.44 | Boilerplate reduction                           |
 | JUnit 5            | 6.0.3   | Unit and integration testing                    |
-
----
-
-## Contributing
-
-Contributions are welcome. Before contributing, read the [AI Agent Setup Guide](docs/developers/reference/ai-agent-setup.md) to understand the structured development workflow. The project uses six specialized agents covering investigation, architecture, implementation, testing, debugging, and documentation. Follow the standard pipeline:
-
-1. **Investigator** — traces code and data flow to map the scope
-2. **Architect** — designs the solution and writes `PLAN.md`
-3. **Human Review** — approves the plan before implementation
-4. **Coder** — implements one plan step at a time
-5. **Tester** — writes tests and verifies edge cases
-6. **Docs Writer** — documents the completed feature
-
-See the [AI Agent Setup Guide](docs/developers/reference/ai-agent-setup.md) for detailed invocation examples and the reactive workflow for debugging and documentation tasks.
 
 ---
 

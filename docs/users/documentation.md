@@ -29,7 +29,7 @@ related_docs:
 
 # File Renamer Application
 
-![Example of the application screen](../screens/v1/app_screen_example_1.png)
+![Example of the application screen](../screens/v2/MacOS_26/main_window_add_text_with_files.png)
 
 ## Overview
 
@@ -53,61 +53,61 @@ The application provides 10 renaming modes. Select the mode you need from the to
 
 #### Add Text
 
-![Add text mode](../screens/v1/1_add_custom.png)
+![Add text mode](../screens/v2/MacOS_26/main_window_add_text_pending.png)
 
 Append or prepend custom text to existing filenames. Useful for adding prefixes like "2025_" or suffixes like "_final".
 
 #### Change Case
 
-![Change case mode](../screens/v1/2_change_case.png)
+![Change case mode](../screens/v2/MacOS_26/main_window_change_case_pending.png)
 
 Transform filename case to different variants: UPPERCASE, lowercase, Title Case, camelCase, or snake_case. Improves consistency and readability across your file collections.
 
 #### Add Date/Time
 
-![DateTime mode](../screens/v1/3_date_time.png)
+![DateTime mode](../screens/v2/MacOS_26/main_window_add_datetime_with_fallback.png)
 
 Incorporate date and time information into filenames or replace names entirely with datetime values. Supports multiple formats and extraction from file metadata (EXIF creation date, file modification date, or metadata-extracted date).
 
 #### Add Dimensions
 
-![Image dimensions mode](../screens/v1/4_img_dimensions.png)
+![Image dimensions mode](../screens/v2/MacOS_26/main_window_add_dimensions_pending.png)
 
 Insert image width and height (e.g., "1920x1080") into filenames. Applies only to supported image file types.
 
 #### Add Folder Name
 
-![Parent folder mode](../screens/v1/5_parents.png)
+![Parent folder mode](../screens/v2/MacOS_26/main_window_add_folder_name_pending.png)
 
 Include parent folder names in filenames for organization and context. Useful when organizing files from multiple source directories.
 
 #### Remove Text
 
-![Remove text mode](../screens/v1/6_remove.png)
+![Remove text mode](../screens/v2/MacOS_26/main_window_remove_text_pending.png)
 
 Trim text from the beginning or end of filenames. Removes unwanted prefixes or suffixes efficiently.
 
 #### Find & Replace
 
-![Replace text mode](../screens/v1/7_replace.png)
+![Replace text mode](../screens/v2/MacOS_26/main_window_replace_text_pending.png)
 
 Find and replace text segments within filenames. Enter the text to find and its replacement to update filenames precisely.
 
 #### Number Files
 
-![Digit sequence mode](../screens/v1/8_seq.png)
+![Digit sequence mode](../screens/v2/MacOS_26/main_window_number_files_pending.png)
 
 Rename files with sequential numeric sequences (001, 002, 003, etc.). Configure sorting by name, date, or size to control the numbering order. Useful for organizing photo collections or video sequences.
 
 #### Trim Name
 
-![Symbol truncation mode](../screens/v1/9_truncate.png)
+![Symbol truncation mode](../screens/v2/MacOS_26/main_window_trim_name_pending.png)
 
 Remove specified characters from filenames by position (from the beginning or end). Optimizes long filenames and removes unwanted character sequences.
 
 #### Change Extension
 
-![Change extensions mode](../screens/v1/10_ext_change.png)
+![Change extensions mode](../screens/v2/MacOS_26/main_window_change_extension_pending.png)
 
 Modify file extensions to ensure compatibility and consistency across file types. Simply specify the new extension.
 

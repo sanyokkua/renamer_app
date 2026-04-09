@@ -796,8 +796,8 @@ stateDiagram-v2
     CheckFile --> ProcessExt: is file
     ProcessExt --> StripWhitespace: trim input
     StripWhitespace --> CheckDot: starts with dot?
-    CheckDot --> RemoveDot: yes; remove leading dot
-    CheckDot --> UseDirect: no; use as-is
+    CheckDot --> RemoveDot: yes, remove leading dot
+    CheckDot --> UseDirect: no, use as-is
     RemoveDot --> StoreExt: extension without dot
     UseDirect --> StoreExt: extension as-is
     StoreExt --> ValidateExt: check not empty
