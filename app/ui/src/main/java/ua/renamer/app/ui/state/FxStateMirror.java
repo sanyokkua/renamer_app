@@ -121,6 +121,7 @@ public class FxStateMirror implements StatePublisher {
         Platform.runLater(() -> {
             filesList.setAll(files);
             previewList.setAll(preview);
+            renameResultsList.clear();
         });
     }
 

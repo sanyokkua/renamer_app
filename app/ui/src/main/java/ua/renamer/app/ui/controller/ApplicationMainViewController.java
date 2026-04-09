@@ -412,13 +412,16 @@ public class ApplicationMainViewController implements Initializable {
             updateFileCountLabel();
         });
         fxStateMirror.renameResults().addListener((ListChangeListener<RenameSessionResult>) change -> {
-            if (!fxStateMirror.renameResults().isEmpty()) {
+            if (fxStateMirror.renameResults().isEmpty()) {
+                renameResultsByFileId.clear();
+                areFilesRenamed = false;
+            } else {
                 renameResultsByFileId = fxStateMirror.renameResults().stream().collect(Collectors.toMap(RenameSessionResult::fileId, r -> r));
                 areFilesRenamed = true;
-                configureControlWidgetsState();
-                filesTableView.refresh();
-                updateFileCountLabel();
             }
+            configureControlWidgetsState();
+            filesTableView.refresh();
+            updateFileCountLabel();
         });
     }
 
@@ -731,6 +734,7 @@ public class ApplicationMainViewController implements Initializable {
         log.debug("handleClearBtnClicked");
         sessionApi.clearFiles().thenRunAsync(() -> {
             areFilesRenamed = false;
+            renameResultsByFileId.clear();
             clearFileInfoPanel();
             configureControlWidgetsState();
             updateFileCountLabel();
