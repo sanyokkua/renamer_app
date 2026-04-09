@@ -1,18 +1,3 @@
----
-title: "Renamer App"
-description: "JavaFX 25 desktop app for batch file renaming with metadata extraction"
-audience: "all"
-last_validated: "2026-04-09"
-last_commit: "3c570e2"
-related_modules:
-  - "app/api"
-  - "app/core"
-  - "app/backend"
-  - "app/metadata"
-  - "app/ui"
-  - "app/utils"
----
-
 # Renamer App
 
 **Batch rename files using metadata, patterns, and smart rules — no scripting required.**
