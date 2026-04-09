@@ -1,10 +1,16 @@
 package ua.renamer.app.backend.config;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.renamer.app.api.session.SessionApi;
 import ua.renamer.app.api.session.StatePublisher;
 import ua.renamer.app.backend.service.BackendExecutor;
@@ -29,6 +35,26 @@ import static org.mockito.Mockito.mock;
 class DIBackendModuleTest {
 
     private Injector injector;
+
+    /**
+     * Stop and detach the FILE appender created when Guice eagerly initialises
+     * {@link ua.renamer.app.backend.settings.LoggingConfigService}. Without this
+     * cleanup the appender (pointing at the real APPDATA log directory) remains
+     * attached to the shared Logback root logger and leaks into subsequent test
+     * classes in the same JVM.
+     */
+    @AfterEach
+    void tearDown() {
+        if (!(LoggerFactory.getILoggerFactory() instanceof LoggerContext ctx)) {
+            return;
+        }
+        ch.qos.logback.classic.Logger root = ctx.getLogger(Logger.ROOT_LOGGER_NAME);
+        Appender<ILoggingEvent> appender = root.getAppender("FILE");
+        if (appender != null) {
+            appender.stop();
+        }
+        root.detachAppender("FILE");
+    }
 
     @BeforeEach
     void setUp() {

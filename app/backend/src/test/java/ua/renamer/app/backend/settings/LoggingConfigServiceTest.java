@@ -21,6 +21,7 @@ import ua.renamer.app.api.settings.LogLevel;
 import ua.renamer.app.api.settings.SettingsService;
 
 import java.nio.file.Path;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.atLeastOnce;
@@ -74,6 +75,17 @@ class LoggingConfigServiceTest {
             appender.stop();
         }
         root.detachAppender("FILE");
+        // Windows: the SizeAndTimeBasedRollingPolicy executor may briefly hold the
+        // file handle after stop(). Without this pause, TempDirExtension fails to
+        // delete the log directory when the test cycled through multiple enable/disable
+        // calls (each cycle creates and stops a new RollingFileAppender on the same path).
+        if (System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("windows")) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
