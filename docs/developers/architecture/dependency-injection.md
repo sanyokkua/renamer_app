@@ -1,3 +1,17 @@
+---
+title: "Dependency Injection"
+description: "Guice 7 module hierarchy, constructor injection patterns, UI mode registration via ModeViewRegistry, and adding new bindings"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/ui"
+  - "app/backend"
+  - "app/core"
+  - "app/metadata"
+  - "app/api"
+---
+
 # Dependency Injection in the Renamer App
 
 This document explains how the Renamer App wires dependencies using Google Guice 7, which modules compose the injector,
@@ -167,6 +181,22 @@ private void loadAndRegister(ModeViewRegistry registry, ViewLoaderApi viewLoader
     registry.register(controller.supportedMode(), () -> parent, controller);
 }
 ```
+
+The `ModeViewRegistry` provides two overloaded `register()` methods:
+
+```java
+// Overload 1: Register view factory only
+public void register(TransformationMode mode, Supplier<Parent> viewFactory)
+
+// Overload 2: Register view factory and controller
+public void register(TransformationMode mode,
+                     Supplier<Parent> viewFactory,
+                     ModeControllerV2Api<?> controller)
+```
+
+The `provideModeViewRegistry()` method uses overload 2, which registers both the view supplier and the controller
+instance. This enables `ApplicationMainViewController` to retrieve both the view and its controller when a mode is
+selected.
 
 **Result:** The `ModeViewRegistry` maps each `TransformationMode` enum value to a supplier of its `Parent` (FXML root
 node) and its `ModeControllerV2Api` instance. This pattern avoids the complexity of `@Qualifier` annotations and makes

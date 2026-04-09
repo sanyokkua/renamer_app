@@ -1,106 +1,123 @@
+---
+title: "User Documentation"
+description: "User documentation hub — guides, mode reference, and support resources for the Renamer app"
+audience: "users"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_docs:
+  - "docs/users/user-guide.md"
+  - "docs/users/mode-reference-card.md"
+---
+
 <!-- TOC -->
 * [File Renamer Application](#file-renamer-application)
   * [Overview](#overview)
   * [Start renaming](#start-renaming)
     * [Renaming Modes](#renaming-modes)
       * [Add Text](#add-text)
-      * [Change Text Case](#change-text-case)
-      * [DateTime Integration](#datetime-integration)
-      * [Image Dimensions](#image-dimensions)
-      * [Parent Folder Names](#parent-folder-names)
+      * [Change Case](#change-case)
+      * [Add Date/Time](#add-datetime)
+      * [Add Dimensions](#add-dimensions)
+      * [Add Folder Name](#add-folder-name)
       * [Remove Text](#remove-text)
-      * [Replace Text](#replace-text)
-      * [Digit Sequence Replacement](#digit-sequence-replacement)
-      * [Symbol Truncation](#symbol-truncation)
-      * [Change Extensions](#change-extensions)
-    * [Caution](#caution)
-  * [Future Enhancements](#future-enhancements)
+      * [Find & Replace](#find--replace)
+      * [Number Files](#number-files)
+      * [Trim Name](#trim-name)
+      * [Change Extension](#change-extension)
+    * [Important Notes](#important-notes)
 <!-- TOC -->
+
 # File Renamer Application
 
 ![Example of the application screen](../screens/v1/app_screen_example_1.png)
 
 ## Overview
 
-The File Renamer Application offers users a convenient way to batch rename files with various customization options. Whether it's adding a sequential digit sequence, appending or prepending additional text, changing text case, or incorporating metadata like DateTime or image dimensions into the file names, this application provides flexibility and efficiency in file management tasks.
-For functionality related to work with metadata extraction currently supported file types: avi, bmp, epsf, eps, epsi, gif, heif, heic, ico, jpg, jpeg, jpe, m4r, m4p, mp4, m4b, m4a, m4v, pcx, png, psd, mov, qt, tiff, tif, wav, wave, webp.
+The File Renamer Application enables batch renaming of files with extensive customization options. Add sequential numbers, append or prepend text, change capitalization, incorporate metadata like dates or image dimensions, and more—all with a live preview before any files are modified.
+
+Metadata extraction (dates, image dimensions) is supported for the following file types:
+
+**Image formats:** jpg, jpeg, jpe, png, gif, bmp, heif, heic, tiff, tif, psd, ico, pcx, webp, avif, arw, cr2, cr3, nef, orf, raf, rw2, dng, epsf, eps, epsi
+
+**Video formats:** mp4, m4v, mov, qt, avi
+
+**Audio formats:** m4a, m4b, m4p, m4r, wav, wave, mp3, flac, ogg, wma, aiff, aif, ape, mpc, wv, spx, opus, au, dsf, mp2, ra, ofr, tta
 
 ## Start renaming
 
-Just chose files/folder in the file manager and **drag and drop** them to the right side of the app (Files Table View)
-When files are added, you can click on the row in the table to get more information that was parsed by application.
+Select files or folders in your file manager and drag them onto the File Renamer app window. Once added, click any file row to view detailed metadata extracted by the application.
 
 ### Renaming Modes
 
-Explore the different renaming modes available in the application:
+The application provides 10 renaming modes. Select the mode you need from the top menu bar, configure options in the right panel, and preview the results in the **Preview** column before committing the rename.
 
 #### Add Text
 
 ![Add text mode](../screens/v1/1_add_custom.png)
 
-Append or prepend custom text to the existing file names.
+Append or prepend custom text to existing filenames. Useful for adding prefixes like "2025_" or suffixes like "_final".
 
-#### Change Text Case
+#### Change Case
 
 ![Change case mode](../screens/v1/2_change_case.png)
 
-Alter the case of file names to different variants, enhancing consistency and readability.
+Transform filename case to different variants: UPPERCASE, lowercase, Title Case, camelCase, or snake_case. Improves consistency and readability across your file collections.
 
-#### DateTime Integration
+#### Add Date/Time
 
 ![DateTime mode](../screens/v1/3_date_time.png)
 
-Incorporate DateTime information into file names or replace existing names with DateTime details, with support for various formats and source selection.
+Incorporate date and time information into filenames or replace names entirely with datetime values. Supports multiple formats and extraction from file metadata (EXIF creation date, file modification date, or metadata-extracted date).
 
-#### Image Dimensions
+#### Add Dimensions
 
 ![Image dimensions mode](../screens/v1/4_img_dimensions.png)
 
-Utilize image width and height metadata to enrich file names, exclusive to image files.
+Insert image width and height (e.g., "1920x1080") into filenames. Applies only to supported image file types.
 
-#### Parent Folder Names
+#### Add Folder Name
 
 ![Parent folder mode](../screens/v1/5_parents.png)
 
-Include parent folder names in file names, offering organization and context.
+Include parent folder names in filenames for organization and context. Useful when organizing files from multiple source directories.
 
 #### Remove Text
 
 ![Remove text mode](../screens/v1/6_remove.png)
 
-Effortlessly trim text from the beginning or end of file names.
+Trim text from the beginning or end of filenames. Removes unwanted prefixes or suffixes efficiently.
 
-#### Replace Text
+#### Find & Replace
 
 ![Replace text mode](../screens/v1/7_replace.png)
 
-Swap text segments in file names with custom alternatives, enhancing file name clarity.
+Find and replace text segments within filenames. Enter the text to find and its replacement to update filenames precisely.
 
-#### Digit Sequence Replacement
+#### Number Files
 
 ![Digit sequence mode](../screens/v1/8_seq.png)
 
-Replace file names with sequential digit sequences, with sorting options available for streamlined management.
+Rename files with sequential numeric sequences (001, 002, 003, etc.). Configure sorting by name, date, or size to control the numbering order. Useful for organizing photo collections or video sequences.
 
-#### Symbol Truncation
+#### Trim Name
 
 ![Symbol truncation mode](../screens/v1/9_truncate.png)
 
-Remove specified symbols from file names, optimizing file name lengths.
+Remove specified characters from filenames by position (from the beginning or end). Optimizes long filenames and removes unwanted character sequences.
 
-#### Change Extensions
+#### Change Extension
 
 ![Change extensions mode](../screens/v1/10_ext_change.png)
 
-Modify file extensions, ensuring compatibility and consistency across file types.
+Modify file extensions to ensure compatibility and consistency across file types. Simply specify the new extension.
 
-### Caution
+### Important Notes
 
-While the application offers powerful renaming capabilities, it's essential to exercise caution and maintain backups of your data before proceeding with any renaming operations. Some functionalities may be limited based on file metadata availability, and the application may append digital numbers to differentiate files with identical names.
+The application is powerful, but exercise caution:
 
-## Future Enhancements
+- **Always maintain backups** of your original files before renaming large batches.
+- **Metadata availability** varies by file type — if a file lacks the requested metadata (e.g., EXIF date in a photo), the mode may not apply the full transformation.
+- **Duplicate filename handling** — if a rename operation would create files with identical names, the application automatically appends `_1`, `_2`, etc. to differentiate them.
+- **Live preview** — always review the **Preview** column before clicking **Rename** to ensure the results match your expectations.
 
-- **Expanded Metadata Support:** Implement support for additional file types, such as videos, to enhance metadata retrieval capabilities.
-- **Multilingual Support:** Introduce multilingual support to cater to users worldwide.
-- **UI Testing:** Conduct thorough testing of the user interface to ensure seamless user experience across different platforms.
-- **Continuous Improvement:** Explore opportunities for further enhancements and optimizations to elevate user satisfaction and usability.
+See the [User Guide](user-guide.md) for detailed instructions and the [Mode Reference Card](mode-reference-card.md) for quick syntax examples.

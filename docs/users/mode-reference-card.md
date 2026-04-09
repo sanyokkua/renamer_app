@@ -1,3 +1,14 @@
+---
+title: "Mode Reference Card"
+description: "Quick reference for all transformation modes — names, purposes, and key options"
+audience: "users"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/core"
+  - "app/api"
+---
+
 # Mode Reference Card
 
 Quick reference for all 10 renaming modes — see the [User Guide](user-guide.md) for full explanations.
@@ -8,9 +19,9 @@ Quick reference for all 10 renaming modes — see the [User Guide](user-guide.md
 |----------------------|-------------------------------------------------|--------------------------------------------------------|---------------------------------------------|
 | **Add Text**         | Adds text to the start or end of filenames      | Text; Position (Begin / End)                           | `photo.jpg` → `vacation_photo.jpg`          |
 | **Remove Text**      | Removes text from the start or end of filenames | Text to remove; Position (Begin / End)                 | `IMG_photo.jpg` → `photo.jpg`               |
-| **Find & Replace**   | Replaces any text in filenames                  | Find; Replace with; Where (Begin / End / Everywhere)   | `photo copy.jpg` → `photo backup.jpg`       |
-| **Change Case**      | Changes the capitalization style                | Case style (8 options); Capitalize first letter        | `My File.jpg` → `my_file.jpg`               |
-| **Add Date/Time**    | Adds a date or time from file or photo metadata | Source (5 options); Date format; Time format; Position | `photo.jpg` → `2024-03-15_photo.jpg`        |
+| **Find & Replace**   | Replaces text in filenames                      | Find; Replace with; Where (Begin / End / Everywhere)   | `photo copy.jpg` → `photo backup.jpg`       |
+| **Change Case**      | Changes the capitalization style                | Case style (UPPERCASE, lowercase, Title Case, etc.)    | `My File.jpg` → `my_file.jpg`               |
+| **Add Date & Time**  | Adds a date or time from file or photo metadata | Source (5 options); Date format; Time format; Position | `photo.jpg` → `2024-03-15_photo.jpg`        |
 | **Add Dimensions**   | Adds image or video resolution to the filename  | Include width; Include height; Position                | `wallpaper.jpg` → `wallpaper_1920x1080.jpg` |
 | **Number Files**     | Adds sequential numbers to filenames            | Start; Step; Padding; Sort by (8 options); Per folder  | `photo.jpg` → `001_photo.jpg`               |
 | **Add Folder Name**  | Adds the parent folder name to filenames        | Parent folders; Position; Separator                    | `file.txt` → `Reports_file.txt`             |

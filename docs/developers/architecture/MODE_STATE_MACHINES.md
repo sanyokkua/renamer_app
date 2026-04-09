@@ -1,3 +1,13 @@
+---
+name: Application Mode State Machines
+type: technical-reference
+status: finalized
+date: 2026-04-09
+audience: Engineering team maintaining and extending the Renamer App
+scope: State machines, parameter contracts, and validation rules for all 10 Renamer App transformation modes
+version: 2.0
+---
+
 # Application Mode State Machines
 
 **Document Type:** Technical Reference

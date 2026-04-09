@@ -1,3 +1,15 @@
+---
+title: "Settings System"
+description: "Application settings — AppSettings model, persistence mechanism, storage format, and settings service"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/backend"
+  - "app/api"
+  - "app/ui"
+---
+
 # Settings System
 
 This document covers the settings architecture: the `SettingsService` interface, the JSON storage format, OS-specific
@@ -37,15 +49,13 @@ file paths, error handling, logging configuration, and how the settings dialog r
 `SettingsServiceImpl` is bound in `DIBackendModule`:
 
 ```java
-bind(SettingsService .class).
-
-to(SettingsServiceImpl .class).
-
-in(Singleton .class);
+bind(SettingsService.class)
+    .to(SettingsServiceImpl.class)
+    .in(Scopes.SINGLETON);
 ```
 
-`LoggingConfigService` is also bound as a singleton in the same module, with its `configure()` method invoked by Guice
-via `@Inject` at startup.
+`LoggingConfigService` is bound as an eager singleton in the same module — Guice automatically calls its
+`configure()` method via the `@Inject` annotation during application startup.
 
 ---
 
@@ -66,11 +76,11 @@ defaults via `AppSettings.defaults()`.
 All defaults are defined as constants in `AppDefaults` (`app/api`):
 
 ```java
-AppDefaults.SETTINGS_VERSION   =1
-AppDefaults.DEFAULT_LANGUAGE   ="en"
-AppDefaults.DEFAULT_LOG_LEVEL  =LogLevel.INFO
-AppDefaults.SETTINGS_FILE_NAME ="settings.json"
-AppDefaults.APP_DIR_NAME       ="Renamer"
+AppDefaults.SETTINGS_VERSION   = 1
+AppDefaults.DEFAULT_LANGUAGE   = "en"
+AppDefaults.DEFAULT_LOG_LEVEL  = LogLevel.INFO
+AppDefaults.SETTINGS_FILE_NAME = "settings.json"
+AppDefaults.APP_DIR_NAME       = "Renamer"
 ```
 
 ---
@@ -169,11 +179,11 @@ use; no version-specific migration logic is currently implemented.
 
 ### LoggingConfigService
 
-`LoggingConfigService` (`app/backend`) manages the Logback runtime based on `AppSettings`. It operates on the
-`ua.renamer.app` logger — not the ROOT logger — so third-party library logging is unaffected. Console logging is
+`LoggingConfigService` (`app/backend`) manages the Logback runtime based on `AppSettings`. It applies the log level
+to the `ua.renamer.app` logger — not the ROOT logger — so third-party library logging is unaffected. Console logging is
 controlled exclusively by `logback.xml` and is never modified here.
 
-**Startup:** Guice calls `configure()` via `@Inject` when the singleton is created. `configure()` applies the saved log
+**Startup:** Guice calls `configure()` automatically when the singleton is created. `configure()` applies the saved log
 level and, if `loggingEnabled` is `true`, adds a `RollingFileAppender` named `FILE`.
 
 **After settings save:** `SettingsDialogController` calls `loggingConfigService.reconfigure(updated)` immediately after

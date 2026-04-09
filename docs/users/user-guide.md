@@ -1,3 +1,14 @@
+---
+title: "User Guide"
+description: "Complete user guide for the Renamer App — getting started, all transformation modes, and settings"
+audience: "users"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/ui"
+  - "app/core"
+---
+
 # User Guide
 
 ## Table of Contents
@@ -8,9 +19,9 @@
 - [Modes](#modes)
     - [Add Text](#add-text)
     - [Remove Text](#remove-text)
-    - [Find & Replace](#find--replace)
+    - [Replace Text](#replace-text)
     - [Change Case](#change-case)
-    - [Add Date/Time](#add-datetime)
+    - [Add Date & Time](#add-date--time)
     - [Add Dimensions](#add-dimensions)
     - [Number Files](#number-files)
     - [Add Folder Name](#add-folder-name)
@@ -107,9 +118,9 @@ Remove a specific word or phrase from the beginning or end of filenames. Useful 
 
 ---
 
-### Find & Replace
+### Replace Text
 
-![Find & Replace mode](../screens/v2/mode_replace_text.png)
+![Replace Text mode](../screens/v2/mode_replace_text.png)
 
 Find any text in your filenames and replace it with something else. You can target the very start, the very end, or
 every occurrence anywhere in the name.
@@ -157,9 +168,9 @@ Change the capitalization of every filename in one click.
 
 ---
 
-### Add Date/Time
+### Add Date & Time
 
-![Add Date/Time mode](../screens/v2/mode_add_datetime.png)
+![Add Date & Time mode](../screens/v2/mode_add_datetime.png)
 
 Add a date or time to every filename, pulled from the file's own metadata or a date you choose.
 
@@ -193,11 +204,13 @@ Add a date or time to every filename, pulled from the file's own metadata or a d
 
 Add the image or video resolution to the filename. Works with image and video files that have dimension metadata.
 
-| Parameter      | What it does          |
-|----------------|-----------------------|
-| Include width  | Adds the pixel width  |
-| Include height | Adds the pixel height |
-| Position       | **Begin** or **End**  |
+| Parameter       | What it does                                                     |
+|-----------------|------------------------------------------------------------------|
+| Left side       | What to show on the left (Width, Height, or Do not use)         |
+| Right side      | What to show on the right (Width, Height, or Do not use)        |
+| Separator       | Character between left and right (usually "x")                  |
+| Name separator  | Character between dimensions and filename (e.g., "_", "-", " ") |
+| Position        | **Begin**, **End**, or **Replace** (dimensions replace filename) |
 
 **Examples:**
 
@@ -320,11 +333,11 @@ Open **Settings** from the menu bar to adjust these options:
 1. **Sort chaotic photo dumps with Number Files.** Drop your photos in, sort by **File Content Creation Datetime**, and
    prefix every file with `001_`, `002_` — instant chronological order.
 
-2. **Date-stamp photos by when they were taken, not copied.** In **Add Date/Time**, choose **File Content Creation
+2. **Date-stamp photos by when they were taken, not copied.** In **Add Date & Time**, choose **File Content Creation
    Datetime** as the source. This reads the EXIF data recorded by your camera, not the file's creation date on your
    computer.
 
-3. **Use Find & Replace to delete text.** Leave the "Replace with" field empty. Set "Where" to **Everywhere**. The app
+3. **Use Replace Text to delete text.** Leave the "Replace with" field empty. Set "Where" to **Everywhere**. The app
    removes every occurrence of the search text without replacing it with anything.
 
 4. **Drop a whole folder to process everything inside.** When the folder dialog appears, choose **Expand contents** —

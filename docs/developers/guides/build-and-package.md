@@ -1,7 +1,21 @@
-# How to Build & Package
+---
+title: "Build and Package"
+description: "How to compile, test, lint, and create native installers for all platforms"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/ui"
+  - "app/core"
+  - "app/api"
+  - "app/backend"
+  - "app/metadata"
+  - "app/utils"
+---
 
-This guide covers every workflow a developer needs: compiling, testing, linting, running locally, and building native
-installers with jpackage.
+# Build and Package
+
+This guide covers every workflow a developer needs: compiling, testing, linting, running locally, and building native installers with jpackage.
 
 ---
 
@@ -65,15 +79,13 @@ mvn --version   # must show 3.9.x or higher
 | Linux    | `fakeroot`               | `.deb` package           | `sudo apt-get install -y fakeroot`                      |
 | Windows  | WiX Toolset 3.x          | `.msi` installer         | Download from [wixtoolset.org](https://wixtoolset.org/) |
 
-`fakeroot` is optional on Linux — `package-linux.sh` warns and builds only the app-image if it is absent. WiX is not yet
-integrated into `package-windows.bat` (see Section 5).
+`fakeroot` is optional on Linux — `package-linux.sh` warns and builds only the app-image if it is absent. WiX integration into `package-windows.bat` is not yet implemented; the app-image can be distributed as a zip archive.
 
 ---
 
 ## 2. Development Build Commands
 
-All commands run from the `app/` directory. `app/.mvn/maven.config` automatically applies `-B --no-transfer-progress` to
-every Maven invocation in this directory — no need to type those flags manually.
+All commands run from the `app/` directory. `app/.mvn/maven.config` automatically applies `-B --no-transfer-progress` to every Maven invocation in this directory — no need to type those flags manually.
 
 | Command                                                 | Purpose                               | Notes                                               |
 |---------------------------------------------------------|---------------------------------------|-----------------------------------------------------|
@@ -104,18 +116,15 @@ cd app/ui
 mvn javafx:run
 ```
 
-Run from the `app/ui/` subdirectory, not the `app/` root. The `javafx-maven-plugin` is configured only in the `ui`
-module POM.
+Run from the `app/ui/` subdirectory, not the `app/` root. The `javafx-maven-plugin` is configured only in the `ui` module POM.
 
-**macOS dock name:** A `macos-dock` Maven profile auto-activates on macOS and injects `-Xdock:name=Renamer` as a JVM
-argument, so the app appears correctly in the Dock. This profile is excluded on Linux and Windows — no action needed.
+**macOS dock name:** A `macos-dock` Maven profile auto-activates on macOS and injects `-Xdock:name=Renamer` as a JVM argument, so the app appears correctly in the Dock. This profile is excluded on Linux and Windows — no action needed.
 
 ---
 
 ## 4. Full Build Script
 
-`scripts/ai-build.sh` runs the full quality pipeline in a fixed sequence, stopping on compile or test failure but
-treating linting as informational:
+`scripts/ai-build.sh` runs the full quality pipeline in a fixed sequence, stopping on compile or test failure but treating linting as informational:
 
 ```
 compile → Checkstyle → PMD → SpotBugs → test
@@ -131,8 +140,7 @@ compile → Checkstyle → PMD → SpotBugs → test
 | 4 — SpotBugs   | `mvn spotbugs:check -Pcode-quality`   | No                | Violations logged as `[ERROR]`   |
 | 5 — Tests      | `mvn test -Dai=true`                  | Yes               | —                                |
 
-All three linting tools have `failOnViolation=false` in the parent `pom.xml` — they report violations but do not fail
-the build. Review the output and address violations before submitting a pull request.
+All three linting tools have `failOnViolation=false` in the parent `pom.xml` — they report violations but do not fail the build. Review the output and address violations before submitting a pull request.
 
 **Run from any directory:**
 
@@ -144,15 +152,13 @@ the build. Review the output and address violations before submitting a pull req
 ../scripts/ai-build.sh
 ```
 
-The script's first line (`cd "$(dirname "$0")/../app"`) normalises the working directory regardless of where it is
-invoked from.
+The script's first line (`cd "$(dirname "$0")/../app"`) normalizes the working directory regardless of where it is invoked from.
 
 ---
 
 ## 5. Packaging with jpackage
 
-jpackage produces self-contained native installers. Each installer bundles a trimmed JRE — end users need no Java
-installation.
+jpackage produces self-contained native installers. Each installer bundles a trimmed JRE — end users need no Java installation.
 
 ### Pre-package build (all platforms)
 
@@ -163,8 +169,7 @@ cd app
 mvn clean package -DskipTests
 ```
 
-This populates `app/ui/target/libs/` with the main JAR and all runtime dependency JARs. The packaging scripts read from
-this directory.
+This populates `app/ui/target/libs/` with the main JAR and all runtime dependency JARs. The packaging scripts read from this directory.
 
 ### Common jpackage configuration
 
@@ -208,8 +213,7 @@ dist/
 └── Renamer-2.0.0.dmg
 ```
 
-**Gatekeeper (unsigned app):** The app is not code-signed. macOS Gatekeeper blocks it on first launch. To allow it, use
-one of:
+**Gatekeeper (unsigned app):** The app is not code-signed. macOS Gatekeeper blocks it on first launch. To allow it, use one of:
 
 - **Right-click → Open** in Finder — accepts a one-time prompt without touching the terminal
 - **Remove the quarantine flag** (most reliable after dragging from a DMG):
@@ -231,8 +235,7 @@ one of:
 The script builds:
 
 1. `dist/Renamer/` — app-image (raw executable directory)
-2. `dist/renamer_<version>_<arch>.deb` (~221 MB) — only if `fakeroot` is installed; the script warns and skips the
-   `.deb` step if `fakeroot` is absent.
+2. `dist/renamer_<version>_<arch>.deb` (~221 MB) — only if `fakeroot` is installed; the script warns and skips the `.deb` step if `fakeroot` is absent.
 
 **`dist/` layout:**
 
@@ -258,8 +261,7 @@ Run from a Command Prompt or PowerShell window:
 scripts\package-windows.bat
 ```
 
-The script builds `dist\Renamer\` (app-image, ~400 MB). An MSI installer step is not yet implemented in the script; the
-app-image can be distributed as a zip archive.
+The script builds `dist\Renamer\` (app-image, ~400 MB). An MSI installer step is not yet implemented in the script; the app-image can be distributed as a zip archive.
 
 **`dist\` layout:**
 
@@ -280,17 +282,7 @@ dist\
 
 ---
 
-## 6. jdeploy (Historical Note)
-
-The project previously used [jdeploy](https://www.jdeploy.com/) — a tool that packages Java apps as thin launchers that
-download the JRE on first run. jdeploy required a `package.json` configuration file at the project root.
-
-The project has migrated to jpackage, which produces fully self-contained installers. The `package.json` file and
-jdeploy configuration have been removed. All packaging now uses the `scripts/` directory described in Section 5.
-
----
-
-## 7. Quick Reference Cheat Sheet
+## 6. Quick Reference Cheat Sheet
 
 | Purpose                            | Command                                             | Directory    |
 |------------------------------------|-----------------------------------------------------|--------------|

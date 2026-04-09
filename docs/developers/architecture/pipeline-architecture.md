@@ -1,3 +1,17 @@
+---
+title: "Pipeline Architecture"
+description: "V2 file rename pipeline — phases, threading model, data flow, and error handling"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "f801ec2"
+related_modules:
+  - "app/api"
+  - "app/core"
+diagram_sources:
+  - "docs/diagrams/pipeline-sequence.mmd"
+  - "docs/diagrams/error-handling-flow.mmd"
+---
+
 # Pipeline Architecture
 
 ## Pipeline Overview
@@ -24,38 +38,38 @@ sequenceDiagram
     Caller ->>+ Orc: execute(files, mode, config, callback)
 
     rect rgb(230, 240, 255)
-        Note over Orc, Mapper: Phase 1 — Metadata Extraction (parallel)
+        Note over Orc, Mapper: Phase 1 - Metadata Extraction (parallel)
         Orc ->>+ VT: newVirtualThreadPerTaskExecutor
         loop per file
             VT ->> Mapper: map(file)
             Mapper -->> VT: FileModel (isFile=false on error)
         end
-        VT -->>- Orc: List<FileModel>
+        VT -->>- Orc: List&lt;FileModel&gt;
     end
 
     rect rgb(230, 255, 230)
-        Note over Orc, TX: Phase 2 — Transformation (parallel or sequential)
+        Note over Orc, TX: Phase 2 - Transformation (parallel or sequential)
         alt most modes
             Orc ->>+ VT: newVirtualThreadPerTaskExecutor
             loop per FileModel
                 VT ->> TX: transform(fileModel, config)
                 TX -->> VT: PreparedFileModel
             end
-            VT -->>- Orc: List<PreparedFileModel>
+            VT -->>- Orc: List&lt;PreparedFileModel&gt;
         else NUMBER_FILES mode
             Orc ->> TX: transformBatch(fileModels, config)
-            TX -->> Orc: List<PreparedFileModel>
+            TX -->> Orc: List&lt;PreparedFileModel&gt;
         end
     end
 
     rect rgb(255, 255, 220)
-        Note over Orc, Dedup: Phase 2.5 — Duplicate Resolution (sequential)
+        Note over Orc, Dedup: Phase 2.5 - Duplicate Resolution (sequential)
         Orc ->> Dedup: resolve(preparedFiles)
-        Dedup -->> Orc: List<PreparedFileModel>
+        Dedup -->> Orc: List&lt;PreparedFileModel&gt;
     end
 
     rect rgb(255, 230, 230)
-        Note over Orc, Exec: Phase 3 — Physical Rename (sequential, deepest-first)
+        Note over Orc, Exec: Phase 3 - Physical Rename (sequential, deepest-first)
         loop per PreparedFileModel, depth-ordered
             Orc ->> Exec: execute(preparedFile)
             Exec -->> Orc: RenameResult
@@ -88,20 +102,14 @@ returned with `isFile = false`. The file is not dropped — it flows into Phase 
 without attempting a transformation.
 
 **Progress:** An `AtomicInteger` counts completed files; the `ProgressCallback` is invoked (null-safely) after each
-file.
+file completes.
 
 ```java
-try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()){
-List<CompletableFuture<FileModel>> futures = files.stream()
-        .map(file -> CompletableFuture.supplyAsync(() -> safeMap(file), executor))
-        .toList();
-    return futures.
-
-stream().
-
-map(CompletableFuture::join).
-
-toList();
+try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+  return files.parallelStream()
+    .map(file -> CompletableFuture.supplyAsync(() -> fileMapper.mapFrom(file), executor))
+    .map(CompletableFuture::join)
+    .toList();
 }
 ```
 
@@ -120,29 +128,11 @@ implements `FileTransformationService` and receives the matched config object.
 **Parallel path (all modes except `NUMBER_FILES`):**
 
 ```java
-try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()){
-        return fileModels.
-
-stream()
-        .
-
-map(fm ->CompletableFuture.
-
-supplyAsync(
-                () ->transformer.
-
-transform(fm, config),executor))
-        .
-
-toList().
-
-stream()
-        .
-
-map(CompletableFuture::join)
-        .
-
-toList();
+try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+  return fileModels.parallelStream()
+    .map(model -> CompletableFuture.supplyAsync(() -> transformer.transform(model, config), executor))
+    .map(CompletableFuture::join)
+    .toList();
 }
 ```
 
@@ -185,10 +175,11 @@ a numeric suffix to all but the first.
 
 4. **Suffix generation** — format: `" (N)"` where N is zero-padded based on group context:
 
-   | Base name pattern | Padding rule | Example |
-      |-------------------|-------------|---------|
-   | Matches `\d+` and starts with `'0'` (zero-padded) | `max(baseNameLength, len(groupSize))` | Base `"01"`, 3 files → pad 2 → `" (01)"`, `" (02)"` |
-   | Any other name | `len(groupSize)` | 2 files → pad 1 → `" (1)"`, `" (2)"`; 100 files → pad 3 → `" (001)"` |
+   | Scenario | Padding rule | Example |
+   |----------|--------------|---------|
+   | Base name is numeric and zero-padded (e.g., `"01"`, `"001"`) | `max(basePadding, groupSizePadding)` | Base `"01"` with 3 files → `max(2, 1)=2` → `" (01)"`, `" (02)"` |
+   | Base name is numeric but not zero-padded (e.g., `"10"`, `"100"`) | `groupSizePadding` only | Base `"100"` with 2 files → `len("2")=1` → `" (1)"`, `" (2)"` |
+   | Base name is non-numeric (e.g., `"file"`, `"photo"`) | `groupSizePadding` only | 10 files → `len("10")=2` → `" (01)"`, `" (02)"`, …, `" (09)"` |
 
    The suffix counter starts at 1 and increments until a non-colliding name is found in `usedNames`.
 
@@ -205,22 +196,11 @@ sort prevents a `NoSuchFileException` that would occur if a parent directory wer
 
 ```java
 prepared.stream()
-    .
-
-sorted(Comparator.comparingInt(
-        (PreparedFileModel p) ->p.
-
-getOldPath().
-
-getNameCount()).
-
-reversed())
-        .
-
-map(renameExecutor::execute)
-    .
-
-toList();
+  .sorted(Comparator.comparingInt(
+      (PreparedFileModel p) -> p.getOldPath().getNameCount())
+    .reversed())
+  .map(renameExecutor::execute)
+  .toList();
 ```
 
 **Per-file execution — 4-step guard:**
@@ -234,11 +214,13 @@ toList();
 
 **Disk conflict resolution:** If the computed target path already exists on disk (a file not in the current batch),
 `resolveConflictWithDisk()` appends ` (NNN)` with 3-digit zero-padding and tries up to `MAX_SUFFIX_ATTEMPTS = 999`
-variants. Returns `null` if all 999 are occupied, which becomes `ERROR_EXECUTION`.
+variants. Returns `null` if all 999 are occupied, which results in `ERROR_EXECUTION`.
 
 **Case-only rename:** On case-insensitive filesystems (macOS HFS+, Windows NTFS), `Files.move()` treats a rename from
-`IMG.jpg` to `img.jpg` as a no-op. The implementation detects this with a case-insensitive path comparison and falls
-back to `File.renameTo()`, which correctly handles case changes on these filesystems.
+`IMG.jpg` to `img.jpg` as a no-op — the file stays as `IMG.jpg`. The implementation detects case-only changes using a
+case-insensitive comparison of absolute paths (`oldPath.equalsIgnoreCase(newPath)`) and falls back to `File.renameTo()`,
+which correctly handles case changes on these filesystems. The conflict resolution step is skipped for case changes since
+the source and target are technically the same file on case-insensitive systems.
 
 ---
 
@@ -266,17 +248,17 @@ appropriate model field:
 ```mermaid
 flowchart TD
     fileIn["java.io.File"]
-    phase1{"Phase 1\nextraction"}
-    fm1["FileModel\nisFile=false"]
-    fm2["FileModel\n(with metadata)"]
-    phase2{"Phase 2\ntransformation"}
-    pf1["PreparedFileModel\nhasError=true"]
-    pf2["PreparedFileModel\n(with new name)"]
-    phase3{"Phase 3\nrename"}
-    rr1["RenameResult\nSKIPPED"]
-    rr2["RenameResult\nERROR_EXECUTION"]
-    rr3["RenameResult\nSUCCESS"]
-    globalCatch["Global catch\nall files →\nERROR_EXTRACTION"]
+    phase1{"Phase 1<br/>extraction"}
+    fm1["FileModel<br/>isFile=false"]
+    fm2["FileModel<br/>(with metadata)"]
+    phase2{"Phase 2<br/>transformation"}
+    pf1["PreparedFileModel<br/>hasError=true"]
+    pf2["PreparedFileModel<br/>(with new name)"]
+    phase3{"Phase 3<br/>rename"}
+    rr1["RenameResult<br/>SKIPPED"]
+    rr2["RenameResult<br/>ERROR_EXECUTION"]
+    rr3["RenameResult<br/>SUCCESS"]
+    globalCatch["Global catch<br/>all files<br/>ERROR_EXTRACTION"]
     fileIn --> phase1
     phase1 -->|error| fm1
     phase1 -->|ok| fm2

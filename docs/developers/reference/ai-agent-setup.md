@@ -1,3 +1,18 @@
+---
+title: "AI Agent Setup"
+description: "Claude Code agents, skills, MCP servers, and the standard development pipeline for the Renamer App"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/core"
+  - "app/api"
+  - "app/ui"
+  - "app/backend"
+  - "app/metadata"
+  - "app/utils"
+---
+
 # Claude Code Agent and Skill Setup
 
 This document is a technical reference for developers who use Claude Code to contribute to the Renamer App. It covers
@@ -21,8 +36,8 @@ at the start of every session — you do not need to reference it manually.
 
 **API key** — Set `ANTHROPIC_API_KEY` in your shell environment or via `claude config`.
 
-**Working directory** — All agent invocations assume the project root (`/Users/ok/Development/GitHub/renamer_app`) as
-the working directory. If you are in a subdirectory, absolute file paths are required in agent prompts.
+**Working directory** — All agent invocations assume the project root (Renamer App repository) as the working directory.
+If you are in a subdirectory, use absolute file paths in agent prompts.
 
 **CLAUDE.md is auto-loaded** — Claude Code reads `.claude/CLAUDE.md` automatically at session start; you do not need to
 reference it manually.
@@ -34,14 +49,14 @@ invoked via the `@"agent-name (agent)"` syntax.
 
 ### Agent Summary
 
-| Agent          | Model         | Role                            | When to invoke                                                                          |
-|----------------|---------------|---------------------------------|-----------------------------------------------------------------------------------------|
-| `investigator` | Claude Haiku  | Read-only codebase cartographer | Before any new task — maps code, traces data flow, identifies modification scope        |
-| `architect`    | Claude Sonnet | Technical designer              | After investigation — designs solution, evaluates trade-offs, writes `PLAN.md`          |
-| `coder`        | Claude Sonnet | Step-by-step implementer        | After human approves `PLAN.md` — implements exactly one plan step at a time             |
-| `tester`       | Claude Sonnet | JUnit 5 QA engineer             | After each coder step — writes tests, finds edge cases, verifies the no-throw contract  |
-| `debugger`     | Claude Sonnet | Root cause analyst              | When any Maven build, test, or runtime failure occurs                                   |
-| `docs-writer`  | Claude Haiku  | Technical writer                | After implementation — writes/updates README, ADRs, ARCHITECTURE.md, Javadoc, CHANGELOG |
+| Agent          | Model  | Role                            | When to invoke                                                                          |
+|----------------|--------|---------------------------------|-----------------------------------------------------------------------------------------|
+| `investigator` | haiku  | Read-only codebase cartographer | Before any new task — maps code, traces data flow, identifies modification scope        |
+| `architect`    | sonnet | Technical designer              | After investigation — designs solution, evaluates trade-offs, writes `PLAN.md`          |
+| `coder`        | sonnet | Step-by-step implementer        | After human approves `PLAN.md` — implements exactly one plan step at a time             |
+| `tester`       | sonnet | JUnit 5 QA engineer             | After each coder step — writes tests, finds edge cases, verifies the no-throw contract  |
+| `debugger`     | sonnet | Root cause analyst              | When any Maven build, test, or runtime failure occurs                                   |
+| `docs-writer`  | haiku  | Technical writer                | After implementation — writes/updates README, ADRs, ARCHITECTURE.md, Javadoc, CHANGELOG |
 
 ### investigator
 
@@ -140,8 +155,8 @@ Use "adding a new transformation mode" as the running example:
 @"investigator (agent)" which files need to change to add a new V2 transformation mode?
 ```
 
-Investigator produces a Modification Scope table identifying all files across `app/api`, `app/core`, and `app/ui` that
-must be created or modified.
+Investigator produces a Modification Scope table identifying all files across `app/api`, `app/core`, `app/backend`,
+`app/metadata`, and `app/ui` that must be created or modified.
 
 **2. Design** — Write a step-by-step plan with file paths and validation commands.
 
@@ -193,7 +208,7 @@ pipeline — invoke the appropriate agent for the problem.
 Any Maven compile error, test failure, or runtime exception:
 
 ```bash
-@"debugger (agent)" [paste full Maven [ERROR] output with stack trace]
+@"debugger (agent)" [paste full Maven error output with stack trace]
 ```
 
 After the fix is confirmed, add a regression test:
@@ -216,7 +231,7 @@ When a significant technical decision is made (new framework, replaced module, c
 
 ```bash
 @"architect (agent)" write an ADR for switching from V1 to V2 transformation pipeline
-@"docs-writer (agent)" add ADR-0007 to docs/adr/ based on the architect's output
+@"docs-writer (agent)" document the ADR decision in docs/adr/
 ```
 
 ## 6. Skills Reference
@@ -231,11 +246,11 @@ Claude's active session, giving it knowledge of conventions before it writes cod
 | `write-junit5-tests`      | `/write-junit5-tests`      | Writing unit or integration tests — loads test naming, AAA structure, and assertion patterns |
 | `javafx`                  | `/javafx`                  | Writing JavaFX controllers, FXML, or CSS in `app/ui/`                                        |
 | `javafx-ui-designer`      | `/javafx-ui-designer`      | Designing or theming JavaFX UI — colors, CSS tokens, layout, typography, accessibility       |
-| `add-transformation-mode` | `/add-transformation-mode` | Adding a new V2 transformation mode end-to-end (multi-step across 4 modules)                 |
+| `add-transformation-mode` | `/add-transformation-mode` | Adding a new V2 transformation mode end-to-end across multiple modules                       |
 | `project-docs`            | `/project-docs`            | Writing or updating README, ADRs, or architecture docs — loads documentation standards       |
 | `use-exiftool-metadata`   | `/use-exiftool-metadata`   | Embedding datetime/GPS into test media files                                                 |
 | `use-ffmpeg-cli`          | `/use-ffmpeg-cli`          | Generating base test media files (images, video, audio)                                      |
-| `create-mermaid-diagrams` | `/create-mermaid-diagrams` | Creating Mermaid diagrams — loads syntax rules, node shape reference, and common errors      |
+| `create-mermaid-diagrams` | `/create-mermaid-diagrams` | Creating Mermaid diagrams — loads syntax rules and common errors                             |
 
 ## 7. MCP Servers
 

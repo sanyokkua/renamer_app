@@ -1,16 +1,25 @@
+---
+title: "Add a Transformation Mode"
+description: "Step-by-step guide to adding a new V2 transformation mode — enum, config, transformer, UI controller, FXML, and DI wiring"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/api"
+  - "app/core"
+  - "app/ui"
+---
+
 # How to Add a New Transformation Mode
 
-This guide walks through every file you must create or edit to add a fully functional transformation mode — from the
-enum value through the UI panel. Follow the steps in order; each step produces output consumed by the next.
+This guide walks through every file you must create or edit to add a fully functional transformation mode — from the enum value through the UI panel. Follow the steps in order; each step produces output consumed by the next.
 
 ## Prerequisites
 
 Before starting, read:
 
-- **[Transformation Modes](../architecture/transformation-modes.md)** — understand what a mode is and how the pipeline
-  uses it
-- **[Data Models Reference](../architecture/data-models.md)** — understand `FileModel`, `PreparedFileModel`, and the
-  `@Builder(setterPrefix = "with")` pattern
+- **[Transformation Modes](../architecture/transformation-modes.md)** — understand what a mode is and how the pipeline uses it
+- **[Data Models Reference](../architecture/data-models.md)** — understand `FileModel`, `PreparedFileModel`, and the `@Builder(setterPrefix = "with")` pattern
 
 You also need the project building cleanly:
 
@@ -67,8 +76,7 @@ public enum TransformationMode {
 }
 ```
 
-`TransformationMode` drives compile-time exhaustiveness checking across the codebase. Adding the enum value makes the
-switch statements in Steps 3 and 6 non-exhaustive — the compiler tells you exactly which arms to add.
+`TransformationMode` drives compile-time exhaustiveness checking across the codebase. Adding the enum value makes the switch statements in Steps 3 and 6 non-exhaustive — the compiler tells you exactly which arms to add.
 
 ---
 
@@ -85,6 +93,8 @@ import lombok.Builder;
 import lombok.Value;
 import ua.renamer.app.api.enums.ItemPosition;
 
+import java.util.Objects;
+
 @Value
 @Builder(setterPrefix = "with")
 public class MyModeConfig implements TransformationConfig {
@@ -96,12 +106,8 @@ public class MyModeConfig implements TransformationConfig {
     // Throw IllegalArgumentException — ModeParametersConverter catches it.
     public static class MyModeConfigBuilder {
         public MyModeConfig build() {
-            if (myParameter == null) {
-                throw new IllegalArgumentException("myParameter must not be null");
-            }
-            if (position == null) {
-                throw new IllegalArgumentException("position must not be null");
-            }
+            Objects.requireNonNull(myParameter, "myParameter must not be null");
+            Objects.requireNonNull(position, "position must not be null");
             return new MyModeConfig(myParameter, position);
         }
     }
@@ -110,8 +116,7 @@ public class MyModeConfig implements TransformationConfig {
 
 **Critical rules:**
 
-- `@Builder(setterPrefix = "with")` — **required**. Without it, every builder call site fails to compile (
-  `withMyParameter(...)` → compile error if prefix is wrong).
+- `@Builder(setterPrefix = "with")` — **required**. Without it, every builder call site fails to compile (`withMyParameter(...)` → compile error if prefix is wrong).
 - `implements TransformationConfig` — required for the sealed type hierarchy.
 - No business logic in the config — it is a pure data holder.
 
@@ -133,8 +138,7 @@ public sealed interface TransformationConfig
 
 ### Step 3 — Create the params record
 
-The params record is the UI-layer representation of mode settings. It is distinct from the config because the UI updates
-individual fields interactively; the config is assembled once before pipeline execution.
+The params record is the UI-layer representation of mode settings. It is distinct from the config because the UI updates individual fields interactively; the config is assembled once before pipeline execution.
 
 **File:** `app/api/src/main/java/ua/renamer/app/api/session/MyModeParams.java`
 
@@ -195,26 +199,17 @@ public sealed interface ModeParameters
 }
 ```
 
-**Also update** `ModeParametersConverter` to convert your params to the config. Because `ModeParameters` is sealed, the
-compiler will flag the missing arm immediately:
+**Also update** `ModeParametersConverter` to convert your params to the config. Because `ModeParameters` is sealed, the compiler will flag the missing arm immediately:
 
 **File:** `app/backend/src/main/java/ua/renamer/app/backend/session/ModeParametersConverter.java`
 
 Add the new case to `toConfig()`:
 
 ```java
-case MyModeParams p ->MyModeConfig.
-
-builder()
-        .
-
-withMyParameter(p.myParameter())
-        .
-
-withPosition(p.position())
-        .
-
-build();
+case MyModeParams p -> MyModeConfig.builder()
+        .withMyParameter(p.myParameter())
+        .withPosition(p.position())
+        .build();
 ```
 
 ---
@@ -223,8 +218,7 @@ build();
 
 **File:** `app/core/src/main/java/ua/renamer/app/core/service/transformation/MyModeTransformer.java`
 
-The transformer is stateless, receives one `FileModel` and its config, and always returns a `PreparedFileModel` — never
-throws:
+The transformer is stateless, receives one `FileModel` and its config, and always returns a `PreparedFileModel` — never throws:
 
 ```java
 package ua.renamer.app.core.service.transformation;
@@ -314,23 +308,16 @@ public class MyModeTransformer implements FileTransformationService<MyModeConfig
 Add one line to `configure()`:
 
 ```java
-bind(MyModeTransformer .class).
-
-in(Singleton .class);
+bind(MyModeTransformer.class).in(Singleton.class);
 ```
 
 Place it alongside the other transformer bindings:
 
 ```java
 // Transformers (stateless, can be singletons)
-bind(AddTextTransformer .class).
-
-in(Singleton .class);
-
+bind(AddTextTransformer.class).in(Singleton.class);
 // ... other existing transformers ...
-bind(MyModeTransformer .class).
-
-in(Singleton .class);   // add here
+bind(MyModeTransformer.class).in(Singleton.class);   // add here
 ```
 
 ---
@@ -348,27 +335,18 @@ private final AddTextTransformer addTextTransformer;
 private final MyModeTransformer myModeTransformer;   // add here
 ```
 
-**6b.** Add a `case` arm to the `applyTransformation()` switch. The switch is over `TransformationMode`, so the compiler
-enforces exhaustiveness — the missing arm will be a compile error after Step 1:
+**6b.** Add a `case` arm to the `applyTransformation()` switch. The switch is over `TransformationMode`, so the compiler enforces exhaustiveness — the missing arm will be a compile error after Step 1:
 
 ```java
-case MY_MODE ->{
-        if(!(config instanceof
-MyModeConfig typedConfig)){
-        throw new
-
-IllegalArgumentException(
-                "MY_MODE requires MyModeConfig, got: "+configClassName);
+case MY_MODE -> {
+    if (!(config instanceof MyModeConfig typedConfig)) {
+        throw new IllegalArgumentException("MY_MODE requires MyModeConfig, got: " + configClassName);
     }
-
-yield applyTransformationParallel(
-        fileModels, myModeTransformer, typedConfig, executor, progressCallback);
+    yield applyTransformationParallel(fileModels, myModeTransformer, typedConfig, executor, progressCallback);
 }
 ```
 
-Use `applyTransformationParallel()` for all modes except `NUMBER_FILES`-style modes that require a strict ordering
-across files. If your mode assigns per-file sequential values (like counters), use
-`sequenceTransformer.transformBatch()` instead and document why.
+Use `applyTransformationParallel()` for all modes except `NUMBER_FILES`-style modes that require a strict ordering across files. If your mode assigns per-file sequential values (like counters), use `sequenceTransformer.transformBatch()` instead and document why.
 
 ---
 
@@ -376,8 +354,7 @@ across files. If your mode assigns per-file sequential values (like counters), u
 
 **File:** `app/ui/src/main/resources/fxml/ModeMyMode.fxml`
 
-Use `VBox` as the root. Set `fx:controller` to your controller's fully qualified class name — Guice instantiates the
-controller and JavaFX's `FXMLLoader` links the `@FXML` fields:
+Use `VBox` as the root. Set `fx:controller` to your controller's fully qualified class name — Guice instantiates the controller and JavaFX's `FXMLLoader` links the `@FXML` fields:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -402,8 +379,7 @@ controller and JavaFX's `FXMLLoader` links the `@FXML` fields:
 </VBox>
 ```
 
-Use `%key` references for all user-visible strings. Add the corresponding key to
-`app/ui/src/main/resources/langs/lang.properties` (and translations).
+Use `%key` references for all user-visible strings. Add the corresponding key to `app/ui/src/main/resources/langs/lang.properties` (and translations).
 
 ---
 
@@ -411,8 +387,7 @@ Use `%key` references for all user-visible strings. Add the corresponding key to
 
 **File:** `app/ui/src/main/java/ua/renamer/app/ui/controller/mode/impl/ModeMyModeController.java`
 
-The controller wires FXML controls to the `ModeApi` parameter update mechanism. Guice injects it; Lombok generates the
-`@Inject` constructor:
+The controller wires FXML controls to the `ModeApi` parameter update mechanism. Guice injects it; Lombok generates the `@Inject` constructor:
 
 ```java
 package ua.renamer.app.ui.controller.mode.impl;
@@ -475,11 +450,9 @@ public class ModeMyModeController implements ModeControllerV2Api<MyModeParams>, 
 
 **Rules:**
 
-- Always remove the old listener at the top of `bind()`. The mode panel is reused across mode switches — a stale
-  listener from a previous `bind()` call would fire against the wrong `ModeApi`.
+- Always remove the old listener at the top of `bind()`. The mode panel is reused across mode switches — a stale listener from a previous `bind()` call would fire against the wrong `ModeApi`.
 - `bind()` is called on the JavaFX Application Thread. Do not block it.
-- If your controller has no Guice-injected dependencies, `@RequiredArgsConstructor` still works — Lombok generates an
-  empty constructor with `@Inject`.
+- If your controller has no Guice-injected dependencies, `@RequiredArgsConstructor` still works — Lombok generates an empty constructor with `@Inject`.
 
 ---
 
@@ -495,8 +468,7 @@ Three edits, all in the UI module.
 MODE_MY_MODE("ModeMyMode.fxml"),
 ```
 
-The enum value name must match the `TransformationMode` name by convention (`MODE_` prefix + the mode name), and the
-string must match the FXML filename created in Step 7 exactly.
+The enum value name must match the `TransformationMode` name by convention (`MODE_` prefix + the mode name), and the string must match the FXML filename created in Step 7 exactly.
 
 **9b. Bind the controller class**
 
@@ -505,9 +477,7 @@ string must match the FXML filename created in Step 7 exactly.
 In `bindViewControllers()`, add:
 
 ```java
-bind(ModeMyModeController .class).
-
-in(Singleton .class);
+bind(ModeMyModeController.class).in(Singleton.class);
 ```
 
 **9c. Register in the mode view registry**
@@ -515,7 +485,6 @@ in(Singleton .class);
 In `provideModeViewRegistry()`, add the controller as a parameter and register it:
 
 ```java
-
 @Provides
 @Singleton
 public ModeViewRegistry provideModeViewRegistry(
@@ -533,8 +502,7 @@ public ModeViewRegistry provideModeViewRegistry(
 }
 ```
 
-`loadAndRegister()` calls `FXMLLoader.load()` once at startup. The loaded `Parent` is reused for every subsequent mode
-switch — FXML is not reloaded at runtime.
+`loadAndRegister()` calls `FXMLLoader.load()` once at startup. The loaded `Parent` is reused for every subsequent mode switch — FXML is not reloaded at runtime.
 
 ---
 
@@ -632,8 +600,7 @@ Run the full pipeline from the `app/` directory:
 ../scripts/ai-build.sh
 ```
 
-This runs in order: compile → Checkstyle → PMD → SpotBugs → all tests. All four must pass before the mode is considered
-done.
+This runs in order: compile → Checkstyle → PMD → SpotBugs → all tests. All four must pass before the mode is considered done.
 
 If the build fails, check these common causes first (see also the Common Mistakes section below).
 
@@ -685,7 +652,5 @@ cd app/ && mvn test -q -ff -Dai=true -Dtest=MyModeTransformerTest#transform_with
 ## Cross-References
 
 - **[Transformation Modes](../architecture/transformation-modes.md)** — per-mode documentation for all 10 existing modes
-- **[Dependency Injection](../architecture/dependency-injection.md)** — how `DIV2ServiceModule` and `DIUIModule` wiring
-  works in detail
-- **[Data Models Reference](../architecture/data-models.md)** — `FileModel`, `PreparedFileModel`,
-  `@Builder(setterPrefix = "with")` pattern
+- **[Dependency Injection](../architecture/dependency-injection.md)** — how `DIV2ServiceModule` and `DIUIModule` wiring works in detail
+- **[Data Models Reference](../architecture/data-models.md)** — `FileModel`, `PreparedFileModel`, `@Builder(setterPrefix = "with")` pattern

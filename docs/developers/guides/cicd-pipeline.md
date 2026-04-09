@@ -1,7 +1,21 @@
+---
+title: "CI/CD Pipeline"
+description: "GitHub Actions workflows — build, test, lint, and release pipeline configuration"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/ui"
+  - "app/core"
+  - "app/api"
+  - "app/backend"
+  - "app/metadata"
+  - "app/utils"
+---
+
 # CI/CD Pipeline Guide
 
-This guide covers the three GitHub Actions workflows, how they trigger, how releases are versioned, and the day-to-day
-developer workflow.
+This guide covers the three GitHub Actions workflows, how they trigger, how releases are versioned, and the day-to-day developer workflow.
 
 ---
 
@@ -18,10 +32,10 @@ Three pipelines handle the full lifecycle:
 ```mermaid
 flowchart TD
     A["Push to feature branch / PR to main"] --> CI["ci.yml\ncompile + test\nubuntu-latest\nTemurin JDK 25"]
-    B["Push to main\n(no tags)"] --> BT["build.yml\nbuild-and-test\nubuntu-latest"]
+    B["Push to main\n(no tags)"] --> BT["build-and-test\nubuntu-latest"]
     BT --> BM["package-macos\nmacos-13 x86_64\nmacos-14 aarch64\nTemurin"]
     BT --> BW["package-windows\nwindows-latest x86_64\nLiberica Full"]
-    BT --> BL["package-linux\nubuntu-latest x86_64 Temurin\nubuntu-24.04-arm aarch64 any JDK 25"]
+    BT --> BL["package-linux\nubuntu-latest x86_64 Temurin\nubuntu-24.04-arm aarch64 Liberica Full"]
     BM --> BA["Artifacts (14 days)\n.dmg + .tar.gz per arch\n.zip (Windows)\n.deb + .tar.gz per arch (Linux)"]
     BW --> BA
     BL --> BA
@@ -62,8 +76,7 @@ No packaging, no artifacts. The sole purpose is validation. If this fails, the P
 
 **Trigger:** Push to `main`. Tags are excluded via `tags-ignore: '**'` — `release.yml` handles those.
 
-**Purpose:** Prove that every commit merged to `main` is packageable on all target platforms. Produces snapshot
-artifacts available for 14 days for manual testing.
+**Purpose:** Prove that every commit merged to `main` is packageable on all target platforms. Produces snapshot artifacts available for 14 days for manual testing.
 
 ### Job structure
 
@@ -78,32 +91,26 @@ artifacts available for 14 days for manual testing.
 |----------------------|-------------------------------------|----------------------------|-----------------------------|
 | `package-macos` (×2) | `macos-13`, `macos-14`              | Temurin                    | `.dmg` + `.tar.gz` per arch |
 | `package-windows`    | `windows-latest`                    | Liberica Full (`jdk+fx`)   | `.zip` (app-image)          |
-| `package-linux` (×2) | `ubuntu-latest`, `ubuntu-24.04-arm` | Temurin (any JDK 25 works) | `.deb` + `.tar.gz` per arch |
+| `package-linux` (×2) | `ubuntu-latest`, `ubuntu-24.04-arm` | Temurin (x86_64), Liberica Full (aarch64) | `.deb` + `.tar.gz` per arch |
 
-**APP_VERSION:** Hardcoded placeholder `2.0.0` in the workflow env. Snapshot builds are not versioned from a tag — they
-are for verification only, not distribution.
+**APP_VERSION:** Hardcoded placeholder `2.0.0` in the workflow env. Snapshot builds are not versioned from a tag — they are for verification only, not distribution.
 
-**Artifacts retained 14 days** under names: `macos-x86_64`, `macos-aarch64`, `windows-x86_64`, `linux-x86_64`,
-`linux-aarch64`.
+**Artifacts retained 14 days** under names: `macos-x86_64`, `macos-aarch64`, `windows-x86_64`, `linux-x86_64`, `linux-aarch64`.
 
-**Why any JDK works on Linux:** jpackage on Linux resolves JavaFX from the modular JARs already in
-`app/ui/target/libs/` — no `.jmod` files from the JDK itself are needed. This is the same mechanism macOS uses.
-Verified with BellSoft Liberica, Amazon Corretto, Eclipse Temurin, and Ubuntu OpenJDK.
+**JDK distribution per platform:**
 
-**Why any x64 JDK works on Windows:** Maven resolves JavaFX as platform-specific JARs from Maven Central — the same
-mechanism used on macOS and Linux. No `.jmod` files from the JDK are needed. The CI uses Liberica Full (`jdk+fx`)
-because it is a known-good x64 distribution, but Temurin or Zulu would also work. Windows ARM64 is not supported —
-OpenJFX does not publish win-aarch64 Maven artifacts.
+- **macOS (both architectures):** Temurin. jpackage resolves JavaFX from the modular JARs already in `app/ui/target/libs/`.
+- **Windows (x86_64 only):** Liberica Full (`jdk+fx`). Maven resolves JavaFX as platform-specific JARs from Maven Central, but Windows is more conservative with a full distribution. Temurin or Zulu would also work, but Liberica is known-good. Windows ARM64 is unsupported — OpenJFX does not publish `win-aarch64` Maven artifacts.
+- **Linux (x86_64):** Temurin. jpackage resolves JavaFX from modular JARs in `app/ui/target/libs/`.
+- **Linux (aarch64):** Liberica Full (`jdk+fx`). Runner constraints require this distribution; jpackage behavior is otherwise the same as x86_64.
 
 ---
 
 ## 4. Release Pipeline (`release.yml`)
 
-**Trigger:** Tag push matching `v[0-9]+.[0-9]+.[0-9]+` (stable) or `v[0-9]+.[0-9]+.[0-9]+-*` (pre-release, e.g.
-`v2.1.0-rc1`).
+**Trigger:** Tag push matching `v[0-9]+.[0-9]+.[0-9]+` (stable) or `v[0-9]+.[0-9]+.[0-9]+-*` (pre-release, e.g. `v2.1.0-rc1`).
 
-**Purpose:** Versioned, signed-off release — extract version from the tag, inject it into Maven, build, package all
-platforms, publish a GitHub Release with all installer artifacts.
+**Purpose:** Versioned, signed-off release — extract version from the tag, inject it into Maven, build, package all platforms, publish a GitHub Release with all installer artifacts.
 
 ### Job flow
 
@@ -122,8 +129,7 @@ Two checks run before any build work:
    git fetch origin main
    git merge-base --is-ancestor ${{ github.sha }} origin/main
    ```
-   If the tagged commit is not reachable from `main`, the job fails immediately. This prevents accidental releases from
-   feature branches.
+   If the tagged commit is not reachable from `main`, the job fails immediately. This prevents accidental releases from feature branches.
 
 2. **Version extraction:**
    ```bash
@@ -135,8 +141,7 @@ Two checks run before any build work:
 
 ### Job 2 — `build-and-test`
 
-1. `mvn versions:set -DnewVersion=2.1.0 -DgenerateBackupFiles=false` — updates `pom.xml` in the CI workspace only. *
-   *This change is never committed.**
+1. `mvn versions:set -DnewVersion=2.1.0 -DgenerateBackupFiles=false` — updates `pom.xml` in the CI workspace only. **This change is never committed.**
 2. `mvn clean package` — builds with the injected version; JARs include the release version number.
 3. Uploads `app/ui/target/libs/` as `app-libs` (retained 1 day).
 
@@ -146,21 +151,18 @@ Same platform matrix as `build.yml`. Each job:
 
 - Downloads `app-libs`
 - Runs the platform packaging script with `APP_VERSION` set to `JPACKAGE_VERSION` from the `verify` job
-- Uploads artifacts to `release-macos-{arch}`, `release-windows-x86_64`, `release-linux-{arch}` (retained 1 day —
-  consumed by `create-release`)
+- Uploads artifacts to `release-macos-{arch}`, `release-windows-x86_64`, `release-linux-{arch}` (retained 1 day — consumed by `create-release`)
 
 ### Job 6 — `create-release`
 
-Downloads all `release-*` artifacts, collects `.dmg`, `.zip`, `.deb`, `.tar.gz` files, then calls
-`softprops/action-gh-release@v2`:
+Downloads all `release-*` artifacts, collects `.dmg`, `.zip`, `.deb`, `.tar.gz` files, then calls `softprops/action-gh-release@v2`:
 
 - `name`: `Release v2.1.0-rc1`
 - `prerelease`: `true` if the tag name contains `-` (e.g. `-rc1`, `-beta.1`)
 - `generate_release_notes`: `true` — GitHub auto-generates notes from merged PRs
 - `files`: all collected installer files
 
-**Required permissions:** `contents: write` is declared at the workflow level. No repository secrets needed —
-`GITHUB_TOKEN` is used automatically.
+**Required permissions:** `contents: write` is declared at the workflow level. No repository secrets needed — `GITHUB_TOKEN` is used automatically.
 
 ### Release artifact inventory
 
@@ -176,13 +178,9 @@ Downloads all `release-*` artifacts, collects `.dmg`, `.zip`, `.deb`, `.tar.gz` 
 | `Renamer-{v}-linux-aarch64.tar.gz` | Linux arm64         | Portable             |
 | `renamer_{v}_arm64.deb`            | Linux arm64         | Installer            |
 
-macOS DMGs are renamed inline in the YAML to append `-macos-{arch}` before upload, preventing filename collisions when
-both arch artifacts are collected by `create-release`. `.deb` filenames are generated by jpackage with the host arch
-already embedded — no renaming needed.
+macOS DMGs are renamed inline in the YAML to append `-macos-{arch}` before upload, preventing filename collisions when both arch artifacts are collected by `create-release`. `.deb` filenames are generated by jpackage with the host arch already embedded — no renaming needed.
 
-No code signing is applied. macOS Gatekeeper warning on first launch is documented in
-[`cross-platform-notes.md`](cross-platform-notes.md) (Section 3) and [`README.md`](../../../README.md) (Download →
-macOS).
+No code signing is applied. macOS Gatekeeper warning on first launch is documented in [`cross-platform-notes.md`](cross-platform-notes.md) (Section 3) and [`README.md`](../../../README.md) (Download → macOS).
 
 ---
 
@@ -190,8 +188,7 @@ macOS).
 
 **Git tags are the single source of truth for the release version.**
 
-During development, `pom.xml` carries a static placeholder version (`2.0.0`). This version is used as-is for local
-builds, feature-branch CI, and main-branch snapshot builds. It has no semantic meaning.
+During development, `pom.xml` carries a static placeholder version (`2.0.0`). This version is used as-is for local builds, feature-branch CI, and main-branch snapshot builds. It has no semantic meaning.
 
 At release time:
 
@@ -222,11 +219,9 @@ GitHub Release "Release v2.1.0"       (assets attached, release notes generated)
 | `v2.1.0-rc1`    | Release candidate | `2.1.0`          | Yes                |
 | `v2.1.0-beta.1` | Beta              | `2.1.0`          | Yes                |
 
-The pre-release suffix is stripped for jpackage (which requires `X.Y.Z`) but preserved in the GitHub Release name. A tag
-containing `-` causes `prerelease: true` in the GitHub Release.
+The pre-release suffix is stripped for jpackage (which requires `X.Y.Z`) but preserved in the GitHub Release name. A tag containing `-` causes `prerelease: true` in the GitHub Release.
 
-**pom.xml is never committed with a release version.** The tag is the permanent, immutable record of what was released.
-This keeps git history clean and avoids CI-generated version-bump commits.
+**pom.xml is never committed with a release version.** The tag is the permanent, immutable record of what was released. This keeps git history clean and avoids CI-generated version-bump commits.
 
 ---
 
@@ -296,8 +291,8 @@ git push origin v2.1.1
 
 | Symptom                                  | Likely cause                                                    | Fix                                                                                        |
 |------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| `package-linux` arm64 fails on jpackage  | JDK 25 not installed or wrong version                           | Any JDK 25 vendor works on Linux; verify `java -version` shows 25.x and Maven is on `PATH` |
-| `package-windows` fails on jpackage      | ARM64 Windows JDK selected, or no JavaFX artifacts for platform | Use an x64 (amd64) JDK; OpenJFX has no win-aarch64 Maven artifacts. Any x64 JDK 25 works.  |
+| `package-linux` arm64 fails on jpackage  | JDK 25 not installed or wrong version                           | Liberica Full for arm64 is configured in workflow; verify runner has internet access       |
+| `package-windows` fails on jpackage      | ARM64 Windows JDK selected, or no JavaFX artifacts for platform | Use an x64 (amd64) JDK; OpenJFX has no win-aarch64 Maven artifacts. Liberica Full works.   |
 | `.deb` step skipped with warning         | `fakeroot` not installed                                        | The Linux job installs `fakeroot` via `apt-get` — verify this step is present              |
 | Artifact download fails in packaging job | `build-and-test` job failed or artifact expired                 | Check `build-and-test` job logs; artifact retention is 1 day                               |
 
@@ -309,16 +304,3 @@ git push origin v2.1.1
 | `verify` fails: version extraction error                        | Tag format doesn't match pattern        | Tag must match `v[0-9]+.[0-9]+.[0-9]+` (with optional `-suffix`)                     |
 | `build-and-test` fails                                          | Tests don't pass with injected version  | Ensure main branch CI is green before tagging                                        |
 | `create-release` finds no files                                 | One or more packaging jobs failed       | Check individual `package-*` job logs; `fail-fast: false` means other jobs still run |
-
-### Legacy workflow (`build-and-release.yml`)
-
-`build-and-release.yml` is the previous monolithic workflow. It triggers on branches and tags matching `*-release-*` or
-`*-snapshot-*`. **It is deprecated and should be deleted** — the three-workflow design above supersedes it. If you see
-unexpected CI runs on `*-release-*` branches, this legacy workflow is still active.
-
-To remove it:
-
-```bash
-git rm .github/workflows/build-and-release.yml
-git commit -m "Remove deprecated build-and-release.yml workflow"
-```

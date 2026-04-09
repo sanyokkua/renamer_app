@@ -1,3 +1,9 @@
+---
+name: Project Overview
+description: System architecture, module responsibilities, JPMS design, and tech stack for the Renamer App
+type: architecture
+---
+
 # Project Overview
 
 ## Overview
@@ -74,18 +80,19 @@ in `backend` that accidentally imports a JavaFX type produces a compile error. T
 - The session layer can be reused by a headless CLI or server process without change
 - The dependency direction is strict: `ui` depends on `backend`, never the reverse
 
-### Intentionally Unexported Packages
+### Exported Packages
 
-Several packages are compiled into their module but deliberately excluded from `exports`:
+All modules export their public API packages explicitly in `module-info.java`. The following packages are intentionally
+opened (via `opens` directives) but not exported, creating a read-only boundary that preserves encapsulation while
+allowing Guice reflective access:
 
-| Module     | Unexported package area                                                        | Reason                                                                                                                          |
-|------------|--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| `core`     | Internal transformer implementations (`service.transformation.*` impl classes) | Public API is `FileTransformationService` interface in `api`; callers never instantiate transformers directly                   |
-| `metadata` | Internal extraction strategy details                                           | `CategoryFileMetadataExtractorResolver` is the single public entry point; format-specific strategies are implementation details |
-| `backend`  | Internal session state fields                                                  | Session mutations go through `RenameSessionService`; raw state access would bypass invariant checks                             |
-| `api`      | `exception` package                                                            | Exceptions are implementation-private; the no-throw contract means callers never catch them directly                            |
-
-The general rule: if downstream modules only need an interface, the concrete class is unexported.
+| Module     | Export Pattern                                                                                 | Rationale                                                                                                            |
+|------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `api`      | All packages exported: enums, exceptions, interfaces, models, services, session, settings       | Contracts and models are cross-module — full API access required                                                     |
+| `utils`    | All packages exported: root, text, datetime, file                                              | Utility functions consumed across all modules — no internal details                                                  |
+| `core`     | Exports public services and implementations: config, service, service.impl, service.transformation, mapper, service.validator | Both public APIs and transformer implementations are exported for direct use                               |
+| `metadata` | Exports entire extraction hierarchy: config, extractor, extractor.strategy and all subpackages | Format-specific strategy classes are public for extensibility; `CategoryFileMetadataExtractorResolver` is the entry point |
+| `backend`  | Exports service, settings, service.impl, session, config                                      | Services and session are public; internal mutations go through service APIs                                          |
 
 ---
 

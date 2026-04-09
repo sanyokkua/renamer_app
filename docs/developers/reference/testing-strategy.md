@@ -1,3 +1,15 @@
+---
+title: "Testing Strategy"
+description: "Test framework, conventions, test data infrastructure, generation scripts, and coverage reporting for the Renamer App"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/core"
+  - "app/backend"
+  - "app/metadata"
+---
+
 # Testing Strategy
 
 This document describes the test framework, conventions, and test data infrastructure for the Renamer App.
@@ -24,52 +36,30 @@ Each library contributes specific assertion patterns:
 
 ```java
 // AssertJ — fluent, readable assertions (preferred for most cases)
-assertThat(result.getNewName()).
+assertThat(result.getNewName()).isEqualTo("prefix_document");
 
-isEqualTo("prefix_document");
+assertThat(results)
+    .hasSize(3)
+    .extracting(PreparedFileModel::getNewName)
+    .containsExactly("a","b","c");
 
-assertThat(results).
-
-hasSize(3).
-
-extracting(PreparedFileModel::getNewName)
-    .
-
-containsExactly("a","b","c");
-
-assertThat(result.getCreationDate()).
-
-isPresent()
-    .
-
-hasValueSatisfying(dt ->
-
-assertThat(dt.getYear()).
-
-isEqualTo(2025));
+assertThat(result.getCreationDate())
+    .isPresent()
+    .hasValueSatisfying(dt ->
+        assertThat(dt.getYear()).isEqualTo(2025));
 
 // AssertJ — exception assertion
-assertThatThrownBy(() ->
-
-method(null))
-        .
-
-isInstanceOf(IllegalArgumentException .class)
-    .
-
-hasMessageContaining("must not be null");
+assertThatThrownBy(() -> method(null))
+    .isInstanceOf(IllegalArgumentException.class)
+    .hasMessageContaining("must not be null");
 
 // JUnit 5 — exception assertion (when exact type and stacktrace matter)
-assertThrows(NullPointerException .class, () ->transformer.
-
-transform(null,config));
+assertThrows(NullPointerException.class, () ->
+    transformer.transform(null, config));
 
 // Mockito — verification
 var mock = mock(FilesOperations.class);
-
-verify(mock, times(1)).
-
-move(any(),any());
+verify(mock, times(1)).move(any(), any());
 ```
 
 ---
@@ -88,11 +78,9 @@ testProcessItem_withNullExtension_shouldPreserveEmptyExtension
 
 ### AAA Structure (Arrange-Act-Assert)
 
-All tests follow an implicit Arrange-Act-Assert structure. When the logical sections are not immediately obvious from
-the code, include `// Given`, `// When`, `// Then` comment headers:
+All tests follow an implicit Arrange-Act-Assert structure. When the logical sections are not immediately obvious from the code, include `// Given`, `// When`, `// Then` comment headers:
 
 ```java
-
 @Test
 void testAddTextTransformer_whenPrefixAndEmptyName_shouldOnlyAddPrefix() {
     // Given
@@ -126,8 +114,7 @@ void testAddTextTransformer_whenPrefixAndEmptyName_shouldOnlyAddPrefix() {
 | All transformers (`AddTextTransformer`, etc.)    | Instantiate directly | Pure logic; no external dependencies                 |
 | `String`, `LocalDateTime`, collections           | Instantiate directly | Standard library types                               |
 
-**Never mock transformers or value objects** — mocking them obscures the actual behavior under test. Instead,
-instantiate them and test their methods directly.
+**Never mock transformers or value objects** — mocking them obscures the actual behavior under test. Instead, instantiate them and test their methods directly.
 
 ### V2 Builder Syntax (Critical)
 
@@ -157,21 +144,15 @@ AddTextConfig config = AddTextConfig.builder()
         .build();
 
 // WRONG — compile error, "with" prefix is required
-FileModel.
-
-builder().
-
-file(f).
-
-name("x").
-
-build();  // ❌ Compile error
+FileModel.builder()
+    .file(f)
+    .name("x")
+    .build();  // ❌ Compile error
 ```
 
 ### @TempDir for Filesystem Tests
 
-Annotate a `Path` or `File` field with `@TempDir` for tests that create real files. JUnit 5 creates the directory before
-each test and cleans it up automatically:
+Annotate a `Path` or `File` field with `@TempDir` for tests that create real files. JUnit 5 creates the directory before each test and cleans it up automatically:
 
 ```java
 class FileRenameTest {
@@ -199,12 +180,9 @@ class FileRenameTest {
 ### Quality Rules
 
 - **No `Thread.sleep()`** — Use Awaitility or polling loops for async assertions
-- **No control flow in test methods** — Use `@ParameterizedTest` with `@MethodSource` or `@CsvSource` instead of `if`/
-  `for`/`while`
-- **One logical concept per test method** — Multiple assertions on the same output are OK; multiple independent
-  scenarios are not
-- **Hard-coded expected values only** — Never re-derive the expected value using production logic (defeats the purpose
-  of the test)
+- **No control flow in test methods** — Use `@ParameterizedTest` with `@MethodSource` or `@CsvSource` instead of `if`/`for`/`while`
+- **One logical concept per test method** — Multiple assertions on the same output are OK; multiple independent scenarios are not
+- **Hard-coded expected values only** — Never re-derive the expected value using production logic (defeats the purpose of the test)
 - **`@Disabled` must include a reason** — `@Disabled("JIRA-123: description")`
 
 ---
@@ -217,14 +195,11 @@ Integration tests exercise multiple components together with real files and I/O.
 
 **Location:** `app/backend/src/test/java/ua/renamer/app/backend/config/DIBackendModuleTest.java`
 
-Verifies that all Guice bindings in `DIBackendModule` resolve at injector-creation time and that `@Singleton` bindings
-return the same instance on repeated calls. Uses a real injector — not mocks.
+Verifies that all Guice bindings in `DIBackendModule` resolve at injector-creation time and that `@Singleton` bindings return the same instance on repeated calls. Uses a real injector — not mocks.
 
-The test supplements `DIBackendModule` with a stub binding for `StatePublisher`, which is normally provided by
-`DIUIModule` (the JavaFX layer):
+The test supplements `DIBackendModule` with a stub binding for `StatePublisher`, which is normally provided by `DIUIModule` (the JavaFX layer):
 
 ```java
-
 @BeforeEach
 void setUp() {
     injector = Guice.createInjector(
@@ -296,15 +271,13 @@ Extends `BaseTransformationIntegrationTest`, which provides:
 
 #### Additional Scenarios
 
-- **Async execution** — `orchestrator.executeAsync()` returns `CompletableFuture<List<RenameResult>>`; verified with
-  `future.get()`
+- **Async execution** — `orchestrator.executeAsync()` returns `CompletableFuture<List<RenameResult>>`; verified with `future.get()`
 - **Progress callback** — `progressMax.get() > 0` confirms callback was invoked during execution
 - **Null callback** — pipeline handles `null` callback without throwing `NullPointerException`
 - **Mixed results** — 2 valid files + 1 non-existent file → 2 successes + 1 error; both counted correctly
 - **Physical verification** — asserts new files exist on disk and old paths are gone
 - **Large batch** — 100 files sequentially numbered; all 100 renamed and verified
-- **Result metadata** — each `RenameResult` carries `getPreparedFile()`, `getStatus()`, `getExecutedAt()`,
-  `getOriginalFileName()`, `getNewFileName()`; verified non-null for each result
+- **Result metadata** — each `RenameResult` carries `getPreparedFile()`, `getStatus()`, `getExecutedAt()`, `getOriginalFileName()`, `getNewFileName()`; verified non-null for each result
 
 ---
 
@@ -344,8 +317,7 @@ Each format has files covering 7 metadata states, named by convention:
 
 **Location:** `app/backend/src/test/resources/integration-test-data/`
 
-19 semantically named files + `manifest.json` (committed to git). Used by `DIBackendModuleTest` and full pipeline
-integration tests that need predictable, reproducible file content and metadata.
+18 semantically named files + `manifest.json` (committed to git). Used by `DIBackendModuleTest` and full pipeline integration tests that need predictable, reproducible file content and metadata.
 
 **Directory Layout:**
 
@@ -415,9 +387,7 @@ Each file entry is keyed by relative path and contains static metadata:
 
 **Critical Note**
 
-`content_creation_date` is the only reliable metadata field — EXIF-embedded values survive file copies and file system
-operations. `fs_creation_date` and `fs_modification_date` are unreliable and MUST NOT be used in assertions. These
-filesystem-level timestamps change when files are copied or moved.
+`content_creation_date` is the only reliable metadata field — EXIF-embedded values survive file copies and file system operations. `fs_creation_date` and `fs_modification_date` are unreliable and MUST NOT be used in assertions. These filesystem-level timestamps change when files are copied or moved.
 
 ---
 
@@ -428,8 +398,7 @@ filesystem-level timestamps change when files are copied or moved.
 **Location:** `tools/generate_test_data.py`  
 **Output:** `tools/test-data/` (not committed to git)
 
-Generates 93 real media files with various metadata states. Output is copied manually to
-`app/core/src/test/resources/test-data/` to update unit test fixtures.
+Generates 93 real media files with various metadata states. Output is copied manually to `app/core/src/test/resources/test-data/` to update unit test fixtures.
 
 **Prerequisites:**
 
@@ -462,9 +431,7 @@ python3 tools/generate_test_data.py
 **Location:** `tools/generate_integration_test_data.py`  
 **Output:** `app/backend/src/test/resources/integration-test-data/` (committed to git)
 
-Generates a fixed set of 19 semantically named files (not a scenario matrix). The script is idempotent: re-running
-overwrites the output directory with identical content and regenerates `manifest.json`. Total output is kept under 10
-MB.
+Generates a fixed set of 18 semantically named files (not a scenario matrix). The script is idempotent: re-running overwrites the output directory with identical content and regenerates `manifest.json`. Total output is kept under 10 MB.
 
 **Prerequisites:**
 
@@ -512,8 +479,7 @@ mvn test -q -ff -Dai=true -pl app/core
 
 ## 7. Coverage
 
-JaCoCo `0.8.14` is configured for reporting only — there is no enforced coverage minimum in the build. Coverage reports
-are generated on demand and are not checked during `mvn verify`.
+JaCoCo `0.8.14` is configured for reporting only — there is no enforced coverage minimum in the build. Coverage reports are generated on demand and are not checked during `mvn verify`.
 
 **Generate the HTML report:**
 
@@ -530,5 +496,4 @@ After running the command above, reports are available at:
 - `app/backend/target/site/jacoco/index.html`
 - `app/metadata/target/site/jacoco/index.html`
 
-**Note:** The `app/ui` module is excluded from coverage measurement. JavaFX controllers require a running FX toolkit and
-are tested through manual or integration-level testing rather than JaCoCo instrumentation.
+**Note:** The `app/ui` module is excluded from coverage measurement. JavaFX controllers require a running FX toolkit and are tested through manual or integration-level testing rather than JaCoCo instrumentation.

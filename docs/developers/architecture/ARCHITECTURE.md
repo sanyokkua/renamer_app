@@ -1,3 +1,8 @@
+---
+title: Architecture Overview
+description: System design, pipeline architecture, dependency injection, and data flow for the Renamer App
+---
+
 # Renamer App — Architecture Overview
 
 ## Table of Contents
@@ -468,5 +473,5 @@ public class MyService {
 |------------------------------------------------------|---------------------------------------------------------------|
 | [AI Agent Setup](../reference/ai-agent-setup.md)     | Claude Code agents, skills, MCP servers, development workflow |
 | [Testing Strategy](../reference/testing-strategy.md) | Test conventions, integration tests, coverage                 |
-| [UI Architecture](../reference/ui-architecture.md)   | JavaFX layout, FXML structure, CSS system, InjectQualifiers   |
+| [UI Architecture](../reference/ui-architecture.md)   | JavaFX layout, FXML structure, CSS system, mode controllers   |
 | [Settings System](../reference/settings-system.md)   | Language and log level settings                               |

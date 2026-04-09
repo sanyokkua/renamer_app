@@ -1,3 +1,16 @@
+---
+title: "Data Models"
+description: "V2 immutable data models, builders, enums, and config classes used throughout the pipeline"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/api"
+  - "app/core"
+  - "app/backend"
+  - "app/metadata"
+---
+
 # Data Models — Renamer App Technical Reference
 
 This document describes the core data structures in the Renamer App V2 pipeline: immutable models, their fields,
@@ -25,8 +38,8 @@ The V2 pipeline flows through four phases, producing a sequence of immutable mod
 |---------------------------------|---------------------|--------------------------------|------------------------------------------|------------------------------------------------------|
 | Phase 1: Metadata Extraction    | `File`              | `FileModel`                    | `ThreadAwareFileMapper`                  | Parallel, virtual threads                            |
 | Phase 2: Transformation         | `FileModel`         | `PreparedFileModel`            | Transformer (e.g., `AddTextTransformer`) | Parallel (most modes); sequential for `NUMBER_FILES` |
-| Phase 2.5: Duplicate Resolution | `PreparedFileModel` | `PreparedFileModel` (modified) | `DuplicateNameResolverImpl`              | Sequential; appends `_1`, `_2` suffixes              |
-| Phase 3: Physical Rename        | `PreparedFileModel` | `RenameResult`                 | `RenameExecutionServiceImpl`             | Sequential, depth-ordered                            |
+| Phase 2.5: Duplicate Resolution | `PreparedFileModel` | `PreparedFileModel` (modified) | `DuplicateNameResolverImpl`               | Sequential; appends `_1`, `_2` suffixes              |
+| Phase 3: Physical Rename        | `PreparedFileModel` | `RenameResult`                 | `RenameExecutionServiceImpl`              | Sequential, depth-ordered                            |
 
 Model classes reside in `ua.renamer.app.api.model` and are exported via JPMS in `app/api/module-info.java`.
 
@@ -285,7 +298,6 @@ All four model classes and all ten config classes use a consistent Lombok-genera
 ### @Value Annotation
 
 ```java
-
 @Value
 @Builder(setterPrefix = "with")
 public class FileModel {
@@ -408,7 +420,6 @@ The `api` module defines 15 enums across two packages plus one functional interf
 Located in `ua.renamer.app.api.enums`, this is a `@FunctionalInterface` (not an enum):
 
 ```java
-
 @FunctionalInterface
 public interface EnumWithExample {
     String getExampleString();
@@ -432,7 +443,7 @@ These 13 enums drive transformation logic and UI presentation.
 | `ItemPosition`                | 2     | `BEGIN`, `END`                                                                                                                                                                   | Where to insert/remove text (used by `ADD_TEXT`, `REMOVE_TEXT`, `ADD_FOLDER_NAME`)                                                                                                  |
 | `ItemPositionExtended`        | 3     | `BEGIN`, `END`, `EVERYWHERE`                                                                                                                                                     | Position for `REPLACE_TEXT` mode; `EVERYWHERE` replaces all occurrences                                                                                                             |
 | `ItemPositionWithReplacement` | 3     | `BEGIN`, `END`, `REPLACE`                                                                                                                                                        | Position for `ADD_DATETIME` and `ADD_DIMENSIONS`; `REPLACE` overwrites the entire filename                                                                                          |
-| `SortSource`                  | 8     | `FILE_NAME`, `FILE_PATH`, `FILE_SIZE`, `FILE_CREATION_DATETIME`, `FILE_MODIFICATION_DATETIME`, `FILE_CONTENT_CREATION_DATETIME`, `IMAGE_WIDTH`, `IMAGE_HEIGHT`                   | Sort order for `NUMBER_FILES` mode; determines which file receives index 1. Memory note: `SortSource` is intentional behavior; only per-folder counting was the bug. Do not modify. |
+| `SortSource`                  | 8     | `FILE_NAME`, `FILE_PATH`, `FILE_SIZE`, `FILE_CREATION_DATETIME`, `FILE_MODIFICATION_DATETIME`, `FILE_CONTENT_CREATION_DATETIME`, `IMAGE_WIDTH`, `IMAGE_HEIGHT`                   | Sort order for `NUMBER_FILES` mode; determines which file receives index 1                                                                                                          |
 | `TextCaseOptions`             | 8     | `CAMEL_CASE`, `PASCAL_CASE`, `SNAKE_CASE`, `SNAKE_CASE_SCREAMING`, `KEBAB_CASE`, `UPPERCASE`, `LOWERCASE`, `TITLE_CASE`                                                          | Target case style in `CHANGE_CASE` mode. Implements `EnumWithExample`.                                                                                                              |
 | `TimeFormat`                  | 21    | `DO_NOT_USE_TIME`, `HH_MM_SS_24_TOGETHER`, `HH_MM_24_WHITE_SPACED`, `HH_MM_SS_AM_PM_UNDERSCORED`, ...                                                                            | Time portion pattern in `ADD_DATETIME` mode (24-hour and 12-hour AM/PM variants). Implements `EnumWithExample`. Methods: `getExampleString()`, `getFormatter()`                     |
 | `TruncateOptions`             | 3     | `REMOVE_SYMBOLS_IN_BEGIN`, `REMOVE_SYMBOLS_FROM_END`, `TRUNCATE_EMPTY_SYMBOLS`                                                                                                   | How `TRIM_NAME` mode removes characters                                                                                                                                             |
@@ -441,10 +452,10 @@ These 13 enums drive transformation logic and UI presentation.
 
 These 2 enums represent data states passed through the pipeline.
 
-| Enum                 | Count | Values                                                                                                                                                         | Purpose                                                                                        |
-|----------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| `TransformationMode` | 10    | `ADD_TEXT`, `REMOVE_TEXT`, `REPLACE_TEXT`, `CHANGE_CASE`, `ADD_DATETIME`, `ADD_DIMENSIONS`, `NUMBER_FILES`, `ADD_FOLDER_NAME`, `TRIM_NAME`, `CHANGE_EXTENSION` | The currently active rename mode; used by the orchestrator to route to the correct transformer |
-| `RenameStatus`       | 5     | `SUCCESS`, `SKIPPED`, `ERROR_EXTRACTION`, `ERROR_TRANSFORMATION`, `ERROR_EXECUTION`                                                                            | Final outcome of Phase 3 physical rename; set by `RenameExecutionServiceImpl`                  |
+| Enum                 | Count | Values                                                                                                                                                         | Purpose                                                                        |
+|----------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| `TransformationMode` | 10    | `ADD_TEXT`, `REMOVE_TEXT`, `REPLACE_TEXT`, `CHANGE_CASE`, `ADD_DATETIME`, `ADD_DIMENSIONS`, `NUMBER_FILES`, `ADD_FOLDER_NAME`, `TRIM_NAME`, `CHANGE_EXTENSION` | Currently active rename mode; used by orchestrator to route to correct transformer |
+| `RenameStatus`       | 5     | `SUCCESS`, `SKIPPED`, `ERROR_EXTRACTION`, `ERROR_TRANSFORMATION`, `ERROR_EXECUTION`                                                                            | Final outcome of Phase 3 physical rename; set by `RenameExecutionServiceImpl`  |
 
 ---
 
@@ -490,7 +501,7 @@ All config classes:
 | `ImageDimensionsConfig` | `ua.renamer.app.api.model.config` | `leftSide: ImageDimensionOptions` (required), `rightSide: ImageDimensionOptions` (required), `separator: String` (nullable), `position: ItemPositionWithReplacement` (required), `nameSeparator: String` (required)                                                                                                         | `position`, `leftSide`, `rightSide`, `nameSeparator` non-null; at least one of `leftSide` or `rightSide` must not be `DO_NOT_USE`                                                        |
 | `SequenceConfig`        | `ua.renamer.app.api.model.config` | `startNumber: int`, `stepValue: int`, `padding: int`, `sortSource: SortSource`, `perFolderCounting: boolean`                                                                                                                                                                                                                | `padding >= 0`                                                                                                                                                                           |
 | `ParentFolderConfig`    | `ua.renamer.app.api.model.config` | `numberOfParentFolders: int` (required), `position: ItemPosition` (required), `separator: String` (nullable)                                                                                                                                                                                                                | `position` non-null; `numberOfParentFolders >= 1`                                                                                                                                        |
-| `TruncateConfig`        | `ua.renamer.app.api.model.config` | `numberOfSymbols: int`, `truncateOption: TruncateOptions` (required)                                                                                                                                                                                                                                                        | `truncateOption` non-null; `numberOfSymbols >= 0`                                                                                                                                        |
+| `TruncateConfig`        | `ua.renamer.app.api.model.config` | `numberOfSymbols: int`, `truncateOption: TruncateOptions` (required)                                                                                                                                                                                                                                                        | `truncateOption` non-null; `numberOfSymbols >= 0`                                                                                                                                       |
 | `ExtensionChangeConfig` | `ua.renamer.app.api.model.config` | `newExtension: String` (required)                                                                                                                                                                                                                                                                                           | Non-null, non-blank (after trim)                                                                                                                                                         |
 
 For detailed transformer behavior and how each config is consumed,

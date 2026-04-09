@@ -1,3 +1,16 @@
+---
+title: "Transformation Modes Reference"
+description: "10 file transformation strategies — implementation patterns, config validation, algorithms, and sequential execution contract"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "f801ec2"
+related_modules:
+  - "app/api"
+  - "app/core"
+diagram_sources:
+  - "docs/diagrams/transformation-modes-class.mmd"
+---
+
 # Transformation Modes — Developer Reference
 
 ## Strategy Pattern Overview
@@ -6,7 +19,6 @@ Each transformation mode is implemented as a stateless strategy class that imple
 generic interface in `ua.renamer.app.core.service`:
 
 ```java
-
 @FunctionalInterface
 public interface FileTransformationService<C> {
     PreparedFileModel transform(FileModel input, C config);
@@ -63,7 +75,6 @@ Validation uses `Objects.requireNonNull()` for non-null constraints and explicit
 checks:
 
 ```java
-
 @Value
 @Builder(setterPrefix = "with")
 public class ExampleConfig implements TransformationConfig {
@@ -499,9 +510,7 @@ dispatching:
 ```java
 // FileRenameOrchestratorImpl — Phase 2 dispatch (simplified)
 if(transformer.requiresSequentialExecution()){
-        return transformer.
-
-transformBatch(fileModels, config);  // no thread pool
+        return transformer.transformBatch(fileModels, config);  // no thread pool
 }else{
         // parallel virtual-thread pool
         }

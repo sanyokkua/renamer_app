@@ -1,3 +1,12 @@
+---
+title: "Icon Creation"
+description: "How to create and update application icons for macOS, Windows, and Linux"
+audience: "developers"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules: []
+---
+
 # App Icon Creation Guide
 
 How to create correctly sized and formatted app icons for macOS, Windows, and Linux so they render without artifacts in
@@ -136,6 +145,7 @@ The 256×256 entry is stored as PNG inside the `.ico` container on modern Window
 3. The plugin dialog lets you select which sizes to embed.
 
 **Option C — online converter:**
+
 Tools such as icoconvert.com or convertico.com accept a PNG and produce a multi-size `.ico`. Upload your 1024×1024
 source and select all sizes listed above.
 

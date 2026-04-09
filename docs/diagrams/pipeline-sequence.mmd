@@ -1,0 +1,51 @@
+sequenceDiagram
+    autonumber
+    participant Caller
+    participant Orc as FileRenameOrchestratorImpl
+    participant VT as "Virtual Thread Pool"
+    participant Mapper as ThreadAwareFileMapper
+    participant TX as Transformer
+    participant Dedup as DuplicateNameResolverImpl
+    participant Exec as RenameExecutionServiceImpl
+    Caller ->>+ Orc: execute(files, mode, config, callback)
+
+    rect rgb(230, 240, 255)
+        Note over Orc, Mapper: Phase 1 - Metadata Extraction (parallel)
+        Orc ->>+ VT: newVirtualThreadPerTaskExecutor
+        loop per file
+            VT ->> Mapper: map(file)
+            Mapper -->> VT: FileModel (isFile=false on error)
+        end
+        VT -->>- Orc: List&lt;FileModel&gt;
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Orc, TX: Phase 2 - Transformation (parallel or sequential)
+        alt most modes
+            Orc ->>+ VT: newVirtualThreadPerTaskExecutor
+            loop per FileModel
+                VT ->> TX: transform(fileModel, config)
+                TX -->> VT: PreparedFileModel
+            end
+            VT -->>- Orc: List&lt;PreparedFileModel&gt;
+        else NUMBER_FILES mode
+            Orc ->> TX: transformBatch(fileModels, config)
+            TX -->> Orc: List&lt;PreparedFileModel&gt;
+        end
+    end
+
+    rect rgb(255, 255, 220)
+        Note over Orc, Dedup: Phase 2.5 - Duplicate Resolution (sequential)
+        Orc ->> Dedup: resolve(preparedFiles)
+        Dedup -->> Orc: List&lt;PreparedFileModel&gt;
+    end
+
+    rect rgb(255, 230, 230)
+        Note over Orc, Exec: Phase 3 - Physical Rename (sequential, deepest-first)
+        loop per PreparedFileModel, depth-ordered
+            Orc ->> Exec: execute(preparedFile)
+            Exec -->> Orc: RenameResult
+        end
+    end
+
+    Orc -->>- Caller: List&lt;RenameResult&gt;

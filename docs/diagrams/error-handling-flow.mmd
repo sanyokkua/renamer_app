@@ -1,0 +1,27 @@
+flowchart TD
+    fileIn["java.io.File"]
+    phase1{"Phase 1<br/>extraction"}
+    fm1["FileModel<br/>isFile=false"]
+    fm2["FileModel<br/>(with metadata)"]
+    phase2{"Phase 2<br/>transformation"}
+    pf1["PreparedFileModel<br/>hasError=true"]
+    pf2["PreparedFileModel<br/>(with new name)"]
+    phase3{"Phase 3<br/>rename"}
+    rr1["RenameResult<br/>SKIPPED"]
+    rr2["RenameResult<br/>ERROR_EXECUTION"]
+    rr3["RenameResult<br/>SUCCESS"]
+    globalCatch["Global catch<br/>all files<br/>ERROR_EXTRACTION"]
+    fileIn --> phase1
+    phase1 -->|error| fm1
+    phase1 -->|ok| fm2
+    fm1 --> phase2
+    fm2 --> phase2
+    phase2 -->|isFile = false| pf1
+    phase2 -->|ok| pf2
+    pf1 --> phase3
+    pf2 --> phase3
+    phase3 -->|hasError = true| rr1
+    phase3 -->|I/O failure| rr2
+    phase3 -->|renamed| rr3
+    phase1 -.->|catastrophic failure| globalCatch
+    phase2 -.->|catastrophic failure| globalCatch
