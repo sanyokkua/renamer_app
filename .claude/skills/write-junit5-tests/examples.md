@@ -126,34 +126,6 @@ class FileRenameOrchestratorImplTest {
 
 ---
 
-## V1 Command Test
-
-Use real `FileInformation`, not mocked:
-
-```java
-class AddTextPrepareInformationCommandTest {
-
-    @Test
-    void execute_shouldPrependTextToAllFiles() {
-        FileInformation file = FileInformation.builder()
-            .fileName("photo")
-            .fileExtension("jpg")
-            .build();
-        var command = AddTextPrepareInformationCommand.builder()
-            .text("prefix_")
-            .position(ItemPosition.BEGINNING)
-            .build();
-
-        List<FileInformation> result = command.execute(List.of(file), null); // null progress OK
-
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getNewName()).isEqualTo("prefix_photo");
-    }
-}
-```
-
----
-
 ## File System Test (@TempDir)
 
 Always use `@TempDir` — never hardcoded paths:

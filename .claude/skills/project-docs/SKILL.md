@@ -58,7 +58,7 @@ Create an ADR when:
 
 ### Format and Storage
 
-- Store in `docs/adr/` with naming `NNNN-short-title.md` (e.g., `0001-use-guice-for-di.md`)
+- Store in `docs/developers/` with naming `adr-NNNN-short-title.md` (e.g., `adr-0001-use-guice-for-di.md`)
 - Zero-padded four-digit sequence number, monotonically increasing
 
 Every ADR MUST contain:
@@ -140,11 +140,17 @@ See `/create-mermaid-diagrams` for Mermaid syntax rules and common errors.
 
 ```
 repo-root/
-├── README.md                  # Required: 6 sections above
-├── CHANGELOG.md               # Public API / behavior change log
+├── README.md                               # Required: 6 sections above
 ├── docs/
-│   ├── adr/                   # Architecture Decision Records (NNNN-short-title.md)
-│   ├── diagrams/              # Code-based diagrams (Mermaid source)
-│   └── ARCHITECTURE.md        # System overview with Mermaid diagrams
-└── .claude/                   # Claude Code infrastructure (skills, memory, CLAUDE.md)
+│   ├── developers/
+│   │   ├── architecture/                   # Data models, pipeline, DI, metadata, modes
+│   │   ├── guides/                         # How-to guides (add-transformation-mode.md, build-and-package.md, etc.)
+│   │   ├── reference/                      # UI architecture, settings, testing strategy, AI setup
+│   │   └── ui_design/                      # JavaFX design system, CSS tokens, component patterns
+│   ├── users/                              # User-facing docs (user-guide.md, mode-reference-card.md)
+│   ├── diagrams/                           # Code-based Mermaid source files
+│   └── screens/                            # App screenshots (v1/, v2/ per OS)
+└── .claude/                                # Claude Code infrastructure (skills, memory, CLAUDE.md)
 ```
+
+ADRs: this project does not have a dedicated `docs/adr/` folder. If creating ADRs, place them in `docs/developers/` with naming `adr-NNNN-short-title.md`.

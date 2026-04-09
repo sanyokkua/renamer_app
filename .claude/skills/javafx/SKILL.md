@@ -10,7 +10,7 @@ allowed-tools: Read, Grep, Glob
 ## Critical Rules
 
 - MUST execute all scene graph reads and writes exclusively on the FX Application Thread — marshal from background threads via `Platform.runLater()` or `Task` callbacks (`setOnSucceeded`, `setOnFailed`)
-- MUST NOT use the `fx:controller` attribute in FXML files — controllers are loaded via Guice's `DIUIModule`, never via FXML's built-in controller factory
+- MUST set `fx:controller` to the fully qualified controller class name — `ViewLoaderService` routes it through `injector::getInstance` so Guice handles instantiation
 - MUST use the `-fx-` prefix for every CSS property in JavaFX stylesheets — W3C property names are silently ignored
 - MUST use `javafx.concurrent.Task<V>` for all operations exceeding 100 ms — always on daemon threads
 - MUST install a global `Thread.setDefaultUncaughtExceptionHandler` during startup
@@ -28,31 +28,35 @@ Guice.createInjector(DIAppModule, DICoreModule, DIUIModule)
 
 The JavaFX `Application` subclass is `ua.renamer.app.RenamerApplication`. Launcher is `ua.renamer.app.Launcher`.
 
-**FXML loading with Guice** (existing pattern — use `DIUIModule` as reference):
+**FXML loading with Guice** — `ViewLoaderService` sets `loader.setControllerFactory(injector::getInstance)`, so
+Guice resolves the controller named in `fx:controller`. The service is used internally by `DIUIModule.loadAndRegister()`:
 
 ```java
-// Controllers are @Provides @Singleton beans in DIUIModule
-// FXMLLoader sets no fx:controller — controller is injected by Guice
-FXMLLoader loader = injector.getInstance(Key.get(FXMLLoader.class, MyModeFxmlLoader.class));
-loader.setLocation(getClass().getResource("/fxml/mode_my_mode.fxml"));
-Parent parent = loader.load();
-// Controller is retrieved from the loader after load()
+// FXML declares the controller class:
+// fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeAddTextController"
+//
+// ViewLoaderService creates the loader and wires Guice:
+// loader.setControllerFactory(injector::getInstance)
+// loader.setResources(resourceBundle)
+//
+// DIUIModule.provideModeViewRegistry() loads each mode view at startup:
+// loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_TEXT, addText);
 ```
 
 **Adding a new UI mode requires:**
-1. Controller class extending `ModeBaseController` with `@RequiredArgsConstructor(onConstructor_ = {@Inject})`
-2. Three qualifier annotations in `InjectQualifiers` (FxmlLoader, Parent, Controller)
-3. Three `@Provides @Singleton` methods in `DIUIModule`
-4. Entry in `ViewNames` enum
-5. Mapping in `MainViewControllerHelper`
+1. Controller class implementing `ModeControllerV2Api<MyModeParams>` with `@RequiredArgsConstructor(onConstructor_ = {@Inject})`
+2. FXML file with `fx:controller="...ModeMyModeController"`
+3. `bind(ModeMyModeController.class).in(Singleton.class)` in `DIUIModule.bindViewControllers()`
+4. Add controller parameter + `loadAndRegister()` call in `DIUIModule.provideModeViewRegistry()`
+5. Entry in `ViewNames` enum
 
 ---
 
 ## FXML Rules
 
 - MUST place all FXML files under `app/ui/src/main/resources/fxml/`
-- MUST NOT include `fx:controller` attribute in any FXML file — breaks Guice injection
-- FXML files reference `@FXML` fields/methods; these are injected after `loader.load()` returns
+- MUST set `fx:controller` to the fully qualified controller class name — Guice resolves it via `loader.setControllerFactory(injector::getInstance)`
+- `@FXML` fields/methods are injected after `loader.load()` returns
 - Centralize FXML paths in `ViewNames` enum — MUST NOT hardcode `/fxml/...` strings elsewhere
 
 ---
@@ -141,7 +145,7 @@ Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
 
 ## Enforcement
 
-- MUST flag any FXML file containing `fx:controller`
+- MUST flag any FXML file missing `fx:controller` (all mode views must declare their controller class)
 - MUST flag any `new Thread()` without `setDaemon(true)`
 - MUST flag any import from `javax.swing.*` or `org.eclipse.swt.*`
 - MUST flag any CSS property without `-fx-` prefix

@@ -1,3 +1,10 @@
+---
+title: "Developer Notes"
+description: "Test data creation guide with FFmpeg and ExifTool instructions"
+audience: "developers"
+last_validated: "2026-04-09"
+---
+
 # Test data creation
 
 ## Create test files on macOS with FFmpeg

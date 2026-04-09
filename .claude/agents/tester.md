@@ -105,7 +105,7 @@ Invoke this skill at the start of every test-writing session:
 
 - `/write-junit5-tests` — invoke before writing any test class. After invoking,
   also use the Read tool to read `.claude/skills/write-junit5-tests/examples.md`
-  for complete test class templates (V2 mock template, V1 command template,
+  for complete test class templates (mock template,
   `@TempDir` file-system template, error-path template, integration test scaffold).
 - `/java-developer` — invoke when you need to verify V2 model structure, builder
   syntax, or error handling patterns. After invoking, read
@@ -202,8 +202,7 @@ What to mock (from `/write-junit5-tests`):
 - External dependencies with side effects
 
 What to NEVER mock (instantiate directly):
-- `FileInformation`, `RenameModel` — V1 mutable domain objects, use real instances
-- `FileModel`, `PreparedFileModel`, `RenameResult` — V2 immutable models, use builders
+- `FileModel`, `PreparedFileModel`, `RenameResult` — immutable models, use builders
 - Collections, `String`, `LocalDateTime`, and other standard types
 - Pure transformation functions with no side effects
 

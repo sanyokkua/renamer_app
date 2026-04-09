@@ -24,8 +24,7 @@ See [examples.md](examples.md) for complete test class templates.
 - External dependencies with side effects
 
 ### Never mock these (instantiate directly):
-- `FileInformation`, `RenameModel` — mutable V1 domain objects, use real instances
-- `FileModel`, `PreparedFileModel`, `RenameResult` — V2 immutable models, use builders
+- `FileModel`, `PreparedFileModel`, `RenameResult` — immutable models, use builders
 - `FileInformationMetadata`, `FileMeta` — metadata containers
 - Collections, `String`, `LocalDateTime`, other standard types
 - Pure text transformation functions
@@ -54,13 +53,17 @@ void test1()
 ## Test Organization (mirrors production structure)
 
 ```
-app/core/src/test/java/.../
-├── v2/
-│   ├── mapper/integration/     # Real file tests per format (JpegExtractorIT)
-│   └── service/
-│       ├── transformation/     # Transformer unit tests (*Test.java)
-│       └── integration/        # End-to-end pipeline tests (*IT.java)
-└── service/command/impl/       # V1 command tests
+app/core/src/test/java/ua/renamer/app/core/
+├── service/
+│   ├── transformation/         # Transformer unit tests (*Test.java)
+│   └── impl/                   # Orchestrator unit tests
+└── v2/
+    ├── mapper/integration/     # Mapper integration tests (real files)
+    └── service/integration/    # End-to-end pipeline integration tests (*IT.java)
+
+app/metadata/src/test/java/ua/renamer/app/metadata/
+├── extractor/strategy/format/  # Extractor unit tests
+└── extractor/integration/      # Metadata extraction integration tests (real files)
 ```
 
 Integration tests use suffix `*IT.java`, unit tests use `*Test.java`.

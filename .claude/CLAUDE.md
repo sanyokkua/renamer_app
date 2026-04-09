@@ -69,7 +69,8 @@ public class MyService {
 
 Modules: `DIAppModule`, `DICoreModule`, `DIUIModule` in `app/ui/.../config/`; `DIV2ServiceModule` in
 `app/core/.../config/`; `DIBackendModule` in `app/backend/.../config/`; `DIMetadataModule` in
-`app/metadata/.../config/`. `DICoreModule` installs `DIMetadataModule` and `DIV2ServiceModule`.
+`app/metadata/.../config/`. Injector: `Guice.createInjector(DIAppModule, DICoreModule, DIUIModule)`;
+`DIUIModule` installs `DIBackendModule`; `DIBackendModule` installs `DIMetadataModule` and `DIV2ServiceModule`.
 
 **V2 model builders** — non-default prefix, critical:
 
@@ -86,11 +87,13 @@ build();
 // NOT: .originalFile(file)  ← compile error
 ```
 
-**UI disambiguation**: `InjectQualifiers` holds 30 `@jakarta.inject.Qualifier` annotations (10 each for FXMLLoader,
-Parent, ModeControllerApi). Required when adding new modes.
+**UI mode wiring**: New modes register via `ModeViewRegistry`. In `DIUIModule`, add:
+1. `bind(ModeMyModeController.class).in(Singleton.class)` in `bindViewControllers()`
+2. `ModeMyModeController myMode` parameter to `provideModeViewRegistry()`
+3. `loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_MY_MODE, myMode)` call
+4. Entry in `ViewNames` enum
 
-**JPMS**: Internal packages (interfaces, exceptions) that are implementation details are intentionally NOT exported from
-their respective modules. Always check the module's `module-info.java` before adding cross-module calls.
+**JPMS**: Always check the module's `module-info.java` before adding cross-module calls. Every new package needs an `exports` directive.
 
 ## Agents (invoke with `@"agent-name (agent)"`)
 
@@ -163,9 +166,6 @@ Real test files in `app/core/src/test/resources/test-data/`. Generate with `tool
 with FFmpeg + ExifTool (see skills above).
 
 ## MCP Servers
-
-`py-search-helper` provides web search: `search_web_ddg(query)`, `open_page(url)`. Use for library API docs (Tika,
-Guice, JavaFX, metadata-extractor).
 
 `CodeGraphContext` provides code graph analysis via MCP tools (`mcp__CodeGraphContext__*`) and CLI (`cgc`). Use when
 answering questions about code structure, relationships, or quality:

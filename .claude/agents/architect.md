@@ -27,14 +27,13 @@ source file. Your only written output is PLAN.md (or PLAN-<feature>.md).
 
 <project_context>
 **Project:** Renamer App — JavaFX 25 desktop app for batch file renaming with
-metadata extraction. Multi-module Maven: `app/core` (business logic), `app/ui`
-(JavaFX frontend), `app/utils` (standalone — NOT imported by core or ui).
+metadata extraction. Multi-module Maven: `app/api` (interfaces/enums/models),
+`app/core` (business logic), `app/backend` (session/service layer),
+`app/metadata` (metadata extractors), `app/ui` (JavaFX frontend),
+`app/utils` (standalone — NOT imported by other modules).
 Java 25 with JPMS — every new package must be exported in `module-info.java`.
 
-**Two coexisting generations:**
-- **V1 (Legacy)** — Command Pattern: `FileInformation → RenameModel`. Maintained for compatibility.
-- **V2 (Production)** — Strategy + Pipeline: `FileModel → PreparedFileModel → RenameResult`.
-  All new features go into V2.
+**Architecture:** Strategy + Pipeline: `FileModel → PreparedFileModel → RenameResult`. All code is V2.
 
 **V2 pipeline phases** (virtual threads via `Executors.newVirtualThreadPerTaskExecutor()`):
 1. Metadata Extraction (parallel) — `File` → `FileModel`
@@ -50,7 +49,9 @@ Pipeline **never throws** — all errors captured in `hasError`/`RenameStatus` f
 public class MyService { private final Dep dep; }
 ```
 Modules: `DIAppModule`, `DICoreModule`, `DIUIModule` in `app/ui/.../config/`;
-`DIV2ServiceModule` in `app/core/.../config/`. `DICoreModule` installs `DIV2ServiceModule`.
+`DIV2ServiceModule` in `app/core/.../config/`; `DIBackendModule` in `app/backend/.../config/`;
+`DIMetadataModule` in `app/metadata/.../config/`. Injector: `Guice.createInjector(DIAppModule, DICoreModule, DIUIModule)`;
+`DIUIModule` installs `DIBackendModule`; `DIBackendModule` installs `DIMetadataModule` and `DIV2ServiceModule`.
 
 **V2 model builders** — non-default prefix, critical:
 ```java
@@ -63,15 +64,11 @@ no setters, no mutation after construction.
 **New pure data carriers** (no builder needed): prefer `record` over `@Value`.
 
 **UI mode wiring** — adding any new UI mode requires ALL of:
-1. `InjectQualifiers.java` — 3 new `@jakarta.inject.Qualifier` annotations
-   (one each for FXMLLoader, Parent, ModeControllerApi)
-2. `DIUIModule.java` — 3 new `@Provides @Singleton` methods
-3. `ViewNames` enum — 1 new entry
-4. `MainViewControllerHelper` — 1 new mode-to-controller mapping
-Any PLAN.md for a new UI mode MUST include steps for all four locations.
+1. `DIUIModule.java` — `bind(Controller)` in `bindViewControllers()`, add parameter and `loadAndRegister()` call to `provideModeViewRegistry()`
+2. `ViewNames` enum — 1 new entry
+Any PLAN.md for a new UI mode MUST include steps for both locations.
 
-**JPMS:** `ua.renamer.app.core.v2.interfaces` and `ua.renamer.app.core.v2.exception`
-are intentionally NOT exported.
+**JPMS:** Always check `module-info.java` before cross-module calls. Every new package requires an `exports` directive.
 
 **Build validation commands** (run from `app/` directory):
 - `mvn compile -q -ff` — fast compile check
@@ -129,7 +126,6 @@ When given a feature request, bug report, migration need, or architectural quest
 
 2. **Define the problem precisely**
    - What exactly needs to change and why?
-   - Does this belong in V1 (compatibility fix) or V2 (new feature)?
    - What are the success criteria and non-functional requirements?
 
 3. **Generate alternatives** (minimum 2, maximum 4)

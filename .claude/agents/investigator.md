@@ -28,14 +28,14 @@ metadata extraction.
 
 **Module structure:**
 
-- `app/core` — V2 pipeline business logic, Guice DI module: `DIV2ServiceModule`
-- `app/ui` — JavaFX frontend, Guice DI modules: `DIAppModule`, `DICoreModule`, `DIUIModule`
-- `app/utils` — standalone utilities (NOT imported by core or ui)
+- `app/api` — shared interfaces, enums, models, config DTOs; Guice DI: none (shared types only)
+- `app/core` — pipeline business logic, transformers; Guice DI module: `DIV2ServiceModule`
+- `app/backend` — session/service layer; Guice DI module: `DIBackendModule` (installs `DIMetadataModule` + `DIV2ServiceModule`)
+- `app/metadata` — file metadata extractors; Guice DI module: `DIMetadataModule`
+- `app/ui` — JavaFX frontend; Guice DI modules: `DIAppModule`, `DICoreModule`, `DIUIModule` (installs `DIBackendModule`)
+- `app/utils` — standalone utilities (NOT imported by other modules)
 
-**Two coexisting architectures:**
-
-- **V1 (Legacy)** — Command Pattern: `FileInformation → RenameModel`
-- **V2 (Production)** — Strategy + Pipeline: `FileModel → PreparedFileModel → RenameResult`
+**Architecture:** Strategy + Pipeline: `FileModel → PreparedFileModel → RenameResult`. All code is V2.
 
 **V2 pipeline phases** (virtual threads via `Executors.newVirtualThreadPerTaskExecutor()`):
 
@@ -46,31 +46,32 @@ metadata extraction.
 
 **Key package roots:**
 
-- `ua.renamer.app.core.service.transformation` — V2 transformers
-- `ua.renamer.app.core.v2.model.config` — V2 transformation configs
-- `ua.renamer.app.core.v2.mapper.strategy.format` — metadata extractors
+- `ua.renamer.app.api.model.config` — transformation config DTOs
+- `ua.renamer.app.api.model` — `TransformationMode` enum, `FileModel`, `PreparedFileModel`, `RenameResult`
+- `ua.renamer.app.core.service.transformation` — transformers
+- `ua.renamer.app.core.service.impl` — pipeline orchestrator
+- `ua.renamer.app.metadata.extractor.strategy.format` — metadata extractors
 - `ua.renamer.app.ui.controller.mode.impl` — JavaFX controllers
+- `ua.renamer.app.ui.view` — `ModeViewRegistry` (maps modes to views)
 - `ua.renamer.app.core.config` / `ua.renamer.app.ui.config` — Guice DI modules
 
 **DI module hierarchy:**
 `Guice.createInjector(DIAppModule, DICoreModule, DIUIModule)` —
-`DICoreModule` installs `DIV2ServiceModule`. `DIUIModule` is separate.
+`DIUIModule` installs `DIBackendModule`; `DIBackendModule` installs `DIMetadataModule` and `DIV2ServiceModule`.
 When investigating Guice binding errors, trace through this install chain.
 
-**UI mode wiring** — new mode requires changes in all of:
-`InjectQualifiers.java` (3 new qualifiers), `DIUIModule.java`
-(3 new `@Provides` methods), `ViewNames` enum, `MainViewControllerHelper`.
-When mapping a UI mode's data flow, check all four locations.
+**UI mode wiring** — new mode requires changes in:
+`DIUIModule.bindViewControllers()` (add `bind(Controller.class)`),
+`DIUIModule.provideModeViewRegistry()` (add parameter + `loadAndRegister()` call),
+`ViewNames` enum. When mapping a UI mode's data flow, check these locations.
 
 **Test conventions:**
 
 - Unit tests: `*Test.java` — mirror source package under `src/test/java/`
-- Integration tests: `*IT.java` — use real files from `test-data/`
-- Test data: `app/core/src/test/resources/test-data/`
+- Integration tests under `app/core/src/test/java/.../v2/service/integration/` use `*IT.java` suffix; test data in `app/core/src/test/resources/test-data/`
+- Metadata extraction integration tests in `app/metadata/src/test/java/.../extractor/integration/`; test data in `app/metadata/src/test/resources/test-data/`
 
-**JPMS:** `ua.renamer.app.core.v2.interfaces` and `ua.renamer.app.core.v2.exception`
-are intentionally NOT exported. Every other new package requires an `exports`
-directive in its module's `module-info.java`.
+**JPMS:** Every new package requires an `exports` directive in its module's `module-info.java`.
 
 **MCP web search:** Use `search_web_ddg(query)` and `open_page(url)` from the
 `py-search-helper` MCP server to look up Tika, Guice, JavaFX, or

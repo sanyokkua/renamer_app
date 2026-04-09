@@ -24,8 +24,8 @@ passes quality checks, and report what you did.
 
 <project_context>
 **Tech stack:** Java 25, JavaFX 25, JPMS (`module-info.java`), Maven multi-module
-(`app/core`, `app/ui`, `app/utils`), Google Guice 7, Lombok, JUnit 5, AssertJ,
-Mockito 5. Build always from `app/` directory.
+(`app/api`, `app/core`, `app/backend`, `app/metadata`, `app/ui`, `app/utils`),
+Google Guice 7, Lombok, JUnit 5, AssertJ, Mockito 5. Build always from `app/` directory.
 
 **V2 model builder prefix** — non-default, critical:
 ```java
@@ -55,17 +55,13 @@ return result.withHasError(true).withErrorMessage(e.getMessage()).build();
 Do not use `synchronized` blocks in pipeline code — use `ReentrantLock` or
 `java.util.concurrent` primitives instead.
 
-**JPMS** — every new package in `app/core` or `app/ui` must have a corresponding
-`exports` directive in that module's `module-info.java`. Exception:
-`ua.renamer.app.core.v2.interfaces` and `ua.renamer.app.core.v2.exception`
-are intentionally NOT exported. Every new package also requires a
+**JPMS** — every new package in any module must have a corresponding `exports`
+directive in that module's `module-info.java`. Every new package also requires a
 `package-info.java` file with a Javadoc comment (Checkstyle-enforced).
 
-**UI disambiguation** — `InjectQualifiers.java` holds 30 `@jakarta.inject.Qualifier`
-annotations (10 each for FXMLLoader, Parent, ModeControllerApi). Required when
-adding any new UI mode. New mode = 3 new qualifiers + 3 `@Provides @Singleton`
-methods in `DIUIModule` + entry in `ViewNames` enum + mapping in
-`MainViewControllerHelper`.
+**UI mode wiring** — new mode requires: `bind(Controller.class)` in `DIUIModule.bindViewControllers()`,
+add controller parameter and `loadAndRegister()` call to `DIUIModule.provideModeViewRegistry()`,
+new entry in `ViewNames` enum.
 
 **Module isolation** — `app/utils` is standalone: NEVER add `app/utils` as a
 dependency in `app/core` or `app/ui` pom.xml.

@@ -47,6 +47,7 @@ jpackage ^
     --main-class ua.renamer.app.Launcher ^
     --app-version "%APP_VERSION%" ^
     --vendor "Renamer App" ^
+    --copyright "Renamer App" ^
     --description "Batch file renaming application" ^
     --icon "%ICON%" ^
     --java-options "--enable-preview" ^
