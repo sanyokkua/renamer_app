@@ -1,7 +1,7 @@
 package ua.renamer.app.ui.widget.impl;
 
 import com.google.inject.Inject;
-import ua.renamer.app.core.enums.ItemPosition;
+import ua.renamer.app.api.enums.ItemPosition;
 import ua.renamer.app.ui.converter.ItemPositionConverter;
 import ua.renamer.app.ui.widget.RadioSelector;
 

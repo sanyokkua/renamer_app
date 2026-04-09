@@ -1,0 +1,63 @@
+/* ScrollPane wrapper — must colour both the node and its inner viewport */
+.file-info-scroll {
+    -fx-background-color: #EAF0F8;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 0;
+}
+
+.file-info-scroll > .viewport {
+    -fx-background-color: #EAF0F8;
+}
+
+.file-info-panel {
+    -fx-background-color: #EAF0F8;
+    -fx-padding: 4;
+}
+
+.file-info-row {
+    -fx-spacing: 4;
+    -fx-padding: 2 6 2 6;
+}
+
+.file-info-label-key {
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-min-width: 120;
+    -fx-pref-width: 120;
+}
+
+.file-info-label-value {
+    -fx-text-fill: -color-text-primary;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
+}
+
+.file-info-error {
+    -fx-text-fill: -color-danger;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
+    -fx-padding: 2 6 2 6;
+}
+
+.file-info-separator {
+    -fx-background-color: #D0E2F5;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+
+.file-info-placeholder {
+    -fx-text-fill: -color-text-muted;
+    -fx-font-style: italic;
+    -fx-font-size: 11px;
+    -fx-padding: 8 8 8 8;
+}
+
+.file-info-columns {
+    -fx-fill-width: true;
+}
+
+.file-info-col {
+    -fx-padding: 0 4 0 4;
+}

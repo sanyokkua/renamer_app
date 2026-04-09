@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import ua.renamer.app.ui.config.DIAppModule;
@@ -13,10 +12,10 @@ import ua.renamer.app.ui.config.DICoreModule;
 import ua.renamer.app.ui.config.DIUIModule;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.enums.ViewNames;
+import ua.renamer.app.ui.service.AppResourceRegistryApi;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.service.ViewLoaderApi;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -38,9 +37,7 @@ public class RenamerApplication extends Application {
     // The start method is the entry point for the JavaFX application
     @Override
     public void start(Stage stage) {
-        var iconInputStream = RenamerApplication.class.getClassLoader().getResourceAsStream("images/icon.png");
-        Objects.requireNonNull(iconInputStream); // If icon can't be loaded, then we do not need to try start app
-
+        var registry = injector.getInstance(AppResourceRegistryApi.class);
         var languageTextRetriever = injector.getInstance(LanguageTextRetrieverApi.class);
         var viewLoader = injector.getInstance(ViewLoaderApi.class);
 
@@ -51,7 +48,7 @@ public class RenamerApplication extends Application {
         stage.setTitle(title);
         stage.setMinWidth(MINIMAL_WIDTH);
         stage.setMinHeight(MINIMAL_HEIGHT);
-        stage.getIcons().add(new Image(iconInputStream));
+        stage.getIcons().add(registry.getAppIcon());
 
         log.debug("title: {}", title);
         log.debug("minimal width: {}", MINIMAL_WIDTH);
@@ -67,6 +64,7 @@ public class RenamerApplication extends Application {
 
         // Create a scene with the root node and set it on the stage
         var scene = new Scene(root.get(), MINIMAL_WIDTH, MINIMAL_HEIGHT);
+        scene.getStylesheets().addAll(registry.getSceneStylesheets());
         stage.setScene(scene);
 
         // Show the stage

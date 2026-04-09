@@ -1,0 +1,17 @@
+/* Typography utility classes */
+
+.label-section {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-muted;
+}
+
+.label-caption {
+    -fx-font-size: 10px;
+    -fx-text-fill: -color-text-secondary;
+}
+
+.label-body {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-primary;
+}

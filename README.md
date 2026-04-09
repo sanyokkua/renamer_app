@@ -1,126 +1,196 @@
+---
+title: "Renamer App"
+description: "JavaFX 25 desktop app for batch file renaming with metadata extraction"
+audience: "all"
+last_validated: "2026-04-09"
+last_commit: "3c570e2"
+related_modules:
+  - "app/api"
+  - "app/core"
+  - "app/backend"
+  - "app/metadata"
+  - "app/ui"
+  - "app/utils"
+---
+
 # Renamer App
 
-Welcome to the Renamer App repository! This is a desktop tool designed to streamline the process of renaming files on
-your PC. Say goodbye to manual file renaming and hello to a more efficient workflow.
+**Batch rename files using metadata, patterns, and smart rules — no scripting required.**
 
-[For more detailed documentation, click here](docs/documentation.md)
+[![CI](https://github.com/sanyokkua/renamer_app/actions/workflows/build.yml/badge.svg)](https://github.com/sanyokkua/renamer_app/actions/workflows/build.yml)
 
-## Problem
+---
 
-When working with files on your PC, you often find yourself needing to rename multiple files according to a specific
-pattern or based on certain properties of the files themselves.
+## Purpose
 
-For instance, let's say you have a collection of images with generic names like "IMG_0001.jpg", "IMG_0002.jpg", and so
-on.
+Renamer App is a JavaFX desktop application for batch renaming files using metadata extracted directly from file content. It reads EXIF dates, image dimensions, audio tags, video streams, and other embedded properties to build new filenames automatically. The app provides 10 configurable transformation modes — add text, remove text, find and replace, change case, add date/time, add image dimensions, number files, add folder name, trim name, and change extension. A live preview shows every new filename before committing any rename, and native installers for macOS, Linux, and Windows require no Java installation. It is designed for photographers, audio engineers, and power users managing large collections of media files who need rule-based, preview-before-rename workflows.
 
-You know these files contain valuable metadata like creation dates or EXIF data, which you'd like to use to rename them
-to something more descriptive, such as "20240506_172055.jpg", "20240507_123011.jpg", and so forth.
+### Features
 
-Currently, your only option is to tediously inspect each file's properties and manually craft new names. This app aims
-to change that by providing a simple and intuitive way to rename files based on predefined patterns or file properties.
-Whether you need to add prefixes or suffixes, replace text, or utilize file metadata, this tool has got you covered.
+- **10 renaming modes** — add text, remove text, find and replace, change case, add date/time, add image dimensions, number files, add folder name, trim name, change extension
+- **Drag and drop** — drop files or entire folders onto the file list
+- **Live preview** — see every new filename before committing a single rename
+- **Metadata-aware** — reads EXIF dates, image dimensions, and file dates to build filenames automatically
+- **19 UI languages** — switch at any time from Settings
+- **Native installers** — one-click install on macOS, Linux, and Windows; no Java installation needed
 
-Also, there can be different options of renaming as:
+### Screenshots
 
-- Adding text to the name
-- Replacing text
-- Generation of the digit sequence
-- Adding files metadata like width\height for images
-- Changing file extension (if it absent or any other cases)
-- Removing text
-- Removing empty symbols
-- etc.
+![Main window — Add Text mode with files loaded](docs/screens/v2/MacOS_26/main_window_add_text_pending.png)
+![Mode selection menu](docs/screens/v2/MacOS_26/main_window_mode_menu_open.png)
+![After renaming — status column shows results](docs/screens/v2/MacOS_26/main_window_add_datetime_after_rename.png)
 
-## Screenshots
+---
 
-Some examples of the working app
+## Prerequisites
 
-![File Renamer App - ex1](docs/app_screen_example_1.png)
-![File Renamer App - ex2](docs/app_screen_example_2.png)
-![File Renamer App - ex3](docs/app_screen_example_3.png)
+Install the following tools before building or running the app from source.
 
-## Download Page
+- **Java 25+** ([Temurin](https://adoptium.net) recommended)
+- **Apache Maven 3.9+**
 
-You can download an installer for the app by the [following link](https://github.com/sanyokkua/renamer_app/releases)
+To run the app without building from source, download a native installer from [GitHub Releases](https://github.com/sanyokkua/renamer_app/releases) — no separate Java installation is required.
 
-## Used Libraries
+---
 
-### Application Logic
+## Setup
 
-- **Metadata-extractor**: A tool for reading EXIF (and some other) data from certain types of image and video
-  files. [Metadata-extractor](https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor/2.19.0), [Docs](https://github.com/drewnoakes/metadata-extractor)
-- **Tika**: Library for extracting metadata from files. Used to get Mime
-  type. [Tika](https://mvnrepository.com/artifact/org.apache.tika/), [Docs](https://tika.apache.org)
-- **JavaFX**: A Java UI
-  library/framework. [JavaFX](https://mvnrepository.com/artifact/org.openjfx/javafx), [Docs](https://openjfx.io/index.html)
+### Download and Run (Recommended)
 
-### Development
+Download the latest release from [GitHub Releases](https://github.com/sanyokkua/renamer_app/releases) and follow the instructions for your platform.
 
-- **Lombok**: Project Lombok is a Java library that reduces boilerplate code by automatically generating getters,
-  setters, and other common
-  methods. [Lombok](https://mvnrepository.com/artifact/org.projectlombok/lombok), [Docs](https://projectlombok.org)
-- **Mockito**: Mockito is a popular open-source framework for Java that simplifies unit testing by letting you create
-  mock objects to isolate the code you're
-  testing. [Mockito](https://mvnrepository.com/artifact/org.mockito), [Docs](https://site.mockito.org)
-- **Google Guice**: Google Guice is an open-source framework for Java that simplifies dependency injection using
-  annotations, making your code more modular and easier to
-  test. [Google Guice](https://mvnrepository.com/artifact/com.google.inject/guice), [Docs](https://github.com/google/guice)
-- **Junit5**: JUnit 5 is the latest version of the JUnit testing framework for Java, offering a modern approach to unit
-  testing with features like support for Java 8 and above, various testing styles, and improved
-  annotations. [Junit5](https://mvnrepository.com/artifact/org.junit.jupiter), [Docs](https://junit.org/junit5/)
-- **Jdeploy**: Tool helps to build installers of JavaFX app. [Docs](https://www.jdeploy.com)
+#### macOS
 
-## How to Build and Run the App from Source
+1. Download the `.dmg` file.
+2. Open the DMG and drag **Renamer.app** to your Applications folder.
+3. Launch **Renamer** from Applications.
 
-To build and run the app from source, follow these steps:
+**macOS Gatekeeper — Unsigned App Warning**
 
-**(Expected that Java 21+ and Apache Maven 3.9.6 are installed, also these versions of tools were used during
-development)**
+The app is not code-signed. macOS may block it on first launch with a message like _"Renamer cannot be opened because it is from an unidentified developer."_ To allow it, use **one** of the following options:
 
-- [OpenJDK](https://openjdk.org/projects/jdk/21/),
-- [Maven](https://maven.apache.org)
-- I would use following [Adoptium Project JDKs](https://adoptium.net), or JDK from
-  Amazon - [Amazon Corretto](https://aws.amazon.com/ru/corretto/)
-- [Installation JDK on macOS via Homebrew](https://formulae.brew.sh/cask/temurin#default)
-- If you want to manage several versions of java on MacOS - [Jenv](https://formulae.brew.sh/formula/jenv#default)
+- **Right-click → Open** — right-click the app icon and choose **Open**, then click **Open** in the prompt. This is the quickest option and only needs to be done once.
+- **Remove the quarantine flag** in Terminal:
+  ```bash
+  xattr -rd com.apple.quarantine /Applications/Renamer.app
+  ```
+- **System Settings → Privacy & Security** — if the app was blocked, scroll to the bottom of the Privacy & Security pane and click **Open Anyway** next to the Renamer entry.
 
-1. Navigate to the folder containing the source code.
-   ```shell
-   cd /path/to/renamer_app
+#### Windows
+
+1. Download the `.zip` file.
+2. Extract the zip.
+3. Run `Renamer.exe` from the extracted `Renamer\` folder.
+
+No installer is provided — the app runs directly from the extracted folder.
+
+#### Linux
+
+1. Download the `.deb` package or the `.tar.gz` portable archive.
+2. Install the `.deb`:
+   ```bash
+   sudo dpkg -i renamer_<version>_amd64.deb   # or arm64
    ```
-2. Install all dependencies and build the app using mvn.
-   ```shell
-   mvn clean install
-   ```
-3. Once the build process is complete, you'll find the executable for your OS in
-   the `renamer_app/app/ui/target/ua.renamer.app.ui-{version}.jar` folder. You can run it as below:
-   ```shell
-   # Navigate to the UI module and run via maven javafx plugin
-   cd /path/to/renamer_app/app/ui
-   mvn javafx:run
-   
-   # Or you can run it directly by the following script from the project root
-   java -jar ui/target/ua.renamer.app.ui-1.0-SNAPSHOT.jar
-   
-   # 1.0-SNAPSHOT is a version of the app, so check the version before run
-   ```
+   Or extract the `.tar.gz` and run `./Renamer/bin/Renamer` directly.
+3. Launch **Renamer** from your applications menu.
 
-## Code Coverage
+### Build from Source
 
-The core module is extensively covered by unit tests, ensuring robust functionality across all non-UI related aspects of
-the application.
+Clone the repository and build with Maven.
 
-# Languages
+```bash
+git clone https://github.com/sanyokkua/renamer_app.git
+cd renamer_app/app
+mvn clean install -q
+```
 
-Currently supported 2 languages - English and Ukrainian. Language will be choosen based on the system locale, if
-locale - UA, Ukrainian will be used, for all other locales default is English.
+Run the app after building:
 
-# Nothing is good... TODO list for this app
+```bash
+cd ui
+mvn javafx:run
+```
 
-- Investigate [ExifTool by Phil Harvey](https://exiftool.org) in order to use it as metadata parser for files
-- Investigate other libs that can extract metadata for other file types
-- Implement extracting metadata for video files
-- Implement using metadata for audio files (artist name, song name, creation date, etc)
-- Improve UI/UX
-- Review the app, find what can be improved or added
-- Add more unit tests
+For native installer builds, code signing, and CI pipeline details, see the [Build & Package Guide](docs/developers/guides/build-and-package.md).
+
+---
+
+## Usage
+
+### Running the App
+
+After installation, launch Renamer from your applications menu or by running the executable directly.
+
+### Project Structure
+
+The codebase is organized as a multi-module Maven project under `app/`. Each module has a single responsibility:
+
+| Module     | Responsibility                                                            |
+|------------|---------------------------------------------------------------------------|
+| `api`      | Shared interfaces, enums, and immutable models used across all modules    |
+| `core`     | Business logic — all 10 transformers and the rename pipeline orchestrator |
+| `backend`  | Session management and file I/O service layer                             |
+| `metadata` | File metadata extractors (EXIF dates, image dimensions, MIME types)       |
+| `ui`       | JavaFX frontend — controllers, FXML layouts, CSS theming                  |
+| `utils`    | Standalone utility classes; not imported by other modules                 |
+
+### Build and Test Commands
+
+Run all commands from the `app/` directory.
+
+```bash
+mvn compile -q -ff                                         # Compile only (fast feedback)
+mvn test -q -ff -Dai=true                                  # All tests, quiet output
+mvn test -q -ff -Dai=true -Dtest=ClassName                # Single test class
+mvn test -q -ff -Dai=true -Dtest=ClassName#methodName     # Single test method
+mvn clean test jacoco:report -Dai=true                     # Coverage report
+mvn verify -Pcode-quality -q                               # Checkstyle + PMD + SpotBugs
+../scripts/ai-build.sh                                     # Sequential: compile → lint → test
+mvn clean install -q                                       # Build all modules
+cd ui && mvn javafx:run                                    # Run the app
+```
+
+### Documentation
+
+**Users**
+
+- [User Guide](docs/users/user-guide.md) — interface walkthrough, all 10 modes explained with examples
+- [Mode Reference Card](docs/users/mode-reference-card.md) — one-page quick-reference cheat sheet
+
+**Developers**
+
+- [Developer Docs](docs/developers/) — architecture, guides, and reference material
+  - [Project Overview](docs/developers/architecture/project-overview.md) — system overview, module map, dependency graph
+  - [Pipeline Architecture](docs/developers/architecture/pipeline-architecture.md) — data-flow diagrams and transformation phases
+  - [Transformation Modes](docs/developers/architecture/transformation-modes.md) — mode reference and V1 vs V2 differences
+  - [Data Models](docs/developers/architecture/data-models.md) — immutable model builders, enums, session contracts
+  - [Dependency Injection](docs/developers/architecture/dependency-injection.md) — Guice module hierarchy and wiring
+  - [Metadata Extraction](docs/developers/architecture/metadata-extraction.md) — extractor strategies and format support
+  - [UI Architecture](docs/developers/reference/ui-architecture.md) — JavaFX layout, controllers, CSS theming
+  - [Settings System](docs/developers/reference/settings-system.md) — persistent configuration storage
+  - [Testing Strategy](docs/developers/reference/testing-strategy.md) — unit, integration, and test data
+  - [AI Agent Setup](docs/developers/reference/ai-agent-setup.md) — Claude Code agent pipeline for contributions
+  - [Build & Package Guide](docs/developers/guides/build-and-package.md) — native installers, signing, CI/CD
+  - [Icon Creation Guide](docs/developers/guides/icon-creation.md) — asset design and export
+  - [Add Transformation Mode](docs/developers/guides/add-transformation-mode.md) — step-by-step new mode implementation
+  - [Cross-Platform Notes](docs/developers/guides/cross-platform-notes.md) — platform-specific build considerations
+
+### Tech Stack
+
+The app is built with industry-standard Java libraries and frameworks:
+
+| Library            | Version | Role                                            |
+|--------------------|---------|-------------------------------------------------|
+| Java               | 25      | Language and runtime                            |
+| JavaFX             | 25.0.2  | Desktop UI framework                            |
+| Google Guice       | 7.0.0   | Dependency injection                            |
+| metadata-extractor | 2.19.0  | EXIF and metadata reading from images and video |
+| Apache Tika        | 3.3.0   | MIME type detection                             |
+| Lombok             | 1.18.44 | Boilerplate reduction                           |
+| JUnit 5            | 6.0.3   | Unit and integration testing                    |
+
+---
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).

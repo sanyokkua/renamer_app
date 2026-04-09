@@ -3,24 +3,44 @@ package ua.renamer.app.ui.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.util.BuilderFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ua.renamer.app.core.model.RenameModel;
+import ua.renamer.app.api.session.StatePublisher;
+import ua.renamer.app.backend.config.DIBackendModule;
 import ua.renamer.app.ui.controller.ApplicationMainViewController;
-import ua.renamer.app.ui.controller.mode.ModeControllerApi;
-import ua.renamer.app.ui.controller.mode.impl.*;
-import ua.renamer.app.ui.converter.*;
+import ua.renamer.app.ui.controller.SettingsDialogController;
+import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
+import ua.renamer.app.ui.controller.mode.impl.ModeAddDatetimeController;
+import ua.renamer.app.ui.controller.mode.impl.ModeAddDimensionsController;
+import ua.renamer.app.ui.controller.mode.impl.ModeAddFolderNameController;
+import ua.renamer.app.ui.controller.mode.impl.ModeAddTextController;
+import ua.renamer.app.ui.controller.mode.impl.ModeChangeCaseController;
+import ua.renamer.app.ui.controller.mode.impl.ModeChangeExtensionController;
+import ua.renamer.app.ui.controller.mode.impl.ModeNumberFilesController;
+import ua.renamer.app.ui.controller.mode.impl.ModeRemoveTextController;
+import ua.renamer.app.ui.controller.mode.impl.ModeReplaceTextController;
+import ua.renamer.app.ui.controller.mode.impl.ModeTrimNameController;
+import ua.renamer.app.ui.converter.AppModesConverter;
+import ua.renamer.app.ui.converter.DateFormatConverter;
+import ua.renamer.app.ui.converter.DateTimeFormatConverter;
+import ua.renamer.app.ui.converter.DateTimeSourceConverter;
+import ua.renamer.app.ui.converter.ImageDimensionOptionsConverter;
+import ua.renamer.app.ui.converter.ItemPositionConverter;
+import ua.renamer.app.ui.converter.ItemPositionExtendedConverter;
+import ua.renamer.app.ui.converter.ItemPositionWithReplacementConverter;
+import ua.renamer.app.ui.converter.SortSourceConverter;
+import ua.renamer.app.ui.converter.TimeFormatConverter;
+import ua.renamer.app.ui.converter.TruncateOptionsConverter;
 import ua.renamer.app.ui.enums.ViewNames;
+import ua.renamer.app.ui.service.AppResourceRegistryApi;
 import ua.renamer.app.ui.service.ViewLoaderApi;
-import ua.renamer.app.ui.service.impl.CoreFunctionalityHelper;
-import ua.renamer.app.ui.service.impl.MainViewControllerHelper;
+import ua.renamer.app.ui.service.impl.AppResourceRegistryService;
 import ua.renamer.app.ui.service.impl.ViewLoaderService;
+import ua.renamer.app.ui.state.FxStateMirror;
+import ua.renamer.app.ui.view.ModeViewRegistry;
 import ua.renamer.app.ui.widget.builder.ItemPositionExtendedRadioSelectorBuilder;
 import ua.renamer.app.ui.widget.builder.ItemPositionRadioSelectorBuilder;
 import ua.renamer.app.ui.widget.builder.ItemPositionTruncateRadioSelectorBuilder;
@@ -34,8 +54,6 @@ import ua.renamer.app.ui.widget.impl.ItemPositionWithReplacementRadioSelector;
 import java.io.IOException;
 import java.util.Optional;
 
-import static ua.renamer.app.ui.config.InjectQualifiers.*;
-
 /**
  * Dependency Injection module configuration for the application. Includes only UI module dependencies.
  */
@@ -45,6 +63,7 @@ public class DIUIModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        install(new DIBackendModule());
         bindServices();
         bindCustomWidgets();
         bindStringConverters();
@@ -52,9 +71,8 @@ public class DIUIModule extends AbstractModule {
     }
 
     private void bindServices() {
+        bind(AppResourceRegistryApi.class).to(AppResourceRegistryService.class).asEagerSingleton();
         bind(ViewLoaderApi.class).to(ViewLoaderService.class).in(Singleton.class);
-        bind(CoreFunctionalityHelper.class).in(Singleton.class);
-        bind(MainViewControllerHelper.class).in(Singleton.class);
     }
 
     private void bindCustomWidgets() {
@@ -87,254 +105,98 @@ public class DIUIModule extends AbstractModule {
     }
 
     private void bindViewControllers() {
-        bind(ModeAddCustomTextController.class).in(Singleton.class);
-        bind(ModeAddSequenceController.class).in(Singleton.class);
+        bind(ModeAddTextController.class).in(Singleton.class);
+        bind(ModeNumberFilesController.class).in(Singleton.class);
         bind(ModeChangeCaseController.class).in(Singleton.class);
         bind(ModeChangeExtensionController.class).in(Singleton.class);
-        bind(ModeRemoveCustomTextController.class).in(Singleton.class);
-        bind(ModeReplaceCustomTextController.class).in(Singleton.class);
-        bind(ModeTruncateFileNameController.class).in(Singleton.class);
-        bind(ModeUseDatetimeController.class).in(Singleton.class);
-        bind(ModeUseImageDimensionsController.class).in(Singleton.class);
-        bind(ModeUseParentFolderNameController.class).in(Singleton.class);
+        bind(ModeRemoveTextController.class).in(Singleton.class);
+        bind(ModeReplaceTextController.class).in(Singleton.class);
+        bind(ModeTrimNameController.class).in(Singleton.class);
+        bind(ModeAddDatetimeController.class).in(Singleton.class);
+        bind(ModeAddDimensionsController.class).in(Singleton.class);
+        bind(ModeAddFolderNameController.class).in(Singleton.class);
         bind(ApplicationMainViewController.class).in(Singleton.class);
+        bind(SettingsDialogController.class).in(Singleton.class);
     }
 
+    /**
+     * Provides a fully populated {@link ModeViewRegistry} by loading each mode's FXML
+     * and pairing its loaded {@link Parent} view with its injected controller.
+     *
+     * @param viewLoaderApi   the service that resolves FXML files by view name
+     * @param addText         controller for ADD_TEXT mode
+     * @param changeCase      controller for CHANGE_CASE mode
+     * @param addDatetime     controller for ADD_DATETIME mode
+     * @param addDimensions   controller for ADD_DIMENSIONS mode
+     * @param addFolderName   controller for ADD_FOLDER_NAME mode
+     * @param removeText      controller for REMOVE_TEXT mode
+     * @param replaceText     controller for REPLACE_TEXT mode
+     * @param numberFiles     controller for NUMBER_FILES mode
+     * @param trimName        controller for TRIM_NAME mode
+     * @param changeExtension controller for CHANGE_EXTENSION mode
+     * @return a populated registry; never null
+     * @throws IOException if any FXML file cannot be loaded
+     */
     @Provides
     @Singleton
-    @AddCustomTextFxmlLoader
-    public FXMLLoader provideAddCustomTextFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_ADD_CUSTOM_TEXT);
+    public ModeViewRegistry provideModeViewRegistry(
+            ViewLoaderApi viewLoaderApi,
+            ModeAddTextController addText,
+            ModeChangeCaseController changeCase,
+            ModeAddDatetimeController addDatetime,
+            ModeAddDimensionsController addDimensions,
+            ModeAddFolderNameController addFolderName,
+            ModeRemoveTextController removeText,
+            ModeReplaceTextController replaceText,
+            ModeNumberFilesController numberFiles,
+            ModeTrimNameController trimName,
+            ModeChangeExtensionController changeExtension) throws IOException {
+        var registry = new ModeViewRegistry();
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_TEXT, addText);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_CHANGE_CASE, changeCase);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_DATETIME, addDatetime);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_DIMENSIONS, addDimensions);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_ADD_FOLDER_NAME, addFolderName);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_REMOVE_TEXT, removeText);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_REPLACE_TEXT, replaceText);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_NUMBER_FILES, numberFiles);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_TRIM_NAME, trimName);
+        loadAndRegister(registry, viewLoaderApi, ViewNames.MODE_CHANGE_EXTENSION, changeExtension);
+        return registry;
     }
 
-    private FXMLLoader createFXMLLoader(ViewLoaderApi viewLoaderApi, ViewNames viewName) {
-        Optional<FXMLLoader> loaderOptional = viewLoaderApi.createLoader(viewName);
-        if (loaderOptional.isEmpty()) {
+    private void loadAndRegister(ModeViewRegistry registry, ViewLoaderApi viewLoaderApi,
+                                 ViewNames viewName, ModeControllerV2Api<?> controller) throws IOException {
+        Optional<javafx.fxml.FXMLLoader> loaderOpt = viewLoaderApi.createLoader(viewName);
+        if (loaderOpt.isEmpty()) {
             throw new IllegalStateException("Could not find FXMLLoader for " + viewName);
         }
-
-        return loaderOptional.get();
+        var fxmlLoader = loaderOpt.get();
+        Parent parent = fxmlLoader.load();
+        registry.register(controller.supportedMode(), () -> parent, controller);
     }
 
+    /**
+     * Provides a {@link FxStateMirror} singleton.
+     *
+     * @return a new {@link FxStateMirror}; never null
+     */
     @Provides
     @Singleton
-    @ChangeCaseFxmlLoader
-    public FXMLLoader provideChangeCaseFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_CHANGE_CASE);
+    public FxStateMirror provideFxStateMirror() {
+        return new FxStateMirror();
     }
 
+    /**
+     * Provides the {@link StatePublisher} backed by the {@link FxStateMirror}.
+     *
+     * @param mirror the {@link FxStateMirror} to delegate to; never null
+     * @return the mirror as a {@link StatePublisher}; never null
+     */
     @Provides
     @Singleton
-    @UseDatetimeFxmlLoader
-    public FXMLLoader provideUseDatetimeFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_USE_DATETIME);
-    }
-
-    @Provides
-    @Singleton
-    @UseImageDimensionsFxmlLoader
-    public FXMLLoader provideUseImageDimensionsFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_USE_IMAGE_DIMENSIONS);
-    }
-
-    @Provides
-    @Singleton
-    @UseParentFolderNameFxmlLoader
-    public FXMLLoader provideUseParentFolderNameFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_USE_PARENT_FOLDER_NAME);
-    }
-
-    @Provides
-    @Singleton
-    @RemoveCustomTextFxmlLoader
-    public FXMLLoader provideRemoveCustomTextFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_REMOVE_CUSTOM_TEXT);
-    }
-
-    @Provides
-    @Singleton
-    @ReplaceCustomTextFxmlLoader
-    public FXMLLoader provideReplaceCustomTextFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_REPLACE_CUSTOM_TEXT);
-    }
-
-    @Provides
-    @Singleton
-    @AddSequenceFxmlLoader
-    public FXMLLoader provideAddSequenceFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_ADD_SEQUENCE);
-    }
-
-    @Provides
-    @Singleton
-    @TruncateFileNameFxmlLoader
-    public FXMLLoader provideTruncateFileNameFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_TRUNCATE_FILE_NAME);
-    }
-
-    @Provides
-    @Singleton
-    @ChangeExtensionFxmlLoader
-    public FXMLLoader provideChangeExtensionFxmlLoader(ViewLoaderApi viewLoaderApi) {
-        return createFXMLLoader(viewLoaderApi, ViewNames.MODE_CHANGE_EXTENSION);
-    }
-
-    @Provides
-    @Singleton
-    @AddCustomTextParent
-    public Parent provideAddCustomTextParent(@AddCustomTextFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @ChangeCaseParent
-    public Parent provideChangeCaseParent(@ChangeCaseFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @UseDatetimeParent
-    public Parent provideUseDatetimeParent(@UseDatetimeFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @UseImageDimensionsParent
-    public Parent provideUseImageDimensionsParent(@UseImageDimensionsFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @UseParentFolderNameParent
-    public Parent provideUseParentFolderNameParent(
-            @UseParentFolderNameFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @RemoveCustomTextParent
-    public Parent provideRemoveCustomTextParent(@RemoveCustomTextFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @ReplaceCustomTextParent
-    public Parent provideReplaceCustomTextParent(@ReplaceCustomTextFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @AddSequenceParent
-    public Parent provideAddSequenceParent(@AddSequenceFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @TruncateFileNameParent
-    public Parent provideTruncateFileNameParent(@TruncateFileNameFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @ChangeExtensionParent
-    public Parent provideChangeExtensionParent(@ChangeExtensionFxmlLoader FXMLLoader loader) throws IOException {
-        return loader.load();
-    }
-
-    @Provides
-    @Singleton
-    @AddCustomTextController
-    public ModeControllerApi provideAddCustomTextController(@AddCustomTextFxmlLoader FXMLLoader loader,
-                                                            @AddCustomTextParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @ChangeCaseController
-    public ModeControllerApi provideChangeCaseController(@ChangeCaseFxmlLoader FXMLLoader loader,
-                                                         @ChangeCaseParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @UseDatetimeController
-    public ModeControllerApi provideUseDatetimeController(@UseDatetimeFxmlLoader FXMLLoader loader,
-                                                          @UseDatetimeParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @UseImageDimensionsController
-    public ModeControllerApi provideUseImageDimensionsController(@UseImageDimensionsFxmlLoader FXMLLoader loader,
-                                                                 @UseImageDimensionsParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @UseParentFolderNameController
-    public ModeControllerApi provideUseParentFolderNameController(@UseParentFolderNameFxmlLoader FXMLLoader loader,
-                                                                  @UseParentFolderNameParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @RemoveCustomTextController
-    public ModeControllerApi provideRemoveCustomTextController(@RemoveCustomTextFxmlLoader FXMLLoader loader,
-                                                               @RemoveCustomTextParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @ReplaceCustomTextController
-    public ModeControllerApi provideReplaceCustomTextController(@ReplaceCustomTextFxmlLoader FXMLLoader loader,
-                                                                @ReplaceCustomTextParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @AddSequenceController
-    public ModeControllerApi provideAddSequenceController(@AddSequenceFxmlLoader FXMLLoader loader,
-                                                          @AddSequenceParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @TruncateFileNameController
-    public ModeControllerApi provideTruncateFileNameController(@TruncateFileNameFxmlLoader FXMLLoader loader,
-                                                               @TruncateFileNameParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    @ChangeExtensionController
-    public ModeControllerApi provideChangeExtensionController(@ChangeExtensionFxmlLoader FXMLLoader loader,
-                                                              @ChangeExtensionParent Parent parent) {
-        return loader.getController();
-    }
-
-    @Provides
-    @Singleton
-    public ObservableList<RenameModel> provideAppGlobalRenameModelList() {
-        return FXCollections.observableArrayList();
+    public StatePublisher provideStatePublisher(FxStateMirror mirror) {
+        return mirror;
     }
 
 }
-

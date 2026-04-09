@@ -3,7 +3,7 @@ package ua.renamer.app.ui.converter;
 import com.google.inject.Inject;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
-import ua.renamer.app.core.enums.SortSource;
+import ua.renamer.app.api.enums.SortSource;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 
@@ -20,7 +20,6 @@ public class SortSourceConverter extends StringConverter<SortSource> {
      * Converts a {@link SortSource} enum constant to its corresponding string representation.
      *
      * @param object The {@link SortSource} enum constant to be converted to a string.
-     *
      * @return The string representation of the provided {@link SortSource} constant.
      */
     @Override
@@ -43,9 +42,7 @@ public class SortSourceConverter extends StringConverter<SortSource> {
      * Converts a string back to a {@link SortSource} enum constant.
      *
      * @param string The string to be converted back to a {@link SortSource} enum constant.
-     *
      * @return The corresponding {@link SortSource} enum constant, or {@code null} if not implemented.
-     *
      * @implNote This method is not yet implemented and always returns {@code null}.
      */
     @Override

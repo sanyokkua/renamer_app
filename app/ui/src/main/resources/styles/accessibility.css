@@ -1,0 +1,41 @@
+/*
+ * accessibility.css — WCAG 2.1 AA focus indicators.
+ * Adds a 2 px focus-colour outline to all interactive controls when
+ * keyboard-focused, making keyboard navigation visible.
+ */
+
+.button:focused,
+.btn-primary:focused,
+.btn-secondary:focused {
+    -fx-focus-color: #4A90D9;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #4A90D9;
+    -fx-border-width: 2;
+    -fx-border-radius: 6px;
+}
+
+.text-field:focused,
+.spinner .text-field:focused {
+    -fx-focus-color: #4A90D9;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #4A90D9;
+    -fx-border-width: 2;
+}
+
+.choice-box:focused {
+    -fx-focus-color: #4A90D9;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #4A90D9;
+    -fx-border-width: 2;
+    -fx-border-radius: 4px;
+}
+
+.check-box:focused > .box {
+    -fx-border-color: #4A90D9;
+    -fx-border-width: 2;
+}
+
+.table-view:focused {
+    -fx-focus-color: #4A90D9;
+    -fx-faint-focus-color: transparent;
+}

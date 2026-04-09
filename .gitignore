@@ -1116,3 +1116,20 @@ cython_debug/
 */target/*
 .DS_Store
 .vscode/*
+.project
+.classpath
+.factorypath
+.eclipse
+node_modules
+.settings
+.theia
+# Claude Code - ignore local settings but keep CLAUDE.md
+.claude/settings.local.json
+!.claude/CLAUDE.md
+!.claude/skills/*
+!.claude/.mcp.json
+!/scripts/
+
+# PMD bundled rule files (resolved from classpath, not filesystem — not needed in git)
+category/
+rulesets/

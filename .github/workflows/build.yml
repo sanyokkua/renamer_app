@@ -1,0 +1,187 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - '**'   # release.yml handles tags; don't double-fire
+
+env:
+  JAVA_VERSION: '25'
+  APP_VERSION: '2.0.0'   # placeholder — snapshot build, not a release
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Job 1: Compile, test, and produce JARs (once, on Linux)
+  # ──────────────────────────────────────────────
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Start Xvfb
+        run: Xvfb :99 -screen 0 1280x1024x24 &
+
+      - name: Build and test
+        run: cd app && mvn clean package
+        env:
+          DISPLAY: ':99'
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+          retention-days: 1
+
+  # ──────────────────────────────────────────────
+  # Job 2: Package for macOS (Intel + Apple Silicon)
+  # ──────────────────────────────────────────────
+  package-macos:
+    needs: build-and-test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-13   # Intel x86_64
+            arch: x86_64
+          - runner: macos-14   # Apple Silicon arm64
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+
+      - name: Package macOS app
+        env:
+          APP_VERSION: ${{ env.APP_VERSION }}
+        run: ./scripts/package-macos.sh
+
+      - name: Rename DMG to include arch
+        run: |
+          cd dist
+          for f in *.dmg; do
+            mv "$f" "${f%.dmg}-macos-${{ matrix.arch }}.dmg"
+          done
+
+      - name: Tar app bundle
+        run: cd dist && tar -czf "Renamer-${{ env.APP_VERSION }}-macos-${{ matrix.arch }}.tar.gz" Renamer.app
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: |
+            dist/*.dmg
+            dist/*.tar.gz
+          retention-days: 14
+
+  # ──────────────────────────────────────────────
+  # Job 3: Package for Windows (x86_64 only — no ARM64 runner available)
+  # ──────────────────────────────────────────────
+  package-windows:
+    needs: build-and-test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'liberica'
+          java-package: 'jdk+fx'   # Full edition with JavaFX jmods (required for jpackage on Windows)
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+
+      - name: Package Windows app
+        env:
+          APP_VERSION: ${{ env.APP_VERSION }}
+        run: scripts\package-windows.bat
+
+      - name: Zip app image
+        run: Compress-Archive -Path dist\Renamer -DestinationPath "dist\Renamer-${{ env.APP_VERSION }}-windows-x86_64.zip"
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x86_64
+          path: dist/*.zip
+          retention-days: 14
+
+  # ──────────────────────────────────────────────
+  # Job 4: Package for Linux (x86_64 + arm64)
+  # ──────────────────────────────────────────────
+  package-linux:
+    needs: build-and-test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+            distribution: temurin
+            java-package: jdk
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+            distribution: liberica
+            java-package: jdk+fx   # Liberica Full required for arm64 packaging
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ matrix.distribution }}
+          java-package: ${{ matrix.java-package }}
+
+      - name: Install fakeroot
+        run: sudo apt-get update && sudo apt-get install -y fakeroot
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-libs
+          path: app/ui/target/libs/
+
+      - name: Package Linux app
+        env:
+          APP_VERSION: ${{ env.APP_VERSION }}
+        run: ./scripts/package-linux.sh
+
+      - name: Tar app image
+        run: cd dist && tar -czf "Renamer-${{ env.APP_VERSION }}-linux-${{ matrix.arch }}.tar.gz" Renamer/
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: |
+            dist/*.deb
+            dist/*.tar.gz
+          retention-days: 14

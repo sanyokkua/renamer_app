@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeNumberFilesController"
+      prefHeight="400.0" prefWidth="600.0" spacing="12">
+    <padding>
+        <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label text="%mode_number_files_label_start_value" styleClass="label-section"/>
+        <Spinner fx:id="startSeqNumberSpinner" maxWidth="Infinity">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Spinner>
+
+        <Label text="%mode_number_files_label_step_value" styleClass="label-section"/>
+        <Spinner fx:id="stepValueSpinner" maxWidth="Infinity">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Spinner>
+
+        <Label text="%mode_number_files_label_amount_of_digits" styleClass="label-section"/>
+        <Spinner fx:id="minDigitAmountSpinner" maxWidth="Infinity">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Spinner>
+
+        <Label text="%mode_number_files_label_sorting_source" styleClass="label-section"/>
+        <ChoiceBox fx:id="sortingSourceChoiceBox" maxWidth="Infinity">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ChoiceBox>
+
+        <CheckBox fx:id="perFolderCountingCheckBox"
+                  text="%mode_number_files_label_per_folder_counting"
+                  maxWidth="Infinity">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </CheckBox>
+    </VBox>
+
+</VBox>

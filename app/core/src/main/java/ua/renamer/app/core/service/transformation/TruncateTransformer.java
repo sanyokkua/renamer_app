@@ -1,0 +1,93 @@
+package ua.renamer.app.core.service.transformation;
+
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
+import ua.renamer.app.api.model.FileModel;
+import ua.renamer.app.api.model.PreparedFileModel;
+import ua.renamer.app.api.model.TransformationMetadata;
+import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.model.config.TruncateConfig;
+import ua.renamer.app.core.service.FileTransformationService;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+/**
+ * Transformer that truncates filenames by removing characters.
+ */
+@Slf4j
+public class TruncateTransformer implements FileTransformationService<TruncateConfig> {
+
+    @Override
+    public PreparedFileModel transform(FileModel input, TruncateConfig config) {
+        if (config == null) {
+            return buildErrorResult(input, "Transformer configuration must not be null");
+        }
+        if (!input.isFile() && !"application/x-directory".equals(input.getDetectedMimeType())) {
+            return buildErrorResult(input, "File extraction failed");
+        }
+
+        try {
+            String newName = getNewName(input, config);
+
+            if (newName.isEmpty()) {
+                return buildErrorResult(input, "Truncation resulted in empty filename");
+            }
+
+            return PreparedFileModel.builder()
+                    .withOriginalFile(input)
+                    .withNewName(newName)
+                    .withNewExtension(input.getExtension())
+                    .withHasError(false)
+                    .withErrorMessage(null)
+                    .withTransformationMeta(buildMetadata(config))
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Failed to truncate file: {}", input.getName(), e);
+            return buildErrorResult(input, "Failed to truncate: " + e.getMessage());
+        }
+    }
+
+    private static @NonNull String getNewName(FileModel input, TruncateConfig config) {
+        final boolean isNameWithinLimit = input.getName().length() <= config.getNumberOfSymbols();
+        return switch (config.getTruncateOption()) {
+            case REMOVE_SYMBOLS_IN_BEGIN -> {
+                if (isNameWithinLimit) {
+                    yield "";  // Entire name removed
+                }
+                yield input.getName().substring(config.getNumberOfSymbols());
+            }
+            case REMOVE_SYMBOLS_FROM_END -> {
+                if (isNameWithinLimit) {
+                    yield "";  // Entire name removed
+                }
+                yield input.getName().substring(0,
+                        input.getName().length() - config.getNumberOfSymbols());
+            }
+            case TRUNCATE_EMPTY_SYMBOLS -> input.getName().trim();
+        };
+    }
+
+    private TransformationMetadata buildMetadata(TruncateConfig config) {
+        return TransformationMetadata.builder()
+                .withMode(TransformationMode.TRIM_NAME)
+                .withAppliedAt(LocalDateTime.now())
+                .withConfig(Map.of(
+                        "numberOfSymbols", config.getNumberOfSymbols(),
+                        "truncateOption", config.getTruncateOption().name()
+                ))
+                .build();
+    }
+
+    private PreparedFileModel buildErrorResult(FileModel input, String error) {
+        return PreparedFileModel.builder()
+                .withOriginalFile(input)
+                .withNewName(input.getName())
+                .withNewExtension(input.getExtension())
+                .withHasError(true)
+                .withErrorMessage(error)
+                .withTransformationMeta(null)
+                .build();
+    }
+}

@@ -5,19 +5,27 @@
     <parent>
         <groupId>ua.renamer.app</groupId>
         <artifactId>renamer-app-parent</artifactId>
-        <version>1.1.0</version>
+        <version>2.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ua.renamer.app.ui</artifactId>
-    <version>1.1.0</version>
 
     <dependencies>
         <dependency>
             <groupId>ua.renamer.app</groupId>
+            <artifactId>ua.renamer.app.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ua.renamer.app</groupId>
             <artifactId>ua.renamer.app.core</artifactId>
-            <version>1.1.0</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ua.renamer.app</groupId>
+            <artifactId>ua.renamer.app.backend</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -46,6 +54,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -59,14 +68,30 @@
             <groupId>jakarta.inject</groupId>
             <artifactId>jakarta.inject-api</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parsers-standard-package</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -78,6 +103,7 @@
                 <version>${javafx-maven-plugin.version}</version>
                 <configuration>
                     <mainClass>ua.renamer.app.RenamerApplication</mainClass>
+                    <options>${javafx.jvm.args}</options>
                 </configuration>
             </plugin>
             <plugin>
@@ -87,14 +113,15 @@
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>
-                                ${project.build.directory}/libs
-                            </outputDirectory>
+                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
                 </executions>
@@ -112,6 +139,29 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-app-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/libs">
+                                    <fileset dir="${project.build.directory}"
+                                             includes="*.jar"
+                                             excludes="*-sources.jar,*-javadoc.jar"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

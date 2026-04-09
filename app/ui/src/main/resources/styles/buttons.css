@@ -1,0 +1,82 @@
+/* ── Primary button (Rename) ── */
+.btn-primary {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: -color-text-on-primary;
+    -fx-background-radius: 6px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-primary:hover {
+    -fx-background-color: -color-primary-hover;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: -color-primary-press;
+}
+
+.btn-primary:disabled {
+    -fx-background-color: #D8E5F2;
+    -fx-text-fill: #8FA4BB;
+}
+
+/* ── Secondary button (Clear, Reload) ── */
+.btn-secondary {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2C6FBF;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #2C6FBF;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #EBF2FF;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #D6E9FF;
+}
+
+.btn-secondary:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* ── Danger button (future use) ── */
+.btn-danger {
+    -fx-background-color: -color-danger;
+    -fx-text-fill: -color-text-on-primary;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-danger:hover {
+    -fx-background-color: -color-danger-hover;
+}
+
+/* ── Ghost / cancel button (muted, non-destructive) ── */
+.btn-ghost {
+    -fx-background-color: transparent;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: -color-text-muted;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-ghost:hover {
+    -fx-background-color: #E8EFF7;
+}
+
+.btn-ghost:pressed {
+    -fx-background-color: #D8E5F2;
+}
+
+.btn-ghost:disabled {
+    -fx-opacity: 0.5;
+}

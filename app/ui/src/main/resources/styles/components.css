@@ -1,0 +1,268 @@
+/* Progress bar — taller track for visual prominence */
+.progress-bar {
+    -fx-pref-height: 8px;
+    -fx-min-height: 8px;
+}
+
+/* ── Config panel (left mode panel) ── */
+.config-panel {
+    -fx-background-color: -color-config-panel;
+    -fx-border-color: #BDD0E8;
+    -fx-border-width: 0 1 0 0;
+}
+
+.config-panel > .scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.config-panel > .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ── Bottom action bar ── */
+.action-bar {
+    -fx-background-color: -color-action-bar;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ── Text field ── */
+.text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #BDD0E8;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-text-fill: #162030;
+}
+
+.text-field:focused {
+    -fx-border-color: #4A90D9;
+    -fx-effect: dropshadow(gaussian, rgba(74, 144, 217, 0.2), 4, 0, 0, 0);
+}
+
+/* ── ComboBox / ChoiceBox ── */
+.combo-box,
+.choice-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #BDD0E8;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.combo-box:focused,
+.choice-box:focused {
+    -fx-border-color: #4A90D9;
+    -fx-effect: dropshadow(gaussian, rgba(74, 144, 217, 0.25), 4, 0, 0, 0);
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #BDD0E8;
+}
+
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #E8F0FB;
+}
+
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #D4E5F9;
+    -fx-text-fill: #1F3C5C;
+}
+
+/* ── Radio button & Checkbox ── */
+.radio-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: #35506A;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.radio-button .radio {
+    -fx-background-color: #E8EFF7, #BDD0E8, #FFFFFF;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 50%, 50%, 50%;
+    -fx-padding: 3;
+}
+
+.radio-button:selected .radio {
+    -fx-background-color: #2C6FBF, #2C6FBF, #2C6FBF;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 50%, 50%, 50%;
+    -fx-padding: 3;
+}
+
+.radio-button:selected .radio > .dot {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+}
+
+.check-box {
+    -fx-text-fill: #35506A;
+}
+
+.check-box .box {
+    -fx-border-color: #BDD0E8;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-border-color: #2C6FBF;
+    -fx-background-color: #2C6FBF;
+}
+
+.check-box:selected .box > .mark {
+    -fx-background-color: white;
+}
+
+/* ── Scrollbars ── */
+.scroll-bar {
+    -fx-background-color: #EFF4FA;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #BDD0E8;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #94B0CC;
+}
+
+/* ── Separator ── */
+.separator .line {
+    -fx-border-color: #C8D8EE;
+    -fx-border-width: 0.5;
+}
+
+/* ── Validation error state (replaces inline setStyle calls in mode controllers) ── */
+.validation-error {
+    -fx-border-color: #B42222;
+    -fx-border-width: 1;
+}
+
+/* ── Status badges (File Status column) ── */
+.badge-pending {
+    -fx-background-color: #EBF1FA;
+    -fx-text-fill: #5580AC;
+    -fx-border-color: #BDD0E8;
+    -fx-border-width: 0.5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 2 8 2 8;
+    -fx-font-size: 11px;
+}
+
+.badge-success {
+    -fx-background-color: #E6F4EC;
+    -fx-text-fill: #2E6E50;
+    -fx-border-color: #A8D5BC;
+    -fx-border-width: 0.5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 2 8 2 8;
+    -fx-font-size: 11px;
+}
+
+.badge-error {
+    -fx-background-color: #FEF2F2;
+    -fx-text-fill: #B42222;
+    -fx-border-color: #F5AAAA;
+    -fx-border-width: 0.5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 2 8 2 8;
+    -fx-font-size: 11px;
+}
+
+.badge-warning {
+    -fx-background-color: #FEF9EC;
+    -fx-text-fill: #9A6B15;
+    -fx-border-color: #F5D98A;
+    -fx-border-width: 0.5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 2 8 2 8;
+    -fx-font-size: 11px;
+}
+
+/* ── Type chip (Type column) ── */
+.type-chip {
+    -fx-background-color: #E3EBF5;
+    -fx-text-fill: #4A70A0;
+    -fx-border-color: #BDD0E8;
+    -fx-border-width: 0.5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 2 6 2 6;
+    -fx-font-size: 9px;
+}
+
+/* ── Folder type chip (Type column) ── */
+.type-chip-folder {
+    -fx-background-color: #FEF3C7;
+    -fx-text-fill: #92400E;
+    -fx-border-color: #FCD34D;
+    -fx-border-width: 0.5;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 2 6 2 6;
+    -fx-font-size: 9px;
+}
+
+/* ── Live preview box (inside config panel) ── */
+.preview-box {
+    -fx-background-color: #D4E5F9;
+    -fx-border-color: #A8C5E8;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 10 8 10;
+    -fx-spacing: 4;
+}
+
+.preview-box-title {
+    -fx-text-fill: #6688AA;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.preview-box-value {
+    -fx-text-fill: #1F3C5C;
+    -fx-font-family: "Monospaced";
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
+}
+
+/* ── Live preview panel — fixed strip at bottom of config column ── */
+.config-preview-panel {
+    -fx-background-color: #D4E5F9;
+    -fx-border-color: #A8C5E8;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 8 12 8 12;
+    -fx-spacing: 4;
+}
+
+/* ── Dialog pane ── */
+.dialog-pane > .header-panel {
+    -fx-padding: 16 20 14 20;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text-primary;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+}
+
+.dialog-pane > .button-bar {
+    -fx-padding: 20 16 12 16;
+}

@@ -12,7 +12,6 @@ public interface Validator<T> {
      * Validates an object of type T.
      *
      * @param value The value to validate.
-     *
      * @return {@code true} if the value is valid, {@code false} otherwise.
      */
     boolean isValid(T value);

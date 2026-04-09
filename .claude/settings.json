@@ -1,0 +1,70 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(echo \"$CLAUDE_TOOL_INPUT\" | jq -r '.command // empty'); echo \"$INPUT\" | grep -qE 'rm -rf /|sudo |mvn deploy' && { echo 'Blocked dangerous command' >&2; exit 2; } || exit 0"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(echo \"$CLAUDE_TOOL_INPUT\" | jq -r '.file_path // empty'); if [[ \"$FILE\" == *.java ]]; then cd \"$CLAUDE_PROJECT_DIR/app\" && mvn compile -q -B --no-transfer-progress -ff 2>&1 | tail -20; fi; exit 0"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'cd \"$CLAUDE_PROJECT_DIR/app\" && mvn test-compile -q -B --no-transfer-progress 2>&1 | tail -10; if [ ${PIPESTATUS[0]} -ne 0 ]; then echo \"Compilation errors detected — please fix before continuing\" >&2; exit 2; fi; exit 0'"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "WebFetch",
+      "WebSearch",
+      "Read(**)",
+      "Glob(**)",
+      "Grep(**)",
+      "Bash(grep:*)",
+      "Bash(grep -R:*)",
+      "Bash(rg:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(awk:*)",
+      "Bash(sed -n:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(pwd:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(git branch:*)"
+    ],
+    "deny": [
+      "Read(app/*/target/**)",
+      "Write(app/*/target/**)",
+      "Read(**/*.class)"
+    ]
+  }
+}

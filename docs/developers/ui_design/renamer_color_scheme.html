@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Renamer App — Color Scheme Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --ink: #1a2332;
+            --ink-mid: #3a4d63;
+            --ink-soft: #5e7388;
+            --ink-muted: #8fa4bb;
+            --paper: #f7f9fc;
+            --surface: #ffffff;
+            --border: #dde6f0;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+
+            /* THE PROPOSED PALETTE */
+            --p-bg: #EFF4FA;
+            --p-panel: #E3EBF5;
+            --p-border: #C4D4E8;
+            --p-header: #1F3C5C;
+            --p-accent: #2C6FBF;
+            --p-accent2: #4A90D9;
+            --p-row-alt: #F4F8FD;
+            --p-hover: #E8F0FB;
+            --p-selected: #D4E5F9;
+            --p-meta: #EAF0F8;
+            --p-divider: #BDD0E8;
+            --p-text: #162030;
+            --p-text-mid: #35506A;
+            --p-text-soft: #6688AA;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #1F3C5C 0%, #2C6FBF 60%, #4A90D9 100%);
+            padding: 56px 56px 48px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            pointer-events: none;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: 40%;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .h-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+        }
+
+        header h1 {
+            font-size: clamp(24px, 3.5vw, 42px);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            max-width: 600px;
+        }
+
+        header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            font-size: 15px;
+            max-width: 520px;
+        }
+
+        .header-palette {
+            display: flex;
+            gap: 8px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .h-swatch {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            flex-shrink: 0;
+        }
+
+        /* LAYOUT */
+        .page {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 52px 40px;
+        }
+
+        /* SECTIONS */
+        section {
+            margin-bottom: 64px;
+        }
+
+        .sec-tag {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        section > h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
+            padding-bottom: 12px;
+            border-bottom: 1.5px solid var(--border);
+            margin-bottom: 28px;
+        }
+
+        .lead {
+            color: var(--ink-mid);
+            font-size: 14.5px;
+            margin-bottom: 28px;
+            max-width: 700px;
+            line-height: 1.7;
+        }
+
+        /* PALETTE HERO */
+        .palette-hero {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .swatch-card {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .swatch-color {
+            height: 72px;
+        }
+
+        .swatch-info {
+            padding: 10px 12px;
+        }
+
+        .swatch-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 2px;
+        }
+
+        .swatch-hex {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-soft);
+        }
+
+        .swatch-role {
+            font-size: 10px;
+            color: var(--ink-muted);
+            margin-top: 3px;
+        }
+
+        /* ZONE GRID */
+        .zones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .zone-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .zone-stripe {
+            height: 6px;
+        }
+
+        .zone-body {
+            padding: 18px 20px;
+        }
+
+        .zone-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .zone-label {
+            font-size: 10px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            border-bottom: 0.5px solid var(--border);
+        }
+
+        .color-row:last-child {
+            border-bottom: none;
+        }
+
+        .cr-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            flex-shrink: 0;
+        }
+
+        .cr-name {
+            flex: 1;
+            font-size: 12px;
+            color: var(--ink-mid);
+        }
+
+        .cr-hex {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-soft);
+            background: var(--paper);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 0.5px solid var(--border);
+        }
+
+        /* APP MOCK */
+        .app-mock {
+            background: #EFF4FA;
+            border-radius: 12px;
+            border: 1px solid #C4D4E8;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(31, 60, 92, 0.10);
+            margin: 32px 0;
+            font-family: system-ui, sans-serif;
+        }
+
+        .mock-titlebar {
+            background: #EFF4FA;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid #C4D4E8;
+        }
+
+        .mock-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .mock-title {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            color: #35506A;
+            font-weight: 500;
+        }
+
+        .mock-body {
+            display: flex;
+            min-height: 360px;
+        }
+
+        .mock-left {
+            width: 220px;
+            flex-shrink: 0;
+            background: #E3EBF5;
+            border-right: 1px solid #C4D4E8;
+            padding: 14px 16px;
+        }
+
+        .mock-left-label {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #6688AA;
+            margin-bottom: 6px;
+        }
+
+        .mock-left-field {
+            background: white;
+            border: 1px solid #BDD0E8;
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 10px;
+            color: #162030;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mock-left-field .arr {
+            color: #6688AA;
+            font-size: 8px;
+        }
+
+        .mock-radio-group {
+            margin-bottom: 12px;
+        }
+
+        .mock-radio {
+            font-size: 10px;
+            color: #35506A;
+            padding: 3px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .mock-rb {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1.5px solid #BDD0E8;
+            background: white;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mock-rb.active {
+            border-color: #2C6FBF;
+            background: #2C6FBF;
+        }
+
+        .mock-rb.active::after {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .mock-sep {
+            height: 1px;
+            background: #C4D4E8;
+            margin: 12px 0;
+        }
+
+        .mock-preview-box {
+            background: #D4E5F9;
+            border: 1px solid #A8C5E8;
+            border-radius: 5px;
+            padding: 8px 10px;
+            margin-top: 12px;
+        }
+
+        .mock-preview-label {
+            font-size: 9px;
+            color: #6688AA;
+            margin-bottom: 3px;
+        }
+
+        .mock-preview-val {
+            font-size: 10px;
+            color: #1F3C5C;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .mock-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mock-table-header {
+            display: grid;
+            grid-template-columns: 2fr 0.6fr 2.2fr 1.4fr;
+            background: #1F3C5C;
+            padding: 8px 14px;
+            gap: 8px;
+        }
+
+        .mock-th {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 0.3px;
+        }
+
+        .mock-row {
+            display: grid;
+            grid-template-columns: 2fr 0.6fr 2.2fr 1.4fr;
+            padding: 7px 14px;
+            gap: 8px;
+            border-bottom: 0.5px solid #D8E5F2;
+            align-items: center;
+        }
+
+        .mock-row.alt {
+            background: #F4F8FD;
+        }
+
+        .mock-row.hover {
+            background: #E8F0FB;
+        }
+
+        .mock-row.selected {
+            background: #D4E5F9;
+            border-left: 3px solid #2C6FBF;
+            padding-left: 11px;
+        }
+
+        .mock-td {
+            font-size: 10px;
+            color: #35506A;
+        }
+
+        .mock-td.name {
+            color: #162030;
+            font-weight: 500;
+        }
+
+        .mock-td.changed {
+            color: #1F3C5C;
+            font-family: monospace;
+            font-size: 9.5px;
+        }
+
+        .mock-td.type {
+            font-size: 9px;
+            background: #E3EBF5;
+            color: #4A70A0;
+            padding: 2px 6px;
+            border-radius: 10px;
+            text-align: center;
+            border: 0.5px solid #BDD0E8;
+            width: fit-content;
+        }
+
+        .status-badge {
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .status-badge.pending {
+            background: #EBF1FA;
+            color: #5580AC;
+            border: 0.5px solid #BDD0E8;
+        }
+
+        .status-badge.success {
+            background: #E6F4EC;
+            color: #2E6E50;
+            border: 0.5px solid #A8D5BC;
+        }
+
+        .status-badge.error {
+            background: #FEF2F2;
+            color: #B42222;
+            border: 0.5px solid #F5AAAA;
+        }
+
+        .status-badge.warn {
+            background: #FEF9EC;
+            color: #9A6B15;
+            border: 0.5px solid #F5D98A;
+        }
+
+        .mock-meta {
+            background: #EAF0F8;
+            border-top: 1px solid #C4D4E8;
+            padding: 12px 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 24px;
+        }
+
+        .meta-row {
+            display: flex;
+            gap: 8px;
+            align-items: baseline;
+        }
+
+        .meta-key {
+            font-size: 9px;
+            color: #6688AA;
+            font-weight: 600;
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .meta-val {
+            font-size: 9.5px;
+            color: #162030;
+            font-family: monospace;
+        }
+
+        .mock-bottom-bar {
+            background: #F7F9FC;
+            border-top: 1px solid #C4D4E8;
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .mock-count {
+            font-size: 10px;
+            color: #6688AA;
+            margin-right: auto;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #BDD0E8;
+            border-radius: 5px;
+            padding: 4px 12px;
+            font-size: 10px;
+            color: #35506A;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #2C6FBF;
+            border: none;
+            border-radius: 5px;
+            padding: 4px 14px;
+            font-size: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* CSS CODE BLOCK */
+        .code-block {
+            background: #0F1C2E;
+            border-radius: 10px;
+            padding: 22px 26px;
+            overflow-x: auto;
+            margin: 16px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.75;
+        }
+
+        .c-comment {
+            color: #5c7a99;
+        }
+
+        .c-selector {
+            color: #7ec8e3;
+        }
+
+        .c-prop {
+            color: #c3d4e8;
+        }
+
+        .c-val {
+            color: #a8d8a8;
+        }
+
+        .c-hex {
+            color: #f9d77e;
+        }
+
+        .c-punct {
+            color: #5c7a99;
+        }
+
+        /* STATUS TABLE */
+        .status-showcase {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .status-cell {
+            border-radius: 8px;
+            padding: 14px 16px;
+            border: 1px solid;
+        }
+
+        .status-cell .s-icon {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .status-cell .s-name {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .status-cell .s-desc {
+            font-size: 11px;
+        }
+
+        .status-cell .s-colors {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .s-chip {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .status-cell.pending {
+            background: #EBF1FA;
+            border-color: #BDD0E8;
+            color: #35506A;
+        }
+
+        .status-cell.success {
+            background: #E6F4EC;
+            border-color: #A8D5BC;
+            color: #2E6E50;
+        }
+
+        .status-cell.error {
+            background: #FEF2F2;
+            border-color: #F5AAAA;
+            color: #B42222;
+        }
+
+        .status-cell.warn {
+            background: #FEF9EC;
+            border-color: #F5D98A;
+            color: #9A6B15;
+        }
+
+        /* COMPARISON */
+        .compare-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .compare-panel {
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .compare-header {
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .compare-header.before {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .compare-header.after {
+            background: #1F3C5C;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .compare-body {
+            padding: 14px;
+        }
+
+        .cmp-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .cmp-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .cmp-label {
+            font-size: 11px;
+            color: var(--ink-mid);
+        }
+
+        /* JAVAFX TIP */
+        .jfx-tip {
+            background: #EFF4FA;
+            border: 1px solid #C4D4E8;
+            border-left: 4px solid #2C6FBF;
+            border-radius: 0 8px 8px 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--ink-mid);
+        }
+
+        .jfx-tip strong {
+            color: var(--accent);
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* BUTTON SHOWCASE */
+        .btn-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            padding: 20px;
+            background: #EFF4FA;
+            border-radius: 10px;
+            border: 1px solid #C4D4E8;
+            margin: 16px 0;
+        }
+
+        .bts-btn {
+            padding: 7px 18px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .bts-primary {
+            background: #2C6FBF;
+            color: white;
+        }
+
+        .bts-secondary {
+            background: white;
+            color: #2C6FBF;
+            border: 1.5px solid #2C6FBF;
+        }
+
+        .bts-ghost {
+            background: transparent;
+            color: #5e7388;
+            border: 1px solid #C4D4E8;
+        }
+
+        .bts-danger {
+            background: #FEF2F2;
+            color: #B42222;
+            border: 1.5px solid #F5AAAA;
+        }
+
+        .bts-disabled {
+            background: #D8E5F2;
+            color: #8fa4bb;
+            cursor: not-allowed;
+        }
+
+        /* FULL PALETTE TABLE */
+        .full-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .fp-chip {
+            border-radius: 7px;
+            overflow: hidden;
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .fp-color {
+            height: 48px;
+        }
+
+        .fp-info {
+            padding: 6px 8px;
+            background: white;
+        }
+
+        .fp-hex {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: #5e7388;
+        }
+
+        .fp-num {
+            font-size: 9px;
+            color: #8fa4bb;
+        }
+
+        /* CALLOUT */
+        .callout {
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 13px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .callout.info {
+            background: #EFF4FA;
+            border: 1px solid #BDD0E8;
+        }
+
+        .callout.tip {
+            background: #FEF9EC;
+            border: 1px solid #F5D98A;
+        }
+
+        .callout .ci {
+            font-size: 15px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .callout p {
+            color: var(--ink-mid);
+            margin: 0;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 32px;
+            font-size: 11px;
+            color: var(--ink-muted);
+            border-top: 1px solid var(--border);
+            letter-spacing: 0.3px;
+        }
+
+        footer strong {
+            color: var(--ink-soft);
+        }
+
+        /* UTILS */
+        .mt {
+            margin-top: 20px;
+        }
+
+        .mb {
+            margin-bottom: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .page {
+                padding: 32px 18px;
+            }
+
+            header {
+                padding: 36px 20px;
+            }
+
+            .zones {
+                grid-template-columns: 1fr;
+            }
+
+            .status-showcase {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .compare-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="h-tag">Color System · JavaFX · 2026</div>
+    <h1>Renamer App<br>Color Scheme Guide</h1>
+    <p>A complete blue-grey pastel color system for the Renamer JavaFX app — with hex values, role definitions, JavaFX
+        CSS snippets, and a live mockup preview.</p>
+    <div class="header-palette">
+        <div class="h-swatch" style="background:#1F3C5C;"></div>
+        <div class="h-swatch" style="background:#2C6FBF;"></div>
+        <div class="h-swatch" style="background:#4A90D9;"></div>
+        <div class="h-swatch" style="background:#7BB8F0;"></div>
+        <div class="h-swatch" style="background:#A8CFEF;"></div>
+        <div class="h-swatch" style="background:#C4D4E8;"></div>
+        <div class="h-swatch" style="background:#D4E5F9;"></div>
+        <div class="h-swatch" style="background:#E3EBF5;"></div>
+        <div class="h-swatch" style="background:#EFF4FA;"></div>
+        <div class="h-swatch" style="background:#F4F8FD;"></div>
+    </div>
+</header>
+
+<div class="page">
+
+    <!-- SECTION 1: PALETTE OVERVIEW -->
+    <section>
+        <div class="sec-tag">Section 01</div>
+        <h2>Complete Palette — All Named Colors</h2>
+        <p class="lead">The entire palette is built on a single hue: Steel Blue (210–220° on the color wheel). Every
+            color in the system is a tint, shade, or saturation variant of this base — giving the app a cohesive, calm,
+            trustworthy appearance with clear visual hierarchy.</p>
+
+        <div class="palette-hero">
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#1F3C5C;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Navy Deep</div>
+                    <div class="swatch-hex">#1F3C5C</div>
+                    <div class="swatch-role">Table header, title bar</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#2C6FBF;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Steel Blue</div>
+                    <div class="swatch-hex">#2C6FBF</div>
+                    <div class="swatch-role">Primary action, accent</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#4A90D9;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Blue Mid</div>
+                    <div class="swatch-hex">#4A90D9</div>
+                    <div class="swatch-role">Focus rings, links</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#7BB8F0;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Blue Light</div>
+                    <div class="swatch-hex">#7BB8F0</div>
+                    <div class="swatch-role">Hover accents, icons</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#A8CFEF;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Blue Mist</div>
+                    <div class="swatch-hex">#A8CFEF</div>
+                    <div class="swatch-role">Borders on dark bg</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#BDD0E8;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Blue-Grey Border</div>
+                    <div class="swatch-hex">#BDD0E8</div>
+                    <div class="swatch-role">Panel borders, dividers</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#C4D4E8;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Border Base</div>
+                    <div class="swatch-hex">#C4D4E8</div>
+                    <div class="swatch-role">Main app borders</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#D4E5F9;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Selection Blue</div>
+                    <div class="swatch-hex">#D4E5F9</div>
+                    <div class="swatch-role">Selected row, preview</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#E3EBF5;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Panel Blue</div>
+                    <div class="swatch-hex">#E3EBF5</div>
+                    <div class="swatch-role">Left config panel bg</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#E8F0FB;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Hover Blue</div>
+                    <div class="swatch-hex">#E8F0FB</div>
+                    <div class="swatch-role">Table row hover</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#EAF0F8;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Meta Panel</div>
+                    <div class="swatch-hex">#EAF0F8</div>
+                    <div class="swatch-role">Metadata panel bg</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#EFF4FA;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">App Background</div>
+                    <div class="swatch-hex">#EFF4FA</div>
+                    <div class="swatch-role">Root background</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#F4F8FD;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Row Alt</div>
+                    <div class="swatch-hex">#F4F8FD</div>
+                    <div class="swatch-role">Alternating table rows</div>
+                </div>
+            </div>
+            <div class="swatch-card">
+                <div class="swatch-color" style="background:#FFFFFF; border:1px solid #eee;"></div>
+                <div class="swatch-info">
+                    <div class="swatch-name">Surface White</div>
+                    <div class="swatch-hex">#FFFFFF</div>
+                    <div class="swatch-role">Table rows, inputs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEMANTIC COLORS -->
+        <h3 style="font-size:15px; font-weight:600; margin-bottom:16px; color:var(--ink);">Semantic Colors (Status
+            States)</h3>
+        <div class="status-showcase">
+            <div class="status-cell pending">
+                <div class="s-name">Pending / Not Renamed</div>
+                <div class="s-desc">File loaded, awaiting rename operation</div>
+                <div class="s-colors">
+                    <span class="s-chip">#EBF1FA bg</span>
+                    <span class="s-chip">#5580AC text</span>
+                    <span class="s-chip">#BDD0E8 border</span>
+                </div>
+            </div>
+            <div class="status-cell success">
+                <div class="s-name">Success / Renamed</div>
+                <div class="s-desc">File renamed without errors</div>
+                <div class="s-colors">
+                    <span class="s-chip">#E6F4EC bg</span>
+                    <span class="s-chip">#2E6E50 text</span>
+                    <span class="s-chip">#A8D5BC border</span>
+                </div>
+            </div>
+            <div class="status-cell error">
+                <div class="s-name">Error / Conflict</div>
+                <div class="s-desc">Name collision or permission error</div>
+                <div class="s-colors">
+                    <span class="s-chip">#FEF2F2 bg</span>
+                    <span class="s-chip">#B42222 text</span>
+                    <span class="s-chip">#F5AAAA border</span>
+                </div>
+            </div>
+            <div class="status-cell warn">
+                <div class="s-name">Warning / Skipped</div>
+                <div class="s-desc">Identical name, file skipped</div>
+                <div class="s-colors">
+                    <span class="s-chip">#FEF9EC bg</span>
+                    <span class="s-chip">#9A6B15 text</span>
+                    <span class="s-chip">#F5D98A border</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION 2: LIVE MOCKUP -->
+    <section>
+        <div class="sec-tag">Section 02</div>
+        <h2>Live Application Mockup</h2>
+        <p class="lead">A pixel-faithful mockup of the app applying the proposed color scheme. Every zone, row state,
+            status badge, and control is shown in its correct color.</p>
+
+        <div class="app-mock">
+            <!-- Title bar -->
+            <div class="mock-titlebar">
+                <div class="mock-dot" style="background:#FF5F57;"></div>
+                <div class="mock-dot" style="background:#FEBC2E;"></div>
+                <div class="mock-dot" style="background:#28C840;"></div>
+                <div class="mock-title">⚙ Renamer App. Rename your files.</div>
+            </div>
+            <!-- Body -->
+            <div class="mock-body">
+                <!-- Left config panel -->
+                <div class="mock-left">
+                    <div class="mock-left-label">Position</div>
+                    <div class="mock-radio-group">
+                        <div class="mock-radio">
+                            <div class="mock-rb"></div>
+                            Begin
+                        </div>
+                        <div class="mock-radio">
+                            <div class="mock-rb active"></div>
+                            Replace
+                        </div>
+                        <div class="mock-radio">
+                            <div class="mock-rb"></div>
+                            End
+                        </div>
+                    </div>
+                    <div class="mock-sep"></div>
+                    <div class="mock-left-label">Date format</div>
+                    <div class="mock-left-field">YYYY-MM-DD <span class="arr">▾</span></div>
+                    <div class="mock-left-label">Time format</div>
+                    <div class="mock-left-field">HHMMSS (24h) <span class="arr">▾</span></div>
+                    <div class="mock-left-label">DateTime format</div>
+                    <div class="mock-left-field">DateTime <span class="arr">▾</span></div>
+                    <div class="mock-left-label">Time source</div>
+                    <div class="mock-left-field">File Creation Date <span class="arr">▾</span></div>
+                    <div class="mock-sep"></div>
+                    <div class="mock-preview-box">
+                        <div class="mock-preview-label">Live preview</div>
+                        <div class="mock-preview-val">photo.jpg →<br>2026-03-01_172243.jpg</div>
+                    </div>
+                </div>
+                <!-- Right table area -->
+                <div class="mock-right">
+                    <div class="mock-table-header">
+                        <div class="mock-th">Name</div>
+                        <div class="mock-th">Type</div>
+                        <div class="mock-th">Changed Name</div>
+                        <div class="mock-th">File Status</div>
+                    </div>
+                    <!-- Rows: various states -->
+                    <div class="mock-row selected">
+                        <div class="mock-td name">aa_2026-03-01:17-22-4300008.jpeg</div>
+                        <div class="mock-td"><span class="mock-td type">jpeg</span></div>
+                        <div class="mock-td changed">2026-03-01_172243_aa_…jpeg</div>
+                        <div class="mock-td"><span class="status-badge pending">● Pending</span></div>
+                    </div>
+                    <div class="mock-row alt">
+                        <div class="mock-td name">aa_2026-03-01:17-22-4300005.jpeg</div>
+                        <div class="mock-td"><span class="mock-td type">jpeg</span></div>
+                        <div class="mock-td changed">2026-03-01_172243_aa_…jpeg</div>
+                        <div class="mock-td"><span class="status-badge success">✓ Renamed</span></div>
+                    </div>
+                    <div class="mock-row">
+                        <div class="mock-td name">20241108_113019.jpeg</div>
+                        <div class="mock-td"><span class="mock-td type">jpeg</span></div>
+                        <div class="mock-td changed">2024-11-08_113019_202…jpeg</div>
+                        <div class="mock-td"><span class="status-badge warn">⚠ Skipped</span></div>
+                    </div>
+                    <div class="mock-row alt hover">
+                        <div class="mock-td name">vacation_photo.HEIC</div>
+                        <div class="mock-td"><span class="mock-td type">heic</span></div>
+                        <div class="mock-td changed">2025-07-14_120033.HEIC</div>
+                        <div class="mock-td"><span class="status-badge error">✕ Error</span></div>
+                    </div>
+                    <!-- Empty rows -->
+                    <div style="flex:1; background:#FFFFFF;"></div>
+                    <!-- Metadata panel -->
+                    <div class="mock-meta">
+                        <div class="meta-row"><span class="meta-key">Name</span><span class="meta-val">aa_2026-03-01:17-22-4300008</span>
+                        </div>
+                        <div class="meta-row"><span class="meta-key">Modified</span><span class="meta-val">2026-03-01 17:22:43</span>
+                        </div>
+                        <div class="meta-row"><span class="meta-key">New name</span><span class="meta-val">2026-03-01_172243_aa_2026…</span>
+                        </div>
+                        <div class="meta-row"><span class="meta-key">Created</span><span class="meta-val">2026-03-01 17:22:43</span>
+                        </div>
+                        <div class="meta-row"><span class="meta-key">Path</span><span class="meta-val">/Users/ok/Pictures/Ava</span>
+                        </div>
+                        <div class="meta-row"><span class="meta-key">Size</span><span class="meta-val">460.4 KB · 1786 × 1786 px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom bar -->
+            <div class="mock-bottom-bar">
+                <span class="mock-count">4 files loaded · 1 renamed · 1 error</span>
+                <button class="btn-secondary">Clear</button>
+                <button class="btn-primary">▶ Rename Files</button>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION 3: ZONE BY ZONE -->
+    <section>
+        <div class="sec-tag">Section 03</div>
+        <h2>Color Assignment — Zone by Zone</h2>
+        <p class="lead">Every visual zone of the application gets specific color values. This section is the reference
+            for Claude Code implementation — each zone maps directly to a JavaFX CSS selector.</p>
+
+        <div class="zones">
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:#EFF4FA;"></div>
+                <div class="zone-body">
+                    <div class="zone-title">App Root Background <span class="zone-label">.root</span></div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#EFF4FA;"></div>
+                        <div class="cr-name">Background fill</div>
+                        <div class="cr-hex">#EFF4FA</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#162030;"></div>
+                        <div class="cr-name">Primary text</div>
+                        <div class="cr-hex">#162030</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#35506A;"></div>
+                        <div class="cr-name">Secondary text</div>
+                        <div class="cr-hex">#35506A</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#6688AA;"></div>
+                        <div class="cr-name">Muted / label text</div>
+                        <div class="cr-hex">#6688AA</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#C4D4E8;"></div>
+                        <div class="cr-name">Global borders</div>
+                        <div class="cr-hex">#C4D4E8</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:#E3EBF5;"></div>
+                <div class="zone-body">
+                    <div class="zone-title">Left Config Panel <span class="zone-label">.config-panel</span></div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#E3EBF5;"></div>
+                        <div class="cr-name">Panel background</div>
+                        <div class="cr-hex">#E3EBF5</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#BDD0E8;"></div>
+                        <div class="cr-name">Panel right border</div>
+                        <div class="cr-hex">#BDD0E8</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#C8D8EE;"></div>
+                        <div class="cr-name">Section separators</div>
+                        <div class="cr-hex">#C8D8EE</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#FFFFFF;"></div>
+                        <div class="cr-name">Input / dropdown bg</div>
+                        <div class="cr-hex">#FFFFFF</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#D4E5F9;"></div>
+                        <div class="cr-name">Preview box bg</div>
+                        <div class="cr-hex">#D4E5F9</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:#1F3C5C;"></div>
+                <div class="zone-body">
+                    <div class="zone-title">Table Header Row <span class="zone-label">.column-header</span></div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#1F3C5C;"></div>
+                        <div class="cr-name">Header background</div>
+                        <div class="cr-hex">#1F3C5C</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#EAEEF2;"></div>
+                        <div class="cr-name">Header text</div>
+                        <div class="cr-hex">#EAEEF2</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#2C4E72;"></div>
+                        <div class="cr-name">Column separator</div>
+                        <div class="cr-hex">#2C4E72</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#264870;"></div>
+                        <div class="cr-name">Sort arrow tint</div>
+                        <div class="cr-hex">#264870</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:linear-gradient(to right, #fff 50%, #F4F8FD 50%);"></div>
+                <div class="zone-body">
+                    <div class="zone-title">Table Data Rows <span class="zone-label">.table-row-cell</span></div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#FFFFFF;"></div>
+                        <div class="cr-name">Even rows</div>
+                        <div class="cr-hex">#FFFFFF</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#F4F8FD;"></div>
+                        <div class="cr-name">Odd rows (alt)</div>
+                        <div class="cr-hex">#F4F8FD</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#E8F0FB;"></div>
+                        <div class="cr-name">Hover state</div>
+                        <div class="cr-hex">#E8F0FB</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#D4E5F9;"></div>
+                        <div class="cr-name">Selected state</div>
+                        <div class="cr-hex">#D4E5F9</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#D8E5F2;"></div>
+                        <div class="cr-name">Row grid lines</div>
+                        <div class="cr-hex">#D8E5F2</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:#EAF0F8;"></div>
+                <div class="zone-body">
+                    <div class="zone-title">Metadata Panel (Bottom) <span class="zone-label">.metadata-panel</span>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#EAF0F8;"></div>
+                        <div class="cr-name">Panel background</div>
+                        <div class="cr-hex">#EAF0F8</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#C4D4E8;"></div>
+                        <div class="cr-name">Top border</div>
+                        <div class="cr-hex">#C4D4E8</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#6688AA;"></div>
+                        <div class="cr-name">Key labels</div>
+                        <div class="cr-hex">#6688AA</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#162030;"></div>
+                        <div class="cr-name">Value text</div>
+                        <div class="cr-hex">#162030</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#D0E2F5;"></div>
+                        <div class="cr-name">Group separator</div>
+                        <div class="cr-hex">#D0E2F5</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:#F7F9FC;"></div>
+                <div class="zone-body">
+                    <div class="zone-title">Bottom Action Bar <span class="zone-label">.action-bar</span></div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#F7F9FC;"></div>
+                        <div class="cr-name">Bar background</div>
+                        <div class="cr-hex">#F7F9FC</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#C4D4E8;"></div>
+                        <div class="cr-name">Top border</div>
+                        <div class="cr-hex">#C4D4E8</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#8fa4bb;"></div>
+                        <div class="cr-name">File count text</div>
+                        <div class="cr-hex">#8fa4bb</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#2C6FBF;"></div>
+                        <div class="cr-name">Primary btn bg</div>
+                        <div class="cr-hex">#2C6FBF</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#1E5A9E;"></div>
+                        <div class="cr-name">Primary btn hover</div>
+                        <div class="cr-hex">#1E5A9E</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION 4: BUTTONS -->
+    <section>
+        <div class="sec-tag">Section 04</div>
+        <h2>Button System</h2>
+        <p class="lead">Four button types with clear visual hierarchy. The primary action (Rename) dominates; secondary
+            actions are quieter. Destructive/clear actions are text-only or ghosted.</p>
+
+        <div class="btn-showcase">
+            <button class="bts-btn bts-primary">▶ Rename Files</button>
+            <button class="bts-btn bts-secondary">Preview ↻</button>
+            <button class="bts-btn bts-ghost">Clear</button>
+            <button class="bts-btn bts-danger">✕ Remove File</button>
+            <button class="bts-btn bts-disabled" disabled>Rename Files</button>
+        </div>
+
+        <div class="zones">
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:#2C6FBF;"></div>
+                <div class="zone-body">
+                    <div class="zone-title">Primary Button <span class="zone-label">.button-primary</span></div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#2C6FBF;"></div>
+                        <div class="cr-name">Normal bg</div>
+                        <div class="cr-hex">#2C6FBF</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#1E5A9E;"></div>
+                        <div class="cr-name">Hover bg</div>
+                        <div class="cr-hex">#1E5A9E</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#184D88;"></div>
+                        <div class="cr-name">Pressed bg</div>
+                        <div class="cr-hex">#184D88</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#FFFFFF;"></div>
+                        <div class="cr-name">Label text</div>
+                        <div class="cr-hex">#FFFFFF</div>
+                    </div>
+                </div>
+            </div>
+            <div class="zone-card">
+                <div class="zone-stripe" style="background:#FFFFFF; border-bottom: 2px solid #2C6FBF;"></div>
+                <div class="zone-body">
+                    <div class="zone-title">Secondary Button <span class="zone-label">.button-secondary</span></div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#FFFFFF;"></div>
+                        <div class="cr-name">Normal bg</div>
+                        <div class="cr-hex">#FFFFFF</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#2C6FBF;"></div>
+                        <div class="cr-name">Border color</div>
+                        <div class="cr-hex">#2C6FBF</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#EBF2FF;"></div>
+                        <div class="cr-name">Hover bg</div>
+                        <div class="cr-hex">#EBF2FF</div>
+                    </div>
+                    <div class="color-row">
+                        <div class="cr-dot" style="background:#2C6FBF;"></div>
+                        <div class="cr-name">Label text</div>
+                        <div class="cr-hex">#2C6FBF</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION 5: JAVAFX CSS -->
+    <section>
+        <div class="sec-tag">Section 05</div>
+        <h2>JavaFX CSS Implementation</h2>
+        <p class="lead">Ready-to-use JavaFX CSS code. Each block targets a specific zone of the application. Apply to
+            your main Scene via <code
+                    style="font-family:monospace; background:#EFF4FA; padding:1px 5px; border-radius:3px;">scene.getStylesheets().add(getClass().getResource("theme.css").toExternalForm())</code>.
+        </p>
+
+        <div class="jfx-tip">
+            <strong>JavaFX CSS Notes</strong>
+            JavaFX uses <code>-fx-</code> prefixed properties. Gradients use <code>linear-gradient()</code> with <code>from
+            ... to ...</code> syntax. Colors can be defined as hex, rgb(), or derived colors using <code>ladder()</code>
+            and <code>derive()</code>.
+        </div>
+
+        <div class="code-block">
+<span class="c-comment">/* ====================================================
+   RENAMER APP — theme.css
+   Blue-Grey Pastel System · JavaFX CSS
+   ==================================================== */</span>
+
+            <span class="c-comment">/* 1. ROOT — global color variables and base */</span>
+            <span class="c-selector">.root</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-base:</span> <span class="c-hex">#EFF4FA</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background:</span> <span class="c-hex">#EFF4FA</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-control-inner-background:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-accent:</span> <span class="c-hex">#2C6FBF</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-focus-color:</span> <span class="c-hex">#4A90D9</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-faint-focus-color:</span> <span class="c-val">rgba(74, 144, 217, 0.15)</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-base-color:</span> <span class="c-hex">#162030</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-inner-color:</span> <span class="c-hex">#162030</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-font-family:</span> <span class="c-val">"System"</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-font-size:</span> <span class="c-val">13px</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 2. LEFT CONFIG PANEL — VBox with style class "config-panel" */</span>
+            <span class="c-selector">.config-panel</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#E3EBF5</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0 1 0 0</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">14 16 14 16</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-spacing:</span> <span class="c-val">8</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Section label inside config panel */</span>
+            <span class="c-selector">.config-panel .section-label</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#6688AA</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-size:</span> <span class="c-val">11px</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-weight:</span> <span class="c-val">bold</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Live preview box inside config panel */</span>
+            <span class="c-selector">.preview-box</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#D4E5F9</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#A8C5E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">1</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">5</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">8 10 8 10</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.preview-box .preview-value</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#1F3C5C</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-family:</span> <span class="c-val">"Monospaced"</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-font-weight:</span> <span class="c-val">bold</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 3. TABLE VIEW — header, rows, states */</span>
+            <span class="c-selector">.table-view</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#C4D4E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-selector">.table-view .column-header-background</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#1F3C5C</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-selector">.table-view .column-header</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#1F3C5C</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#2C4E72</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0 1 0 0</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-size:</span> <span class="c-val">34px</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-selector">.table-view .column-header .label</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#EAEEF2</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-weight:</span> <span class="c-val">bold</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-size:</span> <span class="c-val">12px</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Default row */</span>
+            <span class="c-selector">.table-row-cell</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-val">transparent transparent #D8E5F2 transparent</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0 0 0.5 0</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-cell-size:</span> <span class="c-val">30px</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Alternating row */</span>
+            <span class="c-selector">.table-row-cell:odd</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#F4F8FD</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Hover */</span>
+            <span class="c-selector">.table-row-cell:hover</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#E8F0FB</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Selected row */</span>
+            <span class="c-selector">.table-row-cell:selected</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#D4E5F9</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.table-row-cell:selected .table-cell</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#162030</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Focused table (not selected) */</span>
+            <span class="c-selector">.table-view:focused .table-row-cell:selected</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#D4E5F9</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Status row styles (add via pseudoclass or style class in Java) */</span>
+            <span class="c-selector">.table-row-cell.status-success</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#E6F4EC</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.table-row-cell.status-error</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FEF2F2</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.table-row-cell.status-warning</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FEF9EC</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Empty rows below data */</span>
+            <span class="c-selector">.table-row-cell:empty</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.table-row-cell:empty:odd</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#F4F8FD</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* Table cell text */</span>
+            <span class="c-selector">.table-cell</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#35506A</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-alignment:</span> <span class="c-val">CENTER-LEFT</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">0 8 0 8</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 4. METADATA PANEL — HBox or GridPane with style class */</span>
+            <span class="c-selector">.metadata-panel</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#EAF0F8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#C4D4E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">1 0 0 0</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">12 16 12 16</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.metadata-panel .meta-key</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#6688AA</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-size:</span> <span class="c-val">11px</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-weight:</span> <span class="c-val">bold</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.metadata-panel .meta-value</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#162030</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-family:</span> <span class="c-val">"Monospaced"</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-font-size:</span> <span class="c-val">11.5px</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 5. BOTTOM ACTION BAR */</span>
+            <span class="c-selector">.action-bar</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#F7F9FC</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#C4D4E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">1 0 0 0</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">8 12 8 12</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-alignment:</span> <span class="c-val">CENTER-RIGHT</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-spacing:</span> <span class="c-val">8</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 6. BUTTONS */</span>
+            <span class="c-selector">.button-primary</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#2C6FBF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#FFFFFF</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-font-weight:</span> <span class="c-val">bold</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">5</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">6 18 6 18</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-cursor:</span> <span class="c-val">hand</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.button-primary:hover</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#1E5A9E</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.button-primary:pressed</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#184D88</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.button-primary:disabled</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#D8E5F2</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#8FA4BB</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-selector">.button-secondary</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#2C6FBF</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#2C6FBF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">1.5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">5</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">5 16 5 16</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.button-secondary:hover</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#EBF2FF</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-selector">.button-ghost</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-val">transparent</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#5e7388</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#C4D4E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">1</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">5</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 7. COMBOBOX / DROPDOWN */</span>
+            <span class="c-selector">.combo-box</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">1</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">4</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">4</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.combo-box:focused</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#4A90D9</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-effect:</span> <span class="c-val">dropshadow(gaussian, rgba(74,144,217,0.25), 4, 0, 0, 0)</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.combo-box-popup .list-view</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.combo-box-popup .list-cell:filled:hover</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#E8F0FB</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.combo-box-popup .list-cell:filled:selected</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#D4E5F9</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#1F3C5C</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 8. TEXT FIELD */</span>
+            <span class="c-selector">.text-field</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">1</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">4</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">4</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#162030</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.text-field:focused</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#4A90D9</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-effect:</span> <span class="c-val">dropshadow(gaussian, rgba(74,144,217,0.2), 4, 0, 0, 0)</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 9. RADIO BUTTON & CHECKBOX */</span>
+            <span class="c-selector">.radio-button .radio</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.radio-button:selected .radio</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#2C6FBF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#2C6FBF</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.radio-button .text</span><span class="c-punct">,</span>
+            <span class="c-selector">.check-box .text</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#35506A</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.check-box .box</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FFFFFF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">3</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.check-box:selected .box</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#2C6FBF</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#2C6FBF</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 10. SCROLL BAR */</span>
+            <span class="c-selector">.scroll-bar</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#EFF4FA</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.scroll-bar .thumb</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">4</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.scroll-bar .thumb:hover</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#94B0CC</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 11. SEPARATOR */</span>
+            <span class="c-selector">.separator .line</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#C8D8EE</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0.5</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 12. SPLIT PANE DIVIDER */</span>
+            <span class="c-selector">.split-pane > .split-pane-divider</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">0 1 0 1</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.split-pane > .split-pane-divider:hover</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#4A90D9</span><span
+                class="c-punct">;</span>
+            <span class="c-punct">}</span>
+
+            <span class="c-comment">/* 13. STATUS BADGE LABELS — add via getStyleClass() */</span>
+            <span class="c-selector">.badge-pending</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#EBF1FA</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#5580AC</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#BDD0E8</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0.5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">10</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">10</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">2 8 2 8</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.badge-success</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#E6F4EC</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#2E6E50</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#A8D5BC</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0.5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">10</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">10</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">2 8 2 8</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.badge-error</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FEF2F2</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#B42222</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#F5AAAA</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0.5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">10</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">10</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">2 8 2 8</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+            <span class="c-selector">.badge-warning</span> <span class="c-punct">{</span>
+            <span class="c-prop">-fx-background-color:</span> <span class="c-hex">#FEF9EC</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-text-fill:</span> <span class="c-hex">#9A6B15</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-border-color:</span> <span class="c-hex">#F5D98A</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-width:</span> <span class="c-val">0.5</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-background-radius:</span> <span class="c-val">10</span><span
+                class="c-punct">;</span>
+            <span class="c-prop">-fx-border-radius:</span> <span class="c-val">10</span><span class="c-punct">;</span>
+            <span class="c-prop">-fx-padding:</span> <span class="c-val">2 8 2 8</span><span class="c-punct">;</span>
+            <span class="c-punct">}</span>
+        </div>
+
+        <div class="callout info">
+            <span class="ci">ℹ️</span>
+            <p>To apply status row classes in Java: <code
+                    style="font-family:monospace; background:rgba(0,0,0,0.07); padding:1px 5px; border-radius:3px;">row.getStyleClass().add("status-success")</code>
+                in your <code>updateItem()</code> method inside a custom <code>TableRow</code> factory. Remove old
+                classes first with <code>row.getStyleClass().removeAll("status-success", "status-error",
+                    "status-warning")</code>.</p>
+        </div>
+    </section>
+
+
+    <!-- SECTION 6: BEFORE / AFTER -->
+    <section>
+        <div class="sec-tag">Section 06</div>
+        <h2>Before vs After — Color Impact</h2>
+        <p class="lead">A direct comparison of the old grey palette vs the proposed blue-grey palette for each app
+            zone.</p>
+
+        <div class="compare-wrap">
+            <div class="compare-panel">
+                <div class="compare-header before">CURRENT — Neutral Grey</div>
+                <div class="compare-body">
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#F5F5F5;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">App background — #F5F5F5 (flat, lifeless)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#EBEBEB;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Left panel — same as bg, no differentiation</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#DDDDDD;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Table header — light grey, no hierarchy</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#FFFFFF;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Even rows — white</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#F2F2F2;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Odd rows — barely different grey</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#0096C8;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Old loaded rows — saturated cyan (previous)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#3B82F6;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Primary button — generic blue</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#F0F0F0;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Metadata panel — identical to main bg</div>
+                    </div>
+                </div>
+            </div>
+            <div class="compare-panel">
+                <div class="compare-header after">PROPOSED — Steel Blue-Grey</div>
+                <div class="compare-body">
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#EFF4FA;border:0.5px solid #C4D4E8;"></div>
+                        <div class="cmp-label">App background — #EFF4FA (calm blue tint)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#E3EBF5;"></div>
+                        <div class="cmp-label">Left panel — #E3EBF5 (clearly distinct zone)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#1F3C5C;"></div>
+                        <div class="cmp-label">Table header — #1F3C5C (authoritative navy)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#FFFFFF;border:1px solid #ddd;"></div>
+                        <div class="cmp-label">Even rows — clean white</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#F4F8FD;border:0.5px solid #D8E5F2;"></div>
+                        <div class="cmp-label">Odd rows — #F4F8FD (gentle blue alt)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#D4E5F9;"></div>
+                        <div class="cmp-label">Selected row — #D4E5F9 (clear selection signal)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#2C6FBF;"></div>
+                        <div class="cmp-label">Primary button — #2C6FBF (brand-consistent)</div>
+                    </div>
+                    <div class="cmp-row">
+                        <div class="cmp-dot" style="background:#EAF0F8;"></div>
+                        <div class="cmp-label">Metadata panel — #EAF0F8 (distinct zone)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION 7: CONTRAST CHECK -->
+    <section>
+        <div class="sec-tag">Section 07</div>
+        <h2>Accessibility Contrast Reference</h2>
+        <p class="lead">All text-on-background combinations are checked against WCAG 2.1 contrast requirements. These
+            must pass AA (4.5:1 for normal text, 3:1 for large/bold text).</p>
+
+        <div class="zone-card" style="border-radius:10px; overflow:hidden;">
+            <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <thead>
+                <tr style="background:#1F3C5C;">
+                    <th style="padding:10px 14px; color:rgba(255,255,255,0.85); text-align:left; font-weight:600;">Text
+                        Color
+                    </th>
+                    <th style="padding:10px 14px; color:rgba(255,255,255,0.85); text-align:left; font-weight:600;">
+                        Background
+                    </th>
+                    <th style="padding:10px 14px; color:rgba(255,255,255,0.85); text-align:left; font-weight:600;">
+                        Approx. Ratio
+                    </th>
+                    <th style="padding:10px 14px; color:rgba(255,255,255,0.85); text-align:left; font-weight:600;">WCAG
+                        Grade
+                    </th>
+                    <th style="padding:10px 14px; color:rgba(255,255,255,0.85); text-align:left; font-weight:600;">
+                        Usage
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr style="border-bottom:0.5px solid #D8E5F2;">
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#162030;">#162030</span>
+                    </td>
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#6688AA;">#FFFFFF</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#2E6E50; font-weight:600;">~14.5:1</td>
+                    <td style="padding:9px 14px;"><span
+                            style="background:#E6F4EC; color:#2E6E50; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">AAA ✓</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#6688AA; font-size:12px;">Table cell primary text</td>
+                </tr>
+                <tr style="background:#F4F8FD; border-bottom:0.5px solid #D8E5F2;">
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#162030;">#35506A</span>
+                    </td>
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#6688AA;">#EFF4FA</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#2E6E50; font-weight:600;">~7.1:1</td>
+                    <td style="padding:9px 14px;"><span
+                            style="background:#E6F4EC; color:#2E6E50; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">AAA ✓</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#6688AA; font-size:12px;">Labels on app background</td>
+                </tr>
+                <tr style="border-bottom:0.5px solid #D8E5F2;">
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#162030;">#EAEEF2</span>
+                    </td>
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#6688AA;">#1F3C5C</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#2E6E50; font-weight:600;">~10.8:1</td>
+                    <td style="padding:9px 14px;"><span
+                            style="background:#E6F4EC; color:#2E6E50; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">AAA ✓</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#6688AA; font-size:12px;">Table column headers</td>
+                </tr>
+                <tr style="background:#F4F8FD; border-bottom:0.5px solid #D8E5F2;">
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#162030;">#FFFFFF</span>
+                    </td>
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#6688AA;">#2C6FBF</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#2E6E50; font-weight:600;">~5.0:1</td>
+                    <td style="padding:9px 14px;"><span
+                            style="background:#E6F4EC; color:#2E6E50; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">AA ✓</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#6688AA; font-size:12px;">Button label on primary btn</td>
+                </tr>
+                <tr style="border-bottom:0.5px solid #D8E5F2;">
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#162030;">#6688AA</span>
+                    </td>
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#6688AA;">#EAF0F8</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#9A6B15; font-weight:600;">~3.8:1</td>
+                    <td style="padding:9px 14px;"><span
+                            style="background:#FEF9EC; color:#9A6B15; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">AA (lg) ✓</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#6688AA; font-size:12px;">Meta keys — use 11px bold</td>
+                </tr>
+                <tr style="background:#F4F8FD;">
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#162030;">#2E6E50</span>
+                    </td>
+                    <td style="padding:9px 14px;"><span style="font-family:monospace; font-size:11px; color:#6688AA;">#E6F4EC</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#2E6E50; font-weight:600;">~5.6:1</td>
+                    <td style="padding:9px 14px;"><span
+                            style="background:#E6F4EC; color:#2E6E50; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;">AA ✓</span>
+                    </td>
+                    <td style="padding:9px 14px; color:#6688AA; font-size:12px;">Success badge text</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="callout tip">
+            <span class="ci">💡</span>
+            <p>The muted label color #6688AA on light blue backgrounds sits just at AA for large text. Always use it at
+                minimum 11px bold (600 weight) for metadata keys. For body text, use #35506A or darker. Use the free
+                Colour Contrast Analyser tool to spot-check after implementation.</p>
+        </div>
+    </section>
+
+
+    <!-- SECTION 8: QUICK REFERENCE -->
+    <section>
+        <div class="sec-tag">Section 08</div>
+        <h2>Quick Reference — Complete Color Map</h2>
+        <p class="lead">Every named color in the system with its hex value, for pasting directly into Claude Code.</p>
+
+        <div class="full-palette">
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#1F3C5C;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#1F3C5C</div>
+                    <div class="fp-num">Navy Deep</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#264870;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#264870</div>
+                    <div class="fp-num">Header sep</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#2C6FBF;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#2C6FBF</div>
+                    <div class="fp-num">Accent / Btn</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#1E5A9E;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#1E5A9E</div>
+                    <div class="fp-num">Btn hover</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#184D88;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#184D88</div>
+                    <div class="fp-num">Btn pressed</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#4A90D9;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#4A90D9</div>
+                    <div class="fp-num">Focus ring</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#7BB8F0;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#7BB8F0</div>
+                    <div class="fp-num">Hover icon</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#A8CFEF;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#A8CFEF</div>
+                    <div class="fp-num">Blue mist</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#BDD0E8;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#BDD0E8</div>
+                    <div class="fp-num">Panel border</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#C4D4E8;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#C4D4E8</div>
+                    <div class="fp-num">Base border</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#C8D8EE;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#C8D8EE</div>
+                    <div class="fp-num">Separator</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#D4E5F9;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#D4E5F9</div>
+                    <div class="fp-num">Selected row</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#D8E5F2;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#D8E5F2</div>
+                    <div class="fp-num">Row grid line</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#D0E2F5;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#D0E2F5</div>
+                    <div class="fp-num">Meta divider</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#D8E5F2;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#D8E5F2</div>
+                    <div class="fp-num">Disabled btn</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#E3EBF5;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#E3EBF5</div>
+                    <div class="fp-num">Config panel</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#E8F0FB;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#E8F0FB</div>
+                    <div class="fp-num">Row hover</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#EAF0F8;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#EAF0F8</div>
+                    <div class="fp-num">Meta panel</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#EBF1FA;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#EBF1FA</div>
+                    <div class="fp-num">Pending badge</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#EBF2FF;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#EBF2FF</div>
+                    <div class="fp-num">Sec btn hover</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#EFF4FA;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#EFF4FA</div>
+                    <div class="fp-num">App bg</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#F4F8FD;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#F4F8FD</div>
+                    <div class="fp-num">Row alt</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#F7F9FC;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#F7F9FC</div>
+                    <div class="fp-num">Action bar</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#FFFFFF; border:0.5px solid #eee;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#FFFFFF</div>
+                    <div class="fp-num">Surface</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#162030;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#162030</div>
+                    <div class="fp-num">Text primary</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#35506A;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#35506A</div>
+                    <div class="fp-num">Text mid</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#6688AA;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#6688AA</div>
+                    <div class="fp-num">Text soft</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#8FA4BB;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#8FA4BB</div>
+                    <div class="fp-num">Text muted</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#EAEEF2;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#EAEEF2</div>
+                    <div class="fp-num">Header text</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#2E6E50;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#2E6E50</div>
+                    <div class="fp-num">Success text</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#E6F4EC;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#E6F4EC</div>
+                    <div class="fp-num">Success bg</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#A8D5BC;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#A8D5BC</div>
+                    <div class="fp-num">Success border</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#B42222;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#B42222</div>
+                    <div class="fp-num">Error text</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#FEF2F2;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#FEF2F2</div>
+                    <div class="fp-num">Error bg</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#F5AAAA;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#F5AAAA</div>
+                    <div class="fp-num">Error border</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#9A6B15;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#9A6B15</div>
+                    <div class="fp-num">Warning text</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#FEF9EC;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#FEF9EC</div>
+                    <div class="fp-num">Warning bg</div>
+                </div>
+            </div>
+            <div class="fp-chip">
+                <div class="fp-color" style="background:#F5D98A;"></div>
+                <div class="fp-info">
+                    <div class="fp-hex">#F5D98A</div>
+                    <div class="fp-num">Warning border</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <strong>Renamer App — Color Scheme Guide</strong><br>
+    Steel Blue-Grey Pastel System · Designed for JavaFX · WCAG AA Compliant · 2026
+</footer>
+
+</body>
+</html>

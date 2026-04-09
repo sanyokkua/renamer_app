@@ -1,0 +1,35 @@
+package ua.renamer.app.metadata.extractor.strategy.format.image;
+
+import com.drew.metadata.Directory;
+import com.drew.metadata.bmp.BmpHeaderDirectory;
+import jakarta.inject.Inject;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+
+/**
+ * Metadata extractor for BMP (bitmap) image files.
+ */
+public class BmpFileMetadataExtractor extends BaseImageMetadataExtractor {
+
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
+    @Inject
+    public BmpFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
+        super(dateTimeUtils);
+    }
+
+    @Override
+    protected Class<? extends Directory> getBaseDirectoryClass() {
+        return BmpHeaderDirectory.class;
+    }
+
+    @Override
+    protected Integer getBaseWidthTag() {
+        return BmpHeaderDirectory.TAG_IMAGE_WIDTH;
+    }
+
+    @Override
+    protected Integer getBaseHeightTag() {
+        return BmpHeaderDirectory.TAG_IMAGE_HEIGHT;
+    }
+}

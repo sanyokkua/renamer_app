@@ -1,0 +1,35 @@
+package ua.renamer.app.metadata.extractor.strategy.format.image;
+
+import com.drew.metadata.Directory;
+import com.drew.metadata.webp.WebpDirectory;
+import jakarta.inject.Inject;
+import ua.renamer.app.api.interfaces.DateTimeUtils;
+
+/**
+ * Metadata extractor for WebP image files.
+ */
+public class WebPFileMetadataExtractor extends BaseImageMetadataExtractor {
+
+    /**
+     * @param dateTimeUtils provides date/time parsing utilities
+     */
+    @Inject
+    public WebPFileMetadataExtractor(DateTimeUtils dateTimeUtils) {
+        super(dateTimeUtils);
+    }
+
+    @Override
+    protected Class<? extends Directory> getBaseDirectoryClass() {
+        return WebpDirectory.class;
+    }
+
+    @Override
+    protected Integer getBaseWidthTag() {
+        return WebpDirectory.TAG_IMAGE_WIDTH;
+    }
+
+    @Override
+    protected Integer getBaseHeightTag() {
+        return WebpDirectory.TAG_IMAGE_HEIGHT;
+    }
+}

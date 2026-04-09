@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import ua.renamer.app.ui.widget.impl.ItemPositionRadioSelector?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="ua.renamer.app.ui.controller.mode.impl.ModeRemoveTextController"
+      prefHeight="400.0" prefWidth="600.0" spacing="12">
+    <padding>
+        <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+
+    <ItemPositionRadioSelector fx:id="itemPositionRadioSelector" id="itemPositionRadioSelector"
+                               labelValue="%mode_remove_text_label_position">
+        <VBox.margin>
+            <Insets bottom="4"/>
+        </VBox.margin>
+    </ItemPositionRadioSelector>
+
+    <VBox VBox.vgrow="NEVER" spacing="8">
+        <Label text="%mode_remove_text_label_text_to_remove" styleClass="label-section"/>
+        <TextField fx:id="removeTextField" maxWidth="Infinity"/>
+    </VBox>
+
+</VBox>

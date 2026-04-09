@@ -3,7 +3,7 @@ package ua.renamer.app.ui.converter;
 import com.google.inject.Inject;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
-import ua.renamer.app.core.enums.TruncateOptions;
+import ua.renamer.app.api.enums.TruncateOptions;
 import ua.renamer.app.ui.enums.TextKeys;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 
@@ -21,7 +21,6 @@ public class TruncateOptionsConverter extends StringConverter<TruncateOptions> {
      * representation using {@link LanguageTextRetrieverApi}.
      *
      * @param object The {@link TruncateOptions} enum constant to be converted to a string.
-     *
      * @return The string representation of the provided {@link TruncateOptions} constant.
      */
     @Override
@@ -37,9 +36,7 @@ public class TruncateOptionsConverter extends StringConverter<TruncateOptions> {
      * Converts a string back to a {@link TruncateOptions} enum constant.
      *
      * @param string The string to be converted back to a {@link TruncateOptions} enum constant.
-     *
      * @return The corresponding {@link TruncateOptions} enum constant, or {@code null} if not implemented.
-     *
      * @implNote This method is not yet implemented and always returns {@code null}.
      */
     @Override

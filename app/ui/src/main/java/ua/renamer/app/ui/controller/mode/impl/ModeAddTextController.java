@@ -1,0 +1,88 @@
+package ua.renamer.app.ui.controller.mode.impl;
+
+import com.google.inject.Inject;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.enums.ItemPosition;
+import ua.renamer.app.api.model.TransformationMode;
+import ua.renamer.app.api.session.AddTextParams;
+import ua.renamer.app.api.session.ModeApi;
+import ua.renamer.app.ui.controller.mode.ModeControllerV2Api;
+import ua.renamer.app.ui.widget.impl.ItemPositionRadioSelector;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+/**
+ * Controller for the Add Text transformation mode.
+ */
+@Slf4j
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
+public class ModeAddTextController implements ModeControllerV2Api<AddTextParams>, Initializable {
+
+    @FXML
+    private TextField textField;
+    @FXML
+    private ItemPositionRadioSelector itemPositionRadioSelector;
+
+    private ChangeListener<String> textToAddListener;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        log.info("initialize()");
+    }
+
+    @Override
+    public TransformationMode supportedMode() {
+        return TransformationMode.ADD_TEXT;
+    }
+
+    @Override
+    public void bind(ModeApi<AddTextParams> modeApi) {
+        var params = modeApi.currentParameters();
+
+        // ── Remove old listeners ──────────────────────────────────────────────
+        if (textToAddListener != null) {
+            textField.textProperty().removeListener(textToAddListener);
+        }
+
+        // ── Init ──────────────────────────────────────────────────────────────
+        textField.setText(params.textToAdd() != null ? params.textToAdd() : "");
+
+        if (params.position() != null) {
+            var corePos = ItemPosition.valueOf(params.position().name());
+            itemPositionRadioSelector.getButtons()
+                    .stream()
+                    .filter(btn -> btn.getValue() == corePos)
+                    .findFirst()
+                    .ifPresent(btn -> itemPositionRadioSelector.getToggleGroup().selectToggle(btn));
+        }
+
+        // ── Wire ──────────────────────────────────────────────────────────────
+        textToAddListener = (obs, oldVal, newVal) -> {
+            log.debug("bind: textToAdd changed → {}", newVal);
+            modeApi.updateParameters(p -> p.withTextToAdd(newVal))
+                    .thenAccept(result -> {
+                        if (result.isError()) {
+                            Platform.runLater(() -> textField.getStyleClass().add("validation-error"));
+                        } else {
+                            Platform.runLater(() -> textField.getStyleClass().remove("validation-error"));
+                        }
+                    });
+        };
+        textField.textProperty().addListener(textToAddListener);
+
+        itemPositionRadioSelector.setValueSelectedHandler(corePos -> {
+            var apiPos = ua.renamer.app.api.enums.ItemPosition.valueOf(corePos.name());
+            log.debug("bind: position changed → {}", apiPos);
+            modeApi.updateParameters(p -> p.withPosition(apiPos));
+        });
+
+    }
+
+}

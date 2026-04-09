@@ -5,6 +5,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import ua.renamer.app.api.settings.AppSettings;
+import ua.renamer.app.api.settings.SettingsService;
 import ua.renamer.app.ui.service.LanguageTextRetrieverApi;
 import ua.renamer.app.ui.service.impl.LanguageTextRetrieverService;
 
@@ -20,6 +22,18 @@ import java.util.concurrent.Executors;
 @Getter
 public class DIAppModule extends AbstractModule {
 
+    private static Locale resolveLocale(String languageTag) {
+        Locale requested = Locale.forLanguageTag(languageTag.replace('_', '-'));
+        try {
+            ResourceBundle.getBundle("langs/lang", requested);
+            return requested;
+        } catch (java.util.MissingResourceException e) {
+            log.warn("No resource bundle found for locale: {}; falling back to English", requested);
+            log.debug("ResourceBundle.getBundle failed with exception: {}", e.getMessage());
+            return Locale.ENGLISH;
+        }
+    }
+
     @Override
     protected void configure() {
         bind(LanguageTextRetrieverApi.class).to(LanguageTextRetrieverService.class).in(Singleton.class);
@@ -27,8 +41,10 @@ public class DIAppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public ResourceBundle provideResourceBundle() {
-        Locale locale = Locale.getDefault();
+    public ResourceBundle provideResourceBundle(SettingsService settingsService) {
+        AppSettings settings = settingsService.getCurrent();
+        Locale locale = resolveLocale(settings.getLanguage());
+        log.info("Loading resource bundle for locale: {}", locale);
         return ResourceBundle.getBundle("langs/lang", locale);
     }
 

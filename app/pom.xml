@@ -1,11 +1,11 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ua.renamer.app</groupId>
     <artifactId>renamer-app-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.0</version>
+    <version>2.0.0</version>
     <name>renamer-app</name>
 
     <description>App for renaming files</description>
@@ -15,31 +15,62 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.target>25</maven.compiler.target>
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
 
-        <javafx.version>25.0.1</javafx.version>
+        <javafx.version>25.0.2</javafx.version>
         <javafx-maven-plugin.version>0.0.8</javafx-maven-plugin.version>
 
-        <lombok.version>1.18.42</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <logback.version>1.5.21</logback.version>
+        <logback.version>1.5.32</logback.version>
         <metadata-extractor.version>2.19.0</metadata-extractor.version>
-        <junit-bom.version>6.0.1</junit-bom.version>
-        <mockito-core.version>5.20.0</mockito-core.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <powermock-core.version>2.0.9</powermock-core.version>
+        <junit-bom.version>6.0.3</junit-bom.version>
+        <mockito-core.version>5.23.0</mockito-core.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <guice.version>7.0.0</guice.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
-        <tika-core.version>3.2.3</tika-core.version>
+        <tika-core.version>3.3.0</tika-core.version>
         <jakarta.inject-api.version>2.0.1</jakarta.inject-api.version>
         <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <commons-io.version>2.21.0</commons-io.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <jspecify.version>1.0.0</jspecify.version>
+        <jaudiotagger.version>2.0.19</jaudiotagger.version>
+        <jackson.version>2.21.2</jackson.version>
+        <junrar.version>7.5.8</junrar.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
+
+        <!-- Code quality tool versions -->
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <checkstyle.version>13.4.0</checkstyle.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.3</spotbugs-maven-plugin.version>
+        <findsecbugs-plugin.version>1.13.0</findsecbugs-plugin.version>
+        <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
+
+        <!-- macOS Dock name; overridden by the macos-dock profile -->
+        <javafx.jvm.args/>
     </properties>
 
     <modules>
+        <module>utils</module>
+        <module>api</module>
         <module>core</module>
+        <module>backend</module>
+        <module>metadata</module>
         <module>ui</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -68,6 +99,11 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <version>${jspecify.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -101,6 +137,11 @@
             </dependency>
 
             <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
                 <version>${tika-core.version}</version>
@@ -110,7 +151,35 @@
                 <artifactId>tika-parsers-standard-package</artifactId>
                 <version>${tika-core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.RouHim</groupId>
+                <artifactId>jaudiotagger</artifactId>
+                <version>${jaudiotagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
 
+
+            <!-- CVE overrides for transitive deps -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.junrar</groupId>
+                <artifactId>junrar</artifactId>
+                <version>${junrar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit</groupId>
@@ -130,6 +199,12 @@
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito-core.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-annotations</artifactId>
+                <version>${spotbugs-annotations.version}</version>
+                <scope>provided</scope>
             </dependency>
 
         </dependencies>
@@ -156,7 +231,185 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                 </plugin>
+                <!-- Version management only; child modules activate with their own executions -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${versions-maven-plugin.version}</version> <!-- Use latest stable -->
+                    <configuration>
+                        <allowMajorUpdates>false</allowMajorUpdates>
+                        <allowMinorUpdates>true</allowMinorUpdates>
+                        <allowSnapshots>false</allowSnapshots>
+                        <rulesUri>file:${project.basedir}/versions-rules.xml</rulesUri>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <!--
+            quiet profile: suppress test stdout/stderr to files.
+            Activates automatically with -Dai=true.
+            Use for all test runs when working with Claude Code.
+        -->
+        <profile>
+            <id>quiet</id>
+            <activation>
+                <property>
+                    <name>ai</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <trimStackTrace>true</trimStackTrace>
+                            <printSummary>true</printSummary>
+                            <useFile>true</useFile>
+                            <reportFormat>brief</reportFormat>
+                            <enableOutErrElements>false</enableOutErrElements>
+                            <enablePropertiesElement>false</enablePropertiesElement>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            code-quality profile: run Checkstyle, PMD, and SpotBugs.
+            All tools use failOnViolation=false — violations are informational for local dev.
+            Activate with: mvn verify -Pcode-quality
+            Execution order follows linting standards: compile → checkstyle → PMD → spotbugs → test
+        -->
+        <profile>
+            <id>code-quality</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <configuration>
+                            <configLocation>${maven.multiModuleProjectDirectory}/checkstyle.xml</configLocation>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>false</failsOnError>
+                            <failOnViolation>false</failOnViolation>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <linkXRef>false</linkXRef>
+                            <!-- module-info.java uses JPMS syntax Checkstyle cannot parse -->
+                            <excludes>**/module-info.java</excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>checkstyle-validate</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <configuration>
+                            <rulesets>
+                                <ruleset>${maven.multiModuleProjectDirectory}/pmd-rules.xml</ruleset>
+                            </rulesets>
+                            <targetJdk>25</targetJdk>
+                            <printFailingErrors>true</printFailingErrors>
+                            <failOnViolation>false</failOnViolation>
+                            <linkXRef>false</linkXRef>
+                            <excludeRoots>
+                                <excludeRoot>target/generated-sources</excludeRoot>
+                                <excludeRoot>target/generated-test-sources</excludeRoot>
+                            </excludeRoots>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>pmd-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <effort>Max</effort>
+                            <threshold>Medium</threshold>
+                            <failOnError>false</failOnError>
+                            <xmlOutput>true</xmlOutput>
+                            <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml
+                            </excludeFilterFile>
+                            <plugins>
+                                <plugin>
+                                    <groupId>com.h3xstream.findsecbugs</groupId>
+                                    <artifactId>findsecbugs-plugin</artifactId>
+                                    <version>${findsecbugs-plugin.version}</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>spotbugs-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>macos-dock</id>
+            <activation>
+                <os><family>mac</family></os>
+            </activation>
+            <properties>
+                <javafx.jvm.args>-Xdock:name=Renamer</javafx.jvm.args>
+            </properties>
+        </profile>
+    </profiles>
 </project>
