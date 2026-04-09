@@ -23,5 +23,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Start Xvfb
+        run: Xvfb :99 -screen 0 1280x1024x24 &
+
       - name: Build and test
         run: cd app && mvn verify
+        env:
+          DISPLAY: ':99'
